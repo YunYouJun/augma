@@ -1,0 +1,22 @@
+{
+  "name": "augma",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/SAO-UI/Augma.git",
+  "author": {
+    "email": "me@yunyoujun.cn",
+    "name": "YunYouJun",
+    "url": "https://www.yunyoujun.cn"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "sass": "^1.29.0",
+    "vitepress": "^0.8.1"
+  },
+  "scripts": {
+    "dev": "yarn docs:dev",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs"
+  }
+}
