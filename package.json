@@ -14,6 +14,7 @@
     "vitepress": "^0.8.1"
   },
   "scripts": {
+    "build": "yarn docs:build && cp docs/.vitepress/public/* docs/.vitepress/dist",
     "dev": "yarn docs:dev",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
