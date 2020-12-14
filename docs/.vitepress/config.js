@@ -4,6 +4,7 @@ module.exports = {
 
   themeConfig: {
     repo: "SAO-UI/augma",
+    docsBranch: "main",
     docsDir: "docs",
 
     editLinks: true,

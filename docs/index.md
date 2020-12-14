@@ -6,6 +6,8 @@ Augma 是「[刀剑神域: 序列之争](https://movie.douban.com/subject/266341
 
 我们希望以此为名开发出一套面向未来面向 AR 的 UI 框架/组件库。
 
+> [刀剑神域：序列之争 | bilibili](https://www.bilibili.com/bangumi/play/ss12364/)
+
 ## 设想
 
 ### 技术栈
