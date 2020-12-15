@@ -3,6 +3,9 @@
     <div class="agm-bottom-menu">
       <div class="down-arrow"></div>
       <div class="agm-menu-container">
+        <agm-button icon color="#8dd3d6" @click="flipScreen">
+          <agm-icon :icon="icons.mdiFlipHorizontal"></agm-icon>
+        </agm-button>
         <agm-button
           v-for="(item, i) in menuItems"
           :key="i"
@@ -27,14 +30,13 @@ export default {
   },
   data() {
     return {
+      icons: {
+        mdiFlipHorizontal,
+      },
       menuItems: [
         {
           color: "#4dade0",
           icon: mdiCloud,
-        },
-        {
-          color: "#8dd3d6",
-          icon: mdiFlipHorizontal,
         },
         {
           color: "#dd9d5e",
@@ -46,6 +48,13 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    flipScreen() {
+      console.log(this.$store);
+      this.$store.commit("app/toggleFlipScreen");
+      console.log(this.$store.state.app.flipScreen);
+    },
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <web-cam></web-cam>
+  <web-cam :flip="$store.state.app.flipScreen"></web-cam>
   <augma-ui :opacity="1"></augma-ui>
 </template>
 

@@ -1,0 +1,32 @@
+$agm-brand: #557591;
+
+$agm-success: #98d447;
+$agm-warning: #ed933d;
+$agm-danger: #ff3e5d;
+$agm-info: #004d86;
+$agm-tooltip: #00959c;
+
+$agm-colors: () !default;
+$agm-colors: map-merge(
+  (
+    "success": $agm-success,
+    "warning": $agm-warning,
+    "danger": $agm-danger,
+    "info": $agm-info,
+    "tooltip": $agm-tooltip,
+    "green": $agm-success,
+    "orange": $agm-warning,
+    "red": $agm-danger,
+  ),
+  $agm-colors
+);
+
+:root {
+  --c-brand: #{$agm-brand};
+  --agm-brand: #{$agm-brand};
+  --agm-success: #{$agm-success};
+  --agm-warning: #{$agm-warning};
+  --agm-danger: #{$agm-danger};
+  --agm-info: #{$agm-info};
+  --agm-tooltip: #{$agm-tooltip};
+}

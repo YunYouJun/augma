@@ -8,5 +8,6 @@
   height: $agm-line-width;
   border: none;
   background: white;
+  margin: 0.5rem 3.5rem;
 }
 </style>

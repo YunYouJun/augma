@@ -44,6 +44,10 @@ function getComponentsSidebar() {
       text: "组件",
       children: [
         {
+          text: "Color 色彩",
+          link: "/components/color",
+        },
+        {
           text: "Buttons 按钮",
           link: "/components/buttons",
         },

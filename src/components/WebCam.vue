@@ -1,12 +1,22 @@
 <template>
-  <video id="webcam" ref="webcamVideo" autoplay></video>
+  <video :class="classes" id="webcam" ref="webcamVideo" autoplay></video>
 </template>
 
 <script>
 import { changeWebcamStream } from "../lib/webcam";
 export default {
+  props: {
+    flip: Boolean,
+  },
   mounted() {
     this.initWebcam();
+  },
+  computed: {
+    classes() {
+      return {
+        flip: this.flip,
+      };
+    },
   },
   methods: {
     async initWebcam() {
