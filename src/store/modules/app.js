@@ -1,12 +1,6 @@
-const state = () => {
-  flipScreen: false;
-};
+const state = () => {};
 
-const mutations = {
-  toggleFlipScreen(state) {
-    state.flipScreen = !state.flipScreen;
-  },
-};
+const mutations = {};
 
 export default {
   namespaced: true,

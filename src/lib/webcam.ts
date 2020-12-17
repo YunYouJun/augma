@@ -9,13 +9,17 @@ export async function changeWebcamStream(
 ) {
   const constraints = {
     video: {
+      width: 1920,
+      height: 1080,
       facingMode: front ? "user" : "environment",
     },
   };
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
+  const settings = stream.getVideoTracks()[0].getSettings();
   videoEl.srcObject = stream;
   // autoplay
-  // videoEl.onloadedmetadata = () => {
-  //   videoEl.play();
-  // };
+  videoEl.onloadedmetadata = () => {
+    videoEl.play();
+  };
+  return settings;
 }

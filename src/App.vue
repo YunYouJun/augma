@@ -1,5 +1,9 @@
 <template>
-  <web-cam :flip="$store.state.app.flipScreen"></web-cam>
+  <web-cam
+    v-if="$store.state.camera.display"
+    :flip="$store.state.camera.flipScreen"
+    :front="$store.state.camera.front"
+  ></web-cam>
   <augma-ui :opacity="1"></augma-ui>
 </template>
 

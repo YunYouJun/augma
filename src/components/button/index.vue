@@ -43,6 +43,10 @@ export default {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     font-size: 1.3rem;
 
+    &:hover {
+      cursor: pointer;
+    }
+
     &:focus {
       outline: none;
     }

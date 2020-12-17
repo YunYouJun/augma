@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import app from "./modules/app";
+import camera from "./modules/camera";
 
 export default createStore({
   state: {},
@@ -7,5 +8,6 @@ export default createStore({
   actions: {},
   modules: {
     app,
+    camera,
   },
 });

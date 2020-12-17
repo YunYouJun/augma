@@ -3,7 +3,7 @@
 </template>
 
 <style lang="scss">
-@import "../../scss/_variables.scss";
+@import "../../scss/variables/index.scss";
 .agm-hr {
   height: $agm-line-width;
   border: none;

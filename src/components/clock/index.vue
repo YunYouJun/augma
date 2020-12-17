@@ -18,7 +18,9 @@ export default {
     },
   },
   mounted() {
-    setInterval(this.getTime(), 1000);
+    setInterval(() => {
+      this.getTime();
+    }, 1000);
   },
   methods: {
     getTime() {

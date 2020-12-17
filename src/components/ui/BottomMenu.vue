@@ -11,6 +11,7 @@
           :key="i"
           icon
           :color="item.color"
+          @click="item.do"
         >
           <agm-icon v-if="item.icon" :icon="item.icon" />
         </agm-button>
@@ -22,7 +23,16 @@
 <script>
 import AgmButton from "../button/index.vue";
 import AgmIcon from "../icon/index.vue";
-import { mdiCloud, mdiEarth, mdiFlipHorizontal, mdiMap } from "@mdi/js";
+import {
+  mdiGithub,
+  mdiEarth,
+  mdiFlipHorizontal,
+  mdiMap,
+  mdiEye,
+  mdiCamera,
+  mdiCameraFlip,
+} from "@mdi/js";
+import pkg from "../../../package.json";
 export default {
   components: {
     AgmButton,
@@ -31,12 +41,20 @@ export default {
   data() {
     return {
       icons: {
+        mdiCamera,
+        mdiCameraFlip,
         mdiFlipHorizontal,
       },
       menuItems: [
         {
           color: "#4dade0",
-          icon: mdiCloud,
+          icon: mdiEye,
+          do: this.toggleCameraDisplay,
+        },
+        {
+          color: "#4dade0",
+          icon: mdiCamera,
+          do: this.screenshot,
         },
         {
           color: "#dd9d5e",
@@ -44,16 +62,56 @@ export default {
         },
         {
           color: "#4dade0",
+          icon: mdiCameraFlip,
+          do: this.toggleCameraFront,
+        },
+        {
+          color: "black",
+          icon: mdiGithub,
+          do: this.goToGithub,
+        },
+        {
+          color: "#4dade0",
           icon: mdiEarth,
+          do: this.openBrowser,
         },
       ],
     };
   },
   methods: {
+    screenshot() {
+      const video = this.$store.state.camera.videoEl;
+      const canvas = document.createElement("canvas");
+      // canvas.width = video.clientWidth;
+      // canvas.height = video.clientHeight;
+      const settings = this.$store.state.camera.settings;
+      canvas.width = settings.width;
+      canvas.height = settings.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0);
+
+      const dataUrl = canvas.toDataURL();
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = new Date();
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
     flipScreen() {
-      console.log(this.$store);
-      this.$store.commit("app/toggleFlipScreen");
-      console.log(this.$store.state.app.flipScreen);
+      this.$store.commit("camera/toggleFlipScreen");
+    },
+    toggleCameraDisplay() {
+      this.$store.commit("camera/toggleDisplay");
+    },
+    toggleCameraFront() {
+      this.$store.commit("camera/toggleFront");
+    },
+    goToGithub() {
+      window.open(pkg.repository, "_blank");
+    },
+    openBrowser() {
+      console.log("open!!!");
     },
   },
 };

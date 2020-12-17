@@ -7,8 +7,9 @@ import { changeWebcamStream } from "../lib/webcam";
 export default {
   props: {
     flip: Boolean,
+    front: Boolean,
   },
-  mounted() {
+  async mounted() {
     this.initWebcam();
   },
   computed: {
@@ -18,10 +19,18 @@ export default {
       };
     },
   },
+  watch: {
+    async front(val) {
+      const videoEl = this.$refs.webcamVideo;
+      await changeWebcamStream(videoEl, this.front);
+    },
+  },
   methods: {
     async initWebcam() {
       const videoEl = this.$refs.webcamVideo;
-      await changeWebcamStream(videoEl);
+      this.$store.commit("camera/setVideoEl", videoEl);
+      const settings = await changeWebcamStream(videoEl, this.front);
+      this.$store.commit("camera/setSettings", settings);
     },
   },
 };
