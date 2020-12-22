@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import AgmButton from "../button/index.vue";
-import AgmIcon from "../icon/index.vue";
 import {
   mdiGithub,
   mdiEarth,
@@ -34,10 +32,6 @@ import {
 } from "@mdi/js";
 import pkg from "../../../package.json";
 export default {
-  components: {
-    AgmButton,
-    AgmIcon,
-  },
   data() {
     return {
       icons: {
@@ -68,7 +62,7 @@ export default {
         {
           color: "black",
           icon: mdiGithub,
-          do: this.goToGithub,
+          do: this.openGithubNotification,
         },
         {
           color: "#4dade0",
@@ -78,9 +72,16 @@ export default {
       ],
     };
   },
+  mounted() {
+    this.openGithubNotification();
+  },
   methods: {
     screenshot() {
       const video = this.$store.state.camera.videoEl;
+      if (!video) {
+        console.error("No camera is opened.");
+        return;
+      }
       const canvas = document.createElement("canvas");
       // canvas.width = video.clientWidth;
       // canvas.height = video.clientHeight;
@@ -107,8 +108,14 @@ export default {
     toggleCameraFront() {
       this.$store.commit("camera/toggleFront");
     },
-    goToGithub() {
-      window.open(pkg.repository, "_blank");
+    openGithubNotification() {
+      this.$notify({
+        title: "GitHub",
+        icon: mdiGithub,
+        color: "black",
+        message: `<a href="${pkg.repository}" target="_blank">${pkg.repository}</a>`,
+        duration: 0,
+      });
     },
     openBrowser() {
       console.log("open!!!");

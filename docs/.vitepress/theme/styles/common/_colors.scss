@@ -2,7 +2,7 @@ $agm-brand: #557591;
 
 $agm-success: #98d447;
 $agm-warning: #ed933d;
-$agm-danger: #ff3e5d;
+$agm-error: #ff3e5d;
 $agm-info: #004d86;
 $agm-tooltip: #00959c;
 
@@ -11,12 +11,12 @@ $agm-colors: map-merge(
   (
     "success": $agm-success,
     "warning": $agm-warning,
-    "danger": $agm-danger,
+    "error": $agm-error,
     "info": $agm-info,
     "tooltip": $agm-tooltip,
     "green": $agm-success,
     "orange": $agm-warning,
-    "red": $agm-danger,
+    "red": $agm-error,
   ),
   $agm-colors
 );
@@ -26,7 +26,7 @@ $agm-colors: map-merge(
   --agm-brand: #{$agm-brand};
   --agm-success: #{$agm-success};
   --agm-warning: #{$agm-warning};
-  --agm-danger: #{$agm-danger};
+  --agm-error: #{$agm-error};
   --agm-info: #{$agm-info};
   --agm-tooltip: #{$agm-tooltip};
 }

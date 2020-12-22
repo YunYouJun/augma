@@ -1,0 +1,16 @@
+{
+  "name": "augma",
+  "version": "0.0.1",
+  "description": "AR UI Framework",
+  "main": "dist/index.js",
+  "repository": "https://github.com/YunYouJun/Augma.git",
+  "author": {
+    "email": "me@yunyoujun.cn",
+    "name": "YunYouJun",
+    "url": "https://www.yunyoujun.cn"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "vue": "^3.0.4"
+  }
+}

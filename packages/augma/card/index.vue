@@ -3,7 +3,9 @@
 </template>
 
 <script>
-export default {};
+export default {
+  name: "AgmCard",
+};
 </script>
 
 <style lang="scss">

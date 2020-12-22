@@ -6,6 +6,7 @@
 
 <script lang="ts">
 export default {
+  name: "AgmButton",
   props: {
     color: String,
     icon: Boolean,

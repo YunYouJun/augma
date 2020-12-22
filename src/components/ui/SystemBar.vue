@@ -12,14 +12,8 @@
 </template>
 
 <script>
-import AgmClock from "../clock/index.vue";
-import AgmHr from "../html/AgmHr.vue";
 import { mdiMicrophone, mdiDotsHorizontal } from "@mdi/js";
 export default {
-  components: {
-    AgmClock,
-    AgmHr,
-  },
   data() {
     return {
       icons: {

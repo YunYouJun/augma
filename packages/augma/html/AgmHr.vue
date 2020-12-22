@@ -2,8 +2,14 @@
   <hr class="agm-hr" />
 </template>
 
+<script>
+export default {
+  name: "AgmHr",
+};
+</script>
+
 <style lang="scss">
-@import "../../scss/variables/index.scss";
+@import "../../theme/variables/index.scss";
 .agm-hr {
   height: $agm-line-width;
   border: none;

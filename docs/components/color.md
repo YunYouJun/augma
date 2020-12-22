@@ -54,7 +54,7 @@ export default {
           value: ""
         },
         {
-          name: "danger",
+          name: "error",
           value: ""
         },
         {
