@@ -4,7 +4,7 @@
     :flip="$store.state.camera.flipScreen"
     :front="$store.state.camera.front"
   ></web-cam>
-  <augma-ui :opacity="1"></augma-ui>
+  <augma-ui :opacity="0.95"></augma-ui>
 </template>
 
 <script>
@@ -16,6 +16,9 @@ export default {
   components: {
     AugmaUi,
     WebCam,
+  },
+  mounted() {
+    console.log(this.$store.state.camera.display);
   },
 };
 </script>

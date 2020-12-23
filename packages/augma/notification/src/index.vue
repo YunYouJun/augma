@@ -8,6 +8,7 @@
       role="alert"
       @mouseenter="clearTimer()"
       @mouseleave="startTimer()"
+      @click="click"
     >
       <div class="agm-notification__group">
         <i
@@ -24,7 +25,13 @@
             <p v-html="message"></p>
           </slot>
         </div>
-        <div class="agm-notification__closeBtn"></div>
+        <div
+          v-if="showClose"
+          class="agm-notification__closeBtn"
+          @click.stop="close"
+        >
+          <agm-icon :icon="icons.mdiClose"></agm-icon>
+        </div>
       </div>
     </div>
   </transition>
@@ -37,6 +44,8 @@ import { defineComponent, PropType, ref } from "vue";
 import type { NotificationVM } from "./notification.type";
 import { on, off } from "../../utils/dom";
 import { EVENT_CODE } from "../../utils/aria";
+
+import { mdiClose } from "@mdi/js";
 
 const TypeMap: Indexable<string> = {
   success: "success",
@@ -51,6 +60,13 @@ export default defineComponent({
   name: "AgmNotification",
   components: {
     AgmIcon,
+  },
+  data() {
+    return {
+      icons: {
+        mdiClose,
+      },
+    };
   },
   props: {
     duration: {
@@ -77,7 +93,7 @@ export default defineComponent({
     },
     showClose: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     title: {
       type: String,
@@ -97,6 +113,7 @@ export default defineComponent({
     type: { type: String, default: "" },
     zIndex: { type: Number, default: 0 },
   },
+  emits: ["close", "click"],
   setup(props) {
     const visible = ref(false);
     const closed = ref(false);
@@ -130,7 +147,7 @@ export default defineComponent({
     closed(newVal: boolean) {
       if (newVal) {
         this.visible = false;
-        on(this.$el, "transitionend", this.destroyElement);
+        this.destroyElement();
       }
     },
   },
@@ -145,19 +162,22 @@ export default defineComponent({
     this.visible = true;
     on(document, "keydown", this.keydown);
   },
+  beforeUnmount() {
+    off(document, "keydown", this.keydown);
+  },
   methods: {
     /**
      * Delete Element
+     * do not need on transitionend
      */
     destroyElement() {
       this.visible = false;
-      off(this.$el, "transitionend", this.destroyElement);
       this.onClose();
     },
     startTimer() {
       if (this.duration > 0) {
         this.timer = setTimeout(() => {
-          if (this.closed) {
+          if (!this.closed) {
             this.close();
           }
         }, this.duration);
@@ -165,6 +185,10 @@ export default defineComponent({
     },
     clearTimer() {
       clearTimeout(this.timer);
+      this.timer = null;
+    },
+    click() {
+      this?.onClick();
     },
     close() {
       this.closed = true;
@@ -187,85 +211,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-@import "../../../theme/variables/index.scss";
-.agm-notification {
-  display: flex;
-  width: 12rem;
-  height: 3rem;
-  position: fixed;
-  background-color: white;
-  box-shadow: $box-shadow-light;
-  border-radius: 5px;
-  transition: opacity 0.3s, transform 0.3s, left 0.3s, right 0.3s, top 0.4s,
-    bottom 0.3s;
-  z-index: 9999;
-
-  &.right {
-    right: 1.5rem;
-  }
-
-  &.left {
-    left: 1.5rem;
-  }
-
-  &__icon {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-self: center;
-    // position: absolute;
-
-    background-color: var(--agm-icon-color);
-    border-radius: 2px;
-    padding: 2px;
-    color: white;
-    left: -14px;
-    box-shadow: 0 0 2px var(--agm-icon-color);
-  }
-
-  &__group {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-left: 1.5rem;
-  }
-
-  &__title {
-    font-weight: bold;
-    font-size: 1rem;
-  }
-
-  &__content {
-    color: gray;
-    font-size: 12px;
-
-    p {
-      margin: 0;
-      width: 10rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
-  &-fade {
-    &-enter-from {
-      &.right {
-        right: 0;
-        transform: translateX(100%);
-      }
-
-      &.left {
-        left: 0;
-        transform: translateX(-100%);
-      }
-    }
-
-    &-leave-to {
-      opacity: 0;
-    }
-  }
-}
-</style>

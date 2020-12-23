@@ -1,0 +1,31 @@
+@import "../variables";
+
+.agm-dialog {
+  position: absolute;
+  top: 6rem;
+  left: 6rem;
+  right: 6rem;
+  bottom: 8rem;
+  background: transparent;
+  box-shadow: $box-shadow-light;
+  border-radius: 0.2rem;
+
+  &__closeBtn {
+    position: absolute;
+    top: -1rem;
+    right: 0;
+
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+
+    border: none;
+    outline: none;
+
+    background-color: var(--agm-error);
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

@@ -9,9 +9,6 @@ export type INotification = (
 ) => INotificationHandle;
 
 export type INotificationOptions = {
-  /**
-   * default is 3000
-   */
   duration?: number;
   id?: string;
   message?: string | VNode;

@@ -6,6 +6,7 @@ import type {
   NotificationQueue,
   NotificationVM,
 } from "./notification.type";
+import PopupManager from "../../utils/popup-manager";
 
 let vm: NotificationVM;
 const notifications: NotificationQueue = [];
@@ -14,27 +15,31 @@ let seed = 1;
 const Notification: INotification = function (options = {}) {
   const position = options.position || "top-right";
 
-  let verticalOffset = options.offset || 80;
+  const initOffset = 80;
+
+  let verticalOffset = options.offset || initOffset;
   notifications
     .filter(({ vm }) => vm.component.props.position === position)
     .forEach(({ vm }) => {
-      verticalOffset += (vm.el.offsetHeight || 0) + 16;
+      // vm.el.offsetHeight 该元素的像素高度
+      verticalOffset += (vm.el.offsetHeight || initOffset) + 16;
     });
   verticalOffset += 16;
 
   const id = "notification_" + seed++;
   const userOnClose = options.onClose;
   options = {
+    // default option
     duration: 3000,
     position: "top-right",
-    showClose: true,
-    // default options end
+    showClose: false,
     ...options,
     onClose: () => {
       close(id, userOnClose);
     },
     offset: verticalOffset,
     id,
+    zIndex: PopupManager.nextZIndex(),
   };
 
   const container = document.createElement("div");
@@ -42,7 +47,15 @@ const Notification: INotification = function (options = {}) {
   container.className = `container_${id}`;
   container.style.zIndex = String();
 
-  vm = createVNode(NotificationConstructor, options);
+  vm = createVNode(
+    NotificationConstructor,
+    options,
+    isVNode(options.message)
+      ? {
+          default: () => options.message,
+        }
+      : null
+  );
   render(vm, container);
   notifications.push({ vm, $el: container });
   document.body.appendChild(container);

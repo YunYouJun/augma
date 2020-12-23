@@ -3,6 +3,7 @@
     <div class="agm-bottom-menu">
       <div class="down-arrow"></div>
       <div class="agm-menu-container">
+        <fullscreen-btn></fullscreen-btn>
         <agm-button icon color="#8dd3d6" @click="flipScreen">
           <agm-icon :icon="icons.mdiFlipHorizontal"></agm-icon>
         </agm-button>
@@ -31,9 +32,15 @@ import {
   mdiCameraFlip,
 } from "@mdi/js";
 import pkg from "../../../package.json";
+import FullscreenBtn from "../menu/FullscreenBtn.vue";
 export default {
+  components: {
+    FullscreenBtn,
+  },
   data() {
     return {
+      mode: "use",
+      browser: false,
       icons: {
         mdiCamera,
         mdiCameraFlip,
@@ -73,9 +80,17 @@ export default {
     };
   },
   mounted() {
-    this.openGithubNotification();
+    if (this.mode === "demo") {
+      this.show();
+    }
   },
   methods: {
+    /**
+     * show effect
+     */
+    show() {
+      this.openGithubNotification();
+    },
     screenshot() {
       const video = this.$store.state.camera.videoEl;
       if (!video) {
@@ -114,11 +129,11 @@ export default {
         icon: mdiGithub,
         color: "black",
         message: `<a href="${pkg.repository}" target="_blank">${pkg.repository}</a>`,
-        duration: 0,
+        // showClose: true,
       });
     },
     openBrowser() {
-      console.log("open!!!");
+      this.$store.commit("windows/toggleBrowser");
     },
   },
 };

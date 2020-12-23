@@ -1,5 +1,5 @@
 <template>
-  <svg class="agm-icon" viewbox="0 0 24 24">
+  <svg class="agm-icon">
     <path :d="icon"></path>
   </svg>
 </template>

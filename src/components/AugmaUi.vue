@@ -1,15 +1,18 @@
 <template>
-  <div class="augma-ui" :style="styles">
+  <div id="augma-ui" class="augma-ui" :style="styles">
     <system-bar />
+    <agm-window />
     <bottom-menu id="augma-bottom-menu" />
   </div>
 </template>
 
 <script>
+import AgmWindow from "./ui/AgmWindow.vue";
 import SystemBar from "./ui/SystemBar.vue";
 import BottomMenu from "./ui/BottomMenu.vue";
 export default {
   components: {
+    AgmWindow,
     BottomMenu,
     SystemBar,
   },

@@ -4,3 +4,14 @@
 @import "icon";
 
 @import "button";
+@import "components";
+
+:root {
+  --c-brand: #{$agm-brand};
+  --agm-brand: #{$agm-brand};
+  --agm-success: #{$agm-success};
+  --agm-warning: #{$agm-warning};
+  --agm-error: #{$agm-error};
+  --agm-info: #{$agm-info};
+  --agm-tooltip: #{$agm-tooltip};
+}
