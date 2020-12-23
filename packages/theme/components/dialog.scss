@@ -6,15 +6,12 @@
   left: 6rem;
   right: 6rem;
   bottom: 8rem;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.8);
   box-shadow: $box-shadow-light;
   border-radius: 0.2rem;
 
+  &__fullscreenBtn,
   &__closeBtn {
-    position: absolute;
-    top: -1rem;
-    right: 0;
-
     width: 0.8rem;
     height: 0.8rem;
     border-radius: 50%;
@@ -22,10 +19,24 @@
     border: none;
     outline: none;
 
-    background-color: var(--agm-error);
-
     &:hover {
       cursor: pointer;
     }
+  }
+
+  &__fullscreenBtn {
+    position: absolute;
+    top: -1rem;
+    right: 1rem;
+
+    background-color: var(--agm-success);
+  }
+
+  &__closeBtn {
+    position: absolute;
+    top: -1rem;
+    right: 0;
+
+    background-color: var(--agm-error);
   }
 }

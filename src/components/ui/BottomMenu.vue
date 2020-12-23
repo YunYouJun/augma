@@ -31,6 +31,7 @@ import {
   mdiCamera,
   mdiCameraFlip,
   mdiFace,
+  mdiCubeScan,
 } from "@mdi/js";
 import pkg from "../../../package.json";
 import FullscreenBtn from "../menu/FullscreenBtn.vue";
@@ -59,6 +60,11 @@ export default {
           do: this.toggleFaceDetection,
         },
         {
+          color: "var(--agm-tooltip)",
+          icon: mdiCubeScan,
+          do: this.toggleYolo,
+        },
+        {
           color: "#4dade0",
           icon: mdiCamera,
           do: this.screenshot,
@@ -66,6 +72,7 @@ export default {
         {
           color: "#dd9d5e",
           icon: mdiMap,
+          do: this.toggleSubwayMap,
         },
         {
           color: "#4dade0",
@@ -125,6 +132,10 @@ export default {
     },
     toggleFaceDetection() {
       this.$store.commit("faceApi/toggleFaceDetection");
+    },
+    toggleYolo() {},
+    toggleSubwayMap() {
+      this.$store.commit("app/toggleSubwayMap");
     },
     toggleCameraDisplay() {
       this.$store.commit("camera/toggleDisplay");

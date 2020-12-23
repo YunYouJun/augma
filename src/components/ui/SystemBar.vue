@@ -1,8 +1,6 @@
 <template>
   <div class="agm-system-bar">
-    <agm-button icon class="agm-top-left-btn">
-      <agm-icon :icon="icons.mdiMicrophone"></agm-icon>
-    </agm-button>
+    <audio-btn class="agm-top-left-btn" />
     <agm-button icon class="agm-top-right-btn">
       <agm-icon :icon="icons.mdiDotsHorizontal"></agm-icon>
     </agm-button>
@@ -12,12 +10,13 @@
 </template>
 
 <script>
-import { mdiMicrophone, mdiDotsHorizontal } from "@mdi/js";
+import { mdiDotsHorizontal } from "@mdi/js";
+import AudioBtn from "../menu/AudioBtn.vue";
 export default {
+  components: { AudioBtn },
   data() {
     return {
       icons: {
-        mdiMicrophone,
         mdiDotsHorizontal,
       },
     };

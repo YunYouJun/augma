@@ -6,6 +6,7 @@
 
 <script>
 import { mdiFullscreen, mdiFullscreenExit } from "@mdi/js";
+import { toggleFullscreen } from "../../../packages/augma/utils/functions";
 export default {
   data() {
     return {
@@ -24,16 +25,7 @@ export default {
   },
   methods: {
     toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch((err) => {
-          this.$notify({
-            type: "error",
-            message: "无法进入全屏模式",
-          });
-        });
-      } else {
-        document.exitFullscreen();
-      }
+      toggleFullscreen();
     },
   },
 };

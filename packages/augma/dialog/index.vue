@@ -6,8 +6,13 @@
         :class="['agm-dialog']"
         role="dialog"
         @click="$event.stopPropagation()"
+        ref="agmDialog"
       >
         <slot></slot>
+        <button
+          class="agm-dialog__fullscreenBtn"
+          @click="toggleFullscreen"
+        ></button>
         <button
           class="agm-dialog__closeBtn"
           aria-label="close"
@@ -21,6 +26,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { clearTimer } from "../utils/util";
+import { toggleFullscreen } from "../utils/functions";
 
 export default defineComponent({
   name: "AgmDialog",
@@ -76,6 +82,9 @@ export default defineComponent({
     doClose() {
       this.closed = true;
       this.visible = false;
+    },
+    toggleFullscreen() {
+      toggleFullscreen(this.$refs.agmDialog);
     },
   },
 });

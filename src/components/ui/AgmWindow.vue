@@ -1,4 +1,5 @@
 <template>
+  <agm-weather />
   <agm-dialog v-model="browser">
     <iframe
       frameborder="0"
@@ -7,10 +8,14 @@
       height="100%"
     ></iframe>
   </agm-dialog>
+  <agm-map />
 </template>
 
 <script>
+import AgmWeather from "../app/AgmWeather.vue";
+import AgmMap from "../app/AgmMap.vue";
 export default {
+  components: { AgmMap, AgmWeather },
   computed: {
     browser: {
       get() {
