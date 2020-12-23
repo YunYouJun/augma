@@ -1,6 +1,6 @@
-const state = () => {
-  browser: false;
-};
+const state = () => ({
+  browser: false,
+});
 
 const mutations = {
   setBrowser(state, value) {

@@ -1,10 +1,10 @@
-const state = () => {
-  videoEl: null;
-  settings: null;
-  display: true;
-  flipScreen: false;
-  front: false;
-};
+const state = () => ({
+  videoEl: null,
+  settings: null,
+  display: true,
+  flipScreen: false,
+  front: false,
+});
 
 const mutations = {
   setVideoEl(state, el) {

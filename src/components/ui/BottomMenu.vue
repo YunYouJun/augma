@@ -30,6 +30,7 @@ import {
   mdiEye,
   mdiCamera,
   mdiCameraFlip,
+  mdiFace,
 } from "@mdi/js";
 import pkg from "../../../package.json";
 import FullscreenBtn from "../menu/FullscreenBtn.vue";
@@ -51,6 +52,11 @@ export default {
           color: "#4dade0",
           icon: mdiEye,
           do: this.toggleCameraDisplay,
+        },
+        {
+          color: "var(--agm-info)",
+          icon: mdiFace,
+          do: this.toggleFaceDetection,
         },
         {
           color: "#4dade0",
@@ -116,6 +122,9 @@ export default {
     },
     flipScreen() {
       this.$store.commit("camera/toggleFlipScreen");
+    },
+    toggleFaceDetection() {
+      this.$store.commit("faceApi/toggleFaceDetection");
     },
     toggleCameraDisplay() {
       this.$store.commit("camera/toggleDisplay");

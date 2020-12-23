@@ -17,8 +17,5 @@ export default {
     AugmaUi,
     WebCam,
   },
-  mounted() {
-    console.log(this.$store.state.camera.display);
-  },
 };
 </script>
