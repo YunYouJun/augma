@@ -10,7 +10,10 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@tensorflow/tfjs": "^2.7.0",
+    "@vladmandic/face-api": "^0.10.1",
     "face-api.js": "^0.22.2",
+    "tfjs-yolo": "^0.0.4",
     "vue": "^3.0.4"
   },
   "devDependencies": {

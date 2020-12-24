@@ -31,6 +31,9 @@ export default {
       this.$store.commit("camera/setVideoEl", videoEl);
       const settings = await changeWebcamStream(videoEl, this.front);
       this.$store.commit("camera/setSettings", settings);
+
+      const ratio = document.body.clientWidth / settings.width;
+      this.$store.commit("camera/setRatio", ratio);
     },
   },
 };

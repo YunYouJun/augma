@@ -10,7 +10,8 @@
 </template>
 
 <script>
-import * as faceapi from "face-api.js";
+// import * as faceapi from "face-api.js";
+// import * as faceapi from "@vladmandic/face-api";
 export default {
   props: {
     enable: {
@@ -115,9 +116,8 @@ export default {
     },
 
     setIndicatorByBox(box) {
-      // const ratio = this.videoEl.
-      const settings = this.$store.state.camera.settings;
-      const ratio = document.body.clientWidth / settings.width;
+      const ratio = this.$store.state.camera.ratio;
+
       this.indicatorStyle.top = box.top - 180 + "px";
       this.indicatorStyle.left = `${(box.left + box.width / 2) * ratio}px`;
     },
@@ -135,15 +135,6 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-}
-
-#rects {
-  position: relative;
-}
-
-.rect {
-  position: absolute;
-  border: 2px dashed;
 }
 
 .text {

@@ -4,6 +4,11 @@ const state = () => ({
   display: true,
   flipScreen: false,
   front: false,
+
+  /**
+   * 缩放比例
+   */
+  ratio: 1,
 });
 
 const mutations = {
@@ -21,6 +26,10 @@ const mutations = {
   },
   toggleFront(state) {
     state.front = !state.front;
+  },
+
+  setRatio(state, val) {
+    state.ratio = val;
   },
 };
 

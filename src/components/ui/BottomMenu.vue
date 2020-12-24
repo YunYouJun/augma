@@ -130,7 +130,9 @@ export default {
     toggleFaceDetection() {
       this.$store.commit("faceApi/toggleFaceDetection");
     },
-    toggleYolo() {},
+    toggleYolo() {
+      this.$store.commit("app/toggleYolo");
+    },
     toggleWeather() {
       this.$store.commit("app/toggleWeather");
     },
