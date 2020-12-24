@@ -36,12 +36,6 @@ export default {
       };
     },
   },
-  mounted() {
-    this.$store.commit("app/setLoading", true);
-    setTimeout(() => {
-      this.$store.commit("app/setLoading", false);
-    }, 3000);
-  },
 };
 </script>
 

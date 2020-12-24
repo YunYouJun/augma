@@ -48,8 +48,48 @@ function getComponentsSidebar() {
           link: "/components/color",
         },
         {
-          text: "Buttons 按钮",
-          link: "/components/buttons",
+          text: "Button 按钮",
+          link: "/components/button",
+        },
+        {
+          text: "Card 卡片",
+          link: "/components/card",
+        },
+        {
+          text: "Clock 时钟",
+          link: "/components/clock",
+        },
+        {
+          text: "Dialog 会话",
+          link: "/components/dialog",
+        },
+        {
+          text: "Html 基础元素",
+          link: "/components/html",
+        },
+        {
+          text: "Icon 图标",
+          link: "/components/icon",
+        },
+        {
+          text: "Indicator 指示器",
+          link: "/components/indicator",
+        },
+        {
+          text: "Loading 加载",
+          link: "/components/loading",
+        },
+        {
+          text: "Menu 菜单",
+          link: "/components/menu",
+        },
+        {
+          text: "Notification 通知",
+          link: "/components/notification",
+        },
+        {
+          text: "Utils 工具",
+          link: "/components/utils",
         },
       ],
     },

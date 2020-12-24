@@ -10,7 +10,7 @@
 </template>
 
 <script>
-// import * as faceapi from "face-api.js";
+import * as faceapi from "face-api.js";
 // import * as faceapi from "@vladmandic/face-api";
 export default {
   props: {
@@ -48,7 +48,9 @@ export default {
   watch: {
     async enable(val) {
       if (val) {
+        this.$store.commit("app/setLoading", true);
         await this.loadModel();
+        this.$store.commit("app/setLoading", false);
         this.onPlay();
       }
     },

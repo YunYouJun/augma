@@ -13,3 +13,7 @@
 ### UI Components
 
 - [element-plus](https://github.com/element-plus/element-plus)
+
+## Dependencies
+
+Use `@tensorflow/tfjs@1` for `tfjs-yolo` & `face-api.js`.

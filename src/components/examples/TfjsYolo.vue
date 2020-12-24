@@ -42,7 +42,9 @@ export default {
   watch: {
     async enable(val) {
       if (val) {
+        this.$store.commit("app/setLoading", true);
         await this.loadModel();
+        this.$store.commit("app/setLoading", false);
         this.run();
       }
     },
