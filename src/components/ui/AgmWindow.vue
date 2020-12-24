@@ -1,5 +1,5 @@
 <template>
-  <agm-weather />
+  <agm-weather v-if="$store.state.app.weather" />
   <agm-dialog v-model="browser">
     <iframe
       frameborder="0"
@@ -8,7 +8,7 @@
       height="100%"
     ></iframe>
   </agm-dialog>
-  <agm-map />
+  <agm-map :enable="$store.state.app.subwayMap" />
 </template>
 
 <script>

@@ -3,7 +3,6 @@
     <div class="agm-bottom-menu">
       <div class="down-arrow"></div>
       <div class="agm-menu-container">
-        <fullscreen-btn></fullscreen-btn>
         <agm-button icon color="#8dd3d6" @click="flipScreen">
           <agm-icon :icon="icons.mdiFlipHorizontal"></agm-icon>
         </agm-button>
@@ -32,13 +31,10 @@ import {
   mdiCameraFlip,
   mdiFace,
   mdiCubeScan,
+  mdiWeatherCloudy,
 } from "@mdi/js";
 import pkg from "../../../package.json";
-import FullscreenBtn from "../menu/FullscreenBtn.vue";
 export default {
-  components: {
-    FullscreenBtn,
-  },
   data() {
     return {
       mode: "use",
@@ -49,6 +45,11 @@ export default {
         mdiFlipHorizontal,
       },
       menuItems: [
+        {
+          color: "var(--agm-warning)",
+          icon: mdiWeatherCloudy,
+          do: this.toggleWeather,
+        },
         {
           color: "#4dade0",
           icon: mdiEye,
@@ -74,11 +75,7 @@ export default {
           icon: mdiMap,
           do: this.toggleSubwayMap,
         },
-        {
-          color: "#4dade0",
-          icon: mdiCameraFlip,
-          do: this.toggleCameraFront,
-        },
+
         {
           color: "black",
           icon: mdiGithub,
@@ -134,15 +131,16 @@ export default {
       this.$store.commit("faceApi/toggleFaceDetection");
     },
     toggleYolo() {},
+    toggleWeather() {
+      this.$store.commit("app/toggleWeather");
+    },
     toggleSubwayMap() {
       this.$store.commit("app/toggleSubwayMap");
     },
     toggleCameraDisplay() {
       this.$store.commit("camera/toggleDisplay");
     },
-    toggleCameraFront() {
-      this.$store.commit("camera/toggleFront");
-    },
+
     openGithubNotification() {
       this.$notify({
         title: "GitHub",

@@ -6,6 +6,7 @@ import AgmClock from "./clock/index.vue";
 import AgmDialog from "./dialog/index.vue";
 import AgmIcon from "./icon/index.vue";
 import AgmIndicator from "./indicator/index.vue";
+import AgmMenu from "./menu/index.vue";
 
 // html
 import AgmHr from "./html/AgmHr.vue";
@@ -20,6 +21,7 @@ const components = [
   AgmHr,
   AgmIcon,
   AgmIndicator,
+  AgmMenu,
 ];
 const plugins = [AgmNotification];
 

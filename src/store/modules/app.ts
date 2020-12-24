@@ -1,5 +1,6 @@
 const state = () => ({
   subwayMap: false,
+  weather: false,
 });
 
 const mutations = {
@@ -8,6 +9,9 @@ const mutations = {
   },
   toggleSubwayMap(state) {
     state.subwayMap = !state.subwayMap;
+  },
+  toggleWeather(state) {
+    state.weather = !state.weather;
   },
 };
 
