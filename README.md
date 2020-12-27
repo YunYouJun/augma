@@ -6,8 +6,29 @@
 
 🎨 AR UI Framework
 
+## Dev
+
+You need [Node.js](https://nodejs.org/en/).
+
+```sh
+# install dependencies
+yarn
+```
+
+```sh
+yarn dev
+# localhost:3000
+```
+
+### Docs
+
+```sh
+yarn docs:dev
+```
+
 ## Thanks
 
+- [vite](https://github.com/vitejs/vite)
 - [vitepress](https://github.com/vuejs/vitepress)
 
 ### UI Components
