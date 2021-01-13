@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import FullscreenBtn from "../menu/FullscreenBtn.vue";
+import FullscreenBtn from "augma/components/function/FullscreenBtn.vue";
 import {
   mdiCameraFlip,
   mdiDotsHorizontal,

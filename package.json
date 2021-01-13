@@ -1,6 +1,7 @@
 {
   "name": "augma",
   "version": "0.0.1",
+  "private": "true",
   "main": "index.js",
   "repository": "https://github.com/YunYouJun/augma.git",
   "author": {

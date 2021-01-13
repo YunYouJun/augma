@@ -6,7 +6,7 @@
 
 <script>
 import { mdiFullscreen, mdiFullscreenExit } from "@mdi/js";
-import { toggleFullscreen } from "../../../packages/augma/utils/functions";
+import { toggleFullscreen } from "../../utils/functions";
 export default {
   data() {
     return {

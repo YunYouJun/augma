@@ -31,7 +31,7 @@ export default defineComponent({
     opacity: Number,
   },
   computed: {
-    styles() {
+    styles(): any {
       return {
         opacity: this.opacity,
       };

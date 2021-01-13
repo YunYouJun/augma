@@ -1,6 +1,7 @@
 # Augma
 
 [![GitHub Pages](https://github.com/YunYouJun/augma/workflows/demo/badge.svg)](https://augma.elpsy.cn/)
+[![docs](https://github.com/YunYouJun/augma/workflows/docs/badge.svg)](https://docs.augma.elpsy.cn)
 
 <!-- [![GitHub Pages](https://github.com/SAO-UI/augma/workflows/docs/badge.svg)](https://sao-ui.github.io/augma/) -->
 
