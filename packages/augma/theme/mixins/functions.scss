@@ -1,5 +1,11 @@
 @import "config";
 
+@mixin mobile {
+  @media screen and (max-width: 768px) {
+    @content;
+  }
+}
+
 @mixin b($block) {
   $B: $namespace + "-" + $block !global;
 

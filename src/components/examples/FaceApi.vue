@@ -2,9 +2,9 @@
   <canvas v-show="enable" id="overlay" ref="overlay"></canvas>
   <agm-indicator
     v-show="enable"
-    class="customClass"
-    name="YunYouJun"
-    info="201920081203009"
+    :class="customClass"
+    :name="name"
+    :info="score"
     :style="indicatorStyle"
   />
 </template>
@@ -18,10 +18,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    customClass: {
+      type: Array,
+      default: [],
+    },
   },
 
   data() {
     return {
+      name: "YunYouJun",
+      score: "0",
+
       videoEl: null,
       overlay: null,
 
@@ -30,7 +37,7 @@ export default {
 
       indicatorStyle: {
         position: "absolute",
-        top: "1rem",
+        top: "5rem",
         transform: "translateX(-50%)",
         transition: "all 0.2s",
       },
@@ -99,10 +106,13 @@ export default {
       const dims = faceapi.matchDimensions(canvas, videoEl, true);
 
       const resizedResult = faceapi.resizeResults(result, dims);
+
+      this.score = resizedResult.score.toFixed(7).toString();
       this.setIndicatorByBox(resizedResult.box);
       if (this.withBoxes) {
         faceapi.draw.drawDetections(canvas, resizedResult);
       }
+
       // const { age, gender, genderProbability } = resizedResult;
 
       // interpolate gender predictions over last 30 frames
@@ -119,7 +129,6 @@ export default {
 
     setIndicatorByBox(box) {
       const ratio = this.$store.state.camera.ratio;
-
       this.indicatorStyle.top = box.top - 180 + "px";
       this.indicatorStyle.left = `${(box.left + box.width / 2) * ratio}px`;
     },
@@ -137,13 +146,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-}
 
-.text {
-  font-size: 1em;
-  padding: 5px;
-  @media screen and (max-width: 600px) {
-    font-size: 0.8em;
-  }
+  pointer-events: none;
 }
 </style>

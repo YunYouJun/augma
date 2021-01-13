@@ -26,6 +26,11 @@ yarn dev
 yarn docs:dev
 ```
 
+## Todo
+
+- [ ] refactor docs by vuepress-next (replace vitepress)
+- [ ] button to hide ui
+
 ## Thanks
 
 - [vite](https://github.com/vitejs/vite)

@@ -1,2 +1,7 @@
 @import "./common/vars";
 @import "../../../../packages/theme/augma";
+
+:root {
+  --c-brand: #{$agm-brand};
+  --c-brand-light: #{lighten($agm-brand, 5%)};
+}

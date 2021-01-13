@@ -12,3 +12,6 @@ dist-ssr
 tmp
 temp
 *.log
+
+.temp
+.cache

@@ -1,5 +1,5 @@
 <template>
-  <div id="rects">
+  <div id="rects" v-if="enable">
     <div
       class="agm-rect"
       v-for="(box, i) in boxes"

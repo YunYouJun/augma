@@ -6,19 +6,20 @@
 
     <system-bar />
     <agm-window />
-    <!-- <face-api :enable="$store.state.faceApi.faceDetection" /> -->
+    <face-api :enable="$store.state.faceApi.faceDetection" />
     <tfjs-yolo :enable="$store.state.app.yolo" />
     <bottom-menu id="augma-bottom-menu" />
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import AgmWindow from "./ui/AgmWindow.vue";
 import SystemBar from "./ui/SystemBar.vue";
 import BottomMenu from "./ui/BottomMenu.vue";
 import FaceApi from "./examples/FaceApi.vue";
 import TfjsYolo from "./examples/TfjsYolo.vue";
-export default {
+import { defineComponent } from "vue";
+export default defineComponent({
   components: {
     AgmWindow,
     BottomMenu,
@@ -36,7 +37,7 @@ export default {
       };
     },
   },
-};
+});
 </script>
 
 <style lang="scss">
@@ -52,6 +53,10 @@ export default {
 
 #augma-bottom-menu {
   position: absolute;
-  bottom: 1.5rem;
+  left: 0;
+  bottom: 1rem;
+
+  width: 100%;
+  margin: 0 auto;
 }
 </style>

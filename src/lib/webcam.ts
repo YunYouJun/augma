@@ -1,25 +1,46 @@
 /**
- * 改变 WebCam 流
- * @param videoEl Video Element
- * @param front 是否使用前置摄像头
+ * Webcam
+ * https://developer.mozilla.org/zh-CN/docs/Web/API/MediaDevices/getUserMedia
  */
-export async function changeWebcamStream(
-  videoEl: HTMLVideoElement,
-  front = false
-) {
-  const constraints = {
-    video: {
-      width: 1920,
-      height: 1080,
-      facingMode: front ? "user" : "environment",
-    },
-  };
-  const stream = await navigator.mediaDevices.getUserMedia(constraints);
-  const settings = stream.getVideoTracks()[0].getSettings();
-  videoEl.srcObject = stream;
-  // autoplay
-  videoEl.onloadedmetadata = () => {
-    videoEl.play();
-  };
-  return settings;
+export class Webcam {
+  stream?: MediaStream;
+  settings?: MediaTrackSettings;
+
+  constructor(
+    /**
+     * Video Element
+     */
+    public videoEl: HTMLVideoElement,
+    /**
+     * 是否使用前置摄像头
+     */
+    public front = false,
+    public constraints: MediaStreamConstraints = {
+      video: {
+        width: { min: 640, ideal: 1280, max: 1920 },
+        height: { min: 480, ideal: 720, max: 1080 },
+        facingMode: front ? "user" : "environment",
+      },
+    }
+  ) {}
+
+  /**
+   * 改变 WebCam 流
+   */
+  async changeWebcamStream(front = false) {
+    this.front = front;
+    (this.constraints.video as MediaTrackConstraints).facingMode = front
+      ? "user"
+      : "environment";
+
+    const constraints = this.constraints;
+    this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+    this.settings = this.stream.getVideoTracks()[0].getSettings();
+
+    this.videoEl.srcObject = this.stream;
+    // autoplay
+    this.videoEl.onloadedmetadata = () => {
+      this.videoEl.play();
+    };
+  }
 }

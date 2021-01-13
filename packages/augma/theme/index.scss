@@ -1,15 +1,11 @@
 @import "variables";
 @import "reset";
-
-@import "icon";
-
+@import "mixins";
 @import "common";
 
-@import "button";
 @import "components";
 
 :root {
-  --c-brand: #{$agm-brand};
   --agm-brand: #{$agm-brand};
   --agm-success: #{$agm-success};
   --agm-warning: #{$agm-warning};

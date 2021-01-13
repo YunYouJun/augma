@@ -5,10 +5,9 @@ import store from "./store";
 // css
 import "./index.css";
 
-import augma from "../packages/augma";
-import "../packages/theme/augma.scss";
-
 const app = createApp(App);
+
+import augma from "../packages/augma";
 
 app.use(augma);
 app.use(store).mount("#app");

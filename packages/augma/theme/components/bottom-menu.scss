@@ -1,0 +1,41 @@
+$bottom-nav-color: white;
+
+.agm-bottom-menu {
+  &--inner {
+    position: relative;
+    overflow-x: auto;
+
+    display: flex;
+    height: 2rem;
+    min-width: 20rem;
+    margin: 0 2rem;
+    padding: 1.2rem 0.5rem 1.5rem 0.5rem;
+    border-top: 2px solid $bottom-nav-color;
+
+    @include mobile {
+      margin: 0;
+    }
+  }
+}
+
+.agm-down-arrow {
+  position: absolute;
+  margin: 0 auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border: 10px solid $bottom-nav-color;
+  border-color: $bottom-nav-color transparent transparent transparent;
+}
+
+.agm-menu-container {
+  display: flex;
+  margin: 0 auto;
+  // gap: 1rem;
+
+  .agm-button {
+    margin: 0 0.5rem;
+  }
+}

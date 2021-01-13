@@ -42,8 +42,8 @@ import AgmIcon from "../../icon/index.vue";
 
 import { defineComponent, PropType, ref } from "vue";
 import type { NotificationVM } from "./notification.type";
-import { on, off } from "../../utils/dom";
-import { EVENT_CODE } from "../../utils/aria";
+import { on, off } from "../../../utils/dom";
+import { EVENT_CODE } from "../../../utils/aria";
 
 import { mdiClose } from "@mdi/js";
 

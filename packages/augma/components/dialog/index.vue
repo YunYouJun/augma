@@ -25,8 +25,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { clearTimer } from "../utils/util";
-import { toggleFullscreen } from "../utils/functions";
+import { clearTimer } from "../../utils/util";
+import { toggleFullscreen } from "../../utils/functions";
 
 export default defineComponent({
   name: "AgmDialog",
@@ -89,62 +89,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-.agm-dialog-fade {
-  &-enter-active {
-    animation: modal-fade-in 0.3s !important;
-    .agm-dialog {
-      animation: dialog-fade-in 0.3s;
-    }
-  }
-
-  &-leave-active {
-    animation: modal-fade-out 0.3s;
-    .agm-dialog {
-      animation: dialog-fade-out 0.3s;
-    }
-  }
-}
-
-@keyframes dialog-fade-in {
-  0% {
-    transform: translate3d(0, -20px, 0);
-    opacity: 0;
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-}
-
-@keyframes dialog-fade-out {
-  0% {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-  100% {
-    transform: translate3d(0, -20px, 0);
-    opacity: 0;
-  }
-}
-
-@keyframes modal-fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-}
-
-@keyframes modal-fade-out {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-</style>

@@ -12,12 +12,12 @@ module.exports = {
     lastUpdated: "上次更新",
 
     nav: [
-      { text: "指南", link: "/" },
+      { text: "指南", link: "/guide/" },
       { text: "组件", link: "/components/" },
     ],
 
     sidebar: {
-      "/": getGuideSidebar(),
+      "/guide/": getGuideSidebar(),
       "/components/": getComponentsSidebar(),
     },
   },
@@ -29,8 +29,12 @@ module.exports = {
 function getGuideSidebar() {
   return [
     {
-      text: "Introduction",
-      children: [{ text: "What is Augma?", link: "/" }],
+      text: "介绍",
+      children: [
+        { text: "什么是 Augma?", link: "/guide/" },
+        { text: "Link Start", link: "/guide/link-start" },
+        { text: "更多细节", link: "/guide/details" },
+      ],
     },
   ];
 }

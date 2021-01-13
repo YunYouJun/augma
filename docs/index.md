@@ -1,24 +1,15 @@
-# Augma
-
-## 介绍
-
-Augma 是「[刀剑神域: 序列之争](https://movie.douban.com/subject/26634179/)」中虚构的 AR（增强现实）型情报终端。
-
-我们希望以此为名开发出一套面向未来面向 AR 的 UI 框架/组件库。
-
-> [刀剑神域：序列之争 | bilibili](https://www.bilibili.com/bangumi/play/ss12364/)
-
-## 设想
-
-### 技术栈
-
-- [vite](https://github.com/vitejs/vite)
-- [vitepress](https://github.com/vuejs/vitepress)
-- [vue-next](https://github.com/vuejs/vue-next)
-- [sass](https://github.com/sass/sass)
-
-## 设计理念
-
-- 全局可控的透明度
-- 单色
-- Coooooool
+---
+home: true
+heroImage: /logo.png
+heroAlt: Logo image
+actionText: Link Start
+actionLink: /guide/
+features:
+  - title: 简单易用
+    details: 引入几行代码开始你的开发工作
+  - title: 全新体验
+    details: 基于 Vue3 与 TypeScript ，搭配极速的 Vite 开始你的极致开发体验
+  - title: 交互友好
+    details: 针对 AR 场景的 UI 交互组件
+footer: MIT Licensed | Copyright © 2020-present YunYouJun
+---

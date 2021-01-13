@@ -1,6 +1,6 @@
 <template>
   <agm-weather v-if="$store.state.app.weather" />
-  <agm-dialog v-model="browser">
+  <agm-dialog v-if="browser" v-model="browser">
     <iframe
       frameborder="0"
       src="https://docs.augma.elpsy.cn"
