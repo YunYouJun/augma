@@ -1,5 +1,5 @@
 @import "./common/vars";
-@import "../../../../packages/theme/augma";
+@import "augma/theme/index.scss";
 
 :root {
   --c-brand: #{$agm-brand};
