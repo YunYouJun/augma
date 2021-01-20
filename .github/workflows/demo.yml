@@ -15,6 +15,7 @@ jobs:
           node-version: "12"
 
       - run: yarn
+      - run: cd packages/augma && yarn link
       - run: yarn build
 
       - name: Deploy
