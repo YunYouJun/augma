@@ -16,6 +16,7 @@ jobs:
 
       - run: yarn
       - run: cd packages/augma && yarn link
+      - run: yarn link augma
       - run: yarn build
 
       - name: Deploy
