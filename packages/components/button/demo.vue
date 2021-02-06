@@ -1,5 +1,6 @@
 <template>
   <div>
+    <agm-button>Button</agm-button>
     <agm-button />
   </div>
 </template>

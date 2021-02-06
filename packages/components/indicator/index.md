@@ -1,4 +1,4 @@
 ---
-title: 卡片
+title: 指示器
 category: common
 ---

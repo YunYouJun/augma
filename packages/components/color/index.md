@@ -1,3 +1,9 @@
+---
+category: misc
+---
+
+# 色彩
+
 <style lang="scss">
 .demo-color-box {
   border-radius: 4px;
@@ -75,8 +81,6 @@ export default {
   }
 }
 </script>
-
-# Color 色彩
 
 Augma 是面向 AR 交互的 UI 框架，应避免过于复杂的色彩，并能够与复杂的背景区分开。
 

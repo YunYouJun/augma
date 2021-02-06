@@ -15,8 +15,6 @@ jobs:
           node-version: "12.x"
 
       - run: yarn
-      - run: cd packages/augma && yarn link
-      - run: yarn link augma
       - run: yarn docs:build
       # - name: Deploy
       #   uses: peaceiris/actions-gh-pages@v3

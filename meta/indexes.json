@@ -23,28 +23,24 @@
   ],
   "components": [
     {
-      "name": "color",
-      "title": "色彩",
-      "description": "",
-      "category": "misc"
-    },
-    {
       "name": "button",
       "title": "按钮",
-      "description": "",
       "category": "common"
     },
     {
       "name": "card",
       "title": "卡片",
-      "description": "",
       "category": "common"
     },
     {
       "name": "clock",
-      "title": "时钟",
-      "description": "",
+      "title": "卡片",
       "category": "common"
+    },
+    {
+      "name": "color",
+      "title": "色彩",
+      "category": "misc"
     },
     {
       "name": "dialog",
@@ -54,7 +50,7 @@
     {
       "name": "html",
       "title": "基础元素",
-      "category": "component"
+      "category": "common"
     },
     {
       "name": "icon",
@@ -79,11 +75,6 @@
     {
       "name": "notification",
       "title": "通知",
-      "category": "utilities"
-    },
-    {
-      "name": "utils",
-      "title": "工具",
       "category": "utilities"
     }
   ]

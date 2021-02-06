@@ -1,6 +1,6 @@
 const indexes = require("../../meta/indexes.json");
 
-const mdConfig = require("./markdown");
+const mdConfig = require("./plugins/markdown");
 
 /**
  * @type {import('vitepress').UserConfig}

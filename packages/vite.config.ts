@@ -6,7 +6,7 @@ import ViteIcons from "vite-plugin-icons";
 import { VitePWA } from "vite-plugin-pwa";
 
 import { componentNames } from "../meta/indexes";
-import { hasDemo } from "../scripts/utils";
+import { firstLetterUpper, hasDemo } from "../scripts/utils";
 
 export default defineConfig({
   alias: [
@@ -14,8 +14,9 @@ export default defineConfig({
   ],
   plugins: [
     ViteComponents({
-      dirs: [".vitepress/theme/components", "components"],
+      dirs: [".vitepress/theme/components"],
       customLoaderMatcher: (id) => id.endsWith(".md"),
+      directoryAsNamespace: true,
     }),
     ViteIcons(),
     {
@@ -27,17 +28,24 @@ export default defineConfig({
         const [pkg, name, i] = id.split("/").slice(-3);
 
         if (componentNames.includes(name) && i === "index.md") {
-          const frontmatterEnds = code.indexOf("---\n\n") + 4;
+          const frontmatterEnds = code.indexOf("---\n", 3) + 4;
           let header = "";
-          if (hasDemo(pkg, name))
+          if (hasDemo(pkg, name)) {
+            const insertedCode =
+              "\n\n<script setup>\nimport Demo from './demo.vue'\n</script>\n";
+            const demoCode = `\n\n::: demo\n\n<<< ./packages/components/${name}/demo.vue\n\n:::\n`;
             header =
-              "\n<script setup>\nimport Demo from './demo.vue'\n</script>\n";
+              insertedCode +
+              `\n# ${firstLetterUpper(name)} {{ $frontmatter.title }}` +
+              demoCode;
+          }
 
-          if (header)
+          if (header) {
             code =
               code.slice(0, frontmatterEnds) +
               header +
               code.slice(frontmatterEnds);
+          }
         }
 
         return code;
