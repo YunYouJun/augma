@@ -36,6 +36,8 @@ yarn docs:dev
 
 - [vite](https://github.com/vitejs/vite)
 - [vitepress](https://github.com/vuejs/vitepress)
+- [icones](https://icones.js.org/)
+- [vueuse](https://github.com/vueuse/vueuse)
 
 ### UI Components
 
