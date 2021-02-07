@@ -1,15 +1,10 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "esnext",
     "module": "esnext",
+    "outDir": "./dist",
     "moduleResolution": "node",
     "strict": true,
-    "jsx": "preserve",
-    "sourceMap": true,
-    "lib": ["esnext", "dom"],
-    "types": ["vite/client"],
-    "plugins": [{ "name": "@vuedx/typescript-plugin-vue" }],
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -17,7 +12,5 @@
       "@augma/*": ["packages/*/src"],
       "augma": ["packages/augma/src"]
     }
-  },
-  "include": ["packages"],
-  "exclude": ["node_modules", "**/**/*.md", "**/dist"]
+  }
 }

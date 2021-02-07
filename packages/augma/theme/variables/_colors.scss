@@ -2,7 +2,7 @@ $agm-brand: #557591;
 
 $agm-success: #98d447;
 $agm-warning: #ed933d;
-$agm-error: #ff3e5d;
+$agm-danger: #ff3e5d;
 $agm-info: #004d86;
 $agm-tooltip: #00959c;
 
@@ -11,12 +11,12 @@ $agm-colors: map-merge(
   (
     "success": $agm-success,
     "warning": $agm-warning,
-    "error": $agm-error,
+    "danger": $agm-danger,
     "info": $agm-info,
     "tooltip": $agm-tooltip,
     "green": $agm-success,
     "orange": $agm-warning,
-    "red": $agm-error,
+    "red": $agm-danger,
   ),
   $agm-colors
 );

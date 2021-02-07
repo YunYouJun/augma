@@ -1,0 +1,47 @@
+@mixin card-type($type) {
+  &--#{$type} {
+    color: white;
+    background-color: var(--agm-#{$type});
+
+    &:hover {
+      box-shadow: 0 0 10px var(--agm-#{$type});
+    }
+  }
+}
+
+.agm-card {
+  display: inline-block;
+
+  width: 25rem;
+  margin: 0.5rem;
+  padding: 1rem;
+  border-radius: 0.2rem;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  transition: 0.4s;
+  &:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+
+  &.is-dark {
+    color: white;
+  }
+
+  &--header {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+  }
+
+  &--body {
+    text-align: center;
+    padding-top: 0.6rem;
+  }
+
+  @include card-type("primary");
+  @include card-type("success");
+  @include card-type("warning");
+  @include card-type("danger");
+  @include card-type("info");
+}

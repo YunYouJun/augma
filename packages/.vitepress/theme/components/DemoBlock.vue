@@ -3,8 +3,8 @@
     <div class="demo-content">
       <slot name="demo"></slot>
     </div>
-    <div class="description" v-if="$slots.description">
-      <slot name="description"></slot>
+    <div v-if="$slots.description" class="description">
+      <slot name="description" class="description"></slot>
     </div>
     <details>
       <summary>Code 代码</summary>

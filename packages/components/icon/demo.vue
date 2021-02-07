@@ -1,13 +1,5 @@
 <template>
   <div class="button-demo">
-    <agm-button>Button</agm-button>
-    <agm-button type="primary">Button</agm-button>
-    <agm-button type="success">Button</agm-button>
-    <agm-button type="warning">Button</agm-button>
-    <agm-button type="danger">Button</agm-button>
-    <agm-button type="info">Button</agm-button>
-  </div>
-  <div class="button-demo">
     <agm-button icon>
       <i-carbon-logo-github style="color: black" />
     </agm-button>
@@ -28,8 +20,8 @@
     </agm-button>
   </div>
   <div class="button-demo">
-    <agm-button icon outline>
-      <i-carbon-logo-github style="color: black" />
+    <agm-button icon outline style="background: black">
+      <i-carbon-logo-github style="color: white" />
     </agm-button>
     <agm-button icon type="primary" outline>
       <i-carbon-area />
@@ -47,10 +39,13 @@
       <i-carbon-information />
     </agm-button>
   </div>
+  <div class="logo-demo text-center">
+    <i-carbon-error style="color: var(--agm-danger); font-size: 10rem" />
+  </div>
 </template>
 
 <script>
-import AgmButton from "./index.vue";
+import AgmButton from "../button/index.vue";
 export default {
   components: {
     AgmButton,
@@ -59,6 +54,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.text-center {
+  text-align: center;
+}
+
 .button-demo {
   display: flex;
   justify-content: space-between;

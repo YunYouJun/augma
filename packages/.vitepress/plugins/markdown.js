@@ -13,9 +13,12 @@ module.exports = (md) => {
         const description = m && m.length > 1 ? m[1] : "";
         const content =
           tokens[idx + 1].type === "fence" ? tokens[idx + 1].content : "";
+        const descriptionSlot = description
+          ? `<template v-slot:description>${description}</template>`
+          : "";
         return `<${componentName}>
             <template v-slot:demo><Demo/></template>
-            <template v-slot:description>${description}</template>
+            ${descriptionSlot}
             <template v-slot:code>
           `;
       } else {

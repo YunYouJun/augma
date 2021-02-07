@@ -16,7 +16,7 @@ app.mount("#app");
 
 ## 使用未发布的开发版本
 
-```sh
+```bash
 git clone https://github.com/YunYouJun/augma
 cd augma
 yarn

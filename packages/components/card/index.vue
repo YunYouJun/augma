@@ -1,39 +1,41 @@
 <template>
-  <div class="agm-card" :style="styles">
-    <slot></slot>
+  <div :class="classes" :style="styles">
+    <div class="agm-card--header">
+      <slot name="header"></slot>
+    </div>
+    <div class="agm-card--body">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
 <script>
+import "./index.scss";
 export default {
   name: "AgmCard",
   props: {
     color: {
       type: String,
-      default: "white",
+      default: "",
     },
     dark: {
       type: Boolean,
       default: false,
     },
+    type: {
+      type: String,
+      default: "",
+    },
   },
   computed: {
-    styles() {
-      return {
-        backgroundColor: this.color,
-        color: this.dark ? "white" : "black",
-      };
+    classes() {
+      return [
+        "agm-card",
+        this.type ? `agm-card--${this.type}` : "",
+        this.dark ? "is-dark" : "",
+      ];
     },
   },
 };
 </script>
 
-<style lang="scss">
-.agm-card {
-  display: inline-flex;
-  min-width: 12rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-</style>

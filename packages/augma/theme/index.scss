@@ -7,9 +7,10 @@
 
 :root {
   --agm-brand: #{$agm-brand};
+  --agm-primary: #{$agm-brand};
   --agm-success: #{$agm-success};
   --agm-warning: #{$agm-warning};
-  --agm-error: #{$agm-error};
+  --agm-danger: #{$agm-danger};
   --agm-info: #{$agm-info};
   --agm-tooltip: #{$agm-tooltip};
 }

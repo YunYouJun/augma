@@ -1,8 +1,9 @@
 ---
+title: 色彩
 category: misc
 ---
 
-# 色彩
+## 说明
 
 <style lang="scss">
 .demo-color-box {
@@ -60,7 +61,7 @@ export default {
           value: ""
         },
         {
-          name: "error",
+          name: "danger",
           value: ""
         },
         {

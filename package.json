@@ -12,7 +12,7 @@
     "docs": "vitepress dev packages",
     "docs:build": "vitepress build packages",
     "docs:serve": "vitepress serve packages",
-    "update": "esno scripts/update.ts"
+    "update": "ts-node-script scripts/update.ts"
   },
   "author": {
     "name": "YunYouJun",
@@ -22,7 +22,6 @@
   "license": "MIT",
   "devDependencies": {
     "@iconify/json": "^1.1.298",
-    "esno": "^0.4.3",
     "fast-glob": "^3.2.5",
     "gray-matter": "^4.0.2",
     "ts-node": "^9.1.1",

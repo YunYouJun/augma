@@ -5,21 +5,46 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 import "./index.scss";
+import { colorTypes, getAgmVar } from "@augma/shared";
+
+type IButtonType = PropType<
+  "primary" | "success" | "warning" | "danger" | "info" | "default"
+>;
 
 export default defineComponent({
   name: "AgmButton",
   props: {
     color: String,
     icon: Boolean,
+    type: {
+      type: String as IButtonType,
+      default: "default",
+      validator: (val: string) => {
+        return [
+          "default",
+          "primary",
+          "success",
+          "warning",
+          "danger",
+          "info",
+        ].includes(val);
+      },
+    },
+    outline: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     classes(): any {
-      return {
-        "agm-button": true,
-        "agm-button--icon": this.icon,
-      };
+      return [
+        "agm-button",
+        this.icon ? "agm-button--icon" : "",
+        this.type ? `agm-button--${this.type}` : "",
+        this.outline ? `is-outline` : "",
+      ];
     },
     styles(): any {
       return {

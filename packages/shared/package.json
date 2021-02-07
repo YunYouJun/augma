@@ -1,0 +1,15 @@
+{
+  "name": "@augma/shared",
+  "version": "0.0.1",
+  "description": "common",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": {
+    "name": "YunYouJun",
+    "email": "me@yunyoujun.cn",
+    "url": "https://www.yunyoujun.cn"
+  },
+  "license": "MIT"
+}

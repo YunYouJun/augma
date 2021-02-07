@@ -2,7 +2,7 @@ import { resolve } from "path";
 import { defineConfig } from "vite";
 
 import ViteComponents from "vite-plugin-components";
-import ViteIcons from "vite-plugin-icons";
+import ViteIcons, { ViteIconsResolver } from "vite-plugin-icons";
 import { VitePWA } from "vite-plugin-pwa";
 
 import { componentNames } from "../meta/indexes";
@@ -17,8 +17,11 @@ export default defineConfig({
       dirs: [".vitepress/theme/components"],
       customLoaderMatcher: (id) => id.endsWith(".md"),
       directoryAsNamespace: true,
+      customComponentResolvers: ViteIconsResolver(),
     }),
-    ViteIcons(),
+    ViteIcons({
+      defaultStyle: "",
+    }),
     {
       name: "md-transform",
       enforce: "pre",

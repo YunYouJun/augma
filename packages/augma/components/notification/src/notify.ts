@@ -6,7 +6,7 @@ import type {
   NotificationQueue,
   NotificationVM,
 } from "./notification.type";
-import PopupManager from "../../../utils/popup-manager";
+import PopupManager from "../../../../utils/popup-manager";
 
 let vm: NotificationVM;
 const notifications: NotificationQueue = [];

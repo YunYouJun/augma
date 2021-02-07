@@ -3,26 +3,38 @@ title: 图标
 category: misc
 ---
 
-推荐使用 [Material Design Icons](https://materialdesignicons.com/)
+## 图标
 
-```sh
-yarn add -D @mdi/js
+你可以使用各类扩展图标
+
+[iconify](https://iconify.design/): Unified icons framework
+
+- [浏览图标](https://icones.js.org/)
+
+## 在 Vite 中使用
+
+[vite-plugin-icons](https://github.com/antfu/vite-plugin-icons): Access thousands of icons as Vue components in Vite
+
+```bash
+yarn add -D vite-plugin-icons @iconify/json
 ```
 
-```vue
-<template>
-  <agm-icon :icon="icon"></agm-icon>
-</template>
-
-<script>
-import { mdiMicrophone } from "@mdi/js";
+```ts
+import Vue from "@vitejs/plugin-vue";
+import VueIcons from "vite-plugin-icons";
 
 export default {
-  data() {
-    return {
-      icon: mdiMicrophone,
-    };
-  },
+  plugins: [Vue(), VueIcons()],
 };
-</script>
 ```
+
+你还可以自动按需加载图标
+
+```html
+<template>
+  <i-carbon-accessibility />
+  <i-mdi-account-box style="font-size: 2em; color: red" />
+</template>
+```
+
+> [配置自动加载](https://github.com/antfu/vite-plugin-icons#auto-importing)

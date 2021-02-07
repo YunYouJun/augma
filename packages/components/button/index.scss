@@ -1,33 +1,62 @@
-.agm {
-  &-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 2.6rem;
-    height: 2.6rem;
-    background: white;
-
-    border: none;
-    outline: none;
-
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-    font-size: 1.3rem;
+@mixin button-type($type) {
+  &--#{$type} {
+    color: white;
+    background-color: var(--agm-#{$type});
 
     &:hover {
-      cursor: pointer;
+      box-shadow: 0 0 10px var(--agm-#{$type});
     }
 
-    &:focus {
-      outline: none;
-    }
-
-    &:active {
-      box-shadow: 0 0 10px rgba(31, 82, 144, 0.5);
-    }
-
-    &--icon {
-      border-radius: 50%;
+    &.is-outline {
+      color: var(--agm-#{$type});
+      border: 1px solid var(--agm-#{$type});
+      background-color: white;
     }
   }
+}
+
+.agm-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: white;
+
+  border: none;
+  outline: none;
+
+  padding: 0.5rem 1rem;
+  color: gray;
+
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+
+  transition: 0.4s;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active {
+    box-shadow: 0 0 20px rgba(31, 82, 144, 0.15);
+  }
+
+  &--icon {
+    display: flex;
+    font-size: 1.3rem;
+    width: 2.6rem;
+    height: 2.6rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+  }
+
+  @include button-type("primary");
+  @include button-type("success");
+  @include button-type("warning");
+  @include button-type("danger");
+  @include button-type("info");
 }

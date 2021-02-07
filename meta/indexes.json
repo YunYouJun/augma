@@ -34,7 +34,7 @@
     },
     {
       "name": "clock",
-      "title": "卡片",
+      "title": "时钟",
       "category": "common"
     },
     {
@@ -46,6 +46,11 @@
       "name": "dialog",
       "title": "会话",
       "category": "common"
+    },
+    {
+      "name": "helper",
+      "title": "辅助类",
+      "category": "misc"
     },
     {
       "name": "html",
