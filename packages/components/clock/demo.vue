@@ -15,7 +15,19 @@
   />
 </template>
 
-<script setup>
+<script lang="ts">
+import { defineComponent } from "vue";
+
 import { colorTypes } from "@augma/shared";
 import AgmClock from "./index.vue";
+export default defineComponent({
+  components: {
+    AgmClock,
+  },
+  setup() {
+    return {
+      colorTypes,
+    };
+  },
+});
 </script>

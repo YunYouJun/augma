@@ -1,45 +1,20 @@
-<template>
-  <div class="agm-indicator">
-    <h2 class="agm-indicator__title">
-      {{ name }}
-    </h2>
-    <div class="agm-indicator__info">
-      {{ info }}
-    </div>
-    <div class="agm-indicator__cursor"></div>
-  </div>
-</template>
-
-<script>
-export default {
-  name: "AgmIndicator",
-  props: {
-    name: {
-      type: String,
-      default: "Asuna",
-    },
-    info: {
-      type: String,
-      default: "318",
-    },
-  },
-};
-</script>
-
-<style lang="scss">
 .agm-indicator {
   position: relative;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  filter: drop-shadow(0 0 2px var(--agm-warning));
+  height: 6rem;
+  margin: 0.5rem;
+  filter: drop-shadow(0 1px 3px currentColor);
 
   &__title {
+    margin: 0;
     color: white;
   }
 
   &__info {
     padding: 0.3rem 1rem;
+    text-align: center;
     color: #666666;
     line-height: 1;
     background: white;
@@ -60,4 +35,3 @@ export default {
     border-color: white transparent transparent transparent;
   }
 }
-</style>

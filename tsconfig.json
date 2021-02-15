@@ -3,21 +3,22 @@
     "baseUrl": ".",
     "target": "esnext",
     "module": "esnext",
+    "declaration": true,
     "moduleResolution": "node",
     "strict": true,
     "jsx": "preserve",
     "sourceMap": true,
-    "lib": ["esnext", "dom"],
+    "lib": ["esnext", "DOM"],
     "types": ["vite/client"],
-    "plugins": [{ "name": "@vuedx/typescript-plugin-vue" }],
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
       "@augma/*": ["packages/*/src"],
       "augma": ["packages/augma/src"]
     }
   },
-  "include": ["packages"],
+  "include": ["packages", "packages/*.d.ts"],
   "exclude": ["node_modules", "**/**/*.md", "**/dist"]
 }

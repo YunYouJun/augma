@@ -11,9 +11,9 @@ import AgmLoading from "./loading/src/index.vue";
 import AgmMenu from "./menu/index.vue";
 
 // html
-import AgmHr from "./html/AgmHr.vue";
+import AgmHr from "../../components/html/AgmHr.vue";
 
-import AgmNotification from "./notification/index";
+import AgmNotification from "../../components/notification/index";
 // import AgmLoading from "./loading/index";
 
 const components = [

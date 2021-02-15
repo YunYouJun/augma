@@ -2,14 +2,20 @@
   <span class="agm-clock" :style="styles">{{ now }}</span>
 </template>
 
-<script>
-import { getAgmVar } from "@augma/shared";
+<script lang="ts">
+import { AgmColorType, getAgmColorByType } from "@augma/shared";
+import { defineComponent, PropType } from "vue";
 
-export default {
+interface DisplayTime {
+  hour: number;
+  minute: number;
+}
+
+export default defineComponent({
   name: "AgmClock",
   props: {
     color: {
-      type: String,
+      type: String as PropType<AgmColorType>,
       default: "",
     },
     addZero: {
@@ -18,20 +24,17 @@ export default {
     },
   },
   data() {
-    return {
-      hour: "00",
-      minute: "00",
-    };
+    return this.getTime();
   },
   computed: {
-    styles() {
+    styles(): Object {
       return {
-        color: getAgmVar(this.color),
+        color: getAgmColorByType(this.color),
       };
     },
-    now() {
+    now(): string {
       if (this.addZero) {
-        const addZeroForH = this.hour.toString().length === 1;
+        const addZeroForH: boolean = this.hour.toString().length === 1;
         const hour = (addZeroForH ? "0" : "") + this.hour;
         const addZeroForM = this.minute.toString().length === 1;
         const minute = (addZeroForM ? "0" : "") + this.minute;
@@ -43,17 +46,18 @@ export default {
   },
   mounted() {
     setInterval(() => {
-      this.getTime();
+      const { hour, minute } = this.getTime();
+      this.hour = hour;
+      this.minute = minute;
     }, 1000);
   },
   methods: {
-    getTime() {
+    getTime(): DisplayTime {
       const date = new Date();
-      this.hour = date.getHours();
-      this.minute = date.getMinutes();
+      return { hour: date.getHours(), minute: date.getMinutes() };
     },
   },
-};
+});
 </script>
 
 <style lang="scss">

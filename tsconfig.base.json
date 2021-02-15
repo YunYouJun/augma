@@ -2,12 +2,15 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
+    "baseUrl": ".",
     "outDir": "./dist",
     "moduleResolution": "node",
     "strict": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "lib": ["esnext", "dom"],
+    "types": ["vite/client"],
     "paths": {
       "@augma/*": ["packages/*/src"],
       "augma": ["packages/augma/src"]

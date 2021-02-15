@@ -1,4 +1,4 @@
-@import "../variables";
+@import "../styles/variables/index.scss";
 
 .agm-dialog {
   position: absolute;
@@ -6,38 +6,65 @@
   left: 6rem;
   right: 6rem;
   bottom: 8rem;
-  background: rgba(255, 255, 255, 0.8);
+  background: white;
   box-shadow: $box-shadow-light;
   border-radius: 0.2rem;
+  z-index: 99;
+
+  &--header {
+    display: flex;
+    background-color: #eee;
+    padding: 0.5rem;
+    justify-content: space-between;
+  }
+
+  &--title {
+    display: inline-flex;
+    color: #666;
+  }
+
+  &--action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  &--body {
+    padding: 1rem;
+  }
 
   &__fullscreenBtn,
   &__closeBtn {
-    width: 0.8rem;
-    height: 0.8rem;
+    width: 0.9rem;
+    height: 0.9rem;
     border-radius: 50%;
 
     border: none;
     outline: none;
+    padding: 0;
 
+    color: transparent;
+    font-size: 0.6rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: 0.1s;
     &:hover {
       cursor: pointer;
     }
   }
 
   &__fullscreenBtn {
-    position: absolute;
-    top: -1rem;
-    right: 1rem;
-
     background-color: var(--agm-success);
+
+    &:hover {
+      color: black;
+    }
   }
 
   &__closeBtn {
-    position: absolute;
-    top: -1rem;
-    right: 0;
-
-    background-color: var(--agm-error);
+    background-color: var(--agm-danger);
   }
 }
 

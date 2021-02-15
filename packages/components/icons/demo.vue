@@ -44,7 +44,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import AgmButton from "../button/index.vue";
 export default {
   components: {

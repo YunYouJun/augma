@@ -15,7 +15,7 @@ export const colorTypes: AgmColorType[] = [
   "default",
 ];
 
-export function getAgmVar(type: AgmColorType) {
+export function getAgmColorByType(type: AgmColorType) {
   if (colorTypes.includes(type)) {
     return `var(--agm-${type})`;
   } else {

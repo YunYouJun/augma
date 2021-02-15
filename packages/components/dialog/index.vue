@@ -2,33 +2,50 @@
   <teleport to="body">
     <transition name="agm-dialog-fade">
       <div
+        ref="dialogRef"
         v-show="visible"
         :class="['agm-dialog']"
         role="dialog"
-        @click="$event.stopPropagation()"
-        ref="agmDialog"
+        @click.stop=""
       >
-        <slot></slot>
-        <button
-          class="agm-dialog__fullscreenBtn"
-          @click="toggleFullscreen"
-        ></button>
-        <button
-          class="agm-dialog__closeBtn"
-          aria-label="close"
-          @click="handleClose"
-        ></button>
+        <div class="agm-dialog--header">
+          <div class="agm-dialog--title">
+            <slot name="header"></slot>
+          </div>
+          <div class="agm-dialog--action">
+            <button class="agm-dialog__fullscreenBtn" @click="toggle">
+              <carbon-center-to-fit />
+            </button>
+            <button
+              class="agm-dialog__closeBtn"
+              aria-label="close"
+              @click="handleClose"
+            >
+              <carbon-close />
+            </button>
+          </div>
+        </div>
+        <div class="agm-dialog--body">
+          <slot></slot>
+        </div>
       </div>
     </transition>
   </teleport>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { clearTimer } from "../../utils/util";
-import { toggleFullscreen } from "../../utils/functions";
+import "./index.scss";
+
+import { defineComponent, ref } from "vue";
+import { default as useDialog, UPDATE_MODEL_EVENT } from "./dialog";
+
+import type { SetupContext } from "vue";
+import { useFullscreen } from "@vueuse/core";
+import CarbonCenterToFit from "../icons/default/CarbonCenterToFit.vue";
+import CarbonClose from "../icons/default/CarbonClose.vue";
 
 export default defineComponent({
+  components: { CarbonCenterToFit, CarbonClose },
   name: "AgmDialog",
   data() {
     return {
@@ -38,20 +55,22 @@ export default defineComponent({
   props: {
     modelValue: {
       type: Boolean,
-      required: true,
+      default: false,
     },
-    /**
-     * 打开延时
-     */
-    openDelay: {
-      type: Number,
-      default: 0,
-    },
+  },
+  emits: [UPDATE_MODEL_EVENT],
+  setup(props, ctx) {
+    const dialogRef = ref<HTMLElement | null>(null);
+    const { toggle } = useFullscreen(dialogRef);
+    return {
+      ...useDialog(props, ctx as SetupContext, dialogRef),
+      dialogRef,
+      toggle,
+    };
   },
   watch: {
     modelValue(val) {
       if (val) {
-        this.closed = false;
         this.open();
       } else {
         this.close();
@@ -76,15 +95,11 @@ export default defineComponent({
     },
     close() {
       // update v-model
-      this.$emit("update:modelValue", false);
+      this.$emit(UPDATE_MODEL_EVENT, false);
       this.doClose();
     },
     doClose() {
-      this.closed = true;
       this.visible = false;
-    },
-    toggleFullscreen() {
-      toggleFullscreen(this.$refs.agmDialog);
     },
   },
 });

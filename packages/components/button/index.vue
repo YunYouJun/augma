@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import "./index.scss";
-import { colorTypes, getAgmVar } from "@augma/shared";
+import { colorTypes, getAgmColorByType } from "@augma/shared";
 
 type IButtonType = PropType<
   "primary" | "success" | "warning" | "danger" | "info" | "default"

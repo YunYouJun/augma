@@ -4,7 +4,7 @@
   </agm-button>
 </template>
 
-<script>
+<script lang="ts">
 import { mdiFullscreen, mdiFullscreenExit } from "@mdi/js";
 import { toggleFullscreen } from "../../utils/functions";
 export default {
