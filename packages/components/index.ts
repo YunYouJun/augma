@@ -5,9 +5,7 @@ import AgmBottomMenu from "./bottom-menu/index.vue";
 import AgmCard from "./card/index.vue";
 import AgmClock from "./clock/index.vue";
 import AgmDialog from "./dialog/index.vue";
-import AgmIcon from "./icon/index.vue";
 import AgmIndicator from "./indicator/index.vue";
-// import AgmLoading from "./loading/src/index.vue";
 import AgmMenu from "./menu/index.vue";
 
 import AgmNotification from "./notification/index";

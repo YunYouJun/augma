@@ -1,6 +1,6 @@
 <template>
   <agm-indicator
-    v-for="(type, i) in colorTypes"
+    v-for="(type, i) in TypeMap"
     :key="i"
     :color="type"
     :info="i.toString()"
@@ -8,6 +8,6 @@
 </template>
 
 <script setup>
-import { colorTypes } from "@augma/shared/src";
+import { TypeMap } from "@augma/shared/src";
 import AgmIndicator from "./index.vue";
 </script>

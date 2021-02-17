@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import FullscreenBtn from "../FullscreenBtn.vue";
+import FullscreenBtn from "./FullscreenBtn.vue";
 import {
   mdiCameraFlip,
   mdiDotsHorizontal,

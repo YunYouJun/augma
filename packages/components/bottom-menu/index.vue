@@ -10,23 +10,35 @@
           :color="item.color"
           @click="item.do"
         >
-          <agm-icon v-if="item.icon" :icon="item.icon" />
+          <!-- icon -->
         </agm-button>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import AgmButton from "../button/index.vue";
+import { defineComponent, PropType } from "vue";
+
+interface IMenuItem {
+  color: string;
+  icon: string;
+  do: () => void;
+}
+
+export default defineComponent({
   name: "AgmBottomMenu",
+  components: {
+    AgmButton,
+  },
   props: {
     menuItems: {
-      type: Array,
+      type: Array as PropType<IMenuItem[]>,
       default() {
         return [];
       },
     },
   },
-};
+});
 </script>

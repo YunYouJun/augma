@@ -1,13 +1,13 @@
 <template>
   <agm-clock
-    v-for="(type, i) in colorTypes"
+    v-for="(type, i) in TypeMap"
     :key="i"
     :color="type"
     style="margin: 1rem"
   />
   <hr style="opacity: 0.1; margin: 1rem" />
   <agm-clock
-    v-for="(type, i) in colorTypes"
+    v-for="(type, i) in TypeMap"
     :key="i"
     :color="type"
     :addZero="false"
@@ -17,8 +17,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-
-import { colorTypes } from "@augma/shared";
+import { TypeMap } from "@augma/shared";
 import AgmClock from "./index.vue";
 export default defineComponent({
   components: {
@@ -26,7 +25,7 @@ export default defineComponent({
   },
   setup() {
     return {
-      colorTypes,
+      TypeMap,
     };
   },
 });

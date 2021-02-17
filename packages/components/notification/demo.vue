@@ -3,10 +3,11 @@
 </template>
 
 <script lang="ts">
-import "./index.ts";
+import Notify from "./index";
 import AgmButton from "../button/index.vue";
 import { defineComponent } from "vue";
-import pkg from "../../../package.json";
+// import pkg from "../../../package.json";
+
 export default defineComponent({
   components: {
     AgmButton,
@@ -17,7 +18,8 @@ export default defineComponent({
         title: "GitHub",
         // icon: mdiGithub,
         color: "black",
-        message: `<a href="${pkg.repository}" target="_blank">${pkg.repository}</a>`,
+        // message: `<a href="${pkg.repository}" target="_blank">${pkg.repository}</a>`,
+        message: "xxx",
         duration: 0,
       });
     },

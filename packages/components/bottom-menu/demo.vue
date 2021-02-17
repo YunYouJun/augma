@@ -1,7 +1,26 @@
 <template>
-  <bottom-menu />
+  <agm-bottom-menu :menu-items="menuItems" />
 </template>
 
-<script setup lang="ts">
-import "./index.vue";
+<script lang="ts">
+import { defineComponent } from "vue";
+import AgmBottomMenu from "./index.vue";
+export default defineComponent({
+  components: {
+    AgmBottomMenu,
+  },
+  data() {
+    return {
+      menuItems: [
+        {
+          color: "black",
+          icon: "",
+          do: () => {
+            console.log("yes");
+          },
+        },
+      ],
+    };
+  },
+});
 </script>

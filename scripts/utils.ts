@@ -51,6 +51,10 @@ export async function readIndexes() {
       category: "",
     };
 
+    if (!fs.existsSync(mdPath)) {
+      continue;
+    }
+
     const mdRaw = fs.readFileSync(mdPath);
     const { content: md, data: frontmatter } = matter(mdRaw);
     const { category, title } = frontmatter;

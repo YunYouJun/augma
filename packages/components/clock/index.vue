@@ -3,8 +3,9 @@
 </template>
 
 <script lang="ts">
+import "./index.scss";
 import { AgmColorType, getAgmColorByType } from "@augma/shared";
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, onMounted, PropType } from "vue";
 
 interface DisplayTime {
   hour: number;
@@ -23,48 +24,47 @@ export default defineComponent({
       default: true,
     },
   },
-  data() {
-    return this.getTime();
-  },
-  computed: {
-    styles(): Object {
-      return {
-        color: getAgmColorByType(this.color),
-      };
-    },
-    now(): string {
-      if (this.addZero) {
-        const addZeroForH: boolean = this.hour.toString().length === 1;
-        const hour = (addZeroForH ? "0" : "") + this.hour;
-        const addZeroForM = this.minute.toString().length === 1;
-        const minute = (addZeroForM ? "0" : "") + this.minute;
-        return hour + ":" + minute;
-      } else {
-        return this.hour + ":" + this.minute;
-      }
-    },
-  },
-  mounted() {
-    setInterval(() => {
-      const { hour, minute } = this.getTime();
-      this.hour = hour;
-      this.minute = minute;
-    }, 1000);
-  },
-  methods: {
-    getTime(): DisplayTime {
+  setup(props) {
+    let { hour, minute }: DisplayTime = getTime();
+
+    function getTime() {
       const date = new Date();
       return { hour: date.getHours(), minute: date.getMinutes() };
-    },
+    }
+
+    const styles = computed(() => {
+      return {
+        color: getAgmColorByType(props.color),
+      };
+    });
+
+    const now = computed(() => {
+      if (props.addZero) {
+        const addZeroForH: boolean = hour.toString().length === 1;
+        const curHour = (addZeroForH ? "0" : "") + hour;
+        const addZeroForM = minute.toString().length === 1;
+        const curMinute = (addZeroForM ? "0" : "") + minute;
+        return curHour + ":" + curMinute;
+      } else {
+        return hour + ":" + minute;
+      }
+    });
+
+    onMounted(() => {
+      setInterval(() => {
+        const time = getTime();
+        hour = time.hour;
+        minute = time.minute;
+      }, 1000);
+    });
+
+    return {
+      styles,
+      now,
+
+      hour,
+      minute,
+    };
   },
 });
 </script>
-
-<style lang="scss">
-.agm-clock {
-  color: white;
-  font-size: 1.3rem;
-  font-family: sans-serif;
-  line-height: 0.9;
-}
-</style>

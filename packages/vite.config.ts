@@ -74,10 +74,4 @@ export default defineConfig({
       },
     }),
   ],
-  // build: {
-  //   lib: {
-  //     entry: resolve(__dirname, "index.ts"),
-  //     name: "augma",
-  //   },
-  // },
 });

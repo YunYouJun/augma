@@ -23,6 +23,11 @@
   ],
   "components": [
     {
+      "name": "bottom-menu",
+      "title": "底部菜单",
+      "category": "common"
+    },
+    {
       "name": "button",
       "title": "按钮",
       "category": "common"
@@ -78,9 +83,7 @@
       "category": "common"
     },
     {
-      "name": "notification",
-      "title": "通知",
-      "category": "utilities"
+      "name": "notification"
     }
   ]
 }

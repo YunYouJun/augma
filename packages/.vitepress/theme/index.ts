@@ -9,9 +9,9 @@ import "./styles/index.scss";
 const theme = {
   ...DefaultTheme,
   enhanceApp({ app }) {
-    app.component("DemoBlock", DemoBlock);
+    // app.use(augma);
 
-    app.use(augma);
+    app.component("DemoBlock", DemoBlock);
   },
 };
 

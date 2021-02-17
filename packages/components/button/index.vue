@@ -1,17 +1,13 @@
 <template>
-  <button :class="classes">
+  <button :class="classes" @click="handleClick">
     <slot></slot>
   </button>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import "./index.scss";
-import { colorTypes, AgmColorType } from "@augma/shared";
-
-type IButtonType = PropType<
-  "primary" | "success" | "warning" | "danger" | "info" | "default"
->;
+import { AgmColorType, TypeArray } from "@augma/shared";
 
 export default defineComponent({
   name: "AgmButton",
@@ -19,10 +15,10 @@ export default defineComponent({
     color: String,
     icon: Boolean,
     type: {
-      type: String as IButtonType,
+      type: String as PropType<AgmColorType>,
       default: "default",
-      validator: (val: AgmColorType) => {
-        return colorTypes.includes(val);
+      validator: (type: AgmColorType) => {
+        return TypeArray.includes(type);
       },
     },
     outline: {
@@ -30,15 +26,28 @@ export default defineComponent({
       default: false,
     },
   },
-  computed: {
-    classes(): any {
+
+  emits: ["click"],
+
+  setup(props, ctx) {
+    const handleClick = (evt: MouseEvent) => {
+      ctx.emit("click", evt);
+    };
+
+    const classes = computed(() => {
       return [
         "agm-button",
-        this.icon ? "agm-button--icon" : "",
-        this.type ? `agm-button--${this.type}` : "",
-        this.outline ? `is-outline` : "",
+        props.icon ? "agm-button--icon" : "",
+        props.type ? `agm-button--${props.type}` : "",
+        props.outline ? `is-outline` : "",
       ];
-    },
+    });
+
+    return {
+      classes,
+
+      handleClick,
+    };
   },
 });
 </script>

@@ -11,6 +11,8 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@tensorflow/tfjs": "1",
+    "@vueuse/core": "^4.1.1",
     "face-api.js": "^0.22.2",
     "tfjs-yolo": "^0.0.4",
     "vue": "^3.0.5",

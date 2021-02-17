@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ESNext",
+    "module": "ESNext",
     "declaration": true,
     "moduleResolution": "node",
-    "strict": true,
     "jsx": "preserve",
     "sourceMap": true,
-    "lib": ["esnext", "DOM"],
+    "lib": ["ESNext", "DOM"],
     "types": ["vite/client"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -20,6 +19,6 @@
       "@augma/components": ["packages/augma/components"]
     }
   },
-  "include": ["packages", "packages/*.d.ts"],
+  "include": ["packages", "packages/**/*.d.ts"],
   "exclude": ["node_modules", "**/**/*.md", "**/dist"]
 }

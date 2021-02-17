@@ -1,5 +1,9 @@
 <template>
-  <transition name="agm-notification-fade">
+  <transition
+    name="agm-notification-fade"
+    @before-leave="onClose"
+    @after-leave="$emit('destroy')"
+  >
     <div
       v-show="visible"
       :id="id"
@@ -8,7 +12,7 @@
       role="alert"
       @mouseenter="clearTimer()"
       @mouseleave="startTimer()"
-      @click="click"
+      @click="onClick"
     >
       <div class="agm-notification__group">
         <i
@@ -30,7 +34,7 @@
           class="agm-notification__closeBtn"
           @click.stop="close"
         >
-          <i-carbon-close />
+          <!-- <i-carbon-close /> -->
         </div>
       </div>
     </div>
@@ -38,24 +42,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from "vue";
-import type {
-  NotificationVM,
-  INotificationOptions,
-  INotification,
-} from "./notification.type";
-import { on, off } from "@augma/utils/dom";
+import {
+  defineComponent,
+  computed,
+  ref,
+  onMounted,
+  onBeforeUnmount,
+  CSSProperties,
+} from "vue";
+// notificationVM is an alias of vue.VNode
 import { EVENT_CODE } from "@augma/utils/aria";
-import { Indexable } from "@augma/utils/types";
+import { on, off } from "@augma/utils/dom";
 
-const TypeMap: Indexable<string> = {
-  success: "success",
-  info: "info",
-  warning: "warning",
-  error: "error",
-};
-
-type PositionType = "top-right" | "top-left" | "bottom-right" | "bottom-left";
+import type { PropType } from "vue";
+import type { NotificationVM, Position } from "./notification.type";
+import { AgmColorType, TypeMap } from "@augma/shared/src";
 
 export default defineComponent({
   name: "AgmNotification",
@@ -79,7 +80,7 @@ export default defineComponent({
       required: true,
     },
     position: {
-      type: String as PropType<PositionType>,
+      type: String as PropType<Position>,
       default: "top-right",
     },
     showClose: {
@@ -101,110 +102,90 @@ export default defineComponent({
     /**
      * type for notification
      */
-    type: { type: String, default: "" },
+    type: { type: String as PropType<AgmColorType>, default: "default" },
     zIndex: { type: Number, default: 0 },
   },
-  emits: ["close", "click"],
+  emits: ["destroy"],
+
   setup(props) {
     const visible = ref(false);
-    const closed = ref(false);
-    const timer = ref<NodeJS.Timeout | null>(null);
+    let timer: any = null;
+
+    const typeClass = computed(() => {
+      const type = props.type;
+      return type && TypeMap[type] ? `el-icon-${TypeMap[type]}` : "";
+    });
+
+    const horizontalClass = computed(() => {
+      return props.position.indexOf("right") > 1 ? "right" : "left";
+    });
+
+    const verticalProperty = computed(() => {
+      return props.position.startsWith("top") ? "top" : "bottom";
+    });
+
+    const styles = computed(() => {
+      return {
+        "--agm-icon-color": props.color,
+        [verticalProperty.value]: `${props.offset}px`,
+      } as CSSProperties;
+    });
+
+    function startTimer() {
+      if (props.duration > 0) {
+        timer = setTimeout(() => {
+          if (visible.value) {
+            close();
+          }
+        }, props.duration);
+      }
+    }
+
+    function clearTimer() {
+      if (!timer) return;
+      clearTimeout(timer);
+      timer = null;
+    }
+
+    function close() {
+      visible.value = false;
+    }
+
+    function onKeydown({ code }: KeyboardEvent) {
+      if (code === EVENT_CODE.delete || code === EVENT_CODE.backspace) {
+        clearTimer(); // press delete/backspace clear timer
+      } else if (code === EVENT_CODE.esc) {
+        // press esc to close the notification
+        if (visible.value) {
+          close();
+        }
+      } else {
+        startTimer(); // resume timer
+      }
+    }
+
+    // lifecycle
+    onMounted(() => {
+      startTimer();
+      visible.value = true;
+      on(document, "keydown", onKeydown);
+    });
+
+    onBeforeUnmount(() => {
+      off(document, "keydown", onKeydown);
+    });
 
     return {
       visible,
-      closed,
-      timer,
+
+      horizontalClass,
+      typeClass,
+      styles,
+
+      close,
+      clearTimer,
+      startTimer,
     };
-  },
-  computed: {
-    typeClass(): string {
-      const type = this.type;
-      return type && TypeMap[type] ? `agm-icon-${TypeMap[type]}` : "";
-    },
-    horizontalClass(): string {
-      return this.position.indexOf("right") > 1 ? "right" : "left";
-    },
-    verticalProperty(): string {
-      return this.position.startsWith("top") ? "top" : "bottom";
-    },
-    styles(): object {
-      return {
-        "--agm-icon-color": this.color,
-        [this.verticalProperty]: `${this.offset}px`,
-      };
-    },
-  },
-  watch: {
-    closed(newVal: boolean) {
-      if (newVal) {
-        this.visible = false;
-        this.destroyElement();
-      }
-    },
-  },
-  mounted() {
-    if (this.duration > 0) {
-      this.timer = setTimeout(() => {
-        if (!this.closed) {
-          this.close();
-        }
-      }, this.duration);
-    }
-    this.visible = true;
-    on(document, "keydown", this.keydown as EventListenerOrEventListenerObject);
-  },
-  beforeUnmount() {
-    off(
-      document,
-      "keydown",
-      this.keydown as EventListenerOrEventListenerObject
-    );
-  },
-  methods: {
-    /**
-     * Delete Element
-     * do not need on transitionend
-     */
-    destroyElement() {
-      this.visible = false;
-      this.onClose();
-    },
-    startTimer() {
-      if (this.duration > 0) {
-        this.timer = setTimeout(() => {
-          if (!this.closed) {
-            this.close();
-          }
-        }, this.duration);
-      }
-    },
-    clearTimer() {
-      if (this.timer) {
-        clearTimeout(this.timer);
-      }
-      this.timer = null;
-    },
-    click() {
-      this?.onClick();
-    },
-    close() {
-      this.closed = true;
-      this.timer = null;
-    },
-    /**
-     * shortcut to close notification
-     */
-    keydown({ code }: KeyboardEvent) {
-      if (code === EVENT_CODE.delete || code === EVENT_CODE.backspace) {
-        this.clearTimer();
-      } else if (code === EVENT_CODE.esc) {
-        if (!this.closed) {
-          this.close();
-        }
-      } else {
-        this.startTimer();
-      }
-    },
   },
 });
 </script>
