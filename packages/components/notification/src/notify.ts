@@ -11,7 +11,7 @@ import type {
   NotificationVM,
   Position,
 } from "./notification.type";
-import { TypeArray } from "@augma/shared/src";
+import { TypeArray } from "@augma/shared";
 
 const notifications: Record<Position, NotificationQueue> = {
   "top-left": [],

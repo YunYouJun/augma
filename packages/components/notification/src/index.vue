@@ -56,7 +56,7 @@ import { on, off } from "@augma/utils/dom";
 
 import type { PropType } from "vue";
 import type { NotificationVM, Position } from "./notification.type";
-import { AgmColorType, TypeMap } from "@augma/shared/src";
+import { AgmColorType, TypeMap } from "@augma/shared";
 
 export default defineComponent({
   name: "AgmNotification",

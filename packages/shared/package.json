@@ -2,7 +2,7 @@
   "name": "@augma/shared",
   "version": "0.0.1",
   "description": "common",
-  "main": "dist/index.js",
+  "main": "index.ts",
   "scripts": {
     "build": "tsc"
   },

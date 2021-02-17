@@ -7,7 +7,19 @@
   />
 </template>
 
-<script setup>
-import { TypeMap } from "@augma/shared/src";
+<script lang="ts">
+import { TypeMap } from "@augma/shared";
+import { defineComponent } from "vue";
 import AgmIndicator from "./index.vue";
+
+export default defineComponent({
+  components: {
+    AgmIndicator,
+  },
+  data() {
+    return {
+      TypeMap,
+    };
+  },
+});
 </script>

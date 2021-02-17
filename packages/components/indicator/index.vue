@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { getAgmColorByType } from "@augma/shared/src";
+import { getAgmColorByType } from "@augma/shared";
 import "./index.scss";
 export default {
   name: "AgmIndicator",

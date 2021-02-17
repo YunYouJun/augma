@@ -1,4 +1,4 @@
-import { AgmColorType } from "@augma/shared/src";
+import { AgmColorType } from "@augma/shared";
 
 import type { VNode } from "vue";
 export type Position =

@@ -83,7 +83,9 @@
       "category": "common"
     },
     {
-      "name": "notification"
+      "name": "notification",
+      "title": "通知",
+      "category": "utilities"
     }
   ]
 }

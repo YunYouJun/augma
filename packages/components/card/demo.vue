@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { TypeMap } from "@augma/shared/src";
+import { TypeMap } from "@augma/shared";
 import AgmCard from "./index.vue";
 export default {
   components: {
