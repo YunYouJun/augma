@@ -21,14 +21,14 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@iconify/json": "^1.1.302",
+    "@iconify/json": "^1.1.303",
     "fast-glob": "^3.2.5",
     "gray-matter": "^4.0.2",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.5",
-    "vite-plugin-components": "^0.6.10",
-    "vite-plugin-icons": "^0.2.1",
-    "vite-plugin-pwa": "^0.4.6"
+    "vite-plugin-components": "^0.6.12",
+    "vite-plugin-icons": "^0.2.2",
+    "vite-plugin-pwa": "^0.4.7"
   },
   "dependencies": {
     "@vueuse/core": "^4.1.1",

@@ -16,7 +16,7 @@
           class="agm-notification__icon"
           :class="[typeClass]"
         >
-          <agm-icon :icon="icon"></agm-icon>
+          <slot name="icon"></slot>
         </i>
 
         <div class="agm-notification__title">{{ title }}</div>
@@ -30,7 +30,7 @@
           class="agm-notification__closeBtn"
           @click.stop="close"
         >
-          <agm-icon :icon="icons.mdiClose"></agm-icon>
+          <i-carbon-close />
         </div>
       </div>
     </div>
@@ -38,14 +38,15 @@
 </template>
 
 <script lang="ts">
-import AgmIcon from "../../icon/index.vue";
-
 import { defineComponent, PropType, ref } from "vue";
-import type { NotificationVM } from "./notification.type";
-import { on, off } from "../../../utils/dom";
-import { EVENT_CODE } from "../../../utils/aria";
-
-import { mdiClose } from "@mdi/js";
+import type {
+  NotificationVM,
+  INotificationOptions,
+  INotification,
+} from "./notification.type";
+import { on, off } from "@augma/utils/dom";
+import { EVENT_CODE } from "@augma/utils/aria";
+import { Indexable } from "@augma/utils/types";
 
 const TypeMap: Indexable<string> = {
   success: "success",
@@ -58,16 +59,6 @@ type PositionType = "top-right" | "top-left" | "bottom-right" | "bottom-left";
 
 export default defineComponent({
   name: "AgmNotification",
-  components: {
-    AgmIcon,
-  },
-  data() {
-    return {
-      icons: {
-        mdiClose,
-      },
-    };
-  },
   props: {
     duration: {
       type: Number,
@@ -117,7 +108,7 @@ export default defineComponent({
   setup(props) {
     const visible = ref(false);
     const closed = ref(false);
-    const timer = ref(null);
+    const timer = ref<NodeJS.Timeout | null>(null);
 
     return {
       visible,
@@ -126,17 +117,17 @@ export default defineComponent({
     };
   },
   computed: {
-    typeClass() {
+    typeClass(): string {
       const type = this.type;
       return type && TypeMap[type] ? `agm-icon-${TypeMap[type]}` : "";
     },
-    horizontalClass() {
+    horizontalClass(): string {
       return this.position.indexOf("right") > 1 ? "right" : "left";
     },
-    verticalProperty() {
+    verticalProperty(): string {
       return this.position.startsWith("top") ? "top" : "bottom";
     },
-    styles() {
+    styles(): object {
       return {
         "--agm-icon-color": this.color,
         [this.verticalProperty]: `${this.offset}px`,
@@ -160,10 +151,14 @@ export default defineComponent({
       }, this.duration);
     }
     this.visible = true;
-    on(document, "keydown", this.keydown);
+    on(document, "keydown", this.keydown as EventListenerOrEventListenerObject);
   },
   beforeUnmount() {
-    off(document, "keydown", this.keydown);
+    off(
+      document,
+      "keydown",
+      this.keydown as EventListenerOrEventListenerObject
+    );
   },
   methods: {
     /**
@@ -184,7 +179,9 @@ export default defineComponent({
       }
     },
     clearTimer() {
-      clearTimeout(this.timer);
+      if (this.timer) {
+        clearTimeout(this.timer);
+      }
       this.timer = null;
     },
     click() {

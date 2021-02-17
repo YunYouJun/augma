@@ -1,4 +1,4 @@
-import { install } from "../components";
+import { install } from "../../components/index";
 import pkg from "../package.json";
 
 export default {

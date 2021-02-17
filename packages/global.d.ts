@@ -1,5 +1,4 @@
 import { ComponentOptions } from "vue";
-
 declare module "*.vue" {
   const Component: ComponentOptions;
   export default Component;
@@ -26,5 +25,7 @@ declare module "@vue/runtime-core" {
 
   interface ComponentCustomProperties {
     $store: Store<State>;
+
+    $notify: any;
   }
 }

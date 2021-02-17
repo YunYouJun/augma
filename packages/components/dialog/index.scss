@@ -52,15 +52,12 @@
     transition: 0.1s;
     &:hover {
       cursor: pointer;
+      color: black;
     }
   }
 
   &__fullscreenBtn {
     background-color: var(--agm-success);
-
-    &:hover {
-      color: black;
-    }
   }
 
   &__closeBtn {

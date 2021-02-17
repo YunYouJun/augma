@@ -1,5 +1,5 @@
 <template>
-  <button :class="classes" :style="styles">
+  <button :class="classes">
     <slot></slot>
   </button>
 </template>
@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import "./index.scss";
-import { colorTypes, getAgmColorByType } from "@augma/shared";
+import { colorTypes, AgmColorType } from "@augma/shared";
 
 type IButtonType = PropType<
   "primary" | "success" | "warning" | "danger" | "info" | "default"
@@ -21,15 +21,8 @@ export default defineComponent({
     type: {
       type: String as IButtonType,
       default: "default",
-      validator: (val: string) => {
-        return [
-          "default",
-          "primary",
-          "success",
-          "warning",
-          "danger",
-          "info",
-        ].includes(val);
+      validator: (val: AgmColorType) => {
+        return colorTypes.includes(val);
       },
     },
     outline: {
@@ -45,11 +38,6 @@ export default defineComponent({
         this.type ? `agm-button--${this.type}` : "",
         this.outline ? `is-outline` : "",
       ];
-    },
-    styles(): any {
-      return {
-        color: this.color,
-      };
     },
   },
 });

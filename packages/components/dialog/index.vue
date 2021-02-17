@@ -14,14 +14,14 @@
           </div>
           <div class="agm-dialog--action">
             <button class="agm-dialog__fullscreenBtn" @click="toggle">
-              <carbon-center-to-fit />
+              <i-carbon-center-to-fit />
             </button>
             <button
               class="agm-dialog__closeBtn"
               aria-label="close"
               @click="handleClose"
             >
-              <carbon-close />
+              <i-carbon-close />
             </button>
           </div>
         </div>
@@ -41,11 +41,8 @@ import { default as useDialog, UPDATE_MODEL_EVENT } from "./dialog";
 
 import type { SetupContext } from "vue";
 import { useFullscreen } from "@vueuse/core";
-import CarbonCenterToFit from "../icons/default/CarbonCenterToFit.vue";
-import CarbonClose from "../icons/default/CarbonClose.vue";
 
 export default defineComponent({
-  components: { CarbonCenterToFit, CarbonClose },
   name: "AgmDialog",
   data() {
     return {

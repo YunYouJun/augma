@@ -1,5 +1,5 @@
 <template>
-  <div :class="classes" :style="styles">
+  <div :class="classes">
     <div class="agm-card--header">
       <slot name="header"></slot>
     </div>
@@ -9,15 +9,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
 import "./index.scss";
-export default {
+
+export default defineComponent({
   name: "AgmCard",
   props: {
-    color: {
-      type: String,
-      default: "",
-    },
     dark: {
       type: Boolean,
       default: false,
@@ -28,7 +26,7 @@ export default {
     },
   },
   computed: {
-    classes() {
+    classes(): string[] {
       return [
         "agm-card",
         this.type ? `agm-card--${this.type}` : "",
@@ -36,6 +34,6 @@ export default {
       ];
     },
   },
-};
+});
 </script>
 

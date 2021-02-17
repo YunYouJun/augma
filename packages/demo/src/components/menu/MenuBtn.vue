@@ -5,7 +5,6 @@
         <agm-icon :icon="icon"></agm-icon>
       </agm-button>
     </template>
-
     <fullscreen-btn></fullscreen-btn>
     <agm-button
       v-for="(item, i) in menuItems"
@@ -20,7 +19,7 @@
 </template>
 
 <script>
-import FullscreenBtn from "augma/components/function/FullscreenBtn.vue";
+import FullscreenBtn from "../FullscreenBtn.vue";
 import {
   mdiCameraFlip,
   mdiDotsHorizontal,

@@ -16,7 +16,8 @@
     "allowSyntheticDefaultImports": true,
     "paths": {
       "@augma/*": ["packages/*/src"],
-      "augma": ["packages/augma/src"]
+      "augma": ["packages/augma/src"],
+      "@augma/components": ["packages/augma/components"]
     }
   },
   "include": ["packages", "packages/*.d.ts"],

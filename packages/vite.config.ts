@@ -9,10 +9,12 @@ import { componentNames } from "../meta/indexes";
 import { firstLetterUpper, hasDemo } from "../scripts/utils";
 
 export default defineConfig({
-  alias: [
-    { find: "@augma/core", replacement: resolve(__dirname, "core/index.ts") },
-    { find: "@augma/styles", replacement: resolve(__dirname, "styles") },
-  ],
+  resolve: {
+    alias: [
+      { find: "@augma/core", replacement: resolve(__dirname, "core/index.ts") },
+      { find: "@augma/styles", replacement: resolve(__dirname, "styles") },
+    ],
+  },
   plugins: [
     ViteComponents({
       // dirs: [".vitepress/theme/components"],

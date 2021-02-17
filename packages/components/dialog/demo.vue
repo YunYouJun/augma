@@ -1,5 +1,5 @@
 <template>
-  <agm-button @click="dialogVisible = !dialogVisible">
+  <agm-button type="primary" @click="dialogVisible = !dialogVisible">
     点击打开 Dialog
   </agm-button>
   <agm-dialog v-model="dialogVisible">
