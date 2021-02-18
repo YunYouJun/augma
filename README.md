@@ -7,6 +7,8 @@
 
 🎨 AR UI Framework
 
+> Because many new features are used, you'd better use the latest version of Chrome Browser.
+
 ## Dev
 
 You need [Node.js](https://nodejs.org/en/).

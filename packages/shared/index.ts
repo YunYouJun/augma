@@ -33,3 +33,5 @@ export function getAgmColorByType(type: AgmColorType) {
     return type;
   }
 }
+
+export type ComponentSize = "large" | "medium" | "small" | "mini";

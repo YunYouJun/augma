@@ -11,6 +11,14 @@ import AgmMenu from "./menu/index.vue";
 import AgmNotification from "./notification/index";
 // import AgmLoading from "./loading/index";
 
+import type { InstallOptions } from "@augma/utils/config";
+import { ComponentSize } from "@augma/shared";
+
+const defaultInstallOpt: InstallOptions = {
+  size: "" as ComponentSize,
+  zIndex: 2000,
+};
+
 const components = [
   AgmButton,
   AgmBottomMenu,
@@ -22,10 +30,8 @@ const components = [
 ];
 const plugins = [AgmNotification];
 
-const defaultInstallOpt = {};
-
 // register component & plugin
-const install = (app: App, opt?: any) => {
+const install = (app: App, opt: InstallOptions): void => {
   const option = Object.assign(defaultInstallOpt, opt);
   app.config.globalProperties.$AUGMA = option;
 

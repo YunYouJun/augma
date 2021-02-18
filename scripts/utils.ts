@@ -81,6 +81,10 @@ export function getCategories() {
       title: "通用",
     },
     {
+      name: "form",
+      title: "表单",
+    },
+    {
       name: "misc",
       title: "杂项",
     },

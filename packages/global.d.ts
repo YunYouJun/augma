@@ -9,11 +9,6 @@ declare module "*.md" {
   export default Component;
 }
 
-// index
-declare type Indexable<T> = {
-  [key: string]: T;
-};
-
 // vuex
 import { Store } from "vuex";
 

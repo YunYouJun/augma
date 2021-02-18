@@ -9,6 +9,10 @@
       "title": "通用"
     },
     {
+      "name": "form",
+      "title": "表单"
+    },
+    {
       "name": "misc",
       "title": "杂项"
     },
@@ -73,6 +77,11 @@
       "category": "common"
     },
     {
+      "name": "input",
+      "title": "输入框",
+      "category": "form"
+    },
+    {
       "name": "loading",
       "title": "加载",
       "category": "animation"
@@ -86,6 +95,11 @@
       "name": "notification",
       "title": "通知",
       "category": "utilities"
+    },
+    {
+      "name": "select",
+      "title": "选择器",
+      "category": "form"
     }
   ]
 }
