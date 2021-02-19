@@ -6,7 +6,9 @@
       :disabled="true"
       placeholder="禁用状态"
     ></agm-input>
-    <agm-input v-model="input" placeholder="可清空" clearable></agm-input>
+    <agm-input v-model="input" placeholder="可清空" clearable>
+      <!-- <template #suffix> s </template> -->
+    </agm-input>
     <agm-input v-model="input" placeholder="密码框" show-password></agm-input>
   </div>
 </template>

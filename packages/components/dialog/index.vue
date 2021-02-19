@@ -14,14 +14,14 @@
           </div>
           <div class="agm-dialog--action">
             <button class="agm-dialog__fullscreenBtn" @click="toggle">
-              <i-carbon-center-to-fit />
+              <agm-icon icon="mdi:fullscreen" />
             </button>
             <button
               class="agm-dialog__closeBtn"
               aria-label="close"
               @click="handleClose"
             >
-              <i-carbon-close />
+              <agm-icon icon="mdi:close" />
             </button>
           </div>
         </div>
@@ -36,6 +36,8 @@
 <script lang="ts">
 import "./index.scss";
 
+import AgmIcon from "../icon/index.vue";
+
 import { defineComponent, ref } from "vue";
 import { default as useDialog, UPDATE_MODEL_EVENT } from "./dialog";
 
@@ -44,6 +46,9 @@ import { useFullscreen } from "@vueuse/core";
 
 export default defineComponent({
   name: "AgmDialog",
+  components: {
+    AgmIcon,
+  },
   data() {
     return {
       visible: false,

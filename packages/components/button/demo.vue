@@ -9,51 +9,53 @@
   </div>
   <div class="button-demo">
     <agm-button icon>
-      <i-carbon-logo-github style="color: black" />
+      <agm-icon icon="mdi:github" color="black" />
     </agm-button>
     <agm-button icon type="primary">
-      <i-carbon-area />
+      <agm-icon icon="mdi:vector-square" />
     </agm-button>
     <agm-button icon type="success">
-      <i-carbon-battery-full />
+      <agm-icon icon="mdi:check" />
     </agm-button>
     <agm-button icon type="warning">
-      <i-carbon-warning />
+      <agm-icon icon="mdi:warning" />
     </agm-button>
     <agm-button icon type="danger">
-      <i-carbon-error />
+      <agm-icon icon="mdi:error" />
     </agm-button>
     <agm-button icon type="info">
-      <i-carbon-information />
+      <agm-icon icon="mdi:information-variant" />
     </agm-button>
   </div>
   <div class="button-demo">
-    <agm-button icon outline>
-      <i-carbon-logo-github style="color: black" />
+    <agm-button icon outline style="background: black">
+      <agm-icon icon="mdi:github" color="white" />
     </agm-button>
     <agm-button icon type="primary" outline>
-      <i-carbon-area />
+      <agm-icon icon="mdi:vector-square" />
     </agm-button>
     <agm-button icon type="success" outline>
-      <i-carbon-battery-full />
+      <agm-icon icon="mdi:check" />
     </agm-button>
     <agm-button icon type="warning" outline>
-      <i-carbon-warning />
+      <agm-icon icon="mdi:warning" />
     </agm-button>
     <agm-button icon type="danger" outline>
-      <i-carbon-error />
+      <agm-icon icon="mdi:error" />
     </agm-button>
     <agm-button icon type="info" outline>
-      <i-carbon-information />
+      <agm-icon icon="mdi:information-variant" />
     </agm-button>
   </div>
 </template>
 
 <script>
 import AgmButton from "./index.vue";
+import AgmIcon from "../icon/index.vue";
 export default {
   components: {
     AgmButton,
+    AgmIcon,
   },
 };
 </script>

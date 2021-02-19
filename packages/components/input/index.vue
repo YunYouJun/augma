@@ -59,7 +59,10 @@
             class="agm-input__icon agm-icon-circle-close agm-input__clear"
             @mousedown.prevent
             @click="clear"
-          ></i>
+          >
+            <agm-icon icon="mdi:close" />
+          </i>
+
           <i
             v-if="showPwdVisible"
             class="agm-input__icon agm-icon-view agm-input__clear"
@@ -81,11 +84,12 @@
         <slot name="append"></slot>
       </div>
     </template>
+
+    <!-- v-bind="attrs" -->
     <textarea
       v-else
       ref="textarea"
       class="agm-textarea__inner"
-      v-bind="attrs"
       :tabindex="tabindex"
       :disabled="inputDisabled"
       :readonly="readonly"
@@ -102,8 +106,8 @@
     <span
       v-if="isWordLimitVisible && type === 'textarea'"
       class="agm-input__count"
-      >{{ textLength }}/{{ upperLimit }}</span
-    >
+      >{{ textLength }}/{{ upperLimit }}
+    </span>
   </div>
 </template>
 
@@ -121,6 +125,8 @@ import {
   onMounted,
   onUpdated,
 } from "vue";
+import AgmIcon from "../icon/index.vue";
+
 import { useAttrs } from "@augma/components/hooks";
 import { UPDATE_MODEL_EVENT, VALIDATE_STATE_MAP } from "@augma/utils/constants";
 import { isObject } from "@vue/shared";
@@ -150,7 +156,11 @@ const PENDANT_MAP = {
 };
 
 export default defineComponent({
-  name: "ElInput",
+  name: "AgmInput",
+
+  components: {
+    AgmIcon,
+  },
 
   inheritAttrs: false,
 
@@ -244,7 +254,7 @@ export default defineComponent({
 
   setup(props, ctx) {
     const instance = getCurrentInstance();
-    const attrs = useAttrs();
+    // const attrs = useAttrs();
     const $AUGMA = useGlobalConfig();
 
     const agmForm = inject(agmFormKey, {} as AgmFormContext);
@@ -479,7 +489,7 @@ export default defineComponent({
     return {
       input,
       textarea,
-      attrs,
+      // attrs,
       inputSize,
       validateState,
       validateIcon,

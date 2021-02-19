@@ -19,6 +19,22 @@ $--input-hover-border: $--input-placeholder-color;
     border-color: $--input-hover-border;
   }
 
+  &__suffix {
+    position: absolute;
+    height: 100%;
+    right: 5px;
+    top: 0;
+    text-align: center;
+    color: inherit;
+    transition: all 0.3s;
+    pointer-events: none;
+
+    &-inner {
+      font-size: 2rem;
+      line-height: 2rem;
+    }
+  }
+
   &__inner {
     -webkit-appearance: none;
     background-color: transparent;
@@ -40,10 +56,22 @@ $--input-hover-border: $--input-placeholder-color;
       outline: none;
       border-color: black;
     }
+
+    &__clear {
+      color: inherit;
+      font-size: inherit;
+      cursor: pointer;
+      transition: 0.2s;
+
+      &:hover {
+        color: var(--agm-color-primary);
+      }
+    }
   }
 
   @include when(disabled) {
     .agm-input__inner {
+      color: #555;
       background-color: #eee;
     }
   }

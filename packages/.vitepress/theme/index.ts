@@ -6,6 +6,15 @@ import DemoBlock from "./components/DemoBlock.vue";
 import augma from "augma";
 import "./styles/index.scss";
 
+// import Iconify from "@iconify/iconify/dist/iconify.without-api.min.js";
+// import mdiIcons from "@iconify/json/json/mdi.json";
+// Iconify.addCollection(mdiIcons);
+
+// import Iconify from "@iconify/iconify";
+// Iconify.loadIcons(["mdi:github"]);
+
+import "https://code.iconify.design/2/2.0.0-rc.6/iconify.min.js";
+
 const theme = {
   ...DefaultTheme,
   enhanceApp({ app }) {

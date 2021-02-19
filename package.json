@@ -22,7 +22,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@iconify/json": "^1.1.304",
+    "@iconify/iconify": "^2.0.0-rc.6",
+    "@iconify/json": "^1.1.305",
     "fast-glob": "^3.2.5",
     "gray-matter": "^4.0.2",
     "ts-node": "^9.1.1",
@@ -30,7 +31,7 @@
     "vite": "^2.0.1",
     "vite-plugin-components": "^0.6.12",
     "vite-plugin-icons": "^0.2.2",
-    "vite-plugin-pwa": "^0.4.7",
+    "vite-plugin-pwa": "^0.4.8",
     "vitepress": "^0.12"
   },
   "dependencies": {

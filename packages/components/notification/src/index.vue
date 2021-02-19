@@ -34,7 +34,7 @@
           class="agm-notification__closeBtn"
           @click.stop="close"
         >
-          <!-- <i-carbon-close /> -->
+          <agm-icon icon="mdi:close" />
         </div>
       </div>
     </div>
@@ -50,6 +50,8 @@ import {
   onBeforeUnmount,
   CSSProperties,
 } from "vue";
+import AgmIcon from "../icon/index.vue";
+
 // notificationVM is an alias of vue.VNode
 import { EVENT_CODE } from "@augma/utils/aria";
 import { on, off } from "@augma/utils/dom";
@@ -60,6 +62,9 @@ import { AgmColorType, TypeMap } from "@augma/shared";
 
 export default defineComponent({
   name: "AgmNotification",
+  components: {
+    AgmIcon,
+  },
   props: {
     duration: {
       type: Number,
