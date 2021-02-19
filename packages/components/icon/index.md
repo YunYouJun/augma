@@ -22,7 +22,8 @@ yarn add -D @iconify/iconify @iconify/json
 #### 使用线上的图标 API
 
 ```ts
-import "https://code.iconify.design/2/2.0.0-rc.6/iconify.min.js";
+// import "https://code.iconify.design/2/2.0.0-rc.6/iconify.min.js";
+import "@iconify/iconify";
 ```
 
 #### Without API

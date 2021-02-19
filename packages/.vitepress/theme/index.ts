@@ -10,10 +10,10 @@ import "./styles/index.scss";
 // import mdiIcons from "@iconify/json/json/mdi.json";
 // Iconify.addCollection(mdiIcons);
 
-// import Iconify from "@iconify/iconify";
+import "@iconify/iconify";
 // Iconify.loadIcons(["mdi:github"]);
 
-import "https://code.iconify.design/2/2.0.0-rc.6/iconify.min.js";
+// import "https://code.iconify.design/2/2.0.0-rc.6/iconify.min.js";
 
 const theme = {
   ...DefaultTheme,
