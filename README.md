@@ -13,19 +13,19 @@
 
 You need [Node.js](https://nodejs.org/en/).
 
-```sh
+```bash
 # install dependencies
 yarn
 ```
 
-```sh
+```bash
 yarn dev
 # localhost:3000
 ```
 
 ### Docs
 
-```sh
+```bash
 yarn docs:dev
 ```
 

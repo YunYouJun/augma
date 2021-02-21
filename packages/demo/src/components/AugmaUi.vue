@@ -1,14 +1,12 @@
 <template>
   <div id="augma-ui" class="augma-ui" :style="styles">
-    <div id="agm-loading-container">
-      <agm-loading :loading="$store.state.app.loading" />
-    </div>
+    <div id="agm-loading-container" v-loading="$store.state.app.loading"></div>
 
     <system-bar />
     <agm-window />
     <face-api :enable="$store.state.faceApi.faceDetection" />
     <tfjs-yolo :enable="$store.state.app.yolo" />
-    <bottom-menu id="augma-bottom-menu" />
+    <bottom-menu class="augma-bottom-menu-container" />
   </div>
 </template>
 
@@ -51,7 +49,7 @@ export default defineComponent({
   background: rgba(255, 255, 255, 0.1);
 }
 
-#augma-bottom-menu {
+.augma-bottom-menu-container {
   position: absolute;
   left: 0;
   bottom: 1rem;

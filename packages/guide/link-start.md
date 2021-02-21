@@ -1,6 +1,16 @@
 # Link Start
 
-## 在 Vue 中引入
+Augma 是基于 Vue3 实现的 UI 框架
+
+## 安装
+
+尚未发布
+
+```bash
+yarn add augma
+```
+
+## 在 Vue3 中引入
 
 ```js
 import { createApp } from "vue";

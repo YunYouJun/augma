@@ -7,10 +7,9 @@
           v-for="(item, i) in menuItems"
           :key="i"
           icon
-          :color="item.color"
           @click="item.do"
         >
-          <!-- icon -->
+          <agm-icon :icon="item.icon" :color="item.color"></agm-icon>
         </agm-button>
       </div>
     </div>
@@ -18,7 +17,9 @@
 </template>
 
 <script lang="ts">
+import "./index.scss";
 import AgmButton from "../button/index.vue";
+import AgmIcon from "../icon/index.vue";
 import { defineComponent, PropType } from "vue";
 
 interface IMenuItem {
@@ -31,6 +32,7 @@ export default defineComponent({
   name: "AgmBottomMenu",
   components: {
     AgmButton,
+    AgmIcon,
   },
   props: {
     menuItems: {

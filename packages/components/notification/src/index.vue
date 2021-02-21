@@ -50,7 +50,7 @@ import {
   onBeforeUnmount,
   CSSProperties,
 } from "vue";
-import AgmIcon from "../icon/index.vue";
+import AgmIcon from "../../icon/index.vue";
 
 // notificationVM is an alias of vue.VNode
 import { EVENT_CODE } from "@augma/utils/aria";

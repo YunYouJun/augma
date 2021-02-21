@@ -47,11 +47,11 @@
 
   &--icon {
     display: flex;
-    font-size: 1.3rem;
     width: 2.6rem;
     height: 2.6rem;
-    padding: 0.5rem;
     border-radius: 50%;
+    justify-content: center;
+    align-items: center;
   }
 
   @include button-type("primary");

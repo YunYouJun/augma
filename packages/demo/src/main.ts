@@ -9,7 +9,8 @@ import "./index.css";
 const app = createApp(App);
 
 import augma from "augma";
-import "@augma/components/styles/index.scss";
+// import "@augma/components/styles/index.scss";
+import "augma/dist/style.css";
 
 app.use(augma);
 app.use(router).use(store).mount("#app");

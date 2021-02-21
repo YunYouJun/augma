@@ -1,12 +1,14 @@
+@import "../styles/mixins/";
 $bottom-nav-color: white;
 
 .agm-bottom-menu {
+  position: relative;
+
   &--inner {
     position: relative;
     overflow-x: auto;
 
     display: flex;
-    height: 2rem;
     min-width: 20rem;
     margin: 0 2rem;
     padding: 1.2rem 0.5rem 1.5rem 0.5rem;

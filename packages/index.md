@@ -3,7 +3,7 @@ home: true
 heroImage: /logo.png
 heroAlt: Logo image
 actionText: Link Start
-actionLink: /guide/
+actionLink: /guide/link-start.html
 features:
   - title: 简单易用
     details: 引入几行代码开始你的开发工作

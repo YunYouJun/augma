@@ -1,10 +1,13 @@
 import { App } from "vue";
 import Loading from "./src/index";
-
-const $loading = Loading();
+import vLoading from "./src/directive";
+import "./index.scss";
 
 export default {
   install(app: App) {
-    app.config.globalProperties.$loading = $loading;
+    app.directive("loading", vLoading);
+    app.config.globalProperties.$loading = Loading;
   },
+  directive: vLoading,
+  service: Loading,
 };

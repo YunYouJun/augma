@@ -1,10 +1,10 @@
 <template>
   <web-cam
     v-if="$store.state.camera.display"
-    :flip="$store.state.camera.flipScreen"
-    :front="$store.state.camera.front"
+    :isFlip="$store.state.camera.flipScreen"
+    :isFront="$store.state.camera.front"
   ></web-cam>
-  <augma-ui :opacity="0.95"></augma-ui>
+  <!-- <augma-ui :opacity="0.95"></augma-ui> -->
 </template>
 
 <script>

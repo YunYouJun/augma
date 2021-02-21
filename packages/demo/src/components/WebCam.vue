@@ -1,52 +1,58 @@
 <template>
-  <video :class="classes" id="webcam" ref="webcamVideo" autoplay></video>
+  <video ref="videoRef" :class="classes" id="webcam" autoplay></video>
 </template>
 
-<script>
-import { Webcam } from "../lib/webcam";
-export default {
+<script lang="ts">
+import { computed, defineComponent, onMounted, ref, watchEffect } from "vue";
+import { useWebcam } from "@augma/components/hooks/useWebcam";
+import { useStore } from "vuex";
+
+export default defineComponent({
   props: {
-    flip: Boolean,
-    front: Boolean,
+    isFlip: {
+      type: Boolean,
+      default: false,
+    },
+    isFront: {
+      type: Boolean,
+      default: false,
+    },
   },
-  data() {
+  setup(props) {
+    const store = useStore();
+    const videoRef = ref(null);
+
+    const isFlip = ref(props.isFlip);
+
+    const classes = computed(() => {
+      return {
+        flip: isFlip,
+      };
+    });
+
+    const { changeWebcamStream, settings } = useWebcam(videoRef, {
+      isFront: props.isFront,
+    });
+
+    watchEffect(async () => {
+      await changeWebcamStream(props.isFront);
+    });
+
+    onMounted(async () => {
+      await changeWebcamStream(props.isFront);
+      store.commit("camera/setVideoEl", videoRef.value);
+      store.commit("camera/setSettings", settings);
+      const ratio = document.body.clientWidth / settings.value.width;
+      store.commit("camera/setRatio", ratio);
+    });
+
     return {
-      webcam: null,
+      videoRef,
+      classes,
+      isFlip,
     };
   },
-  async mounted() {
-    this.initWebcam();
-  },
-  computed: {
-    classes() {
-      return {
-        flip: this.flip,
-      };
-    },
-  },
-  watch: {
-    async front(val) {
-      const videoEl = this.$refs.webcamVideo;
-
-      await this.webcam.changeWebcamStream(this.front);
-    },
-  },
-  methods: {
-    async initWebcam() {
-      const videoEl = this.$refs.webcamVideo;
-      this.$store.commit("camera/setVideoEl", videoEl);
-
-      this.webcam = new Webcam(videoEl, this.front);
-      await this.webcam.changeWebcamStream(this.front);
-
-      const settings = this.webcam.settings;
-      this.$store.commit("camera/setSettings", settings);
-
-      const ratio = document.body.clientWidth / settings.width;
-      this.$store.commit("camera/setRatio", ratio);
-    },
-  },
-};
+});
 </script>
 
 <style lang="scss">

@@ -1,9 +1,5 @@
 @import "../../../components/styles/index.scss";
 
-@import "./common/vars";
+@import "./vars.scss";
 @import "./custom.scss";
-
-:root {
-  --c-brand: #{$agm-brand};
-  --c-brand-light: #{lighten($agm-brand, 5%)};
-}
+@import "./layout.scss";

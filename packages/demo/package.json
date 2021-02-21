@@ -23,7 +23,6 @@
     "@mdi/js": "^5.9.55",
     "@vitejs/plugin-vue": "^1.1.4",
     "@vue/compiler-sfc": "^3.0.5",
-    "@vuedx/typecheck": "^0.6.3",
     "sass": "^1.32.8"
   },
   "scripts": {
@@ -31,10 +30,6 @@
     "build:augma": "cd packages/augma && yarn build",
     "dev": "vite",
     "serve": "vite serve",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:deploy": "yarn docs:build && cp docs/.vitepress/public/* docs/.vitepress/dist",
-    "docs:serve": "vitepress serve docs",
     "prepublishOnly": "yarn build:augma"
   }
 }

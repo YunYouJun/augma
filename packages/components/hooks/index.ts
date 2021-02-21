@@ -1,1 +1,2 @@
-export { default as useAttrs } from "./use-attrs";
+export { useAttrs } from "./useAttrs";
+export { useWebcam } from "./useWebcam";

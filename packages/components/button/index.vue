@@ -1,5 +1,5 @@
 <template>
-  <button :class="classes" @click="handleClick">
+  <button :class="classes" :type="nativeType" @click="handleClick">
     <slot></slot>
   </button>
 </template>
@@ -8,6 +8,8 @@
 import { computed, defineComponent, PropType } from "vue";
 import "./index.scss";
 import { AgmColorType, TypeArray } from "@augma/shared";
+
+type IButtonNativeType = PropType<"button" | "submit" | "reset">;
 
 export default defineComponent({
   name: "AgmButton",
@@ -24,6 +26,16 @@ export default defineComponent({
     outline: {
       type: Boolean,
       default: false,
+    },
+    nativeType: {
+      type: String as IButtonNativeType,
+      default: "button",
+      validator: (val: string) => {
+        return ["button", "submit", "reset"].includes(val);
+      },
+    },
+    onClick: {
+      type: Function,
     },
   },
 

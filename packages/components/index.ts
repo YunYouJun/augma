@@ -9,7 +9,7 @@ import AgmIndicator from "./indicator/index.vue";
 import AgmMenu from "./menu/index.vue";
 
 import AgmNotification from "./notification/index";
-// import AgmLoading from "./loading/index";
+import AgmLoading from "./loading/index";
 
 import type { InstallOptions } from "@augma/utils/config";
 import { ComponentSize } from "@augma/shared";
@@ -28,7 +28,7 @@ const components = [
   AgmIndicator,
   AgmMenu,
 ];
-const plugins = [AgmNotification];
+const plugins = [AgmNotification, AgmLoading];
 
 // register component & plugin
 const install = (app: App, opt: InstallOptions): void => {

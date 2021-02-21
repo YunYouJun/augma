@@ -1,3 +1,6 @@
+import isServer from "./isServer";
+import { camelize } from "@vue/shared";
+
 const trim = function (s: string) {
   return (s || "").replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, "");
 };
@@ -73,3 +76,23 @@ export function removeClass(el: HTMLElement, cls: string): void {
     el.className = trim(curClass);
   }
 }
+
+export const getStyle = function (
+  element: HTMLElement,
+  styleName: string
+): string {
+  if (isServer) return;
+  if (!element || !styleName) return null;
+  styleName = camelize(styleName);
+  if (styleName === "float") {
+    styleName = "cssFloat";
+  }
+  try {
+    const style = element.style[styleName];
+    if (style) return style;
+    const computed = document.defaultView.getComputedStyle(element, "");
+    return computed ? computed[styleName] : "";
+  } catch (e) {
+    return element.style[styleName];
+  }
+};

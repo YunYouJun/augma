@@ -4,3 +4,5 @@ declare type Indexable<T> = {
 };
 
 declare type Hash<T> = Indexable<T>;
+
+declare type Nullable<T> = T | null;

@@ -1,5 +1,7 @@
 <template>
-  <agm-bottom-menu :menu-items="menuItems" />
+  <div class="demo-dark-bg">
+    <agm-bottom-menu :menu-items="menuItems" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -14,9 +16,23 @@ export default defineComponent({
       menuItems: [
         {
           color: "black",
-          icon: "",
+          icon: "mdi:github",
+          do: () => {
+            console.log("github");
+          },
+        },
+        {
+          color: "var(--agm-success)",
+          icon: "mdi:check",
           do: () => {
             console.log("yes");
+          },
+        },
+        {
+          color: "var(--agm-danger)",
+          icon: "mdi:error",
+          do: () => {
+            console.log("no");
           },
         },
       ],
@@ -24,3 +40,10 @@ export default defineComponent({
   },
 });
 </script>
+
+<style>
+.demo-dark-bg {
+  padding-top: 1rem;
+  background: #333;
+}
+</style>

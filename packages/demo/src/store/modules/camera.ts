@@ -1,13 +1,22 @@
-const state = () => ({
+export interface State {
+  videoEl: HTMLVideoElement | null;
+  settings: any;
+  display: boolean;
+  flipScreen: boolean;
+  front: boolean;
+  /**
+   * 缩放比例
+   */
+  ratio: number;
+}
+
+const state = (): State => ({
   videoEl: null,
   settings: null,
   display: true,
   flipScreen: false,
   front: false,
 
-  /**
-   * 缩放比例
-   */
   ratio: 1,
 });
 

@@ -9,7 +9,7 @@ interface Params {
 const DEFAULT_EXCLUDE_KEYS = ["class", "style"];
 const LISTENER_PREFIX = /^on[A-Z]/;
 
-export default (params: Params = {}) => {
+export function useAttrs(params: Params = {}) {
   const { excludeListeners = false, excludeKeys = [] } = params;
   const instance = getCurrentInstance();
   const attrs = shallowRef({});
@@ -34,4 +34,4 @@ export default (params: Params = {}) => {
   });
 
   return attrs;
-};
+}
