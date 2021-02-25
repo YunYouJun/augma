@@ -21,6 +21,10 @@
       "title": "传感器"
     },
     {
+      "name": "hooks",
+      "title": "钩子函数"
+    },
+    {
       "name": "utilities",
       "title": "工具"
     }
@@ -100,6 +104,11 @@
       "name": "select",
       "title": "选择器",
       "category": "form"
+    },
+    {
+      "name": "useWebcam",
+      "title": "相机",
+      "category": "hooks"
     }
   ]
 }

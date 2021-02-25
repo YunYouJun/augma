@@ -5,6 +5,8 @@ import matter from "gray-matter";
 
 import { PackageIndexes, Component } from "../meta/types";
 
+import { generateTag } from "./vetur";
+
 // const DOCS_URL = "https://docs.augma.elpsy.cn";
 const DIR_SRC = resolve(__dirname, "../packages");
 
@@ -33,7 +35,7 @@ export async function listComponents(dir: string, ignore: string[] = []) {
 /**
  * 读取并生成索引
  */
-export async function readIndexes() {
+export async function readIndexesAndHints() {
   const indexes: PackageIndexes = {
     categories: [],
     components: [],
@@ -41,6 +43,9 @@ export async function readIndexes() {
 
   const dir = join(DIR_SRC, "components");
   const components = await listComponents(dir);
+
+  // for vetur tags
+  const tags = {};
 
   for (const componentName of components) {
     const mdPath = join(dir, componentName, "index.md");
@@ -63,11 +68,17 @@ export async function readIndexes() {
     component.title = title;
 
     indexes.components.push(component);
+
+    const tagName = `agm-${componentName}`;
+    tags[tagName] = generateTag(frontmatter);
   }
 
   indexes.categories = getCategories();
 
-  return indexes;
+  return {
+    indexes,
+    tags,
+  };
 }
 
 export function getCategories() {
@@ -91,6 +102,10 @@ export function getCategories() {
     {
       name: "sensors",
       title: "传感器",
+    },
+    {
+      name: "hooks",
+      title: "钩子函数",
     },
     {
       name: "utilities",

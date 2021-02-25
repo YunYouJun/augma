@@ -14,14 +14,14 @@
           </div>
           <div class="agm-dialog--action">
             <button class="agm-dialog__fullscreenBtn" @click="toggle">
-              <agm-icon icon="mdi:fullscreen" />
+              <agm-icon icon="mdi:fullscreen" size="0.7rem" />
             </button>
             <button
               class="agm-dialog__closeBtn"
               aria-label="close"
               @click="handleClose"
             >
-              <agm-icon icon="mdi:close" />
+              <agm-icon icon="mdi:close" size="0.7rem" />
             </button>
           </div>
         </div>

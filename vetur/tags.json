@@ -1,0 +1,20 @@
+{
+  "agm-bottom-menu": {
+    "description": "Bottom Menu"
+  },
+  "agm-button": {},
+  "agm-card": {},
+  "agm-clock": {},
+  "agm-color": {},
+  "agm-dialog": {},
+  "agm-helper": {},
+  "agm-html": {},
+  "agm-icon": {},
+  "agm-indicator": {},
+  "agm-input": {},
+  "agm-loading": {},
+  "agm-menu": {},
+  "agm-notification": {},
+  "agm-select": {},
+  "agm-useWebcam": {}
+}

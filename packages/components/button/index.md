@@ -1,10 +1,19 @@
 ---
 title: 按钮
 category: common
+description: Commonly used button.
+props:
+  - name: type
+    description: 类型
+    type: string
+    acceptedValues: TypeArray
+    default: default
+  - name: icon
+    description: 是否图标按钮
+    type: boolean
+    default: false
+  - name: outline
+    description: 是否描边按钮
+    type: boolean
+    default: false
 ---
-
-| 参数    | 说明         | 类型    | 可选值                                                | 默认值  |
-| ------- | ------------ | ------- | ----------------------------------------------------- | ------- |
-| type    | 类型         | string  | default / primary / success / warning / danger / info | default |
-| icon    | 是否图标按钮 | boolean | -                                                     | false   |
-| outline | 是否描边按钮 | boolean | -                                                     | false   |

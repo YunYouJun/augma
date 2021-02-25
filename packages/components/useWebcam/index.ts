@@ -31,7 +31,7 @@ export function useWebcam(
     },
   });
 
-  let settings = ref<MediaTrackSettings | null>(null);
+  const settings = ref<MediaTrackSettings | null>(null);
 
   /**
    * change webcam stream (default is video)

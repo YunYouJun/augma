@@ -1,6 +1,14 @@
 ---
 title: 通知
 category: utilities
+props:
+  - name: title
+    description: 标题
+    type: string
+  - name: color
+    description: 颜色
+    type: string
+    acceptedValues: CSS3 Color
 ---
 
 弹出消息通知
@@ -14,8 +22,3 @@ this.$notify({
   duration: 0,
 });
 ```
-
-| 参数  | 说明 | 类型   | 可选值 | 默认值 |
-| ----- | ---- | ------ | ------ | ------ |
-| title | 标题 | string | -      | -      |
-| color | 颜色 | string |        |        |
