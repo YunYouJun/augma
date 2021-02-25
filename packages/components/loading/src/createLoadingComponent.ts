@@ -22,7 +22,7 @@ export function createLoadingComponent({
   globalLoadingOption,
 }: ILoadingCreateComponentParams): ILoadingInstance {
   let vm: VNode = null;
-  let afterLeaveTimer: Nullable<number> = null;
+  let afterLeaveTimer: Nullable<NodeJS.Timeout> = null;
 
   const afterLeaveFlag = ref(false);
   const data = reactive({
@@ -65,7 +65,7 @@ export function createLoadingComponent({
     afterLeaveFlag.value = true;
     clearTimeout(afterLeaveTimer);
 
-    afterLeaveTimer = window.setTimeout(() => {
+    afterLeaveTimer = setTimeout(() => {
       if (afterLeaveFlag.value) {
         afterLeaveFlag.value = false;
         destroySelf();

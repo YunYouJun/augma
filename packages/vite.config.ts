@@ -8,11 +8,6 @@ import { VitePWA } from "vite-plugin-pwa";
 import { componentNames } from "../meta/indexes";
 import { firstLetterUpper, hasDemo } from "../scripts/utils";
 
-/**
- * 生成属性表
- */
-function generatePropsTable() {}
-
 export default defineConfig({
   resolve: {
     alias: [
@@ -24,7 +19,7 @@ export default defineConfig({
     ViteComponents({
       dirs: [".vitepress/theme/components"],
       customLoaderMatcher: (id) => id.endsWith(".md"),
-      directoryAsNamespace: true,
+      // directoryAsNamespace: true,
       customComponentResolvers: ViteIconsResolver(),
     }),
     ViteIcons({
@@ -57,7 +52,7 @@ export default defineConfig({
               code.slice(0, frontmatterEnds) +
               header +
               code.slice(frontmatterEnds) +
-              '<PropsTable :props="$frontmatter.props" />';
+              "<PropsTable v-if='$frontmatter' :props='$frontmatter.props' />";
           }
         }
 

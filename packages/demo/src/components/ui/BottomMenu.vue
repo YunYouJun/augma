@@ -2,7 +2,7 @@
   <agm-bottom-menu :menuItems="menuItems" />
 </template>
 
-<script>
+<script lang="ts">
 import {
   mdiGithub,
   mdiEarth,
@@ -15,8 +15,9 @@ import {
   mdiCubeScan,
   mdiWeatherCloudy,
 } from "@mdi/js";
+import { defineComponent } from "vue";
 import pkg from "../../../package.json";
-export default {
+export default defineComponent({
   data() {
     return {
       mode: "use",
@@ -139,5 +140,5 @@ export default {
       this.$store.commit("windows/toggleBrowser");
     },
   },
-};
+});
 </script>

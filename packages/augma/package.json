@@ -2,9 +2,9 @@
   "name": "augma",
   "version": "0.0.1",
   "description": "AR UI Framework",
-  "main": "./dist/augma.es.js",
-  "module": "./dist/augma.es.js",
-  "style": "./dist/style.css",
+  "main": "dist/augma.es.js",
+  "module": "dist/augma.es.js",
+  "style": "dist/style.css",
   "repository": "https://github.com/YunYouJun/augma.git",
   "author": {
     "email": "me@yunyoujun.cn",

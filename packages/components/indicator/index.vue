@@ -10,10 +10,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { getAgmColorByType } from "@augma/shared";
+import { defineComponent } from "vue";
 import "./index.scss";
-export default {
+export default defineComponent({
   name: "AgmIndicator",
   props: {
     title: {
@@ -36,5 +37,5 @@ export default {
       };
     },
   },
-};
+});
 </script>

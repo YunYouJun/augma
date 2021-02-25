@@ -23,9 +23,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import yolo from "tfjs-yolo";
-export default {
+import { defineComponent } from "vue";
+export default defineComponent({
   data() {
     return {
       yolo: null,
@@ -83,7 +84,7 @@ export default {
       });
     },
   },
-};
+});
 </script>
 
 <style lang="scss">

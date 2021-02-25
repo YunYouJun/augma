@@ -31,12 +31,12 @@
     "vite": "^2.0.3",
     "vite-plugin-components": "^0.7.3",
     "vite-plugin-icons": "^0.2.4",
-    "vite-plugin-pwa": "^0.5.3",
+    "vite-plugin-pwa": "^0.5.4",
     "vitepress": "^0.12"
   },
   "dependencies": {
     "@vueuse/core": "^4.2.2",
-    "vue": "^3.0.5"
+    "vue": "^3.0.6"
   },
   "vetur": {
     "tags": "./vetur/tags.json",

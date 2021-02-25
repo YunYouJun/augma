@@ -11,8 +11,8 @@ module.exports = (md) => {
       if (tokens[idx].nesting === 1) {
         // opening tag
         const description = m && m.length > 1 ? m[1] : "";
-        const content =
-          tokens[idx + 1].type === "fence" ? tokens[idx + 1].content : "";
+        // const content =
+        //   tokens[idx + 1].type === "fence" ? tokens[idx + 1].content : "";
         const descriptionSlot = description
           ? `<template v-slot:description>${description}</template>`
           : "";

@@ -1,4 +1,6 @@
-let hiddenTextarea
+import isServer from "@augma/utils/isServer";
+
+let hiddenTextarea;
 
 const HIDDEN_STYLE = `
   height:0 !important;
@@ -8,68 +10,67 @@ const HIDDEN_STYLE = `
   z-index:-1000 !important;
   top:0 !important;
   right:0 !important;
-`
+`;
 
 const CONTEXT_STYLE = [
-  'letter-spacing',
-  'line-height',
-  'padding-top',
-  'padding-bottom',
-  'font-family',
-  'font-weight',
-  'font-size',
-  'text-rendering',
-  'text-transform',
-  'width',
-  'text-indent',
-  'padding-left',
-  'padding-right',
-  'border-width',
-  'box-sizing',
-]
+  "letter-spacing",
+  "line-height",
+  "padding-top",
+  "padding-bottom",
+  "font-family",
+  "font-weight",
+  "font-size",
+  "text-rendering",
+  "text-transform",
+  "width",
+  "text-indent",
+  "padding-left",
+  "padding-right",
+  "border-width",
+  "box-sizing",
+];
 
 type NodeStyle = {
-  contextStyle: string
-  boxSizing: string
-  paddingSize: number
-  borderSize: number
-}
+  contextStyle: string;
+  boxSizing: string;
+  paddingSize: number;
+  borderSize: number;
+};
 
 type TextAreaHeight = {
-  height: string
-  minHeight?: string
-}
+  height: string;
+  minHeight?: string;
+};
 
 function calculateNodeStyling(targetElement): NodeStyle {
-  const style = window.getComputedStyle(targetElement)
+  if (isServer) return;
+  const style = getComputedStyle(targetElement);
 
-  const boxSizing = style.getPropertyValue('box-sizing')
+  const boxSizing = style.getPropertyValue("box-sizing");
 
-  const paddingSize = (
-    parseFloat(style.getPropertyValue('padding-bottom')) +
-    parseFloat(style.getPropertyValue('padding-top'))
-  )
+  const paddingSize =
+    parseFloat(style.getPropertyValue("padding-bottom")) +
+    parseFloat(style.getPropertyValue("padding-top"));
 
-  const borderSize = (
-    parseFloat(style.getPropertyValue('border-bottom-width')) +
-    parseFloat(style.getPropertyValue('border-top-width'))
-  )
+  const borderSize =
+    parseFloat(style.getPropertyValue("border-bottom-width")) +
+    parseFloat(style.getPropertyValue("border-top-width"));
 
-  const contextStyle = CONTEXT_STYLE
-    .map(name => `${name}:${style.getPropertyValue(name)}`)
-    .join(';')
+  const contextStyle = CONTEXT_STYLE.map(
+    (name) => `${name}:${style.getPropertyValue(name)}`
+  ).join(";");
 
-  return { contextStyle, paddingSize, borderSize, boxSizing }
+  return { contextStyle, paddingSize, borderSize, boxSizing };
 }
 
 export default function calcTextareaHeight(
   targetElement,
   minRows = 1,
-  maxRows = null,
+  maxRows = null
 ): TextAreaHeight {
   if (!hiddenTextarea) {
-    hiddenTextarea = document.createElement('textarea')
-    document.body.appendChild(hiddenTextarea)
+    hiddenTextarea = document.createElement("textarea");
+    document.body.appendChild(hiddenTextarea);
   }
 
   const {
@@ -77,41 +78,41 @@ export default function calcTextareaHeight(
     borderSize,
     boxSizing,
     contextStyle,
-  } = calculateNodeStyling(targetElement)
+  } = calculateNodeStyling(targetElement);
 
-  hiddenTextarea.setAttribute('style', `${contextStyle};${HIDDEN_STYLE}`)
-  hiddenTextarea.value = targetElement.value || targetElement.placeholder || ''
+  hiddenTextarea.setAttribute("style", `${contextStyle};${HIDDEN_STYLE}`);
+  hiddenTextarea.value = targetElement.value || targetElement.placeholder || "";
 
-  let height = hiddenTextarea.scrollHeight
-  const result = {} as TextAreaHeight
+  let height = hiddenTextarea.scrollHeight;
+  const result = {} as TextAreaHeight;
 
-  if (boxSizing === 'border-box') {
-    height = height + borderSize
-  } else if (boxSizing === 'content-box') {
-    height = height - paddingSize
+  if (boxSizing === "border-box") {
+    height = height + borderSize;
+  } else if (boxSizing === "content-box") {
+    height = height - paddingSize;
   }
 
-  hiddenTextarea.value = ''
-  const singleRowHeight = hiddenTextarea.scrollHeight - paddingSize
+  hiddenTextarea.value = "";
+  const singleRowHeight = hiddenTextarea.scrollHeight - paddingSize;
 
   if (minRows !== null) {
-    let minHeight = singleRowHeight * minRows
-    if (boxSizing === 'border-box') {
-      minHeight = minHeight + paddingSize + borderSize
+    let minHeight = singleRowHeight * minRows;
+    if (boxSizing === "border-box") {
+      minHeight = minHeight + paddingSize + borderSize;
     }
-    height = Math.max(minHeight, height)
-    result.minHeight = `${ minHeight }px`
+    height = Math.max(minHeight, height);
+    result.minHeight = `${minHeight}px`;
   }
   if (maxRows !== null) {
-    let maxHeight = singleRowHeight * maxRows
-    if (boxSizing === 'border-box') {
-      maxHeight = maxHeight + paddingSize + borderSize
+    let maxHeight = singleRowHeight * maxRows;
+    if (boxSizing === "border-box") {
+      maxHeight = maxHeight + paddingSize + borderSize;
     }
-    height = Math.min(maxHeight, height)
+    height = Math.min(maxHeight, height);
   }
-  result.height = `${ height }px`
-  hiddenTextarea.parentNode?.removeChild(hiddenTextarea)
-  hiddenTextarea = null
+  result.height = `${height}px`;
+  hiddenTextarea.parentNode?.removeChild(hiddenTextarea);
+  hiddenTextarea = null;
 
-  return result
+  return result;
 }
