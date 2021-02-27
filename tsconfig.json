@@ -18,6 +18,6 @@
       "augma": ["packages/augma"]
     }
   },
-  "include": ["packages", "packages/**/*.d.ts"],
+  "include": ["packages", "global.d.ts", "packages/**/*.d.ts"],
   "exclude": ["node_modules", "**/**/*.md", "**/dist"]
 }

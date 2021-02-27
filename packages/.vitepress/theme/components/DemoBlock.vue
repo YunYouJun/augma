@@ -13,13 +13,17 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { onErrorCaptured, ref } from "vue";
+<script lang="ts">
+import { defineComponent, onErrorCaptured, ref } from "vue";
 
-const error = ref(null);
+export default defineComponent({
+  setup() {
+    const error = ref(null);
 
-onErrorCaptured((err) => {
-  error.value = err;
+    onErrorCaptured((err) => {
+      error.value = err;
+    });
+  },
 });
 </script>
 

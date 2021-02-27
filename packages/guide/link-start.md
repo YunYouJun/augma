@@ -17,6 +17,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 
 import augma from "augma";
+import "augma/dist/style.css";
 
 const app = createApp(App);
 

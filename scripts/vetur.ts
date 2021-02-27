@@ -10,8 +10,8 @@ export function generateTag(frontmatter: any) {
   if (frontmatter.subtags) {
     tag.subtags = frontmatter.subtags;
   }
-  if (frontmatter.attributes) {
-    tag.attributes = frontmatter.attributes;
+  if (frontmatter.props) {
+    tag.attributes = frontmatter.props.map((prop) => prop.name);
   }
   return tag;
 }

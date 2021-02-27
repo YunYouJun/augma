@@ -6,15 +6,10 @@
 
 <script lang="ts">
 import AgmLoading from "./index";
-import AgmButton from "../button/index.vue";
 import { defineComponent } from "vue";
 export default defineComponent({
-  components: {
-    AgmButton,
-  },
   methods: {
     openLoading() {
-      console.log("open loading");
       this.$loading = AgmLoading.service();
       setTimeout(() => {
         this.$loading.close();

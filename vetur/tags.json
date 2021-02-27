@@ -2,9 +2,26 @@
   "agm-bottom-menu": {
     "description": "Bottom Menu"
   },
-  "agm-button": {},
-  "agm-card": {},
-  "agm-clock": {},
+  "agm-button": {
+    "description": "Commonly used button.",
+    "attributes": [
+      "type",
+      "icon",
+      "outline"
+    ]
+  },
+  "agm-card": {
+    "attributes": [
+      "type"
+    ]
+  },
+  "agm-clock": {
+    "description": "自动显示当前时间",
+    "attributes": [
+      "color",
+      "addZero"
+    ]
+  },
   "agm-color": {},
   "agm-dialog": {},
   "agm-helper": {},
@@ -14,7 +31,12 @@
   "agm-input": {},
   "agm-loading": {},
   "agm-menu": {},
-  "agm-notification": {},
+  "agm-notification": {
+    "attributes": [
+      "title",
+      "color"
+    ]
+  },
   "agm-select": {},
   "agm-useWebcam": {}
 }

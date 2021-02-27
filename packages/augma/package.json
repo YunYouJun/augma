@@ -22,11 +22,10 @@
     "dev": "vite"
   },
   "peerDependencies": {
-    "vue": "^3.0.5"
+    "vue": "^3.0.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.1.5",
-    "@vue/compiler-sfc": "^3.0.6",
     "sass": "^1.32.8"
   }
 }
