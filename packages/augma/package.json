@@ -1,6 +1,6 @@
 {
   "name": "augma",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "AR UI Framework",
   "main": "dist/augma.es.js",
   "module": "dist/augma.es.js",
@@ -25,9 +25,8 @@
     "vue": "^3.0.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.0.5",
+    "@vitejs/plugin-vue": "^1.1.5",
     "@vue/compiler-sfc": "^3.0.6",
-    "@vuedx/typescript-plugin-vue": "^0.6.3",
     "sass": "^1.32.8"
   }
 }
