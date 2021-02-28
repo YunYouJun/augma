@@ -1,5 +1,5 @@
 import fs from "fs";
-import { readIndexesAndHints } from "./utils";
+import { readIndexesAndHints } from "./indexes";
 
 /**
  * 格式化 JSON

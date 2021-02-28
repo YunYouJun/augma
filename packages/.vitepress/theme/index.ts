@@ -4,7 +4,7 @@ import DemoBlock from "./components/DemoBlock.vue";
 
 // custom css
 import augma from "augma";
-import "augma/dist/style.css";
+import "augma/style";
 
 import "./styles/index.scss";
 

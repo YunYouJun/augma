@@ -23,13 +23,15 @@ const config = {
     lastUpdated: "上次更新",
 
     nav: [
-      { text: "指南", link: "/guide/" },
+      { text: "指南", link: "/guide/link-start.html" },
       { text: "组件", link: "/components/" },
+      { text: "钩子函数", link: "/hooks/" },
     ],
 
     sidebar: {
       "/guide/": getGuideSidebar(),
       "/components/": getComponentsSidebar(),
+      "/hooks": getHooksSidebar(),
     },
   },
 
@@ -60,30 +62,59 @@ function getGuideSidebar() {
  */
 function getComponentsSidebar() {
   const links = [];
-  const { categories } = indexes;
 
-  /**
-   * 首字母大写
-   */
-  function firstLetterUpper(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
-  for (const category of categories) {
-    const components = indexes.components.filter(
+  for (const category of indexes.components.categories) {
+    const components = indexes.components.children.filter(
       (i) => i.category === category.name
     );
 
     links.push({
-      text: firstLetterUpper(category.name) + " " + category.title,
+      text: getText(category),
       children: components.map((i) => ({
-        text: firstLetterUpper(i.name) + " " + i.title,
+        text: getText(i),
         link: `/components/${i.name}/`,
       })),
     });
   }
 
   return links;
+}
+
+function getHooksSidebar() {
+  const links = [];
+
+  for (const category of indexes.hooks.categories) {
+    const hooks = indexes.hooks.children.filter(
+      (i) => i.category === category.name
+    );
+
+    if (!hooks.length) continue;
+
+    links.push({
+      text: getText(category),
+      children: hooks.map((hook) => ({
+        text: `${hook.name} ${hook.title}`,
+        link: `/hooks/${hook.name}/`,
+      })),
+    });
+  }
+
+  return links;
+}
+
+/**
+ * 首字母大写
+ */
+function firstLetterUpper(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * 拼接标题
+ * @param {*} object
+ */
+function getText(object) {
+  return firstLetterUpper(object.name) + " " + object.title;
 }
 
 module.exports = config;

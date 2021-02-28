@@ -1,7 +1,8 @@
-import _indexes from "./indexes.json";
+import indexes from "./indexes.json";
 
-const indexes = _indexes;
-
-export const componentNames = indexes.components.map(
+const componentNames = indexes.components.children.map(
   (component) => component.name
 );
+const hookNames = indexes.hooks.children.map((hook) => hook.name);
+
+export const AugmaChildren = componentNames.concat(hookNames);

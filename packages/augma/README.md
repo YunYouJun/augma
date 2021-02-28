@@ -6,7 +6,7 @@ Docs: <https://docs.augma.elpsy.cn>
 
 ## Usage
 
-```sh
+```bash
 yarn add augma
 ```
 
@@ -15,7 +15,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 
 import augma from "augma";
-import "augma/dist/style.css";
+import "augma/style";
 
 const app = createApp(App);
 

@@ -6,8 +6,7 @@ import { prompt } from "enquirer";
 import execa from "execa";
 import semver from "semver";
 
-import { Logger } from "@yunyoujun/logger";
-const logger = new Logger();
+import { logger } from "./utils";
 
 const currentVersion = require("../package.json").version;
 
@@ -72,7 +71,7 @@ async function main() {
 
   // build packages
   logger.debug("Building all packages...");
-  await run("yarn", ["build:lib"]);
+  await run("yarn", ["build"]);
 
   // publish package
   console.log();

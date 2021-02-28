@@ -1,4 +1,4 @@
-name: demo
+name: client
 on:
   push:
     branches:
@@ -12,16 +12,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: "12"
+          node-version: "14"
 
       - run: yarn
-      - run: cd packages/augma && yarn link
-      - run: yarn link augma
-      - run: yarn build
+      - run: yarn build:client
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist
+          publish_dir: ./packages/client/dist
           force_orphan: true

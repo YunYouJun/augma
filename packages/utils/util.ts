@@ -1,12 +1,12 @@
-import type { Ref } from "vue";
 import { getCurrentInstance } from "vue";
 import { AugmaOptions } from "./config";
+import type { Hash } from "./types";
 
 /**
  * 清除定时器
  * @param timer
  */
-export const clearTimer = (timer: NodeJS.Timeout | null) => {
+export const clearTimer = (timer: any) => {
   if (timer) {
     clearTimeout(timer);
   }

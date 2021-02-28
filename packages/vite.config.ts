@@ -5,7 +5,7 @@ import ViteComponents from "vite-plugin-components";
 import ViteIcons, { ViteIconsResolver } from "vite-plugin-icons";
 import { VitePWA } from "vite-plugin-pwa";
 
-import { componentNames } from "../meta/indexes";
+import { AugmaChildren } from "../meta/indexes";
 import { firstLetterUpper, hasDemo } from "../scripts/utils";
 
 export default defineConfig({
@@ -34,13 +34,13 @@ export default defineConfig({
 
         const [pkg, name, i] = id.split("/").slice(-3);
 
-        if (componentNames.includes(name) && i === "index.md") {
+        if (AugmaChildren.includes(name) && i === "index.md") {
           const frontmatterEnds = code.indexOf("---\n", 3) + 4;
           let header = "";
           if (hasDemo(pkg, name)) {
             const insertedCode =
               "\n\n<script setup>\nimport Demo from './demo.vue'\n</script>\n";
-            const demoCode = `\n\n::: demo\n\n<<< ./packages/components/${name}/demo.vue\n\n:::\n`;
+            const demoCode = `\n\n::: demo\n\n<<< ./packages/${pkg}/${name}/demo.vue\n\n:::\n`;
             header =
               insertedCode +
               `\n# ${firstLetterUpper(name)} {{ $frontmatter.title }}` +

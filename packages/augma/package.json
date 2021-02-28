@@ -1,9 +1,16 @@
 {
   "name": "augma",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "AR UI Framework",
   "main": "dist/augma.es.js",
   "module": "dist/augma.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/augma.es.js",
+      "require": "./dist/augma.umd.js"
+    },
+    "./style": "./dist/style.css"
+  },
   "style": "dist/style.css",
   "repository": "https://github.com/YunYouJun/augma.git",
   "author": {

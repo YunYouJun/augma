@@ -127,7 +127,7 @@ import {
 } from "vue";
 import AgmIcon from "../icon/index.vue";
 
-import { useAttrs } from "@augma/components/hooks";
+import { useAttrs } from "@augma/hooks";
 import { UPDATE_MODEL_EVENT, VALIDATE_STATE_MAP } from "@augma/utils/constants";
 import { isObject } from "@vue/shared";
 import { useGlobalConfig } from "@augma/utils/util";
@@ -254,7 +254,7 @@ export default defineComponent({
 
   setup(props, ctx) {
     const instance = getCurrentInstance();
-    // const attrs = useAttrs();
+    const attrs = useAttrs();
     const $AUGMA = useGlobalConfig();
 
     const agmForm = inject(agmFormKey, {} as AgmFormContext);
@@ -415,6 +415,11 @@ export default defineComponent({
       ctx.emit("focus", event);
     };
 
+    const handleBlur = (event) => {
+      focused.value = false;
+      ctx.emit("blur", event);
+    };
+
     const select = () => {
       inputOrTextarea.value.select();
     };
@@ -489,7 +494,7 @@ export default defineComponent({
     return {
       input,
       textarea,
-      // attrs,
+      attrs,
       inputSize,
       validateState,
       validateIcon,
@@ -508,6 +513,7 @@ export default defineComponent({
       handleInput,
       handleChange,
       handleFocus,
+      handleBlur,
       handlePasswordVisible,
       clear,
       select,

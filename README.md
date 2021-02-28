@@ -1,6 +1,6 @@
 # Augma
 
-[![GitHub Pages](https://github.com/YunYouJun/augma/workflows/demo/badge.svg)](https://augma.elpsy.cn/)
+[![GitHub Pages](https://github.com/YunYouJun/augma/workflows/client/badge.svg)](https://augma.elpsy.cn/)
 [![docs](https://github.com/YunYouJun/augma/workflows/docs/badge.svg)](https://docs.augma.elpsy.cn)
 
 <!-- [![GitHub Pages](https://github.com/SAO-UI/augma/workflows/docs/badge.svg)](https://sao-ui.github.io/augma/) -->
@@ -8,6 +8,25 @@
 🎨 AR UI Framework
 
 > Because many new features are used, you'd better use the latest version of Chrome Browser.
+
+## Usage
+
+```bash
+yarn add augma
+```
+
+```ts
+import { createApp } from "vue";
+import App from "./App.vue";
+
+import augma from "augma";
+import "augma/style";
+
+const app = createApp(App);
+
+app.use(augma);
+app.mount("#app");
+```
 
 ## Dev
 
@@ -26,12 +45,11 @@ yarn dev
 ### Docs
 
 ```bash
-yarn docs:dev
+yarn docs
 ```
 
 ## Todo
 
-- [ ] refactor docs by vuepress-next (replace vitepress)
 - [ ] button to hide ui
 
 ## Thanks

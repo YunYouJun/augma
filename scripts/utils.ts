@@ -1,14 +1,11 @@
 import fs from "fs";
-import { resolve, join } from "path";
-import fg from "fast-glob";
-import matter from "gray-matter";
+import path from "path";
 
-import { PackageIndexes, Component } from "../meta/types";
-
-import { generateTag } from "./vetur";
+import { Logger } from "@yunyoujun/logger";
+export const logger = new Logger();
 
 // const DOCS_URL = "https://docs.augma.elpsy.cn";
-const DIR_SRC = resolve(__dirname, "../packages");
+export const DIR_SRC = path.resolve(__dirname, "../packages");
 
 /**
  * 首字母大写
@@ -19,97 +16,22 @@ export function firstLetterUpper(str: string) {
 }
 
 export function hasDemo(pkg: string, name: string) {
-  return fs.existsSync(join(DIR_SRC, pkg, name, "demo.vue"));
+  return fs.existsSync(path.join(DIR_SRC, pkg, name, "demo.vue"));
 }
 
-export async function listComponents(dir: string, ignore: string[] = []) {
-  const files = await fg("*", {
-    onlyDirectories: true,
-    cwd: dir,
-    ignore: ["_*", "dist", "node_modules", ...ignore],
-  });
-  files.sort();
-  return files;
-}
-
-/**
- * 读取并生成索引
- */
-export async function readIndexesAndHints() {
-  const indexes: PackageIndexes = {
-    categories: [],
-    components: [],
-  };
-
-  const dir = join(DIR_SRC, "components");
-  const components = await listComponents(dir);
-
-  // for vetur tags
-  const tags = {};
-
-  for (const componentName of components) {
-    const mdPath = join(dir, componentName, "index.md");
-
-    const component: Component = {
-      name: componentName,
-      title: "",
-      category: "",
-    };
-
-    if (!fs.existsSync(mdPath)) {
-      continue;
-    }
-
-    const mdRaw = fs.readFileSync(mdPath);
-    const { content: md, data: frontmatter } = matter(mdRaw);
-    const { category, title } = frontmatter;
-
-    component.category = category;
-    component.title = title;
-
-    indexes.components.push(component);
-
-    const tagName = `agm-${componentName}`;
-    tags[tagName] = generateTag(frontmatter);
+export const targets = fs.readdirSync("packages").filter((f) => {
+  if (
+    f.endsWith(".ts") ||
+    f.endsWith(".md") ||
+    f.startsWith(".") ||
+    !fs.statSync(`packages/${f}`).isDirectory() ||
+    !fs.existsSync(path.resolve(`packages/${f}`, "package.json"))
+  ) {
+    return false;
   }
-
-  indexes.categories = getCategories();
-
-  return {
-    indexes,
-    tags,
-  };
-}
-
-export function getCategories() {
-  return [
-    {
-      name: "animation",
-      title: "动画",
-    },
-    {
-      name: "common",
-      title: "通用",
-    },
-    {
-      name: "form",
-      title: "表单",
-    },
-    {
-      name: "misc",
-      title: "杂项",
-    },
-    {
-      name: "sensors",
-      title: "传感器",
-    },
-    {
-      name: "hooks",
-      title: "钩子函数",
-    },
-    {
-      name: "utilities",
-      title: "工具",
-    },
-  ];
-}
+  const pkg = require(`../packages/${f}/package.json`);
+  if (pkg.private) {
+    return false;
+  }
+  return true;
+});

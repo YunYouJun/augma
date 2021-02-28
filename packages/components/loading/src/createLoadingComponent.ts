@@ -16,6 +16,7 @@ import type {
   ILoadingCreateComponentParams,
   ILoadingInstance,
 } from "./loading.type";
+import type { Nullable } from "@augma/utils/types";
 
 export function createLoadingComponent({
   options,

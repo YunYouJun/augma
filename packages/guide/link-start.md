@@ -1,10 +1,14 @@
 # Link Start
 
-Augma 是基于 Vue3 实现的 UI 框架
+Augma 是使用 Vite 开发并基于 Vue3 实现的实验性 AR UI 框架
+
+- 尽可能地使用浏览器的新特性
+
+[Client Demo](https://augma.elpsy.cn): 使用 Augma 实现的客户端示例
 
 ## 安装
 
-尚未发布
+[![npm](https://img.shields.io/npm/v/augma)](https://www.npmjs.com/package/augma)
 
 ```bash
 yarn add augma
@@ -16,8 +20,10 @@ yarn add augma
 import { createApp } from "vue";
 import App from "./App.vue";
 
+// 引入 Augma 组件
 import augma from "augma";
-import "augma/dist/style.css";
+// 引入 Augma 样式
+import "augma/style";
 
 const app = createApp(App);
 
@@ -29,10 +35,13 @@ app.mount("#app");
 
 ```bash
 git clone https://github.com/YunYouJun/augma
+# install dependencies
 cd augma
 yarn
+# link augma
 cd packages/augma
 yarn link
+# link to your project
+cd your-project # 进入你的项目
+yarn link augma
 ```
-
-前往你的项目，输入 `yarn link augma`。

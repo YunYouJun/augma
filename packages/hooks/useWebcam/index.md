@@ -1,6 +1,6 @@
 ---
 title: 相机
-category: hooks
+category: sensors
 ---
 
 > [getUserMedia | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/MediaDevices/getUserMedia)

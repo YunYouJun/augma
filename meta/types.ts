@@ -3,20 +3,26 @@ interface Category {
   title: string;
 }
 
-export interface Component {
+interface BaseChild {
   name: string;
-  /**
-   * 中文标题
-   */
   title: string;
   description?: string;
   category: string;
 }
 
+export interface Component extends BaseChild {}
+export interface Hook extends BaseChild {}
+
 export interface PackageIndexes {
   /**
    * 组件的种类
    */
-  categories: Category[];
-  components: Component[];
+  components: {
+    categories: Category[];
+    children: Component[];
+  };
+  hooks: {
+    categories: Category[];
+    children: Hook[];
+  };
 }

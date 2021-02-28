@@ -1,114 +1,122 @@
 {
-  "categories": [
-    {
-      "name": "animation",
-      "title": "动画"
-    },
-    {
-      "name": "common",
-      "title": "通用"
-    },
-    {
-      "name": "form",
-      "title": "表单"
-    },
-    {
-      "name": "misc",
-      "title": "杂项"
-    },
-    {
-      "name": "sensors",
-      "title": "传感器"
-    },
-    {
-      "name": "hooks",
-      "title": "钩子函数"
-    },
-    {
-      "name": "utilities",
-      "title": "工具"
-    }
-  ],
-  "components": [
-    {
-      "name": "bottom-menu",
-      "title": "底部菜单",
-      "category": "common"
-    },
-    {
-      "name": "button",
-      "title": "按钮",
-      "category": "common"
-    },
-    {
-      "name": "card",
-      "title": "卡片",
-      "category": "common"
-    },
-    {
-      "name": "clock",
-      "title": "时钟",
-      "category": "common"
-    },
-    {
-      "name": "color",
-      "title": "色彩",
-      "category": "misc"
-    },
-    {
-      "name": "dialog",
-      "title": "会话",
-      "category": "common"
-    },
-    {
-      "name": "helper",
-      "title": "辅助类",
-      "category": "misc"
-    },
-    {
-      "name": "html",
-      "title": "基础元素",
-      "category": "common"
-    },
-    {
-      "name": "icon",
-      "title": "图标",
-      "category": "misc"
-    },
-    {
-      "name": "indicator",
-      "title": "指示器",
-      "category": "common"
-    },
-    {
-      "name": "input",
-      "title": "输入框",
-      "category": "form"
-    },
-    {
-      "name": "loading",
-      "title": "加载",
-      "category": "animation"
-    },
-    {
-      "name": "menu",
-      "title": "菜单",
-      "category": "common"
-    },
-    {
-      "name": "notification",
-      "title": "通知",
-      "category": "utilities"
-    },
-    {
-      "name": "select",
-      "title": "选择器",
-      "category": "form"
-    },
-    {
-      "name": "useWebcam",
-      "title": "相机",
-      "category": "hooks"
-    }
-  ]
+  "components": {
+    "categories": [
+      {
+        "name": "animation",
+        "title": "动画"
+      },
+      {
+        "name": "common",
+        "title": "通用"
+      },
+      {
+        "name": "form",
+        "title": "表单"
+      },
+      {
+        "name": "misc",
+        "title": "杂项"
+      },
+      {
+        "name": "utilities",
+        "title": "工具"
+      }
+    ],
+    "children": [
+      {
+        "name": "bottom-menu",
+        "title": "底部菜单",
+        "category": "common"
+      },
+      {
+        "name": "button",
+        "title": "按钮",
+        "category": "common"
+      },
+      {
+        "name": "card",
+        "title": "卡片",
+        "category": "common"
+      },
+      {
+        "name": "clock",
+        "title": "时钟",
+        "category": "common"
+      },
+      {
+        "name": "color",
+        "title": "色彩",
+        "category": "misc"
+      },
+      {
+        "name": "dialog",
+        "title": "会话",
+        "category": "common"
+      },
+      {
+        "name": "helper",
+        "title": "辅助类",
+        "category": "misc"
+      },
+      {
+        "name": "html",
+        "title": "基础元素",
+        "category": "common"
+      },
+      {
+        "name": "icon",
+        "title": "图标",
+        "category": "misc"
+      },
+      {
+        "name": "indicator",
+        "title": "指示器",
+        "category": "common"
+      },
+      {
+        "name": "input",
+        "title": "输入框",
+        "category": "form"
+      },
+      {
+        "name": "loading",
+        "title": "加载",
+        "category": "animation"
+      },
+      {
+        "name": "menu",
+        "title": "菜单",
+        "category": "common"
+      },
+      {
+        "name": "notification",
+        "title": "通知",
+        "category": "utilities"
+      },
+      {
+        "name": "select",
+        "title": "选择器",
+        "category": "form"
+      }
+    ]
+  },
+  "hooks": {
+    "categories": [
+      {
+        "name": "sensors",
+        "title": "传感器"
+      },
+      {
+        "name": "helper",
+        "title": "辅助"
+      }
+    ],
+    "children": [
+      {
+        "name": "useWebcam",
+        "title": "相机",
+        "category": "sensors"
+      }
+    ]
+  }
 }
