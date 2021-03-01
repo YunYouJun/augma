@@ -49,31 +49,24 @@
       </span>
       <!-- 后置内容 -->
       <span v-if="getSuffixVisible()" class="agm-input__suffix">
-        <span class="agm-input__suffix-inner">
-          <template v-if="!showClear || !showPwdVisible || !isWordLimitVisible">
-            <slot name="suffix"></slot>
-            <i v-if="suffixIcon" :class="['agm-input__icon', suffixIcon]"></i>
-          </template>
-          <i
-            v-if="showClear"
-            class="agm-input__icon agm-icon-circle-close agm-input__clear"
-            @mousedown.prevent
-            @click="clear"
-          >
-            <agm-icon icon="mdi:close" />
-          </i>
+        <template v-if="!showClear || !showPwdVisible || !isWordLimitVisible">
+          <slot name="suffix"></slot>
+          <i v-if="suffixIcon" :class="['agm-input__icon', suffixIcon]"></i>
+        </template>
+        <agm-icon
+          v-if="showClear"
+          icon="mdi:close"
+          @mousedown.prevent
+          @click="clear"
+        />
 
-          <i
-            v-if="showPwdVisible"
-            class="agm-input__icon agm-icon-view agm-input__clear"
-            @click="handlePasswordVisible"
-          ></i>
-          <span v-if="isWordLimitVisible" class="agm-input__count">
-            <span class="agm-input__count-inner">
-              {{ textLength }}/{{ upperLimit }}
-            </span>
+        <i v-if="showPwdVisible" @click="handlePasswordVisible"></i>
+        <span v-if="isWordLimitVisible" class="agm-input__count">
+          <span class="agm-input__count-inner">
+            {{ textLength }}/{{ upperLimit }}
           </span>
         </span>
+
         <i
           v-if="validateState"
           :class="['agm-input__icon', 'agm-input__validateIcon', validateIcon]"
@@ -293,8 +286,7 @@ export default defineComponent({
         props.clearable &&
         !inputDisabled.value &&
         !props.readonly &&
-        nativeInputValue.value &&
-        (focused.value || hovering.value)
+        nativeInputValue.value
       );
     });
     const showPwdVisible = computed(() => {

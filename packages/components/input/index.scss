@@ -22,16 +22,17 @@ $--input-hover-border: $--input-placeholder-color;
   &__suffix {
     position: absolute;
     height: 100%;
-    right: 5px;
     top: 0;
-    text-align: center;
+    bottom: 0;
+    right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: inherit;
     transition: all 0.3s;
-    pointer-events: none;
+    cursor: pointer;
 
     &-inner {
-      font-size: 2rem;
-      line-height: 2rem;
     }
   }
 

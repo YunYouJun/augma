@@ -33,14 +33,8 @@ export async function listHooks(dir: string, ignore: string[] = []) {
  */
 export async function readIndexesAndHints() {
   const indexes: PackageIndexes = {
-    components: {
-      categories: [],
-      children: [],
-    },
-    hooks: {
-      categories: [],
-      children: [],
-    },
+    components: [],
+    hooks: [],
   };
 
   const dir = path.join(DIR_SRC, "components");
@@ -72,7 +66,7 @@ export async function readIndexesAndHints() {
     component.category = category;
     component.title = title;
 
-    indexes.components.children.push(component);
+    indexes.components.push(component);
 
     const tagName = `agm-${componentName}`;
     tags[tagName] = generateTag(frontmatter);
@@ -94,52 +88,11 @@ export async function readIndexesAndHints() {
     const mdRaw = fs.readFileSync(mdPath);
     const { data: frontmatter } = matter(mdRaw);
     Object.assign(hook, frontmatter);
-    indexes.hooks.children.push(hook);
+    indexes.hooks.push(hook);
   }
-
-  indexes.components.categories = getCategories("components");
-  indexes.hooks.categories = getCategories("hooks");
 
   return {
     indexes,
     tags,
   };
-}
-
-export function getCategories(type: "components" | "hooks") {
-  if (type === "components") {
-    return [
-      {
-        name: "animation",
-        title: "动画",
-      },
-      {
-        name: "common",
-        title: "通用",
-      },
-      {
-        name: "form",
-        title: "表单",
-      },
-      {
-        name: "misc",
-        title: "杂项",
-      },
-      {
-        name: "utilities",
-        title: "工具",
-      },
-    ];
-  } else if (type === "hooks") {
-    return [
-      {
-        name: "sensors",
-        title: "传感器",
-      },
-      {
-        name: "helper",
-        title: "辅助",
-      },
-    ];
-  }
 }

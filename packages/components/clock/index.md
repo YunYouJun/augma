@@ -7,7 +7,7 @@ props:
     description: 色彩
     type: string
     acceptedValues:
-      - TypeArray
+      - AgmTypeArray
       - CSS3 Color
   - name: addZero
     description: 是否补零

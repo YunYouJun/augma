@@ -7,7 +7,7 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
 import "./index.scss";
-import { AgmColorType, TypeArray } from "@augma/shared";
+import { AgmColorType, AgmTypeArray } from "@augma/shared";
 
 type IButtonNativeType = PropType<"button" | "submit" | "reset">;
 
@@ -20,7 +20,7 @@ export default defineComponent({
       type: String as PropType<AgmColorType>,
       default: "default",
       validator: (type: AgmColorType) => {
-        return TypeArray.includes(type);
+        return AgmTypeArray.includes(type);
       },
     },
     outline: {

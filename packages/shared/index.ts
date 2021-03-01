@@ -8,7 +8,7 @@ export type AgmColorType =
   | "danger"
   | "info";
 
-export const TypeArray: AgmColorType[] = [
+export const AgmTypeArray: AgmColorType[] = [
   "default",
   "primary",
   "success",
@@ -17,7 +17,7 @@ export const TypeArray: AgmColorType[] = [
   "info",
 ];
 
-export const TypeMap: Indexable<AgmColorType> = {
+export const AgmTypeMap: Indexable<AgmColorType> = {
   default: "default",
   primary: "primary",
   success: "success",
@@ -27,7 +27,7 @@ export const TypeMap: Indexable<AgmColorType> = {
 };
 
 export function getAgmColorByType(type: AgmColorType) {
-  if (type && TypeMap[type]) {
+  if (type && AgmTypeMap[type]) {
     return `var(--agm-${type})`;
   } else {
     return type;

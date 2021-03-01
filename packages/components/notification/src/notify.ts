@@ -11,7 +11,7 @@ import type {
   NotificationVM,
   Position,
 } from "./notification.type";
-import { TypeArray } from "@augma/shared";
+import { AgmTypeArray } from "@augma/shared";
 
 const notifications: Record<Position, NotificationQueue> = {
   "top-left": [],
@@ -80,7 +80,7 @@ const Notification: INotification = function (options = {}) {
   };
 };
 
-TypeArray.forEach((type) => {
+AgmTypeArray.forEach((type) => {
   Object.assign(Notification, {
     [type]: (options: NotificationVM | INotificationOptions | string = {}) => {
       if (typeof options === "string" || isVNode(options)) {

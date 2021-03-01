@@ -4,9 +4,10 @@ import { defineConfig } from "vite";
 import ViteComponents from "vite-plugin-components";
 import ViteIcons, { ViteIconsResolver } from "vite-plugin-icons";
 import { VitePWA } from "vite-plugin-pwa";
+import { capitalize } from "vue";
 
 import { AugmaChildren } from "../meta/indexes";
-import { firstLetterUpper, hasDemo } from "../scripts/utils";
+import { hasDemo } from "../scripts/utils";
 
 export default defineConfig({
   resolve: {
@@ -43,7 +44,7 @@ export default defineConfig({
             const demoCode = `\n\n::: demo\n\n<<< ./packages/${pkg}/${name}/demo.vue\n\n:::\n`;
             header =
               insertedCode +
-              `\n# ${firstLetterUpper(name)} {{ $frontmatter.title }}` +
+              `\n# ${capitalize(name)} {{ $frontmatter.title }}` +
               demoCode;
           }
 

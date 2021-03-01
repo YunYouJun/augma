@@ -1,4 +1,6 @@
+const { capitalize } = require("vue");
 const indexes = require("../../meta/indexes.json");
+const categories = require("../../meta/categories.json");
 
 const mdConfig = require("./plugins/markdown");
 
@@ -57,14 +59,18 @@ function getGuideSidebar() {
   ];
 }
 
+function getCategories(type) {
+  return categories[type];
+}
+
 /**
  * 获取组件侧边栏
  */
 function getComponentsSidebar() {
   const links = [];
 
-  for (const category of indexes.components.categories) {
-    const components = indexes.components.children.filter(
+  for (const category of categories["components"]) {
+    const components = indexes.components.filter(
       (i) => i.category === category.name
     );
 
@@ -83,10 +89,8 @@ function getComponentsSidebar() {
 function getHooksSidebar() {
   const links = [];
 
-  for (const category of indexes.hooks.categories) {
-    const hooks = indexes.hooks.children.filter(
-      (i) => i.category === category.name
-    );
+  for (const category of categories["hooks"]) {
+    const hooks = indexes.hooks.filter((i) => i.category === category.name);
 
     if (!hooks.length) continue;
 
@@ -103,18 +107,11 @@ function getHooksSidebar() {
 }
 
 /**
- * 首字母大写
- */
-function firstLetterUpper(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-/**
  * 拼接标题
  * @param {*} object
  */
 function getText(object) {
-  return firstLetterUpper(object.name) + " " + object.title;
+  return capitalize(object.name) + " " + object.title;
 }
 
 module.exports = config;

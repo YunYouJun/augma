@@ -6,7 +6,7 @@ props:
   - name: type
     description: 类型
     type: string
-    acceptedValues: TypeArray
+    acceptedValues: AgmTypeArray
     default: default
   - name: icon
     description: 是否图标按钮

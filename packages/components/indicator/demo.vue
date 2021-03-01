@@ -1,6 +1,6 @@
 <template>
   <agm-indicator
-    v-for="(type, i) in TypeMap"
+    v-for="(type, i) in AgmTypeMap"
     :key="i"
     :color="type"
     :info="i.toString()"
@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { TypeMap } from "@augma/shared";
+import { AgmTypeMap } from "@augma/shared";
 import { defineComponent } from "vue";
 import AgmIndicator from "./index.vue";
 
@@ -18,7 +18,7 @@ export default defineComponent({
   },
   data() {
     return {
-      TypeMap,
+      AgmTypeMap,
     };
   },
 });

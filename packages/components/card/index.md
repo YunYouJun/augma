@@ -5,5 +5,5 @@ props:
   - name: type
     description: 类型
     type: string
-    acceptedValues: TypeArray
+    acceptedValues: AgmTypeArray
 ---

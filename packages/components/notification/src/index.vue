@@ -58,7 +58,7 @@ import { on, off } from "@augma/utils/dom";
 
 import type { PropType } from "vue";
 import type { NotificationVM, Position } from "./notification.type";
-import { AgmColorType, TypeMap } from "@augma/shared";
+import { AgmColorType, AgmTypeMap } from "@augma/shared";
 
 export default defineComponent({
   name: "AgmNotification",
@@ -118,7 +118,7 @@ export default defineComponent({
 
     const typeClass = computed(() => {
       const type = props.type;
-      return type && TypeMap[type] ? `el-icon-${TypeMap[type]}` : "";
+      return type && AgmTypeMap[type] ? `el-icon-${AgmTypeMap[type]}` : "";
     });
 
     const horizontalClass = computed(() => {

@@ -1,4 +1,5 @@
 import { getCurrentInstance } from "vue";
+import { toRawType } from "@vue/shared";
 import { AugmaOptions } from "./config";
 import type { Hash } from "./types";
 
@@ -31,3 +32,7 @@ export function useGlobalConfig(): AugmaOptions {
   }
   return {} as AugmaOptions;
 }
+
+export const isBool = (val: unknown) => typeof val === "boolean";
+export const isHTMLElement = (val: unknown) =>
+  toRawType(val).startsWith("HTML");

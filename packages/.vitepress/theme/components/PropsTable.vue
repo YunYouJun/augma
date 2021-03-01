@@ -22,25 +22,28 @@
 </template>
 
 <script lang="ts">
-import { TypeArray } from "@augma/shared";
-export interface PropType {
+import { AgmTypeArray } from "@augma/shared";
+import { PropType } from "vue-demi";
+
+export interface ComponentPropType {
   name: string;
   description: string;
   type: string;
   acceptedValues: string;
   default: string;
 }
+
 export default {
   props: {
     props: {
-      type: Object,
+      type: Object as PropType<ComponentPropType[]>,
       default: null,
     },
   },
   methods: {
     formatValues(values) {
-      if (values === "TypeArray") {
-        values = TypeArray;
+      if (values === "AgmTypeArray") {
+        values = AgmTypeArray;
       }
       if (Array.isArray(values)) {
         return values.join(" / ");
@@ -51,10 +54,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.agm-table {
-  display: table;
-  width: 100%;
-}
-</style>

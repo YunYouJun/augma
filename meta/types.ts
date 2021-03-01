@@ -17,12 +17,6 @@ export interface PackageIndexes {
   /**
    * 组件的种类
    */
-  components: {
-    categories: Category[];
-    children: Component[];
-  };
-  hooks: {
-    categories: Category[];
-    children: Hook[];
-  };
+  components: Component[];
+  hooks: Hook[];
 }
