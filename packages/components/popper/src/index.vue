@@ -3,7 +3,12 @@
     <div class="agm-popper--trigger" ref="triggerRef" v-on="{ ...events }">
       <slot name="trigger"></slot>
     </div>
-    <div v-show="visibility" class="agm-popper--body" ref="popperRef">
+    <div
+      v-show="visibility"
+      class="agm-popper--body"
+      ref="popperRef"
+      :style="popperStyle"
+    >
       <slot name="default"></slot>
     </div>
   </div>
@@ -14,8 +19,8 @@ import "./index.scss";
 
 import {
   defineComponent,
-  onBeforeMount,
   onMounted,
+  onBeforeUnmount,
   onActivated,
   onDeactivated,
 } from "vue";
@@ -38,7 +43,7 @@ export default defineComponent({
 
     const forceDestroy = () => popperStates.doDestroy(true);
     onMounted(popperStates.initializePopper);
-    onBeforeMount(forceDestroy);
+    onBeforeUnmount(forceDestroy);
     onActivated(popperStates.initializePopper);
     onDeactivated(forceDestroy);
 

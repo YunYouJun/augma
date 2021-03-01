@@ -1,6 +1,7 @@
 import type { PropType } from "vue";
 import { Nullable } from "@augma/utils/types";
 import type {
+  Placement,
   Instance as PopperInstance,
   Options as PopperOptions,
 } from "@popperjs/core";
@@ -14,6 +15,10 @@ const PopperProps = {
   disabled: {
     type: Boolean,
     default: false,
+  },
+  placement: {
+    type: String as PropType<Placement>,
+    default: "bottom" as Placement,
   },
   popperOptions: {
     type: Object as PropType<PopperOptions>,
@@ -32,6 +37,7 @@ export default PopperProps;
 
 export type IPopperOptions = {
   disabled: boolean;
+  placement: Placement;
   popperOptions: PopperOptions;
   trigger: Trigger;
   visible: boolean;

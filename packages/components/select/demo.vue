@@ -1,5 +1,10 @@
 <template>
-  <agm-select :options="options" placeholder="Placeholder"></agm-select>
+  <agm-select
+    v-model="currentOption"
+    :options="options"
+    placeholder="Placeholder"
+    :callback="callback"
+  ></agm-select>
 </template>
 
 <script lang="ts">
@@ -11,6 +16,7 @@ export default defineComponent({
   },
   data() {
     return {
+      currentOption: {},
       options: [
         {
           label: "Label A",
@@ -26,6 +32,12 @@ export default defineComponent({
         },
       ],
     };
+  },
+  methods: {
+    callback(val) {
+      console.log(val);
+      console.log(this.currentOption);
+    },
   },
 });
 </script>

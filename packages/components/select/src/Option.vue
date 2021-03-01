@@ -1,5 +1,5 @@
 <template>
-  <li class="agm-select-dropdown__item" @click.stop="selectOptionCLick">
+  <li class="agm-select-dropdown__item" @click.stop="selectOptionClick">
     <slot>
       <span>{{ label }}</span>
     </slot>
@@ -15,7 +15,6 @@ import {
   reactive,
 } from "vue";
 import { useOption } from "./useOption";
-import { SelectOptionProxy } from "./token";
 
 export default defineComponent({
   name: "AgmOption",
@@ -24,13 +23,26 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    value: {
+      type: String,
+      default: "",
+    },
   },
   setup(props) {
     const { select } = useOption(props);
 
-    console.log(select);
+    function selectOptionClick() {
+      if (props.disable) return;
+
+      select.handleOptionSelect({
+        label: props.label,
+        value: props.value,
+      });
+    }
+
     return {
       select,
+      selectOptionClick,
     };
   },
 });

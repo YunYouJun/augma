@@ -1,6 +1,7 @@
-import { computed, reactive, ref, watch } from "vue";
+import { computed, CSSProperties, reactive, ref, watch } from "vue";
 import { createPopper } from "@popperjs/core";
 
+import PopupManager from "@augma/utils/popup-manager";
 import type { ComponentPublicInstance, SetupContext, Ref } from "vue";
 
 import type {
@@ -45,7 +46,10 @@ export default function (props: IPopperOptions, ctx: SetupContext) {
   });
 
   const popperOptions = computed(() => {
-    return props.popperOptions;
+    return {
+      placement: props.placement,
+      ...props.popperOptions,
+    };
   });
 
   function initializePopper() {
@@ -134,6 +138,30 @@ export default function (props: IPopperOptions, ctx: SetupContext) {
     popperInstance.update();
   });
 
+  const popperStyle = ref<CSSProperties>({
+    zIndex: PopupManager.nextZIndex(),
+  });
+
+  function onVisibilityChange(toState: boolean) {
+    if (toState) {
+      popperStyle.value.zIndex = PopupManager.nextZIndex();
+      initializePopper();
+    }
+  }
+
+  watch(visibility, onVisibilityChange);
+
+  function update() {
+    if (!visibility.value) {
+      return;
+    }
+    if (popperInstance) {
+      popperInstance.update();
+    } else {
+      initializePopper();
+    }
+  }
+
   return {
     triggerRef,
     popperRef,
@@ -145,9 +173,14 @@ export default function (props: IPopperOptions, ctx: SetupContext) {
     hide,
     doDestroy,
 
+    popperInstance,
+    popperStyle,
+
     toggleState,
     visibility,
 
     events,
+
+    update,
   };
 }

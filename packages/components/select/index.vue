@@ -1,11 +1,11 @@
 <template>
   <div ref="selectWrapper" class="agm-select" @click.stop="toggleMenu">
-    <agm-popper ref="popper" placement="bottom" trigger="click">
+    <agm-popper ref="popperRef" placement="bottom" trigger="click">
       <template #trigger>
-        <agm-input :placeholder="placeholder" />
+        <agm-input v-model="currentOption.label" :placeholder="placeholder" />
       </template>
       <template #default>
-        <agm-select-menu>
+        <agm-select-menu :minWidth="minWidth">
           <agm-option
             v-for="item in options"
             :label="item.label"
@@ -29,8 +29,12 @@ import {
   PropType,
   provide,
   reactive,
+  computed,
+  nextTick,
 } from "vue";
 import { selectKey } from "./src/useOption";
+import func from "vue-temp/vue-editor-bridge";
+import { UPDATE_MODEL_EVENT } from "@augma/utils/constants";
 
 interface ISelectOption {
   label: string;
@@ -46,20 +50,58 @@ export default defineComponent({
     AgmSelectMenu,
   },
   props: {
+    modelValue: {
+      type: Object,
+      default() {
+        return {
+          label: "",
+          value: "",
+        };
+      },
+    },
     options: {
       type: Object as PropType<ISelectOption[]>,
     },
     placeholder: {
       type: String,
     },
+    callback: {
+      type: Function,
+    },
   },
   setup(props, ctx) {
+    const selectWrapper = ref(null);
+    const minWidth = ref("0");
+
+    const currentOption = ref({ label: "", value: "" });
+
+    function calculateMinWidth() {
+      return getComputedStyle(selectWrapper.value).width;
+    }
+
+    onMounted(() => {
+      minWidth.value = calculateMinWidth();
+      window.onresize = () => {
+        minWidth.value = calculateMinWidth();
+      };
+    });
+
+    function handleOptionSelect(val) {
+      currentOption.value = val;
+      ctx.emit(UPDATE_MODEL_EVENT, val);
+
+      props.callback(val);
+    }
+
     provide(
       selectKey,
       reactive({
         props,
+        handleOptionSelect,
       })
     );
+
+    return { currentOption, selectWrapper, minWidth };
   },
 });
 </script>
