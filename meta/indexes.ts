@@ -1,4 +1,4 @@
-import indexes from "./indexes.json";
+import * as indexes from "./indexes.json";
 
 const componentNames = indexes.components.map((component) => component.name);
 const hookNames = indexes.hooks.map((hook) => hook.name);
