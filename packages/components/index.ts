@@ -8,6 +8,7 @@ import AgmDialog from "./dialog/index.vue";
 import AgmIcon from "./icon/index.vue";
 import AgmIndicator from "./indicator/index.vue";
 import AgmMenu from "./menu/index.vue";
+import AgmSelect from "./select/index.vue";
 
 import AgmNotification from "./notification/index";
 import AgmLoading from "./loading/index";
@@ -29,7 +30,9 @@ const components = [
   AgmIcon,
   AgmIndicator,
   AgmMenu,
+  AgmSelect,
 ];
+
 const plugins = [AgmNotification, AgmLoading];
 
 // register component & plugin

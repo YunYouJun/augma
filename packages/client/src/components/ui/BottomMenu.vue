@@ -3,18 +3,6 @@
 </template>
 
 <script lang="ts">
-import {
-  mdiGithub,
-  mdiEarth,
-  mdiFlipHorizontal,
-  mdiMap,
-  mdiEye,
-  mdiCamera,
-  mdiCameraFlip,
-  mdiFace,
-  mdiCubeScan,
-  mdiWeatherCloudy,
-} from "@mdi/js";
 import { defineComponent } from "vue";
 import pkg from "../../../package.json";
 export default defineComponent({
@@ -22,52 +10,47 @@ export default defineComponent({
     return {
       mode: "use",
       browser: false,
-      icons: {
-        mdiCamera,
-        mdiCameraFlip,
-        mdiFlipHorizontal,
-      },
       menuItems: [
-        { color: "#8dd3d6", icon: mdiFlipHorizontal, do: this.flipScreen },
+        { color: "#8dd3d6", icon: "mdi:flip-horizontal", do: this.flipScreen },
         {
           color: "var(--agm-warning)",
-          icon: mdiWeatherCloudy,
+          icon: "mdi:weather-cloudy",
           do: this.toggleWeather,
         },
         {
           color: "#4dade0",
-          icon: mdiEye,
+          icon: "mdi:eye",
           do: this.toggleCameraDisplay,
         },
         {
           color: "var(--agm-info)",
-          icon: mdiFace,
+          icon: "mdi:face",
           do: this.toggleFaceDetection,
         },
         {
           color: "var(--agm-tooltip)",
-          icon: mdiCubeScan,
+          icon: "mdi:cube-scan",
           do: this.toggleYolo,
         },
         {
           color: "#4dade0",
-          icon: mdiCamera,
+          icon: "mdi:camera",
           do: this.screenshot,
         },
         {
           color: "#dd9d5e",
-          icon: mdiMap,
+          icon: "mdi:map",
           do: this.toggleSubwayMap,
         },
 
         {
           color: "black",
-          icon: mdiGithub,
+          icon: "mdi:github",
           do: this.openGithubNotification,
         },
         {
           color: "#4dade0",
-          icon: mdiEarth,
+          icon: "mdi:earth",
           do: this.openBrowser,
         },
       ],
@@ -103,7 +86,7 @@ export default defineComponent({
       const dataUrl = canvas.toDataURL();
       const link = document.createElement("a");
       link.href = dataUrl;
-      link.download = new Date();
+      link.download = new Date().toString();
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -130,7 +113,7 @@ export default defineComponent({
     openGithubNotification() {
       this.$notify({
         title: "GitHub",
-        icon: mdiGithub,
+        icon: "mdi:github",
         color: "black",
         message: `<a href="${pkg.repository}" target="_blank">${pkg.repository}</a>`,
         // showClose: true,

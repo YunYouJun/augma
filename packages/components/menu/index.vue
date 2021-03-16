@@ -26,7 +26,6 @@ export default defineComponent({
   },
   methods: {
     handleClick() {
-      console.log("click");
       this.$emit(UPDATE_MODEL_EVENT, !this.modelValue);
     },
   },

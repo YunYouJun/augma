@@ -7,6 +7,7 @@ import "./index.css";
 
 import { createRouter, createWebHashHistory } from "vue-router";
 import routes from "pages-generated";
+
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
@@ -16,5 +17,7 @@ const app = createApp(App);
 
 import augma from "augma";
 import "augma/style";
+
+import "@iconify/iconify";
 
 app.use(router).use(store).use(augma).mount("#app");

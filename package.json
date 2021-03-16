@@ -25,10 +25,10 @@
   "license": "MIT",
   "devDependencies": {
     "@iconify/iconify": "^2.0.0-rc.6",
-    "@iconify/json": "^1.1.310",
+    "@iconify/json": "^1.1.316",
     "@types/minimist": "^1.2.1",
     "@types/semver": "^7.3.4",
-    "@yunyoujun/logger": "^0.1.0",
+    "@yunyoujun/logger": "^0.1.2",
     "enquirer": "^2.3.6",
     "execa": "^5.0.0",
     "fast-glob": "^3.2.5",
@@ -36,16 +36,16 @@
     "minimist": "^1.2.5",
     "semver": "^7.3.4",
     "ts-node": "^9.1.1",
-    "typescript": "^4.2.2",
-    "vite": "^2.0.4",
-    "vite-plugin-components": "^0.7.5",
+    "typescript": "^4.2.3",
+    "vite": "^2.0.5",
+    "vite-plugin-components": "^0.8.3",
     "vite-plugin-icons": "^0.3.2",
     "vite-plugin-pwa": "^0.5.6",
     "vitepress": "^0.12.2"
   },
   "dependencies": {
-    "@vueuse/core": "^4.3.1",
-    "vue": "^3.0.6"
+    "@vueuse/core": "^4.4.1",
+    "vue": "^3.0.7"
   },
   "vetur": {
     "tags": "./vetur/tags.json",

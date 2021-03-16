@@ -19,6 +19,10 @@ import { useOption } from "./useOption";
 export default defineComponent({
   name: "AgmOption",
   props: {
+    disable: {
+      type: Boolean,
+      default: false,
+    },
     label: {
       type: String,
       default: "",

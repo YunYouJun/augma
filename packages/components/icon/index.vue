@@ -1,6 +1,7 @@
 <template>
   <div class="agm-icon" :style="styles">
-    <span class="iconify" :data-icon="icon"></span>
+    <span v-if="icon" class="iconify" :data-icon="icon"></span>
+    <span v-else v-html="svg"></span>
   </div>
 </template>
 
@@ -23,6 +24,7 @@ export default defineComponent({
       type: String,
       default: "1.5rem",
     },
+    svg: String,
   },
   setup(props) {
     const styles = computed(() => {

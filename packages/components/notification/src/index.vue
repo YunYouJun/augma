@@ -15,13 +15,12 @@
       @click="onClick"
     >
       <div class="agm-notification__group">
-        <i
-          v-if="type || icon"
+        <agm-icon
+          v-if="!$slots.icon"
           class="agm-notification__icon"
-          :class="[typeClass]"
-        >
-          <slot name="icon"></slot>
-        </i>
+          :icon="icon"
+        ></agm-icon>
+        <slot v-else name="icon"></slot>
 
         <div class="agm-notification__title">{{ title }}</div>
         <div class="agm-notification__content">
@@ -116,11 +115,6 @@ export default defineComponent({
     const visible = ref(false);
     let timer: any = null;
 
-    const typeClass = computed(() => {
-      const type = props.type;
-      return type && AgmTypeMap[type] ? `el-icon-${AgmTypeMap[type]}` : "";
-    });
-
     const horizontalClass = computed(() => {
       return props.position.indexOf("right") > 1 ? "right" : "left";
     });
@@ -184,7 +178,6 @@ export default defineComponent({
       visible,
 
       horizontalClass,
-      typeClass,
       styles,
 
       close,

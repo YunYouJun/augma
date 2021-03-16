@@ -12,8 +12,16 @@ import { hasDemo } from "../scripts/utils";
 export default defineConfig({
   resolve: {
     alias: [
+      { find: "augma", replacement: resolve(__dirname, "augma/index.ts") },
       { find: "@augma/core", replacement: resolve(__dirname, "core/index.ts") },
-      { find: "@augma/styles", replacement: resolve(__dirname, "styles") },
+      {
+        find: "@augma/style",
+        replacement: resolve(__dirname, "components/styles/index.scss"),
+      },
+      {
+        find: "@augma/shared",
+        replacement: resolve(__dirname, "shared/index.ts"),
+      },
     ],
   },
   plugins: [

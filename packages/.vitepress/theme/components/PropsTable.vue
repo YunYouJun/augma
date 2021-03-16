@@ -10,7 +10,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="prop in props">
+      <tr v-for="(prop, i) in props" :key="i">
         <td>{{ prop.name }}</td>
         <td>{{ prop.description }}</td>
         <td>{{ prop.type }}</td>

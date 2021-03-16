@@ -11,9 +11,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@tensorflow/tfjs": "^3.2.0",
-    "@vueuse/core": "^4.3.1",
-    "@vueuse/head": "^0.3.1",
+    "@tensorflow/tfjs": "^3.3.0",
+    "@vueuse/core": "^4.4.1",
+    "@vueuse/head": "^0.5.1",
     "augma": "^0.1.0",
     "face-api.js": "^0.22.2",
     "sass": "^1.32.8",
@@ -25,9 +25,9 @@
   "devDependencies": {
     "@mdi/js": "^5.9.55",
     "@vitejs/plugin-vue": "^1.1.5",
-    "@vue/compiler-sfc": "^3.0.6",
-    "vite": "^2.0.4",
-    "vite-plugin-pages": "^0.4.7"
+    "@vue/compiler-sfc": "^3.0.7",
+    "vite": "^2.0.5",
+    "vite-plugin-pages": "^0.7.0"
   },
   "scripts": {
     "build": "vite build",

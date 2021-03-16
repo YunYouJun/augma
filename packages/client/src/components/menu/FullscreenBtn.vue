@@ -1,6 +1,6 @@
 <template>
   <agm-button icon @click="toggle" title="Fullscreen">
-    <agm-icon :icon="icon"></agm-icon>
+    <agm-icon :icon="icon" />
   </agm-button>
 </template>
 
@@ -17,9 +17,12 @@ export default {
   setup() {
     const { isFullscreen, toggle } = useFullscreen();
 
+    console.log(isFullscreen.value);
+
     const icon = computed(() => {
-      isFullscreen ? mdiFullscreenExit : mdiFullscreen;
+      return isFullscreen.value ? "mdi:fullscreen-exit" : "mdi:fullscreen";
     });
+
     return {
       icon,
       toggle,

@@ -2,10 +2,10 @@ import DefaultTheme from "vitepress/dist/client/theme-default";
 
 import DemoBlock from "./components/DemoBlock.vue";
 
+// import augma from "augma";
+import augma from "../../augma/index";
+import "../../components/styles/index.scss";
 // custom css
-import augma from "augma";
-import "augma/style";
-
 import "./styles/index.scss";
 
 // import Iconify from "@iconify/iconify/dist/iconify.without-api.min.js";

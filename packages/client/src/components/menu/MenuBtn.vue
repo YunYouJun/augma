@@ -1,8 +1,9 @@
 <template>
   <agm-menu v-model="open">
-    <template v-slot:activator>
-      <agm-button icon @click="handleClick">
-        <agm-icon :icon="icon"></agm-icon>
+    <template #activator>
+      <agm-button icon>
+        <agm-icon icon="mdi:dots-vertical" v-if="open" />
+        <agm-icon icon="mdi:dots-horizontal" v-else />
       </agm-button>
     </template>
     <fullscreen-btn></fullscreen-btn>
@@ -18,43 +19,30 @@
   </agm-menu>
 </template>
 
-<script>
+<script lang="ts">
 import FullscreenBtn from "./FullscreenBtn.vue";
-import {
-  mdiCameraFlip,
-  mdiDotsHorizontal,
-  mdiDotsVertical,
-  mdiFullscreen,
-} from "@mdi/js";
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
   components: {
     FullscreenBtn,
   },
   data() {
     return {
       open: false,
-
       menuItems: [
         {
           color: "#4dade0",
-          icon: mdiCameraFlip,
+          icon: "mdi:camera-flip",
           do: this.toggleCameraFront,
         },
       ],
     };
   },
-  computed: {
-    icon() {
-      return this.open ? mdiDotsVertical : mdiDotsHorizontal;
-    },
-  },
   methods: {
-    handleClick() {
-      this.open = !this.open;
-    },
     toggleCameraFront() {
       this.$store.commit("camera/toggleFront");
     },
   },
-};
+});
 </script>

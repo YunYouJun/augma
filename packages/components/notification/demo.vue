@@ -3,10 +3,9 @@
 </template>
 
 <script lang="ts">
-import Notify from "./index";
 import AgmButton from "../button/index.vue";
 import { defineComponent } from "vue";
-// import pkg from "../../../package.json";
+import pkg from "../../../package.json";
 
 export default defineComponent({
   components: {
@@ -16,11 +15,11 @@ export default defineComponent({
     notify() {
       this.$notify({
         title: "GitHub",
-        // icon: mdiGithub,
+        icon: "mdi:github",
         color: "black",
-        // message: `<a href="${pkg.repository}" target="_blank">${pkg.repository}</a>`,
-        message: "xxx",
+        message: `<a href="${pkg.repository}" target="_blank">${pkg.repository}</a>`,
         duration: 0,
+        showClose: true,
       });
     },
   },

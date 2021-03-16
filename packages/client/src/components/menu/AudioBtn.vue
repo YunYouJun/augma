@@ -4,12 +4,13 @@
   </agm-button>
 </template>
 
-<script>
-import { mdiAlert, mdiMicrophone, mdiMicrophoneSettings } from "@mdi/js";
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
   data() {
     return {
-      icon: mdiMicrophone,
+      icon: "mdi:microphone",
       color: "black",
       recognition: null,
       keywords: ["fullscreen"],
@@ -21,6 +22,7 @@ export default {
   },
   methods: {
     init() {
+      // eslint-disable
       var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
       var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
       var SpeechRecognitionEvent =
@@ -55,22 +57,22 @@ export default {
 
         this.$notify({
           title: content,
-          icon: mdiMicrophone,
+          icon: "mdi:microphone",
           color: "var(--agm-success)",
           message: "Confidence: " + event.results[0][0].confidence.toFixed(2),
         });
       };
 
       recognition.onspeechend = () => {
-        this.icon = mdiMicrophone;
+        this.icon = "mdi:microphone";
         this.color = "black";
         recognition.stop();
       };
 
       recognition.onnomatch = (event) => {
         this.$notify({
-          title: content,
-          icon: mdiAlert,
+          title: this.content,
+          icon: "mdi:alert",
           color: "var(--agm-warning)",
           message: "I didn't recognise that command.",
         });
@@ -78,18 +80,18 @@ export default {
 
       recognition.onerror = function (event) {
         this.$notify({
-          title: content,
-          icon: mdiAlert,
+          title: this.content,
+          icon: "mdi:alert",
           color: "var(--agm-error)",
           message: "Error occurred in recognition: " + event.error,
         });
       };
     },
     handleAudio() {
-      this.icon = mdiMicrophoneSettings;
+      this.icon = "mdi:microphone-settings";
       this.color = "var(--agm-success)";
       this.recognition.start();
     },
   },
-};
+});
 </script>

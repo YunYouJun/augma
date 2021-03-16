@@ -9,6 +9,13 @@ props:
     description: 颜色
     type: string
     acceptedValues: CSS3 Color
+  - name: message
+    type: string
+    description: 消息内容
+  - name: showClose
+    type: boolean
+    description: 是否显示关闭按钮
+    default: "false"
 ---
 
 弹出消息通知

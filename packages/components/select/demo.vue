@@ -34,7 +34,7 @@ export default defineComponent({
     };
   },
   methods: {
-    callback(val) {
+    callback(val: any) {
       console.log(val);
       console.log(this.currentOption);
     },
