@@ -11,7 +11,7 @@ export function hasDemo(pkg: string, name: string) {
   return fs.existsSync(path.join(DIR_SRC, pkg, name, "demo.vue"));
 }
 
-export const targets = fs.readdirSync("packages").filter((f) => {
+export const targets = fs.readdirSync("packages").filter(async (f) => {
   if (
     f.endsWith(".ts") ||
     f.endsWith(".md") ||
@@ -21,7 +21,7 @@ export const targets = fs.readdirSync("packages").filter((f) => {
   ) {
     return false;
   }
-  const pkg = require(`../packages/${f}/package.json`);
+  const pkg = await import(`../packages/${f}/package.json`);
   if (pkg.private) {
     return false;
   }
