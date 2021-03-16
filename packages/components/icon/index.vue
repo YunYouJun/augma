@@ -8,6 +8,7 @@
 <script lang="ts">
 import "./index.scss";
 import { computed, defineComponent } from "vue";
+import { getAgmColorByType } from "@augma/shared";
 
 export default defineComponent({
   name: "AgmIcon",
@@ -29,7 +30,7 @@ export default defineComponent({
   setup(props) {
     const styles = computed(() => {
       return {
-        color: props.color,
+        color: getAgmColorByType(props.color) || "inherit",
         fontSize: props.size,
       };
     });

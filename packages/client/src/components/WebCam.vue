@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watchEffect } from "vue";
-import { useWebcam } from "@augma/hooks/useWebcam";
+import { useWebcam } from "@augma/hooks";
 import { useStore } from "vuex";
 
 export default defineComponent({

@@ -1,22 +1,24 @@
 <template>
-  <agm-menu v-model="open">
-    <template #activator>
-      <agm-button icon>
-        <agm-icon icon="mdi:dots-vertical" v-if="open" />
-        <agm-icon icon="mdi:dots-horizontal" v-else />
+  <div>
+    <agm-menu v-model="open">
+      <template #activator>
+        <agm-button icon>
+          <agm-icon icon="mdi:dots-vertical" color="black" v-if="open" />
+          <agm-icon icon="mdi:dots-horizontal" color="black" v-else />
+        </agm-button>
+      </template>
+      <fullscreen-btn></fullscreen-btn>
+      <agm-button
+        v-for="(item, i) in menuItems"
+        :key="i"
+        icon
+        @click="item.do"
+        :color="item.color"
+      >
+        <agm-icon v-if="item.icon" :icon="item.icon" />
       </agm-button>
-    </template>
-    <fullscreen-btn></fullscreen-btn>
-    <agm-button
-      v-for="(item, i) in menuItems"
-      :key="i"
-      icon
-      :color="item.color"
-      @click="item.do"
-    >
-      <agm-icon v-if="item.icon" :icon="item.icon" />
-    </agm-button>
-  </agm-menu>
+    </agm-menu>
+  </div>
 </template>
 
 <script lang="ts">

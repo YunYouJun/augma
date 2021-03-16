@@ -13,7 +13,7 @@ export interface State {
 const state = (): State => ({
   videoEl: null,
   settings: null,
-  display: true,
+  display: false,
   flipScreen: false,
   front: false,
 

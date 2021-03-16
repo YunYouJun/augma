@@ -1,11 +1,10 @@
 <template>
   <agm-button icon @click="toggle" title="Fullscreen">
-    <agm-icon :icon="icon" />
+    <agm-icon :icon="icon" color="black" />
   </agm-button>
 </template>
 
 <script lang="ts">
-import { mdiFullscreen, mdiFullscreenExit } from "@mdi/js";
 import { useFullscreen } from "@vueuse/core";
 import { computed } from "vue";
 export default {
@@ -16,8 +15,6 @@ export default {
   },
   setup() {
     const { isFullscreen, toggle } = useFullscreen();
-
-    console.log(isFullscreen.value);
 
     const icon = computed(() => {
       return isFullscreen.value ? "mdi:fullscreen-exit" : "mdi:fullscreen";

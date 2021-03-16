@@ -1,4 +1,14 @@
-const state = () => ({
+interface AppState {
+  /**
+   * 加载动画
+   */
+  loading: boolean;
+  subwayMap: boolean;
+  weather: boolean;
+  yolo: boolean;
+}
+
+const state = (): AppState => ({
   loading: false,
   subwayMap: false,
   weather: false,
@@ -6,7 +16,7 @@ const state = () => ({
 });
 
 const mutations = {
-  setLoading(state, val) {
+  setLoading(state: AppState, val: boolean) {
     state.loading = val;
   },
   setSubwayMap(state, status) {

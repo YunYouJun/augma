@@ -1,5 +1,10 @@
 <template>
-  <button :class="classes" :type="nativeType" @click="handleClick">
+  <button
+    :class="classes"
+    :style="styles"
+    :type="nativeType"
+    @click="handleClick"
+  >
     <slot></slot>
   </button>
 </template>
@@ -55,8 +60,15 @@ export default defineComponent({
       ];
     });
 
+    const styles = computed(() => {
+      return {
+        color: props.color,
+      };
+    });
+
     return {
       classes,
+      styles,
 
       handleClick,
     };

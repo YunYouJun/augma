@@ -1,6 +1,6 @@
 <template>
-  <agm-button icon @click="handleAudio" :color="color">
-    <agm-icon :icon="icon"></agm-icon>
+  <agm-button icon @click="handleAudio">
+    <agm-icon :icon="icon" :color="color"></agm-icon>
   </agm-button>
 </template>
 
@@ -11,7 +11,7 @@ export default defineComponent({
   data() {
     return {
       icon: "mdi:microphone",
-      color: "black",
+      color: "success",
       recognition: null,
       keywords: ["fullscreen"],
       content: "",

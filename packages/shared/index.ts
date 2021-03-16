@@ -26,7 +26,12 @@ export const AgmTypeMap: Indexable<AgmColorType> = {
   info: "info",
 };
 
-export function getAgmColorByType(type: AgmColorType) {
+/**
+ * 获取类型对应颜色
+ * @param type
+ * @returns
+ */
+export function getAgmColorByType(type: string) {
   if (type && AgmTypeMap[type]) {
     return `var(--agm-${type})`;
   } else {

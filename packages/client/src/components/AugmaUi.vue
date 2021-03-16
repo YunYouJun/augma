@@ -6,7 +6,9 @@
     <agm-window />
     <face-api :enable="$store.state.faceApi.faceDetection" />
     <tfjs-yolo :enable="$store.state.app.yolo" />
-    <bottom-menu class="augma-bottom-menu-container" />
+    <div class="augma-bottom-menu-container">
+      <bottom-menu />
+    </div>
   </div>
 </template>
 
@@ -50,7 +52,7 @@ export default defineComponent({
 }
 
 .augma-bottom-menu-container {
-  position: absolute;
+  position: fixed;
   left: 0;
   bottom: 1rem;
 

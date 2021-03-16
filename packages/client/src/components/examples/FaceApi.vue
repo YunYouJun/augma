@@ -65,7 +65,7 @@ export default {
 
   methods: {
     async loadModel() {
-      const faceApiWeightsUri = "/weights";
+      const faceApiWeightsUri = "/models/weights";
       // const faceApiWeightsUri =
       //   "https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights";
       await faceapi.nets.tinyFaceDetector.loadFromUri(faceApiWeightsUri);
