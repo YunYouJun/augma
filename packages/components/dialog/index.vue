@@ -25,9 +25,7 @@
             </button>
           </div>
         </div>
-        <div class="agm-dialog--body">
-          <slot></slot>
-        </div>
+        <slot class="agm-dialog--body"></slot>
       </div>
     </transition>
   </teleport>
