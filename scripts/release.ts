@@ -71,7 +71,7 @@ async function main() {
 
   // build packages
   logger.debug("Building all packages...");
-  await run("yarn", ["build"]);
+  await run("pnpm", ["build"]);
 
   // publish package
   console.log();
@@ -138,7 +138,7 @@ async function publishPackage(pkgName: string, version: string) {
   logger.debug(`Publishing [${pkgName}]...`);
   try {
     await run(
-      "yarn",
+      "pnpm",
       ["publish", "--new-version", version, "--access", "public"],
       {
         cwd: pkgRoot,

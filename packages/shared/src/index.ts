@@ -1,4 +1,4 @@
-import { Indexable } from "@augma/utils/types";
+import { Indexable } from "@augma/utils/src/types";
 
 export type AgmColorType =
   | "default"

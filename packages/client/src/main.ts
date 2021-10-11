@@ -15,9 +15,7 @@ const router = createRouter({
 
 const app = createApp(App);
 
-import augma from "../../augma/index";
-import "../../components/styles/index.scss";
-
-import "@iconify/iconify";
+import augma from "augma";
+import "@augma/components/styles/index.scss";
 
 app.use(router).use(store).use(augma).mount("#app");

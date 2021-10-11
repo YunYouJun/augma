@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @import "../styles/mixins";
 $--loading-spinner-size: 42px !default;
 $--loading-fullscreen-spinner-size: 50px !default;
@@ -19,7 +21,7 @@ $--loading-fullscreen-spinner-size: 50px !default;
     position: fixed;
 
     .agm-loading-spinner {
-      margin-top: #{- $--loading-fullscreen-spinner-size / 2};
+      margin-top: math.div(-$--loading-fullscreen-spinner-size, 2);
 
       .circular {
         height: $--loading-fullscreen-spinner-size;
@@ -30,7 +32,7 @@ $--loading-fullscreen-spinner-size: 50px !default;
 
   &-spinner {
     top: 50%;
-    margin-top: #{- $--loading-spinner-size / 2};
+    margin-top: math.div(-$--loading-spinner-size, 2);
     width: 100%;
     text-align: center;
     position: absolute;

@@ -1,13 +1,12 @@
-const { capitalize } = require("vue");
-const indexes = require("../../meta/indexes.json");
-const categories = require("../../meta/categories.json");
+import { capitalize } from "vue";
+import indexes from "../../meta/indexes.json";
+import categories from "../../meta/categories.json";
 
-const mdConfig = require("./plugins/markdown");
+import mdConfig from "./plugins/markdown";
 
-/**
- * @type {import('vitepress').UserConfig}
- */
-const config = {
+import type { UserConfig } from "vitepress";
+
+const config: UserConfig = {
   title: "Augma UI",
   description: "AR UI Framework",
 
@@ -33,7 +32,7 @@ const config = {
     sidebar: {
       "/guide/": getGuideSidebar(),
       "/components/": getComponentsSidebar(),
-      "/hooks": getHooksSidebar(),
+      "/hooks/": getHooksSidebar(),
     },
   },
 
@@ -114,4 +113,4 @@ function getText(object) {
   return capitalize(object.name) + " " + object.title;
 }
 
-module.exports = config;
+export default config;

@@ -1,13 +1,10 @@
 {
   "name": "@augma/shared",
   "version": "0.0.1",
-  "description": "internal utils shared across @vue packages",
+  "description": "internal shared utils",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "./dist/index.js",
-  "exports": {
-    ".": "./index.ts"
-  },
   "scripts": {
     "build": "tsc"
   },

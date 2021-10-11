@@ -11,13 +11,21 @@
     "types": ["vite/client"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "allowJs": true,
     "allowSyntheticDefaultImports": true,
+    "outDir": "dist",
     "paths": {
-      "@augma/*": ["packages/*"],
-      "augma": ["packages/augma"]
+      "@augma/*": ["packages/*/src"],
+      "@augma/utils/*": ["packages/utils/src/*"],
+      "@augma/components/*": ["packages/components/*"],
+      "augma": ["packages/augma/src/index.ts"]
     }
   },
-  "include": ["packages", "global.d.ts", "packages/**/*.d.ts"],
-  "exclude": ["node_modules", "**/**/*.md", "**/dist"]
+  "include": [
+    "./*.ts",
+    "./docs/.vitepress/**/*.ts",
+    "./docs/.vitepress/**/*.vue",
+    "./packages/**/*.ts",
+    "./packages/**/*.vue",
+  ],
+  "exclude": ["dist", "node_modules"]
 }

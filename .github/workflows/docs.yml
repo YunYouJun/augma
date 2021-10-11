@@ -14,8 +14,8 @@ jobs:
         with:
           node-version: "14.x"
 
-      - run: yarn
-      - run: yarn docs:build
+      - run: npm i -g pnpm && pnpm i
+      - run: pnpm run docs:build
       # - name: Deploy
       #   uses: peaceiris/actions-gh-pages@v3
       #   with:

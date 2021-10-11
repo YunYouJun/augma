@@ -1,5 +1,5 @@
 import { getCurrentInstance, reactive, shallowRef, watchEffect } from "vue";
-import { entries } from "@augma/utils/util";
+import { entries } from "@augma/utils";
 
 interface Params {
   excludeListeners?: boolean;

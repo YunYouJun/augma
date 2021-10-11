@@ -42,7 +42,7 @@ async function build(target: string) {
     fs.rmSync(distDir, { recursive: true });
   }
 
-  await execa("yarn", ["build"], { cwd: pkgDir, stdio: "inherit" });
+  await execa("pnpm", ["build"], { cwd: pkgDir, stdio: "inherit" });
 }
 
 async function main() {

@@ -1,8 +1,10 @@
 import { resolve } from "path";
 import { defineConfig } from "vite";
 
-import ViteComponents from "vite-plugin-components";
-import ViteIcons, { ViteIconsResolver } from "vite-plugin-icons";
+import Icons from "unplugin-icons/vite";
+import IconsResolver from "unplugin-icons/resolver";
+import Components from "unplugin-vue-components/vite";
+
 import { VitePWA } from "vite-plugin-pwa";
 import { capitalize } from "vue";
 
@@ -25,16 +27,34 @@ export default defineConfig({
     ],
   },
   plugins: [
-    ViteComponents({
+    // https://github.com/antfu/unplugin-vue-components
+    Components({
       dirs: [".vitepress/theme/components"],
-      customLoaderMatcher: (id) => id.endsWith(".md"),
-      // directoryAsNamespace: true,
-      customComponentResolvers: ViteIconsResolver(),
+
+      // allow auto load markdown components under `./src/components/`
+      extensions: ["vue", "md"],
+
+      // allow auto import and register components used in markdown
+      include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
+
+      // custom resolvers
+      resolvers: [
+        // auto import icons
+        // https://github.com/antfu/unplugin-icons
+        IconsResolver({
+          componentPrefix: "",
+          // enabledCollections: ['carbon']
+        }),
+      ],
+
+      dts: "src/components.d.ts",
     }),
-    ViteIcons({
-      // hide default style
-      defaultStyle: "",
+
+    // https://github.com/antfu/unplugin-icons
+    Icons({
+      autoInstall: true,
     }),
+
     {
       name: "md-transform",
       enforce: "pre",
@@ -68,6 +88,7 @@ export default defineConfig({
         return code;
       },
     },
+    
     VitePWA({
       outDir: ".vitepress/dist",
       manifest: {
