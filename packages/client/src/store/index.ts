@@ -1,12 +1,12 @@
-import { createStore, createLogger } from "vuex";
+import { createStore, createLogger } from 'vuex'
 
-import app from "./modules/app";
-import camera from "./modules/camera";
-import faceApi from "./modules/faceApi";
-import windows from "./modules/windows";
+import app from './modules/app'
+import camera from './modules/camera'
+import faceApi from './modules/faceApi'
+import windows from './modules/windows'
 
 // const debug = process.env.NODE_ENV !== "production";
-const debug = false;
+const debug = false
 
 export default createStore({
   state: {},
@@ -20,4 +20,4 @@ export default createStore({
   },
   strict: debug,
   plugins: debug ? [createLogger()] : [],
-});
+})

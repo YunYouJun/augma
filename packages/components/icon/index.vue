@@ -6,38 +6,38 @@
 </template>
 
 <script lang="ts">
-import "./index.scss";
-import { computed, defineComponent } from "vue";
-import { getAgmColorByType } from "@augma/shared";
+import './index.scss'
+import { computed, defineComponent } from 'vue'
+import { getAgmColorByType } from '@augma/shared'
 
 export default defineComponent({
-  name: "AgmIcon",
+  name: 'AgmIcon',
   props: {
     icon: {
       type: String,
-      default: "",
+      default: '',
     },
     color: {
       type: String,
-      default: "",
+      default: '',
     },
     size: {
       type: String,
-      default: "1.5rem",
+      default: '1.5rem',
     },
     svg: String,
   },
   setup(props) {
     const styles = computed(() => {
       return {
-        color: getAgmColorByType(props.color) || "inherit",
+        color: getAgmColorByType(props.color) || 'inherit',
         fontSize: props.size,
-      };
-    });
+      }
+    })
 
     return {
       styles,
-    };
+    }
   },
-});
+})
 </script>

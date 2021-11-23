@@ -3,4 +3,4 @@
  * @param val
  */
 export const isValidComponentSize = (val: string) =>
-  ["", "large", "medium", "small", "mini"].includes(val);
+  ['', 'large', 'medium', 'small', 'mini'].includes(val)

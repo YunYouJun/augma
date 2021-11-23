@@ -10,15 +10,15 @@
     v-for="(type, i) in AgmTypeMap"
     :key="i"
     :color="type"
-    :addZero="false"
+    :add-zero="false"
     style="margin: 1rem"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { AgmTypeMap } from "@augma/shared";
-import AgmClock from "./index.vue";
+import { defineComponent } from 'vue'
+import { AgmTypeMap } from '@augma/shared'
+import AgmClock from './index.vue'
 export default defineComponent({
   components: {
     AgmClock,
@@ -26,7 +26,7 @@ export default defineComponent({
   setup() {
     return {
       AgmTypeMap,
-    };
+    }
   },
-});
+})
 </script>

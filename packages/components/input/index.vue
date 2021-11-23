@@ -99,13 +99,13 @@
     <span
       v-if="isWordLimitVisible && type === 'textarea'"
       class="agm-input__count"
-      >{{ textLength }}/{{ upperLimit }}
+    >{{ textLength }}/{{ upperLimit }}
     </span>
   </div>
 </template>
 
 <script lang='ts'>
-import "./index.scss";
+import './index.scss'
 import {
   defineComponent,
   inject,
@@ -117,39 +117,39 @@ import {
   shallowRef,
   onMounted,
   onUpdated,
-} from "vue";
-import AgmIcon from "../icon/index.vue";
+} from 'vue'
 
-import { useAttrs } from "@augma/hooks";
-import { UPDATE_MODEL_EVENT, VALIDATE_STATE_MAP } from "@augma/utils/constants";
-import { isObject } from "@vue/shared";
-import { useGlobalConfig } from "@augma/utils/util";
-import isServer from "@augma/utils/isServer";
-import { isValidComponentSize } from "@augma/utils/validators";
-import { agmFormKey, agmFormItemKey } from "@augma/components/form";
-import calcTextareaHeight from "./calcTextareaHeight";
+import { useAttrs } from '@augma/hooks'
+import { UPDATE_MODEL_EVENT, VALIDATE_STATE_MAP } from '@augma/utils/constants'
+import { isObject } from '@vue/shared'
+import { useGlobalConfig } from '@augma/utils/util'
+import isServer from '@augma/utils/isServer'
+import { isValidComponentSize } from '@augma/utils/validators'
+import { agmFormKey, agmFormItemKey } from '@augma/components/form'
 
-import type { PropType } from "vue";
+import type { PropType } from 'vue'
 import type {
   AgmFormContext,
   AgmFormItemContext,
-} from "@augma/components/form";
-import type { ComponentSize } from "@augma/shared";
+} from '@augma/components/form'
+import type { ComponentSize } from '@augma/shared'
+import AgmIcon from '../icon/index.vue'
+import calcTextareaHeight from './calcTextareaHeight'
 
 type AutosizeProp =
   | {
-      minRows?: number;
-      maxRows?: number;
-    }
-  | boolean;
+    minRows?: number
+    maxRows?: number
+  }
+  | boolean
 
 const PENDANT_MAP = {
-  suffix: "append",
-  prefix: "prepend",
-};
+  suffix: 'append',
+  prefix: 'prepend',
+}
 
 export default defineComponent({
-  name: "AgmInput",
+  name: 'AgmInput',
 
   components: {
     AgmIcon,
@@ -160,20 +160,20 @@ export default defineComponent({
   props: {
     modelValue: {
       type: [String, Number],
-      default: "",
+      default: '',
     },
     type: {
       type: String,
-      default: "text",
+      default: 'text',
     },
     size: {
       type: String as PropType<ComponentSize>,
       validator: isValidComponentSize,
     },
     resize: {
-      type: String as PropType<"none" | "both" | "horizontal" | "vertical">,
+      type: String as PropType<'none' | 'both' | 'horizontal' | 'vertical'>,
       validator: (val: string) =>
-        ["none", "both", "horizontal", "vertical"].includes(val),
+        ['none', 'both', 'horizontal', 'vertical'].includes(val),
     },
     autosize: {
       type: [Boolean, Object] as PropType<AutosizeProp>,
@@ -181,15 +181,15 @@ export default defineComponent({
     },
     autocomplete: {
       type: String,
-      default: "off",
-      validator: (val: string) => ["on", "off"].includes(val),
+      default: 'off',
+      validator: (val: string) => ['on', 'off'].includes(val),
     },
     placeholder: {
       type: String,
     },
     form: {
       type: String,
-      default: "",
+      default: '',
     },
     disabled: {
       type: Boolean,
@@ -213,15 +213,15 @@ export default defineComponent({
     },
     suffixIcon: {
       type: String,
-      default: "",
+      default: '',
     },
     prefixIcon: {
       type: String,
-      default: "",
+      default: '',
     },
     label: {
       type: String,
-      default: "",
+      default: '',
     },
     tabindex: {
       type: Number,
@@ -235,215 +235,217 @@ export default defineComponent({
 
   emits: [
     UPDATE_MODEL_EVENT,
-    "input",
-    "change",
-    "focus",
-    "blur",
-    "clear",
-    "mouseleave",
-    "mouseenter",
-    "keydown",
+    'input',
+    'change',
+    'focus',
+    'blur',
+    'clear',
+    'mouseleave',
+    'mouseenter',
+    'keydown',
   ],
 
   setup(props, ctx) {
-    const instance = getCurrentInstance();
-    const attrs = useAttrs();
-    const $AUGMA = useGlobalConfig();
+    const instance = getCurrentInstance()
+    const attrs = useAttrs()
+    const $AUGMA = useGlobalConfig()
 
-    const agmForm = inject(agmFormKey, {} as AgmFormContext);
-    const agmFormItem = inject(agmFormItemKey, {} as AgmFormItemContext);
+    const agmForm = inject(agmFormKey, {} as AgmFormContext)
+    const agmFormItem = inject(agmFormItemKey, {} as AgmFormItemContext)
 
-    const input = ref(null);
-    const textarea = ref(null);
-    const focused = ref(false);
-    const hovering = ref(false);
-    const isComposing = ref(false);
-    const passwordVisible = ref(false);
-    const _textareaCalcStyle = shallowRef({});
+    const input = ref(null)
+    const textarea = ref(null)
+    const focused = ref(false)
+    const hovering = ref(false)
+    const isComposing = ref(false)
+    const passwordVisible = ref(false)
+    const _textareaCalcStyle = shallowRef({})
 
-    const inputOrTextarea = computed(() => input.value || textarea.value);
+    const inputOrTextarea = computed(() => input.value || textarea.value)
     const inputSize = computed(
-      () => props.size || agmFormItem.size || $AUGMA.size
-    );
-    const needStatusIcon = computed(() => agmForm.statusIcon);
-    const validateState = computed(() => agmFormItem.validateState || "");
+      () => props.size || agmFormItem.size || $AUGMA.size,
+    )
+    const needStatusIcon = computed(() => agmForm.statusIcon)
+    const validateState = computed(() => agmFormItem.validateState || '')
     const validateIcon = computed(
-      () => VALIDATE_STATE_MAP[validateState.value]
-    );
+      () => VALIDATE_STATE_MAP[validateState.value],
+    )
     const textareaStyle = computed(() => ({
       ..._textareaCalcStyle.value,
       resize: props.resize,
-    }));
-    const inputDisabled = computed(() => props.disabled || agmForm.disabled);
+    }))
+    const inputDisabled = computed(() => props.disabled || agmForm.disabled)
     const nativeInputValue = computed(() =>
       props.modelValue === null || props.modelValue === undefined
-        ? ""
-        : String(props.modelValue)
-    );
-    const upperLimit = computed(() => ctx.attrs.maxlength);
+        ? ''
+        : String(props.modelValue),
+    )
+    const upperLimit = computed(() => ctx.attrs.maxlength)
     const showClear = computed(() => {
       return (
-        props.clearable &&
-        !inputDisabled.value &&
-        !props.readonly &&
-        nativeInputValue.value
-      );
-    });
+        props.clearable
+        && !inputDisabled.value
+        && !props.readonly
+        && nativeInputValue.value
+      )
+    })
     const showPwdVisible = computed(() => {
       return (
-        props.showPassword &&
-        !inputDisabled.value &&
-        !props.readonly &&
-        (!!nativeInputValue.value || focused.value)
-      );
-    });
+        props.showPassword
+        && !inputDisabled.value
+        && !props.readonly
+        && (!!nativeInputValue.value || focused.value)
+      )
+    })
     const isWordLimitVisible = computed(() => {
       return (
-        props.showWordLimit &&
-        ctx.attrs.maxlength &&
-        (props.type === "text" || props.type === "textarea") &&
-        !inputDisabled.value &&
-        !props.readonly &&
-        !props.showPassword
-      );
-    });
+        props.showWordLimit
+        && ctx.attrs.maxlength
+        && (props.type === 'text' || props.type === 'textarea')
+        && !inputDisabled.value
+        && !props.readonly
+        && !props.showPassword
+      )
+    })
     const textLength = computed(() => {
-      return typeof props.modelValue === "number"
+      return typeof props.modelValue === 'number'
         ? String(props.modelValue).length
-        : (props.modelValue || "").length;
-    });
+        : (props.modelValue || '').length
+    })
     const inputExceed = computed(() => {
       // show exceed style if length of initial value greater then maxlength
-      return isWordLimitVisible.value && textLength.value > upperLimit.value;
-    });
+      return isWordLimitVisible.value && textLength.value > upperLimit.value
+    })
 
     const resizeTextarea = () => {
-      const { type, autosize } = props;
+      const { type, autosize } = props
 
-      if (isServer || type !== "textarea") return;
+      if (isServer || type !== 'textarea') return
 
       if (autosize) {
-        const minRows = isObject(autosize) ? autosize.minRows : void 0;
-        const maxRows = isObject(autosize) ? autosize.maxRows : void 0;
+        const minRows = isObject(autosize) ? autosize.minRows : undefined
+        const maxRows = isObject(autosize) ? autosize.maxRows : undefined
         _textareaCalcStyle.value = calcTextareaHeight(
           textarea.value,
           minRows,
-          maxRows
-        );
-      } else {
+          maxRows,
+        )
+      }
+      else {
         _textareaCalcStyle.value = {
           minHeight: calcTextareaHeight(textarea.value).minHeight,
-        };
+        }
       }
-    };
+    }
 
     const setNativeInputValue = () => {
-      const input = inputOrTextarea.value;
-      if (!input || input.value === nativeInputValue.value) return;
-      input.value = nativeInputValue.value;
-    };
+      const input = inputOrTextarea.value
+      if (!input || input.value === nativeInputValue.value) return
+      input.value = nativeInputValue.value
+    }
 
     const calcIconOffset = (place) => {
-      const { el } = instance.vnode;
+      const { el } = instance.vnode
       const elList: HTMLSpanElement[] = Array.from(
-        el.querySelectorAll(`.agm-input__${place}`)
-      );
-      const target = elList.find((item) => item.parentNode === el);
+        el.querySelectorAll(`.agm-input__${place}`),
+      )
+      const target = elList.find(item => item.parentNode === el)
 
-      if (!target) return;
+      if (!target) return
 
-      const pendant = PENDANT_MAP[place];
+      const pendant = PENDANT_MAP[place]
 
       if (ctx.slots[pendant]) {
-        target.style.transform = `translateX(${place === "suffix" ? "-" : ""}${
+        target.style.transform = `translateX(${place === 'suffix' ? '-' : ''}${
           el.querySelector(`.agm-input-group__${pendant}`).offsetWidth
-        }px)`;
-      } else {
-        target.removeAttribute("style");
+        }px)`
       }
-    };
+      else {
+        target.removeAttribute('style')
+      }
+    }
 
     const updateIconOffset = () => {
-      calcIconOffset("prefix");
-      calcIconOffset("suffix");
-    };
+      calcIconOffset('prefix')
+      calcIconOffset('suffix')
+    }
 
     const handleInput = (event) => {
-      const { value } = event.target;
+      const { value } = event.target
 
       // should not emit input during composition
       // see: https://github.com/ElemeFE/element/issues/10516
-      if (isComposing.value) return;
+      if (isComposing.value) return
 
       // hack for https://github.com/ElemeFE/element/issues/8548
       // should remove the following line when we don't support IE
-      if (value === nativeInputValue.value) return;
+      if (value === nativeInputValue.value) return
 
-      ctx.emit(UPDATE_MODEL_EVENT, value);
-      ctx.emit("input", value);
+      ctx.emit(UPDATE_MODEL_EVENT, value)
+      ctx.emit('input', value)
 
       // ensure native input value is controlled
       // see: https://github.com/ElemeFE/element/issues/12850
-      nextTick(setNativeInputValue);
-    };
+      nextTick(setNativeInputValue)
+    }
 
     const handleChange = (event) => {
-      ctx.emit("change", event.target.value);
-    };
+      ctx.emit('change', event.target.value)
+    }
 
     const focus = () => {
       // see: https://github.com/ElemeFE/element/issues/18573
       nextTick(() => {
-        inputOrTextarea.value.focus();
-      });
-    };
+        inputOrTextarea.value.focus()
+      })
+    }
 
     const blur = () => {
-      inputOrTextarea.value.blur();
-    };
+      inputOrTextarea.value.blur()
+    }
 
     const handleFocus = (event) => {
-      focused.value = true;
-      ctx.emit("focus", event);
-    };
+      focused.value = true
+      ctx.emit('focus', event)
+    }
 
     const handleBlur = (event) => {
-      focused.value = false;
-      ctx.emit("blur", event);
-    };
+      focused.value = false
+      ctx.emit('blur', event)
+    }
 
     const select = () => {
-      inputOrTextarea.value.select();
-    };
+      inputOrTextarea.value.select()
+    }
 
     const clear = () => {
-      ctx.emit(UPDATE_MODEL_EVENT, "");
-      ctx.emit("change", "");
-      ctx.emit("clear");
-    };
+      ctx.emit(UPDATE_MODEL_EVENT, '')
+      ctx.emit('change', '')
+      ctx.emit('clear')
+    }
 
     const handlePasswordVisible = () => {
-      passwordVisible.value = !passwordVisible.value;
-      focus();
-    };
+      passwordVisible.value = !passwordVisible.value
+      focus()
+    }
 
     const getSuffixVisible = () => {
       return (
-        ctx.slots.suffix ||
-        props.suffixIcon ||
-        showClear.value ||
-        props.showPassword ||
-        isWordLimitVisible.value ||
-        (validateState.value && needStatusIcon.value)
-      );
-    };
+        ctx.slots.suffix
+        || props.suffixIcon
+        || showClear.value
+        || props.showPassword
+        || isWordLimitVisible.value
+        || (validateState.value && needStatusIcon.value)
+      )
+    }
 
     // native input value is set explicitly
     // do not use v-model / :value in template
     // see: https://github.com/ElemeFE/element/issues/14521
     watch(nativeInputValue, () => {
-      setNativeInputValue();
-    });
+      setNativeInputValue()
+    })
 
     // when change between <input> and <textarea>,
     // update DOM dependent value and styles
@@ -452,36 +454,36 @@ export default defineComponent({
       () => props.type,
       () => {
         nextTick(() => {
-          setNativeInputValue();
-          resizeTextarea();
-          updateIconOffset();
-        });
-      }
-    );
+          setNativeInputValue()
+          resizeTextarea()
+          updateIconOffset()
+        })
+      },
+    )
 
     onMounted(() => {
-      setNativeInputValue();
-      updateIconOffset();
-      nextTick(resizeTextarea);
-    });
+      setNativeInputValue()
+      updateIconOffset()
+      nextTick(resizeTextarea)
+    })
 
     onUpdated(() => {
-      nextTick(updateIconOffset);
-    });
+      nextTick(updateIconOffset)
+    })
 
     const onMouseLeave = (e) => {
-      hovering.value = false;
-      ctx.emit("mouseleave", e);
-    };
+      hovering.value = false
+      ctx.emit('mouseleave', e)
+    }
 
     const onMouseEnter = (e) => {
-      hovering.value = true;
-      ctx.emit("mouseenter", e);
-    };
+      hovering.value = true
+      ctx.emit('mouseenter', e)
+    }
 
     const handleKeydown = (e) => {
-      ctx.emit("keydown", e);
-    };
+      ctx.emit('keydown', e)
+    }
 
     return {
       input,
@@ -515,7 +517,7 @@ export default defineComponent({
       onMouseLeave,
       onMouseEnter,
       handleKeydown,
-    };
+    }
   },
-});
+})
 </script>

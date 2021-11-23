@@ -17,19 +17,19 @@
 </template>
 
 <script lang="ts">
-import "./index.scss";
-import AgmButton from "../button/index.vue";
-import AgmIcon from "../icon/index.vue";
-import { defineComponent, PropType } from "vue";
+import './index.scss'
+import { defineComponent, PropType } from 'vue'
+import AgmButton from '../button/index.vue'
+import AgmIcon from '../icon/index.vue'
 
 interface IMenuItem {
-  color: string;
-  icon: string;
-  do: () => void;
+  color: string
+  icon: string
+  do: () => void
 }
 
 export default defineComponent({
-  name: "AgmBottomMenu",
+  name: 'AgmBottomMenu',
   components: {
     AgmButton,
     AgmIcon,
@@ -38,9 +38,9 @@ export default defineComponent({
     menuItems: {
       type: Array as PropType<IMenuItem[]>,
       default() {
-        return [];
+        return []
       },
     },
   },
-});
+})
 </script>

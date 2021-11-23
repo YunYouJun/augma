@@ -1,21 +1,21 @@
-import { createApp } from "vue";
-import App from "./App.vue";
-import store from "./store";
+import { createApp } from 'vue'
+import augma from 'augma'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import routes from 'pages-generated'
+
+import App from './App.vue'
+import store from './store'
 
 // css
-import "./index.css";
+import './index.css'
 
-import { createRouter, createWebHashHistory } from "vue-router";
-import routes from "pages-generated";
+import '@augma/components/styles/index.scss'
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
-});
+})
 
-const app = createApp(App);
+const app = createApp(App)
 
-import augma from "augma";
-import "@augma/components/styles/index.scss";
-
-app.use(router).use(store).use(augma).mount("#app");
+app.use(router).use(store).use(augma).mount('#app')

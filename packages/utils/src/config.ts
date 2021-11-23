@@ -1,20 +1,20 @@
-import type { ComponentSize } from "@augma/shared";
+import type { ComponentSize } from '@augma/shared'
 
 export interface InstallOptions {
-  size: ComponentSize;
-  zIndex: number;
+  size: ComponentSize
+  zIndex: number
 }
 
-export type AugmaOptions = InstallOptions;
+export type AugmaOptions = InstallOptions
 
-let $AUGMA = {} as InstallOptions;
+let $AUGMA = {} as InstallOptions
 
 const setConfig = (option: InstallOptions): void => {
-  $AUGMA = option;
-};
+  $AUGMA = option
+}
 
 const getConfig = (key: keyof InstallOptions): unknown => {
-  return $AUGMA[key];
-};
+  return $AUGMA[key]
+}
 
-export { getConfig, setConfig };
+export { getConfig, setConfig }

@@ -13,11 +13,11 @@ import {
   getCurrentInstance,
   onBeforeUnmount,
   reactive,
-} from "vue";
-import { useOption } from "./useOption";
+} from 'vue'
+import { useOption } from './useOption'
 
 export default defineComponent({
-  name: "AgmOption",
+  name: 'AgmOption',
   props: {
     disable: {
       type: Boolean,
@@ -25,31 +25,31 @@ export default defineComponent({
     },
     label: {
       type: String,
-      default: "",
+      default: '',
     },
     value: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   setup(props) {
-    const { select } = useOption(props);
+    const { select } = useOption(props)
 
     function selectOptionClick() {
-      if (props.disable) return;
+      if (props.disable) return
 
       select.handleOptionSelect({
         label: props.label,
         value: props.value,
-      });
+      })
     }
 
     return {
       select,
       selectOptionClick,
-    };
+    }
   },
-});
+})
 </script>
 
 <style lang="scss">

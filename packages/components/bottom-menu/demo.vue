@@ -4,41 +4,28 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import AgmBottomMenu from "./index.vue";
-export default defineComponent({
-  components: {
-    AgmBottomMenu,
+<script lang="ts" setup>
+import AgmBottomMenu from './index.vue'
+const menuItems = [
+  {
+    color: 'black',
+    icon: 'mdi:github',
+    do: () => {
+    },
   },
-  data() {
-    return {
-      menuItems: [
-        {
-          color: "black",
-          icon: "mdi:github",
-          do: () => {
-            console.log("github");
-          },
-        },
-        {
-          color: "var(--agm-success)",
-          icon: "mdi:check",
-          do: () => {
-            console.log("yes");
-          },
-        },
-        {
-          color: "var(--agm-danger)",
-          icon: "mdi:error",
-          do: () => {
-            console.log("no");
-          },
-        },
-      ],
-    };
+  {
+    color: 'var(--agm-success)',
+    icon: 'mdi:check',
+    do: () => {
+    },
   },
-});
+  {
+    color: 'var(--agm-danger)',
+    icon: 'mdi:error',
+    do: () => {
+    },
+  },
+]
 </script>
 
 <style>

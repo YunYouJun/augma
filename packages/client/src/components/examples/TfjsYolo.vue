@@ -1,9 +1,9 @@
 <template>
-  <div id="rects" v-if="enable">
+  <div v-if="enable" id="rects">
     <div
-      class="agm-rect"
       v-for="(box, i) in boxes"
       :key="i"
+      class="agm-rect"
       :style="{
         top: `${box.top}px`,
         left: `${box.left * $store.state.camera.ratio}px`,
@@ -24,67 +24,66 @@
 </template>
 
 <script lang="ts">
-import yolo from "tfjs-yolo";
-import { defineComponent } from "vue";
+import yolo from 'tfjs-yolo'
+import { defineComponent } from 'vue'
 export default defineComponent({
-  data() {
-    return {
-      yolo: null,
-      colors: {},
-      boxes: [],
-    };
-  },
   props: {
     enable: {
       type: Boolean,
       default: false,
     },
   },
+  data() {
+    return {
+      yolo: null,
+      colors: {},
+      boxes: [],
+    }
+  },
   watch: {
     async enable(val) {
       if (val) {
-        this.$store.commit("app/setLoading", true);
-        await this.loadModel();
-        this.$store.commit("app/setLoading", false);
-        this.run();
+        this.$store.commit('app/setLoading', true)
+        await this.loadModel()
+        this.$store.commit('app/setLoading', false)
+        this.run()
       }
     },
   },
   methods: {
     async loadModel() {
-      const isLocal = true;
+      const isLocal = true
 
-      if (isLocal) {
-        this.yolo = await yolo.v3tiny("/v3tiny/model.json");
-      } else {
-        this.yolo = await yolo.v3();
-      }
+      if (isLocal)
+        this.yolo = await yolo.v3tiny('/v3tiny/model.json')
+      else
+        this.yolo = await yolo.v3()
     },
     async run() {
-      await this.predict();
+      await this.predict()
       setTimeout(() => {
-        this.run();
-      }, 500);
+        this.run()
+      }, 500)
     },
     async predict(threshold) {
-      const videoEl = this.$store.state.camera.videoEl;
+      const videoEl = this.$store.state.camera.videoEl
       const boxes = await this.yolo.predict(videoEl, {
         scoreThreshold: threshold,
-      });
-      this.boxes = boxes;
-      this.drawBoxes(boxes);
+      })
+      this.boxes = boxes
+      this.drawBoxes(boxes)
     },
     drawBoxes(boxes) {
-      const colors = this.colors;
-      boxes.map((box) => {
+      const colors = this.colors
+      boxes.forEach((box) => {
         if (!(box.class in colors)) {
-          colors[box.class] =
-            "#" + Math.floor(Math.random() * 16777215).toString(16);
+          colors[box.class]
+            = `#${Math.floor(Math.random() * 16777215).toString(16)}`
         }
-      });
+      })
     },
   },
-});
+})
 </script>
 
 <style lang="scss">
@@ -103,4 +102,3 @@ export default defineComponent({
   align-items: flex-start;
 }
 </style>
-

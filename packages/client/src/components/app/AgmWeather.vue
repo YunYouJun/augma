@@ -4,23 +4,27 @@
       <agm-icon :icon="icon" style="transform: scale(3)"></agm-icon>
     </div>
     <div class="weather-info">
-      <div class="weather-city">{{ city }}</div>
-      <div class="weather-temperature">{{ temperature }}</div>
+      <div class="weather-city">
+        {{ city }}
+      </div>
+      <div class="weather-temperature">
+        {{ temperature }}
+      </div>
     </div>
   </agm-card>
 </template>
 
 <script>
-import { mdiWeatherPartlyCloudy } from "@mdi/js";
+import { mdiWeatherPartlyCloudy } from '@mdi/js'
 export default {
   data() {
     return {
       icon: mdiWeatherPartlyCloudy,
-      city: "北京市",
-      temperature: "-4°",
-    };
+      city: '北京市',
+      temperature: '-4°',
+    }
   },
-};
+}
 </script>
 
 <style lang="scss">

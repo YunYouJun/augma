@@ -22,7 +22,9 @@
         ></agm-icon>
         <slot v-else name="icon"></slot>
 
-        <div class="agm-notification__title">{{ title }}</div>
+        <div class="agm-notification__title">
+          {{ title }}
+        </div>
         <div class="agm-notification__content">
           <slot>
             <p v-html="message"></p>
@@ -48,19 +50,19 @@ import {
   onMounted,
   onBeforeUnmount,
   CSSProperties,
-} from "vue";
-import AgmIcon from "../../icon/index.vue";
+} from 'vue'
 
 // notificationVM is an alias of vue.VNode
-import { EVENT_CODE } from "@augma/utils/aria";
-import { on, off } from "@augma/utils/dom";
+import { EVENT_CODE } from '@augma/utils/aria'
+import { on, off } from '@augma/utils/dom'
 
-import type { PropType } from "vue";
-import type { NotificationVM, Position } from "./notification.type";
-import { AgmColorType, AgmTypeMap } from "@augma/shared";
+import type { PropType } from 'vue'
+import { AgmColorType, AgmTypeMap } from '@augma/shared'
+import AgmIcon from '../../icon/index.vue'
+import type { NotificationVM, Position } from './notification.type'
 
 export default defineComponent({
-  name: "AgmNotification",
+  name: 'AgmNotification',
   components: {
     AgmIcon,
   },
@@ -69,15 +71,15 @@ export default defineComponent({
       type: Number,
       default: 3000,
     },
-    id: { type: String, default: "" },
+    id: { type: String, default: '' },
     message: {
       type: [String, Object] as PropType<string | NotificationVM>,
-      default: "",
+      default: '',
     },
     offset: { type: Number, default: 0 },
     onClick: {
       type: Function as PropType<() => void>,
-      default: () => void 0,
+      default: () => undefined,
     },
     onClose: {
       type: Function as PropType<() => void>,
@@ -85,7 +87,7 @@ export default defineComponent({
     },
     position: {
       type: String as PropType<Position>,
-      default: "top-right",
+      default: 'top-right',
     },
     showClose: {
       type: Boolean,
@@ -93,86 +95,86 @@ export default defineComponent({
     },
     title: {
       type: String,
-      default: "",
+      default: '',
     },
     icon: {
       type: String,
-      default: "",
+      default: '',
     },
     color: {
       type: String,
-      default: "black",
+      default: 'black',
     },
     /**
      * type for notification
      */
-    type: { type: String as PropType<AgmColorType>, default: "default" },
+    type: { type: String as PropType<AgmColorType>, default: 'default' },
     zIndex: { type: Number, default: 0 },
   },
-  emits: ["destroy"],
+  emits: ['destroy'],
 
   setup(props) {
-    const visible = ref(false);
-    let timer: any = null;
+    const visible = ref(false)
+    let timer: any = null
 
     const horizontalClass = computed(() => {
-      return props.position.indexOf("right") > 1 ? "right" : "left";
-    });
+      return props.position.indexOf('right') > 1 ? 'right' : 'left'
+    })
 
     const verticalProperty = computed(() => {
-      return props.position.startsWith("top") ? "top" : "bottom";
-    });
+      return props.position.startsWith('top') ? 'top' : 'bottom'
+    })
 
     const styles = computed(() => {
       return {
-        "--agm-icon-color": props.color,
+        '--agm-icon-color': props.color,
         [verticalProperty.value]: `${props.offset}px`,
-      } as CSSProperties;
-    });
+      } as CSSProperties
+    })
 
     function startTimer() {
       if (props.duration > 0) {
         timer = setTimeout(() => {
-          if (visible.value) {
-            close();
-          }
-        }, props.duration);
+          if (visible.value)
+            close()
+        }, props.duration)
       }
     }
 
     function clearTimer() {
-      if (!timer) return;
-      clearTimeout(timer);
-      timer = null;
+      if (!timer) return
+      clearTimeout(timer)
+      timer = null
     }
 
     function close() {
-      visible.value = false;
+      visible.value = false
     }
 
     function onKeydown({ code }: KeyboardEvent) {
       if (code === EVENT_CODE.delete || code === EVENT_CODE.backspace) {
-        clearTimer(); // press delete/backspace clear timer
-      } else if (code === EVENT_CODE.esc) {
+        clearTimer() // press delete/backspace clear timer
+      }
+      else if (code === EVENT_CODE.esc) {
         // press esc to close the notification
-        if (visible.value) {
-          close();
-        }
-      } else {
-        startTimer(); // resume timer
+        if (visible.value)
+          close()
+      }
+      else {
+        startTimer() // resume timer
       }
     }
 
     // lifecycle
     onMounted(() => {
-      startTimer();
-      visible.value = true;
-      on(document, "keydown", onKeydown);
-    });
+      startTimer()
+      visible.value = true
+      on(document, 'keydown', onKeydown)
+    })
 
     onBeforeUnmount(() => {
-      off(document, "keydown", onKeydown);
-    });
+      off(document, 'keydown', onKeydown)
+    })
 
     return {
       visible,
@@ -183,7 +185,7 @@ export default defineComponent({
       close,
       clearTimer,
       startTimer,
-    };
+    }
   },
-});
+})
 </script>

@@ -1,8 +1,8 @@
-import { App } from "vue";
-import Notify from "./src/notify";
+import { App } from 'vue'
+import Notify from './src/notify';
 
 (Notify as any).install = (app: App): void => {
-  app.config.globalProperties.$notify = Notify;
-};
+  app.config.globalProperties.$notify = Notify
+}
 
-export default Notify;
+export default Notify

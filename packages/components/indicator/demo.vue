@@ -8,9 +8,9 @@
 </template>
 
 <script lang="ts">
-import { AgmTypeMap } from "@augma/shared";
-import { defineComponent } from "vue";
-import AgmIndicator from "./index.vue";
+import { AgmTypeMap } from '@augma/shared'
+import { defineComponent } from 'vue'
+import AgmIndicator from './index.vue'
 
 export default defineComponent({
   components: {
@@ -19,7 +19,7 @@ export default defineComponent({
   data() {
     return {
       AgmTypeMap,
-    };
+    }
   },
-});
+})
 </script>

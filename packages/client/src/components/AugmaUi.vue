@@ -13,12 +13,12 @@
 </template>
 
 <script lang="ts">
-import AgmWindow from "./ui/AgmWindow.vue";
-import SystemBar from "./ui/SystemBar.vue";
-import BottomMenu from "./ui/BottomMenu.vue";
-import FaceApi from "./examples/FaceApi.vue";
-import TfjsYolo from "./examples/TfjsYolo.vue";
-import { defineComponent } from "vue";
+import { defineComponent } from 'vue'
+import AgmWindow from './ui/AgmWindow.vue'
+import SystemBar from './ui/SystemBar.vue'
+import BottomMenu from './ui/BottomMenu.vue'
+import FaceApi from './examples/FaceApi.vue'
+import TfjsYolo from './examples/TfjsYolo.vue'
 export default defineComponent({
   components: {
     AgmWindow,
@@ -34,10 +34,10 @@ export default defineComponent({
     styles(): any {
       return {
         opacity: this.opacity,
-      };
+      }
     },
   },
-});
+})
 </script>
 
 <style lang="scss">

@@ -10,75 +10,75 @@ import {
   vShow,
   withCtx,
   withDirectives,
-} from "vue";
-import { removeClass } from "@augma/utils/dom";
+} from 'vue'
+import { removeClass } from '@augma/utils/dom'
+import type { Nullable } from '@augma/utils/types'
 import type {
   ILoadingCreateComponentParams,
   ILoadingInstance,
-} from "./loading.type";
-import type { Nullable } from "@augma/utils/types";
+} from './loading.type'
 
 export function createLoadingComponent({
   options,
   globalLoadingOption,
 }: ILoadingCreateComponentParams): ILoadingInstance {
-  let vm: VNode = null;
-  let afterLeaveTimer: Nullable<NodeJS.Timeout> = null;
+  let vm: VNode = null
+  let afterLeaveTimer: Nullable<NodeJS.Timeout> = null
 
-  const afterLeaveFlag = ref(false);
+  const afterLeaveFlag = ref(false)
   const data = reactive({
     ...options,
-    originalPosition: "",
-    originalOverflow: "",
+    originalPosition: '',
+    originalOverflow: '',
     visible: false,
-  });
+  })
 
   function setText(text: string) {
-    data.text = text;
+    data.text = text
   }
 
   function destroySelf() {
-    const target = data.parent;
+    const target = data.parent
     if (!target.vLoadingAddClassList) {
       let loadingNumber: number | string = target.getAttribute(
-        "loading-number"
-      );
-      loadingNumber = Number.parseInt(loadingNumber) - 1;
+        'loading-number',
+      )
+      loadingNumber = Number.parseInt(loadingNumber) - 1
       if (!loadingNumber) {
-        removeClass(target, "agm-loading-parent--relative");
-        target.removeAttribute("loading-number");
-      } else {
-        target.setAttribute("loading-number", loadingNumber.toString());
+        removeClass(target, 'agm-loading-parent--relative')
+        target.removeAttribute('loading-number')
       }
-      removeClass(target, "agm-loading-parent--hidden");
+      else {
+        target.setAttribute('loading-number', loadingNumber.toString())
+      }
+      removeClass(target, 'agm-loading-parent--hidden')
     }
-    if (vm.el && vm.el.parentNode) {
-      vm.el.parentNode.removeChild(vm.el);
-    }
+    if (vm.el && vm.el.parentNode)
+      vm.el.parentNode.removeChild(vm.el)
   }
 
   function close() {
-    const target = data.parent;
-    target.vLoadingAddClassList = null;
-    if (data.fullscreen) {
-      globalLoadingOption.fullscreenLoading = undefined;
-    }
-    afterLeaveFlag.value = true;
-    clearTimeout(afterLeaveTimer);
+    const target = data.parent
+    target.vLoadingAddClassList = null
+    if (data.fullscreen)
+      globalLoadingOption.fullscreenLoading = undefined
+
+    afterLeaveFlag.value = true
+    clearTimeout(afterLeaveTimer)
 
     afterLeaveTimer = setTimeout(() => {
       if (afterLeaveFlag.value) {
-        afterLeaveFlag.value = false;
-        destroySelf();
+        afterLeaveFlag.value = false
+        destroySelf()
       }
-    }, 400);
-    data.visible = false;
+    }, 400)
+    data.visible = false
   }
 
   function handleAfterLeave() {
-    if (!afterLeaveFlag.value) return;
-    afterLeaveFlag.value = false;
-    destroySelf();
+    if (!afterLeaveFlag.value) return
+    afterLeaveFlag.value = false
+    destroySelf()
   }
 
   const componentSetupConfig = {
@@ -86,86 +86,86 @@ export function createLoadingComponent({
     setText,
     close,
     handleAfterLeave,
-  };
+  }
 
   const agmLoadingComponent = {
-    name: "AgmLoading",
+    name: 'AgmLoading',
     setup() {
-      return componentSetupConfig;
+      return componentSetupConfig
     },
     render() {
       const spinner = h(
-        "svg",
+        'svg',
         {
-          class: "circular",
-          viewBox: "25 25 50 50",
+          class: 'circular',
+          viewBox: '25 25 50 50',
         },
         [
-          h("circle", {
-            class: "path",
-            cx: "50",
-            cy: "50",
-            r: "20",
-            fill: "none",
+          h('circle', {
+            class: 'path',
+            cx: '50',
+            cy: '50',
+            r: '20',
+            fill: 'none',
           }),
-        ]
-      );
+        ],
+      )
 
-      const noSpinner = h("i", { class: this.spinner });
+      const noSpinner = h('i', { class: this.spinner })
 
-      const spinnerText = h("p", { class: "agm-loading-text" }, [this.text]);
+      const spinnerText = h('p', { class: 'agm-loading-text' }, [this.text])
 
       return h(
         Transition,
         {
-          name: "agm-loading-fade",
+          name: 'agm-loading-fade',
           onAfterLeave: this.handleAfterLeave,
         },
         {
           default: withCtx(() => [
             withDirectives(
               createVNode(
-                "div",
+                'div',
                 {
                   style: {
-                    backgroundColor: this.background || "",
+                    backgroundColor: this.background || '',
                   },
                   class: [
-                    "agm-loading-mask",
+                    'agm-loading-mask',
                     this.customClass,
-                    this.fullscreen ? "is-fullscreen" : "",
+                    this.fullscreen ? 'is-fullscreen' : '',
                   ],
                 },
                 [
                   h(
-                    "div",
+                    'div',
                     {
-                      class: "agm-loading-spinner",
+                      class: 'agm-loading-spinner',
                     },
                     [
                       !this.spinner ? spinner : noSpinner,
                       this.text ? spinnerText : null,
-                    ]
+                    ],
                   ),
-                ]
+                ],
               ),
-              [[vShow, this.visible]]
+              [[vShow, this.visible]],
             ),
           ]),
-        }
-      );
+        },
+      )
     },
-  };
+  }
 
-  vm = createVNode(agmLoadingComponent);
+  vm = createVNode(agmLoadingComponent)
 
-  render(vm, document.createElement("div"));
+  render(vm, document.createElement('div'))
 
   return {
     ...componentSetupConfig,
     vm,
     get $el() {
-      return vm.el as HTMLElement;
+      return vm.el as HTMLElement
     },
-  };
+  }
 }

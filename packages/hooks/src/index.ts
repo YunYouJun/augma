@@ -1,2 +1,2 @@
-export { useAttrs } from "./useAttrs";
-export { useWebcam } from "./useWebcam";
+export { useAttrs } from './useAttrs'
+export { useWebcam } from './useWebcam'

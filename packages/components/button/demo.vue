@@ -1,11 +1,21 @@
 <template>
   <div class="button-demo">
     <agm-button>Button</agm-button>
-    <agm-button type="primary">Button</agm-button>
-    <agm-button type="success">Button</agm-button>
-    <agm-button type="warning">Button</agm-button>
-    <agm-button type="danger">Button</agm-button>
-    <agm-button type="info">Button</agm-button>
+    <agm-button type="primary">
+      Button
+    </agm-button>
+    <agm-button type="success">
+      Button
+    </agm-button>
+    <agm-button type="warning">
+      Button
+    </agm-button>
+    <agm-button type="danger">
+      Button
+    </agm-button>
+    <agm-button type="info">
+      Button
+    </agm-button>
   </div>
   <div class="button-demo">
     <agm-button icon>
@@ -50,14 +60,14 @@
 </template>
 
 <script>
-import AgmButton from "./index.vue";
-import AgmIcon from "../icon/index.vue";
+import AgmIcon from '../icon/index.vue'
+import AgmButton from './index.vue'
 export default {
   components: {
     AgmButton,
     AgmIcon,
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

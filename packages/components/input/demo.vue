@@ -14,19 +14,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref } from 'vue'
 
-import AgmInput from "./index.vue";
+import AgmInput from './index.vue'
 export default defineComponent({
   components: {
     AgmInput,
   },
   setup() {
     return {
-      input: ref(""),
-    };
+      input: ref(''),
+    }
   },
-});
+})
 </script>
 
 <style lang="scss">

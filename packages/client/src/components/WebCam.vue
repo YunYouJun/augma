@@ -1,58 +1,46 @@
 <template>
-  <video ref="videoRef" :class="classes" id="webcam" autoplay></video>
+  <video id="webcam" ref="videoRef" :class="classes" autoplay></video>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watchEffect } from "vue";
-import { useWebcam } from "@augma/hooks";
-import { useStore } from "vuex";
+import { computed, onMounted, ref, watchEffect } from 'vue'
+import { useWebcam } from '@augma/hooks'
+import { useStore } from 'vuex'
 
-export default defineComponent({
-  props: {
-    isFlip: {
-      type: Boolean,
-      default: false,
-    },
-    isFront: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  setup(props) {
-    const store = useStore();
-    const videoRef = ref(null);
+const props = withDefaults(defineProps<{
+  isFlip: boolean
+  isFront: boolean
+}>(), {
+  isFlip: false,
+  isFront: false,
+})
 
-    const isFlip = ref(props.isFlip);
+const store = useStore()
+const videoRef = ref(null)
 
-    const classes = computed(() => {
-      return {
-        flip: isFlip,
-      };
-    });
+const isFlip = ref(props.isFlip)
 
-    const { changeWebcamStream, settings } = useWebcam(videoRef, {
-      isFront: props.isFront,
-    });
+const classes = computed(() => {
+  return {
+    flip: isFlip,
+  }
+})
 
-    watchEffect(async () => {
-      await changeWebcamStream(props.isFront);
-    });
+const { changeWebcamStream, settings } = useWebcam(videoRef, {
+  isFront: props.isFront,
+})
 
-    onMounted(async () => {
-      await changeWebcamStream(props.isFront);
-      store.commit("camera/setVideoEl", videoRef.value);
-      store.commit("camera/setSettings", settings);
-      const ratio = document.body.clientWidth / settings.value.width;
-      store.commit("camera/setRatio", ratio);
-    });
+watchEffect(async() => {
+  await changeWebcamStream(props.isFront)
+})
 
-    return {
-      videoRef,
-      classes,
-      isFlip,
-    };
-  },
-});
+onMounted(async() => {
+  await changeWebcamStream(props.isFront)
+  store.commit('camera/setVideoEl', videoRef.value)
+  store.commit('camera/setSettings', settings)
+  const ratio = document.body.clientWidth / settings.value.width
+  store.commit('camera/setRatio', ratio)
+})
 </script>
 
 <style lang="scss">

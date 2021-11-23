@@ -12,7 +12,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="type in AgmTypeArray">
+      <tr v-for="(type, i) in AgmTypeArray" :key="i">
         <td>
           {{ type }}
         </td>
@@ -28,16 +28,16 @@
 </template>
 
 <script lang="ts">
-import { AgmTypeArray } from "@augma/shared";
-import { defineComponent } from "vue";
-import "./index.scss";
+import { AgmTypeArray } from '@augma/shared'
+import { defineComponent } from 'vue'
+import './index.scss'
 export default defineComponent({
   setup() {
     return {
       AgmTypeArray,
-    };
+    }
   },
-});
+})
 </script>
 
 <style lang="scss">

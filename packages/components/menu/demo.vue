@@ -2,8 +2,8 @@
   <agm-menu v-model="open">
     <template #activator>
       <agm-button icon>
-        <agm-icon icon="mdi:dots-vertical" v-if="open" />
-        <agm-icon icon="mdi:dots-horizontal" v-else />
+        <agm-icon v-if="open" icon="mdi:dots-vertical" />
+        <agm-icon v-else icon="mdi:dots-horizontal" />
       </agm-button>
     </template>
     <agm-button icon type="primary" outline>
@@ -16,10 +16,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import AgmButton from "../button/index.vue";
-import AgmIcon from "../icon/index.vue";
-import AgmMenu from "./index.vue";
+import { defineComponent } from 'vue'
+import AgmButton from '../button/index.vue'
+import AgmIcon from '../icon/index.vue'
+import AgmMenu from './index.vue'
 
 export default defineComponent({
   components: {
@@ -30,7 +30,7 @@ export default defineComponent({
   data() {
     return {
       open: false,
-    };
+    }
   },
-});
+})
 </script>

@@ -1,13 +1,15 @@
 <template>
   <agm-card v-for="(type, i) in types" :key="i" :type="type">
-    <template #header> {{ type }} </template>
+    <template #header>
+      {{ type }}
+    </template>
     Card
   </agm-card>
 </template>
 
 <script>
-import { AgmTypeMap } from "@augma/shared";
-import AgmCard from "./index.vue";
+import { AgmTypeMap } from '@augma/shared'
+import AgmCard from './index.vue'
 export default {
   components: {
     AgmCard,
@@ -15,7 +17,7 @@ export default {
   setup() {
     return {
       types: AgmTypeMap,
-    };
+    }
   },
-};
+}
 </script>

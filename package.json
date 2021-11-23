@@ -14,6 +14,8 @@
     "docs": "vitepress dev packages",
     "docs:build": "vitepress build packages",
     "docs:serve": "vitepress serve packages",
+    "lint": "eslint \"**/*.{vue,ts,js}\"",
+    "lint:fix": "eslint \"**/*.{vue,ts,js}\" --fix",
     "release": "ts-node-script scripts/release.ts",
     "update": "ts-node-script scripts/update.ts"
   },
@@ -24,26 +26,28 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@iconify/json": "^1.1.413",
+    "@antfu/eslint-config": "^0.10.0",
     "@types/minimist": "^1.2.2",
-    "@types/semver": "^7.3.8",
+    "@types/semver": "^7.3.9",
     "@yunyoujun/logger": "^0.1.4",
     "enquirer": "^2.3.6",
-    "execa": "^5.0.0",
+    "eslint": "^8.3.0",
+    "execa": "^6.0.0",
     "fast-glob": "^3.2.7",
-    "gray-matter": "^4.0.2",
+    "gray-matter": "^4.0.3",
     "minimist": "^1.2.5",
+    "pnpm": "^6.23.1",
     "semver": "^7.3.5",
-    "ts-node": "^10.2.1",
-    "typescript": "^4.4.3",
-    "unplugin-icons": "^0.12.13",
-    "unplugin-vue-components": "^0.15.6",
-    "vite": "^2.6.5",
-    "vite-plugin-pwa": "^0.11.3",
-    "vitepress": "^0.20.0"
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2",
+    "unplugin-icons": "^0.12.18",
+    "unplugin-vue-components": "^0.17.2",
+    "vite": "^2.6.14",
+    "vite-plugin-pwa": "^0.11.6",
+    "vitepress": "^0.20.1"
   },
   "dependencies": {
-    "@vueuse/core": "^6.5.3"
+    "@vueuse/core": "^7.0.1"
   },
   "vetur": {
     "tags": "./vetur/tags.json",

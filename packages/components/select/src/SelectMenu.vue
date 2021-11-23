@@ -10,14 +10,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent } from 'vue'
 export default defineComponent({
-  name: "AgmSelectDropdown",
+  name: 'AgmSelectDropdown',
   props: {
     minWidth: String,
   },
   setup() {},
-});
+})
 </script>
 
 <style lang="scss">

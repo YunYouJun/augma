@@ -11,31 +11,31 @@
 </template>
 
 <script lang="ts">
-import { getAgmColorByType } from "@augma/shared";
-import { defineComponent } from "vue";
-import "./index.scss";
+import { getAgmColorByType } from '@augma/shared'
+import { defineComponent } from 'vue'
+import './index.scss'
 export default defineComponent({
-  name: "AgmIndicator",
+  name: 'AgmIndicator',
   props: {
     title: {
       type: String,
-      default: "Asuna",
+      default: 'Asuna',
     },
     info: {
       type: String,
-      default: "318",
+      default: '318',
     },
     color: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   computed: {
     styles() {
       return {
         color: getAgmColorByType(this.color),
-      };
+      }
     },
   },
-});
+})
 </script>

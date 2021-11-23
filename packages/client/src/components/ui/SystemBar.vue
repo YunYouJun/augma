@@ -8,11 +8,11 @@
 </template>
 
 <script>
-import AudioBtn from "../menu/AudioBtn.vue";
-import MenuBtn from "../menu/MenuBtn.vue";
+import AudioBtn from '../menu/AudioBtn.vue'
+import MenuBtn from '../menu/MenuBtn.vue'
 export default {
   components: { AudioBtn, MenuBtn },
-};
+}
 </script>
 
 <style lang="scss">

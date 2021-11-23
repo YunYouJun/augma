@@ -1,32 +1,32 @@
-import fs from "fs";
-import path from "path";
-import execa from "execa";
-import { logger, targets } from "./utils";
+import fs from 'fs'
+import path from 'path'
+import os from 'os'
+import { execa } from 'execa'
+import { logger, targets } from './utils'
 
 async function buildAll(targets: string[]) {
-  await runParallel(require("os").cpus().length, targets, build);
+  await runParallel(os.cpus().length, targets, build)
 }
 
 async function runParallel(
   maxConcurrency: number,
   source: string[],
-  iteratorFn: Function
+  iteratorFn: Function,
 ) {
-  const ret = [];
-  const executing = [];
+  const ret = []
+  const executing = []
   for (const item of source) {
-    const p = Promise.resolve().then(() => iteratorFn(item, source));
-    ret.push(p);
+    const p = Promise.resolve().then(() => iteratorFn(item, source))
+    ret.push(p)
 
     if (maxConcurrency <= source.length) {
-      const e = p.then(() => executing.splice(executing.indexOf(e), 1));
-      executing.push(e);
-      if (executing.length >= maxConcurrency) {
-        await Promise.race(executing);
-      }
+      const e = p.then(() => executing.splice(executing.indexOf(e), 1))
+      executing.push(e)
+      if (executing.length >= maxConcurrency)
+        await Promise.race(executing)
     }
   }
-  return Promise.all(ret);
+  return Promise.all(ret)
 }
 
 /**
@@ -34,21 +34,20 @@ async function runParallel(
  * @param target packageName
  */
 async function build(target: string) {
-  logger.info(`Build [${target}]`);
-  const pkgDir = path.resolve(`packages/${target}`);
+  logger.info(`Build [${target}]`)
+  const pkgDir = path.resolve(`packages/${target}`)
 
-  const distDir = `${pkgDir}/dist`;
-  if (fs.existsSync(distDir)) {
-    fs.rmSync(distDir, { recursive: true });
-  }
+  const distDir = `${pkgDir}/dist`
+  if (fs.existsSync(distDir))
+    fs.rmSync(distDir, { recursive: true })
 
-  await execa("pnpm", ["build"], { cwd: pkgDir, stdio: "inherit" });
+  await execa('pnpm', ['build'], { cwd: pkgDir, stdio: 'inherit' })
 }
 
 async function main() {
-  await buildAll(targets);
+  await buildAll(targets)
 }
 
 main().catch((e) => {
-  console.log(e);
-});
+  console.log(e)
+})

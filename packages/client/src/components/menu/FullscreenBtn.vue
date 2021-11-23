@@ -1,34 +1,34 @@
 <template>
-  <agm-button icon @click="toggle" title="Fullscreen">
+  <agm-button icon title="Fullscreen" @click="toggle">
     <agm-icon :icon="icon" color="black" />
   </agm-button>
 </template>
 
 <script lang="ts">
-import { useFullscreen } from "@vueuse/core";
-import { computed } from "vue";
+import { useFullscreen } from '@vueuse/core'
+import { computed } from 'vue'
 export default {
-  data() {
-    return {
-      fullscreen: document.fullscreenElement,
-    };
-  },
   setup() {
-    const { isFullscreen, toggle } = useFullscreen();
+    const { isFullscreen, toggle } = useFullscreen()
 
     const icon = computed(() => {
-      return isFullscreen.value ? "mdi:fullscreen-exit" : "mdi:fullscreen";
-    });
+      return isFullscreen.value ? 'mdi:fullscreen-exit' : 'mdi:fullscreen'
+    })
 
     return {
       icon,
       toggle,
-    };
+    }
+  },
+  data() {
+    return {
+      fullscreen: document.fullscreenElement,
+    }
   },
   mounted() {
     document.onfullscreenchange = () => {
-      this.fullscreen = document.fullscreenElement;
-    };
+      this.fullscreen = document.fullscreenElement
+    }
   },
-};
+}
 </script>

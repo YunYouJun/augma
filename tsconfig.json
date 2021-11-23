@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ESNext",
     "module": "ESNext",
+    "target": "es2016",
     "declaration": true,
     "moduleResolution": "node",
-    "jsx": "preserve",
     "sourceMap": true,
     "lib": ["ESNext", "DOM"],
-    "types": ["vite/client"],
+    "types": [
+      "vite/client",
+      "vite-plugin-pages/client",
+      "vite-plugin-vue-layouts/client"
+    ],
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -20,12 +23,6 @@
       "augma": ["packages/augma/src/index.ts"]
     }
   },
-  "include": [
-    "./*.ts",
-    "./docs/.vitepress/**/*.ts",
-    "./docs/.vitepress/**/*.vue",
-    "./packages/**/*.ts",
-    "./packages/**/*.vue",
-  ],
+  "include": ["./*.ts", "./packages/**/*.ts", "./packages/**/*.vue"],
   "exclude": ["dist", "node_modules"]
 }

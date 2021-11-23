@@ -2,8 +2,8 @@
   <teleport to="body">
     <transition name="agm-dialog-fade">
       <div
-        ref="dialogRef"
         v-show="visible"
+        ref="dialogRef"
         :class="['agm-dialog']"
         role="dialog"
         @click.stop=""
@@ -32,25 +32,17 @@
 </template>
 
 <script lang="ts">
-import "./index.scss";
+import './index.scss'
 
-import AgmIcon from "../icon/index.vue";
-
-import { defineComponent, ref } from "vue";
-import { default as useDialog, UPDATE_MODEL_EVENT } from "./dialog";
-
-import type { SetupContext } from "vue";
-import { useFullscreen } from "@vueuse/core";
+import { defineComponent, ref } from 'vue'
+import { useFullscreen } from '@vueuse/core'
+import AgmIcon from '../icon/index.vue'
+import { UPDATE_MODEL_EVENT } from './dialog'
 
 export default defineComponent({
-  name: "AgmDialog",
+  name: 'AgmDialog',
   components: {
     AgmIcon,
-  },
-  data() {
-    return {
-      visible: false,
-    };
   },
   props: {
     modelValue: {
@@ -60,47 +52,51 @@ export default defineComponent({
   },
   emits: [UPDATE_MODEL_EVENT],
   setup(props, ctx) {
-    const dialogRef = ref<HTMLElement | null>(null);
-    const { toggle } = useFullscreen(dialogRef);
+    const dialogRef = ref<HTMLElement | null>(null)
+    const { toggle } = useFullscreen(dialogRef)
     return {
-      ...useDialog(props, ctx as SetupContext, dialogRef),
+      // ...useDialog(props, ctx as SetupContext, dialogRef),
       dialogRef,
       toggle,
-    };
+    }
+  },
+  data() {
+    return {
+      visible: false,
+    }
   },
   watch: {
     modelValue(val) {
-      if (val) {
-        this.open();
-      } else {
-        this.close();
-      }
+      if (val)
+        this.open()
+      else
+        this.close()
     },
   },
   mounted() {
     if (this.modelValue) {
-      this.visible = true;
-      this.open();
+      this.visible = true
+      this.open()
     }
   },
   methods: {
     open() {
-      this.doOpen();
+      this.doOpen()
     },
     doOpen() {
-      this.visible = true;
+      this.visible = true
     },
     handleClose() {
-      this.close();
+      this.close()
     },
     close() {
       // update v-model
-      this.$emit(UPDATE_MODEL_EVENT, false);
-      this.doClose();
+      this.$emit(UPDATE_MODEL_EVENT, false)
+      this.doClose()
     },
     doClose() {
-      this.visible = false;
+      this.visible = false
     },
   },
-});
+})
 </script>

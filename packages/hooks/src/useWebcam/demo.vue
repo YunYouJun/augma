@@ -2,25 +2,18 @@
   <video id="webcam" ref="videoRef" autoplay />
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
-import { useWebcam } from "./index";
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue'
+import { useWebcam } from './index'
 
-export default defineComponent({
-  setup() {
-    const videoRef = ref(null);
-    const { changeWebcamStream, settings } = useWebcam(videoRef);
+const videoRef = ref(null)
+const { changeWebcamStream, settings } = useWebcam(videoRef)
 
-    onMounted(async () => {
-      await changeWebcamStream();
-      console.log(settings.value);
-    });
-
-    return {
-      videoRef,
-    };
-  },
-});
+onMounted(async() => {
+  await changeWebcamStream()
+  // eslint-disable-next-line no-console
+  console.log(settings.value)
+})
 </script>
 
 <style scoped>

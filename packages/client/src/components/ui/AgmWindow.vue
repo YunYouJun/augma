@@ -12,19 +12,19 @@
 </template>
 
 <script>
-import AgmWeather from "../app/AgmWeather.vue";
-import AgmMap from "../app/AgmMap.vue";
+import AgmWeather from '../app/AgmWeather.vue'
+import AgmMap from '../app/AgmMap.vue'
 export default {
   components: { AgmMap, AgmWeather },
   computed: {
     browser: {
       get() {
-        return this.$store.state.windows.browser;
+        return this.$store.state.windows.browser
       },
       set(value) {
-        this.$store.commit("windows/setBrowser", value);
+        this.$store.commit('windows/setBrowser', value)
       },
     },
   },
-};
+}
 </script>

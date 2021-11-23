@@ -13,11 +13,11 @@
 </template>
 
 <script lang="ts">
-import "./index.scss";
-import { defineComponent } from "vue";
-import { UPDATE_MODEL_EVENT } from "../dialog/dialog";
+import './index.scss'
+import { defineComponent } from 'vue'
+import { UPDATE_MODEL_EVENT } from '../dialog/dialog'
 export default defineComponent({
-  name: "AgmMenu",
+  name: 'AgmMenu',
   props: {
     modelValue: {
       type: Boolean,
@@ -26,9 +26,8 @@ export default defineComponent({
   },
   methods: {
     handleClick() {
-      this.$emit(UPDATE_MODEL_EVENT, !this.modelValue);
+      this.$emit(UPDATE_MODEL_EVENT, !this.modelValue)
     },
   },
-});
+})
 </script>
-

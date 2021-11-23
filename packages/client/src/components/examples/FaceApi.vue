@@ -9,131 +9,118 @@
   />
 </template>
 
-<script>
-import * as faceapi from "face-api.js";
+<script lang="ts" setup>
+import * as faceapi from 'face-api.js'
 // import * as faceapi from "@vladmandic/face-api";
-export default {
-  props: {
-    enable: {
-      type: Boolean,
-      default: false,
-    },
-    customClass: {
-      type: Array,
-      default: [],
-    },
-  },
 
-  data() {
-    return {
-      name: "YunYouJun",
-      score: "0",
+const props = withDefaults(defineProps<{
+  enable?: boolean
+  customClass?: string[]
+}>(), {
+  enable: false,
+  customClass: () => [],
+})
 
-      videoEl: null,
-      overlay: null,
+const name = ref('YunYouJun')
+const score = ref(0)
 
-      minConfidence: 0.5,
-      withBoxes: false,
+const videoEl = ref()
+const overlay = ref()
 
-      indicatorStyle: {
-        position: "absolute",
-        top: "5rem",
-        transform: "translateX(-50%)",
-        transition: "all 0.2s",
-      },
-    };
-  },
+const minConfidence = ref(0.5)
+const withBoxes = ref(false)
 
-  async mounted() {
-    this.videoEl = this.$store.state.camera.videoEl;
-    this.overlay = this.$refs.overlay;
+const indicatorStyle = computed(() => {
+  return {
+    position: 'absolute',
+    top: '5rem',
+    transform: 'translateX(-50%)',
+    transition: 'all 0.2s',
+  }
+})
 
-    this.overlay.width = document.body.clientWidth;
-    this.overlay.height = document.body.clientHeight;
-  },
+watchEffect(() => props.enable, () => {
+  if (props.enable) {
+    this.$store.commit('app/setLoading', true)
+    await this.loadModel()
+    this.$store.commit('app/setLoading', false)
+    this.onPlay()
+  }
+})
 
-  watch: {
-    async enable(val) {
-      if (val) {
-        this.$store.commit("app/setLoading", true);
-        await this.loadModel();
-        this.$store.commit("app/setLoading", false);
-        this.onPlay();
-      }
-    },
-  },
+onMounted(() => {
+  videoEl.value = this.$store.state.camera.videoEl
+  overlay.value = this.$refs.overlay
 
-  methods: {
-    async loadModel() {
-      const faceApiWeightsUri = "/models/weights";
-      // const faceApiWeightsUri =
-      //   "https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights";
-      await faceapi.nets.tinyFaceDetector.loadFromUri(faceApiWeightsUri);
-      // await faceapi.nets.ageGenderNet.loadFromUri(faceApiWeightsUri);
-    },
+  overlay.value.width = document.body.clientWidth
+  overlay.value.height = document.body.clientHeight
+})
 
-    async onPlay() {
-      if (!this.enable) return;
+async function loadModel() {
+  const faceApiWeightsUri = '/models/weights'
+  // const faceApiWeightsUri =
+  //   "https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights";
+  await faceapi.nets.tinyFaceDetector.loadFromUri(faceApiWeightsUri)
+  // await faceapi.nets.ageGenderNet.loadFromUri(faceApiWeightsUri);
+}
 
-      const videoEl = this.videoEl;
+async function onPlay() {
+  if (!props.enable) return
 
-      if (videoEl.paused || videoEl.ended) {
-        return setTimeout(() => onPlay());
-      }
+  const videoEl = this.videoEl
 
-      // tiny_face_detector options
-      let inputSize = 512;
-      let scoreThreshold = 0.5;
-      const options = new faceapi.TinyFaceDetectorOptions({
-        inputSize,
-        scoreThreshold,
-      });
+  if (videoEl.paused || videoEl.ended)
+    return setTimeout(() => onPlay())
 
-      const result = await faceapi.detectSingleFace(videoEl, options);
+  // tiny_face_detector options
+  const inputSize = 512
+  const scoreThreshold = 0.5
+  const options = new faceapi.TinyFaceDetectorOptions({
+    inputSize,
+    scoreThreshold,
+  })
 
-      if (result) {
-        this.drawDetectionsResults(result);
-      }
+  const result = await faceapi.detectSingleFace(videoEl, options)
 
-      setTimeout(() => {
-        this.onPlay();
-      }, 100);
-    },
+  if (result)
+    this.drawDetectionsResults(result)
 
-    drawDetectionsResults(result) {
-      const videoEl = this.videoEl;
-      const canvas = this.overlay;
-      const dims = faceapi.matchDimensions(canvas, videoEl, true);
+  setTimeout(() => {
+    onPlay()
+  }, 100)
+}
 
-      const resizedResult = faceapi.resizeResults(result, dims);
+function drawDetectionsResults(result) {
+  const videoEl = this.videoEl
+  const canvas = this.overlay
+  const dims = faceapi.matchDimensions(canvas, videoEl, true)
 
-      this.score = resizedResult.score.toFixed(7).toString();
-      this.setIndicatorByBox(resizedResult.box);
-      if (this.withBoxes) {
-        faceapi.draw.drawDetections(canvas, resizedResult);
-      }
+  const resizedResult = faceapi.resizeResults(result, dims)
 
-      // const { age, gender, genderProbability } = resizedResult;
+  score.value = resizedResult.score.toFixed(7).toString()
+  setIndicatorByBox(resizedResult.box)
+  if (this.withBoxes)
+    faceapi.draw.drawDetections(canvas, resizedResult)
 
-      // interpolate gender predictions over last 30 frames
-      // to make the displayed age more stable
-      // const interpolatedAge = interpolateAgePredictions(age);
-      // new faceapi.draw.DrawTextField(
-      //   [
-      //     `${faceapi.utils.round(interpolatedAge, 0)} years`,
-      //     `${gender} (${faceapi.utils.round(genderProbability)})`,
-      //   ],
-      //   result.detection.box.bottomLeft
-      // ).draw(canvas);
-    },
+  // const { age, gender, genderProbability } = resizedResult;
 
-    setIndicatorByBox(box) {
-      const ratio = this.$store.state.camera.ratio;
-      this.indicatorStyle.top = box.top - 180 + "px";
-      this.indicatorStyle.left = `${(box.left + box.width / 2) * ratio}px`;
-    },
-  },
-};
+  // interpolate gender predictions over last 30 frames
+  // to make the displayed age more stable
+  // const interpolatedAge = interpolateAgePredictions(age);
+  // new faceapi.draw.DrawTextField(
+  //   [
+  //     `${faceapi.utils.round(interpolatedAge, 0)} years`,
+  //     `${gender} (${faceapi.utils.round(genderProbability)})`,
+  //   ],
+  //   result.detection.box.bottomLeft
+  // ).draw(canvas);
+}
+
+function setIndicatorByBox(box) {
+  const ratio = this.$store.state.camera.ratio
+  this.indicatorStyle.top = `${box.top - 180}px`
+  this.indicatorStyle.left = `${(box.left + box.width / 2) * ratio}px`
+}
 </script>
 
 <style lang="scss">

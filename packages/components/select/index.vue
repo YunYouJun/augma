@@ -3,13 +3,13 @@
     <agm-popper ref="popperRef" placement="bottom" trigger="click">
       <template #trigger>
         <agm-input
-          readonly
           v-model="currentOption.label"
+          readonly
           :placeholder="placeholder"
         />
       </template>
       <template #default>
-        <agm-select-menu :minWidth="minWidth">
+        <agm-select-menu :min-width="minWidth">
           <agm-option
             v-for="(item, i) in options"
             :key="i"
@@ -22,92 +22,67 @@
   </div>
 </template>
 
-<script lang="ts">
-import AgmPopper from "@augma/components/popper";
-import AgmInput from "@augma/components/input/index.vue";
-import AgmSelectMenu from "./src/SelectMenu.vue";
-import AgmOption from "./src/Option.vue";
-
-import { onClickOutside } from "@vueuse/core";
-
+<script lang="ts" setup>
+import AgmPopper from '@augma/components/popper'
+import AgmInput from '@augma/components/input/index.vue'
+import { onClickOutside } from '@vueuse/core'
 import {
-  defineComponent,
   onMounted,
   ref,
-  PropType,
   provide,
   reactive,
-  computed,
-  nextTick,
-} from "vue";
-import { selectKey, ISelectOption } from "./src/useOption";
-import { UPDATE_MODEL_EVENT } from "@augma/utils/constants";
+} from 'vue'
+import { UPDATE_MODEL_EVENT } from '@augma/utils/constants'
+import AgmSelectMenu from './src/SelectMenu.vue'
+import AgmOption from './src/Option.vue'
 
-export default defineComponent({
-  name: "AgmSelect",
-  components: {
-    AgmInput,
-    AgmOption,
-    AgmPopper,
-    AgmSelectMenu,
-  },
-  props: {
-    modelValue: Object as PropType<ISelectOption>,
-    options: Object as PropType<ISelectOption[]>,
-    placeholder: {
-      type: String,
-      default: "",
-    },
-    callback: Function,
-  },
-  setup(props, ctx) {
-    const selectWrapper = ref(null);
-    const popperRef = ref(null);
-    const minWidth = ref("0");
+import { selectKey, ISelectOption } from './src/useOption'
 
-    const currentOption = reactive<ISelectOption>({ label: "", value: "" });
+const props = defineProps<{
+  modelValue: ISelectOption
+  options: ISelectOption[]
+  placeholder: string
+  callback: Function
+}>()
 
-    function calculateMinWidth() {
-      return getComputedStyle(selectWrapper.value).width;
-    }
+const emit = defineEmits([UPDATE_MODEL_EVENT])
 
-    onMounted(() => {
-      minWidth.value = calculateMinWidth();
-      window.onresize = () => {
-        minWidth.value = calculateMinWidth();
-      };
-    });
+const selectWrapper = ref(null)
+const popperRef = ref(null)
+const minWidth = ref('0')
 
-    const callback = props.callback;
+const currentOption = reactive<ISelectOption>({ label: '', value: '' })
 
-    /**
-     * handle child option
-     */
-    function handleOptionSelect(val: ISelectOption) {
-      currentOption.value = val;
-      ctx.emit(UPDATE_MODEL_EVENT, val);
+function calculateMinWidth() {
+  return getComputedStyle(selectWrapper.value).width
+}
 
-      callback(val);
-    }
+onMounted(() => {
+  minWidth.value = calculateMinWidth()
+  window.onresize = () => {
+    minWidth.value = calculateMinWidth()
+  }
+})
 
-    onClickOutside(selectWrapper, () => {
-      popperRef.value.visibility = false;
-    });
+/**
+ * handle child option
+ */
+function handleOptionSelect(val: ISelectOption) {
+  currentOption.value = val
+  emit(UPDATE_MODEL_EVENT, val)
 
-    provide(
-      selectKey,
-      reactive({
-        props,
-        handleOptionSelect,
-      })
-    );
+  props.callback(val)
+}
 
-    return {
-      currentOption,
-      selectWrapper,
-      popperRef,
-      minWidth,
-    };
-  },
-});
+onClickOutside(selectWrapper, () => {
+  popperRef.value.visibility = false
+})
+
+provide(
+  selectKey,
+  reactive({
+    props,
+    handleOptionSelect,
+  }),
+)
 </script>

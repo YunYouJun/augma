@@ -49,14 +49,14 @@
 </template>
 
 <script lang="ts">
-import AgmButton from "../button/index.vue";
-import AgmIcon from "./index.vue";
+import AgmButton from '../button/index.vue'
+import AgmIcon from './index.vue'
 export default {
   components: {
     AgmButton,
     AgmIcon,
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

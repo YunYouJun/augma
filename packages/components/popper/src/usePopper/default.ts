@@ -1,15 +1,15 @@
-import type { PropType } from "vue";
-import { Nullable } from "@augma/utils/types";
+import type { PropType } from 'vue'
+import { Nullable } from '@augma/utils/types'
 import type {
   Placement,
   Instance as PopperInstance,
   Options as PopperOptions,
-} from "@popperjs/core";
+} from '@popperjs/core'
 
-export type { PopperInstance };
-export type TriggerType = "click" | "hover" | "focus";
-export type Trigger = TriggerType | TriggerType[];
-export const DEFAULT_TRIGGER = "hover";
+export type { PopperInstance }
+export type TriggerType = 'click' | 'hover' | 'focus'
+export type Trigger = TriggerType | TriggerType[]
+export const DEFAULT_TRIGGER = 'hover'
 
 const PopperProps = {
   disabled: {
@@ -18,7 +18,7 @@ const PopperProps = {
   },
   placement: {
     type: String as PropType<Placement>,
-    default: "bottom" as Placement,
+    default: 'bottom' as Placement,
   },
   popperOptions: {
     type: Object as PropType<PopperOptions>,
@@ -32,15 +32,15 @@ const PopperProps = {
     type: Boolean,
     default: undefined,
   },
-};
-export default PopperProps;
+}
+export default PopperProps
 
 export type IPopperOptions = {
-  disabled: boolean;
-  placement: Placement;
-  popperOptions: PopperOptions;
-  trigger: Trigger;
-  visible: boolean;
-};
+  disabled: boolean
+  placement: Placement
+  popperOptions: PopperOptions
+  trigger: Trigger
+  visible: boolean
+}
 
-export type RefElement = Nullable<HTMLElement>;
+export type RefElement = Nullable<HTMLElement>

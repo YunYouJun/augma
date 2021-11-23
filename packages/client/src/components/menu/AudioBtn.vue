@@ -5,44 +5,45 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+/* eslint-disable eslint-comments/no-unlimited-disable */
+/* eslint-disable */
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   data() {
     return {
-      icon: "mdi:microphone",
-      color: "success",
+      icon: 'mdi:microphone',
+      color: 'success',
       recognition: null,
-      keywords: ["fullscreen"],
-      content: "",
-    };
+      keywords: ['fullscreen'],
+      content: '',
+    }
   },
   mounted() {
-    this.init();
+    this.init()
   },
   methods: {
     init() {
-      // eslint-disable
-      var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
-      var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
-      var SpeechRecognitionEvent =
-        SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
+      var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
+      var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList
+      var SpeechRecognitionEvent
+        = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
 
-      const grammar =
-        "#JSGF V1.0; grammar colors; public <color> = " +
-        this.keywords.join(" | ") +
-        " ;";
+      const grammar
+        = `#JSGF V1.0; grammar colors; public <color> = ${
+          this.keywords.join(' | ')
+        } ;`
 
-      const recognition = new SpeechRecognition();
-      this.recognition = recognition;
+      const recognition = new SpeechRecognition()
+      this.recognition = recognition
 
-      const speechRecognitionList = new SpeechGrammarList();
-      speechRecognitionList.addFromString(grammar, 1);
-      recognition.grammars = speechRecognitionList;
-      recognition.continuous = false;
-      recognition.lang = "en-US";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
+      const speechRecognitionList = new SpeechGrammarList()
+      speechRecognitionList.addFromString(grammar, 1)
+      recognition.grammars = speechRecognitionList
+      recognition.continuous = false
+      recognition.lang = 'en-US'
+      recognition.interimResults = false
+      recognition.maxAlternatives = 1
       recognition.onresult = (event) => {
         // The SpeechRecognitionEvent results property returns a SpeechRecognitionResultList object
         // The SpeechRecognitionResultList object contains SpeechRecognitionResult objects.
@@ -52,46 +53,46 @@ export default defineComponent({
         // These also have getters so they can be accessed like arrays.
         // The second [0] returns the SpeechRecognitionAlternative at position 0.
         // We then return the transcript property of the SpeechRecognitionAlternative object
-        const content = event.results[0][0].transcript;
-        this.content = content;
+        const content = event.results[0][0].transcript
+        this.content = content
 
         this.$notify({
           title: content,
-          icon: "mdi:microphone",
-          color: "var(--agm-success)",
-          message: "Confidence: " + event.results[0][0].confidence.toFixed(2),
-        });
-      };
+          icon: 'mdi:microphone',
+          color: 'var(--agm-success)',
+          message: `Confidence: ${event.results[0][0].confidence.toFixed(2)}`,
+        })
+      }
 
       recognition.onspeechend = () => {
-        this.icon = "mdi:microphone";
-        this.color = "black";
-        recognition.stop();
-      };
+        this.icon = 'mdi:microphone'
+        this.color = 'black'
+        recognition.stop()
+      }
 
       recognition.onnomatch = (event) => {
         this.$notify({
           title: this.content,
-          icon: "mdi:alert",
-          color: "var(--agm-warning)",
-          message: "I didn't recognise that command.",
-        });
-      };
+          icon: 'mdi:alert',
+          color: 'var(--agm-warning)',
+          message: 'I didn\'t recognise that command.',
+        })
+      }
 
-      recognition.onerror = function (event) {
+      recognition.onerror = function(event) {
         this.$notify({
           title: this.content,
-          icon: "mdi:alert",
-          color: "var(--agm-error)",
-          message: "Error occurred in recognition: " + event.error,
-        });
-      };
+          icon: 'mdi:alert',
+          color: 'var(--agm-error)',
+          message: `Error occurred in recognition: ${event.error}`,
+        })
+      }
     },
     handleAudio() {
-      this.icon = "mdi:microphone-settings";
-      this.color = "var(--agm-success)";
-      this.recognition.start();
+      this.icon = 'mdi:microphone-settings'
+      this.color = 'var(--agm-success)'
+      this.recognition.start()
     },
   },
-});
+})
 </script>

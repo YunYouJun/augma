@@ -10,11 +10,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import "./index.scss";
+import { defineComponent } from 'vue'
+import './index.scss'
 
 export default defineComponent({
-  name: "AgmCard",
+  name: 'AgmCard',
   props: {
     dark: {
       type: Boolean,
@@ -22,18 +22,17 @@ export default defineComponent({
     },
     type: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   computed: {
     classes(): string[] {
       return [
-        "agm-card",
-        this.type ? `agm-card--${this.type}` : "",
-        this.dark ? "is-dark" : "",
-      ];
+        'agm-card',
+        this.type ? `agm-card--${this.type}` : '',
+        this.dark ? 'is-dark' : '',
+      ]
     },
   },
-});
+})
 </script>
-
