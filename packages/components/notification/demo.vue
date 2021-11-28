@@ -4,26 +4,18 @@
   </agm-button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
 import AgmButton from '../button/index.vue'
 import pkg from '../../../package.json'
 
-export default defineComponent({
-  components: {
-    AgmButton,
-  },
-  methods: {
-    notify() {
-      this.$notify({
-        title: 'GitHub',
-        icon: 'mdi:github',
-        color: 'black',
-        message: `<a href="${pkg.repository}" target="_blank">${pkg.repository}</a>`,
-        duration: 0,
-        showClose: true,
-      })
-    },
-  },
-})
+const notify = () => {
+  this.$notify({
+    title: 'GitHub',
+    icon: 'mdi:github',
+    color: 'black',
+    message: `<a href="${pkg.repository}" target="_blank">${pkg.repository}</a>`,
+    duration: 0,
+    showClose: true,
+  })
+}
 </script>

@@ -1,5 +1,5 @@
-@import "../../../components/styles/index.scss";
+@use "../../../components/styles/index.scss" as *;
 
-@import "./vars.scss";
-@import "./custom.scss";
-@import "./layout.scss";
+@use "./vars.scss";
+@use "./custom.scss";
+@use "./layout.scss";

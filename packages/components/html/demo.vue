@@ -1,6 +1,6 @@
 <template>
   <div class="dark-bg">
-    <hr class="agm-hr" />
+    <hr class="agm-hr">
   </div>
 
   <table class="agm-table">
@@ -27,17 +27,9 @@
   </table>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { AgmTypeArray } from '@augma/shared'
-import { defineComponent } from 'vue'
 import './index.scss'
-export default defineComponent({
-  setup() {
-    return {
-      AgmTypeArray,
-    }
-  },
-})
 </script>
 
 <style lang="scss">

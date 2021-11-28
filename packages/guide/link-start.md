@@ -4,6 +4,8 @@ Augma 是使用 Vite 开发并基于 Vue3 实现的实验性 AR UI 框架
 
 - 尽可能地使用浏览器的新特性
 
+> 仍在努力开发中...
+
 [Client Demo](https://augma.elpsy.cn): 使用 Augma 实现的客户端示例
 
 ## 安装

@@ -1,1 +1,2 @@
-@import "./functions.scss";
+@use "./functions.scss" as *;
+@forward "./functions.scss";

@@ -10,9 +10,8 @@ function formatJSON(json: object) {
 }
 
 async function run() {
-  const { indexes, tags } = await readIndexesAndHints()
-  fs.writeFileSync('meta/indexes.json', formatJSON(indexes))
-  fs.writeFileSync('vetur/tags.json', formatJSON(tags))
+  const { indexes } = await readIndexesAndHints()
+  fs.writeFileSync('indexes.json', formatJSON(indexes))
 }
 
 run()

@@ -15,22 +15,11 @@
   </agm-menu>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
+import { ref } from 'vue'
 import AgmButton from '../button/index.vue'
 import AgmIcon from '../icon/index.vue'
 import AgmMenu from './index.vue'
 
-export default defineComponent({
-  components: {
-    AgmButton,
-    AgmIcon,
-    AgmMenu,
-  },
-  data() {
-    return {
-      open: false,
-    }
-  },
-})
+const open = ref(false)
 </script>

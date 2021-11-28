@@ -1,18 +1,18 @@
-@import "../html/";
-@import "../color/";
-@import "variables";
-@import "reset";
-@import "mixins";
-@import "common";
+@use "../color/" as *;
+@use "../html/" as *;
+@use "variables" as *;
+@use "reset";
+@use "mixins" as *;
+@use "common";
 
-@import "components";
+@use "components";
 
 :root {
-  --agm-brand: #{$agm-brand};
-  --agm-primary: #{$agm-brand};
-  --agm-success: #{$agm-success};
-  --agm-warning: #{$agm-warning};
-  --agm-danger: #{$agm-danger};
-  --agm-info: #{$agm-info};
-  --agm-tooltip: #{$agm-tooltip};
+  --agm-color-brand: #{$agm-brand};
+  --agm-color-primary: #{$agm-brand};
+  --agm-color-success: #{$agm-success};
+  --agm-color-warning: #{$agm-warning};
+  --agm-color-danger: #{$agm-danger};
+  --agm-color-info: #{$agm-info};
+  --agm-color-tooltip: #{$agm-tooltip};
 }

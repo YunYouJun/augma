@@ -11,19 +11,22 @@
     </thead>
     <tbody>
       <tr v-for="(prop, i) in props" :key="i">
-        <td>{{ prop.name }}</td>
+        <td font="bold">{{ prop.name }}</td>
         <td>{{ prop.description }}</td>
-        <td>{{ prop.type }}</td>
-        <td>{{ formatValues(prop.acceptedValues) }}</td>
-        <td>{{ prop.default || "-" }}</td>
+        <td><code>{{ prop.type }}</code></td>
+        <td>
+          <code>
+            {{ formatValues(prop.acceptedValues) }}
+          </code>
+        </td>
+        <td><code>{{ prop.default || "-" }}</code></td>
       </tr>
     </tbody>
   </table>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { AgmTypeArray } from "@augma/shared";
-import { PropType } from "vue-demi";
 
 export interface ComponentPropType {
   name: string;
@@ -33,24 +36,19 @@ export interface ComponentPropType {
   default: string;
 }
 
-export default {
-  props: {
-    props: {
-      type: Object as PropType<ComponentPropType[]>,
-      default: null,
-    },
-  },
-  methods: {
-    formatValues(values) {
-      if (values === "AgmTypeArray") {
-        values = AgmTypeArray;
-      }
-      if (Array.isArray(values)) {
-        return values.join(" / ");
-      } else {
-        return values || "-";
-      }
-    },
-  },
-};
+defineProps<{
+  props: ComponentPropType[]
+}>()
+
+
+function formatValues(values) {
+  if (values === "AgmTypeArray") {
+    values = AgmTypeArray;
+  }
+  if (Array.isArray(values)) {
+    return values.join(" / ");
+  } else {
+    return values || "-";
+  }
+}
 </script>

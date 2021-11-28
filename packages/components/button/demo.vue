@@ -59,15 +59,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
 import AgmIcon from '../icon/index.vue'
 import AgmButton from './index.vue'
-export default {
-  components: {
-    AgmButton,
-    AgmIcon,
-  },
-}
 </script>
 
 <style lang="scss" scoped>

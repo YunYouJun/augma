@@ -1,6 +1,7 @@
 ---
 title: 通知
 category: utilities
+description: 弹出消息通知
 props:
   - name: title
     description: 标题
@@ -18,7 +19,12 @@ props:
     default: "false"
 ---
 
-弹出消息通知
+::: info
+
+起初我参考 Element Plus 实现了 Notification，但我发现这也许并不是本组件库的目的。
+重复造轮子总是没有必要的，而 Augma 虽然需要这个功能，但是更主要的是想要其能适配对应的 UI。
+
+:::
 
 ```js
 this.$notify({

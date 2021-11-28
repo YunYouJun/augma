@@ -1,32 +1,23 @@
 <template>
   <div class="demo-input">
-    <agm-input v-model="input" placeholder="请输入内容"></agm-input>
+    <agm-input v-model="input" placeholder="请输入内容" />
     <agm-input
       v-model="input"
       :disabled="true"
       placeholder="禁用状态"
-    ></agm-input>
+    />
     <agm-input v-model="input" placeholder="可清空" clearable>
       <!-- <template #suffix> s </template> -->
     </agm-input>
-    <agm-input v-model="input" placeholder="密码框" show-password></agm-input>
+    <agm-input v-model="input" placeholder="密码框" show-password />
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
-
+<script lang="ts" setup>
+import { ref } from 'vue'
 import AgmInput from './index.vue'
-export default defineComponent({
-  components: {
-    AgmInput,
-  },
-  setup() {
-    return {
-      input: ref(''),
-    }
-  },
-})
+
+const input = ref('')
 </script>
 
 <style lang="scss">

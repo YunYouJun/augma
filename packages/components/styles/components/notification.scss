@@ -1,4 +1,4 @@
-@import "../variables/index.scss";
+@use "../variables/index.scss" as *;
 
 .agm-notification {
   display: flex;

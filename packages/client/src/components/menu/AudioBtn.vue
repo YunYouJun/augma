@@ -60,7 +60,7 @@ export default defineComponent({
         this.$notify({
           title: content,
           icon: 'mdi:microphone',
-          color: 'var(--agm-success)',
+          color: 'var(--agm-color-success)',
           message: `Confidence: ${event.results[0][0].confidence.toFixed(2)}`,
         })
       }
@@ -75,7 +75,7 @@ export default defineComponent({
         this.$notify({
           title: this.content,
           icon: 'mdi:alert',
-          color: 'var(--agm-warning)',
+          color: 'var(--agm-color-warning)',
           message: 'I didn\'t recognise that command.',
         })
       }
@@ -91,7 +91,7 @@ export default defineComponent({
     },
     handleAudio() {
       this.icon = 'mdi:microphone-settings'
-      this.color = 'var(--agm-success)'
+      this.color = 'var(--agm-color-success)'
       this.recognition.start()
     },
   },

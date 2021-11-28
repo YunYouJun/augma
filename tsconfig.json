@@ -18,13 +18,13 @@
     "outDir": "dist",
     "paths": {
        "~/*": ["packages/client/src/*"],
-      "@augma/*": ["packages/*/src"],
       "@augma/utils/*": ["packages/utils/src/*"],
       "@augma/components": ["packages/components/index.ts"],
       "@augma/components/*": ["packages/components/*"],
+      "@augma/*": ["packages/*/src"],
       "augma": ["packages/augma/src/index.ts"]
     }
   },
-  "include": ["./*.ts", "./packages/**/*.ts", "./packages/**/*.vue"],
+  "include": ["./meta/**/*", "./packages/**/*", "packages/.vitepress/**/*"],
   "exclude": ["dist", "node_modules"]
 }

@@ -42,7 +42,7 @@
   <div class="logo-demo text-center">
     <agm-icon
       icon="mdi:do-not-disturb-off"
-      color="var(--agm-danger)"
+      color="var(--agm-color-danger)"
       size="10rem"
     />
   </div>

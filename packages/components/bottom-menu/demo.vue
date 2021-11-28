@@ -14,13 +14,13 @@ const menuItems = [
     },
   },
   {
-    color: 'var(--agm-success)',
+    color: 'var(--agm-color-success)',
     icon: 'mdi:check',
     do: () => {
     },
   },
   {
-    color: 'var(--agm-danger)',
+    color: 'var(--agm-color-danger)',
     icon: 'mdi:error',
     do: () => {
     },

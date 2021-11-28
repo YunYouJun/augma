@@ -1,4 +1,4 @@
-@import "../styles/variables/index.scss";
+@use "../styles/variables/index.scss" as *;
 
 .agm-dialog {
   position: absolute;
@@ -62,11 +62,11 @@
   }
 
   &__fullscreenBtn {
-    background-color: var(--agm-success);
+    background-color: var(--agm-color-success);
   }
 
   &__closeBtn {
-    background-color: var(--agm-danger);
+    background-color: var(--agm-color-danger);
   }
 }
 

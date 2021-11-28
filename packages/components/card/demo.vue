@@ -7,17 +7,10 @@
   </agm-card>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { ref } from 'vue'
 import { AgmTypeMap } from '@augma/shared'
 import AgmCard from './index.vue'
-export default {
-  components: {
-    AgmCard,
-  },
-  setup() {
-    return {
-      types: AgmTypeMap,
-    }
-  },
-}
+
+const types = ref(AgmTypeMap)
 </script>

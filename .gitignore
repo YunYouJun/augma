@@ -17,3 +17,6 @@ temp
 
 .temp
 .cache
+
+# for meta
+indexes.json

@@ -10,20 +10,10 @@
   </agm-dialog>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
+import { ref } from 'vue'
 import AgmButton from '../button/index.vue'
 import AgmDialog from './index.vue'
 
-export default defineComponent({
-  components: {
-    AgmButton,
-    AgmDialog,
-  },
-  data() {
-    return {
-      dialogVisible: false,
-    }
-  },
-})
+const dialogVisible = ref(false)
 </script>

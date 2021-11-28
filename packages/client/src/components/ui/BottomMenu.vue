@@ -40,7 +40,7 @@ const screenshot = () => {
 const menuItems = [
   { color: '#8dd3d6', icon: 'i-mdi-flip-horizontal', do: camera.toggleFlipScreen },
   {
-    color: 'var(--agm-warning)',
+    color: 'var(--agm-color-warning)',
     icon: 'i-mdi-weather-cloudy',
     do: app.toggleWeather,
   },
@@ -50,12 +50,12 @@ const menuItems = [
     do: camera.toggleDisplay,
   },
   {
-    color: 'var(--agm-info)',
+    color: 'var(--agm-color-info)',
     icon: 'i-mdi-face',
     do: app.toggleFaceDetection,
   },
   {
-    color: 'var(--agm-tooltip)',
+    color: 'var(--agm-color-tooltip)',
     icon: 'i-mdi-cube-scan',
     do: app.toggleYolo,
   },

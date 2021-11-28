@@ -5,7 +5,6 @@ import matter from 'gray-matter'
 
 import { PackageIndexes, Component, Hook } from '../meta/types'
 
-import { generateTag } from './vetur'
 import { DIR_SRC, hasDemo } from './utils'
 
 export async function listComponents(dir: string, ignore: string[] = []) {
@@ -43,9 +42,6 @@ export async function readIndexesAndHints() {
   const hooksDir = path.join(DIR_SRC, 'hooks')
   const hooks = await listHooks(hooksDir)
 
-  // for vetur tags
-  const tags = {}
-
   for (const componentName of components) {
     const mdPath = path.join(dir, componentName, 'index.md')
 
@@ -66,9 +62,6 @@ export async function readIndexesAndHints() {
     component.title = title
 
     indexes.components.push(component)
-
-    const tagName = `agm-${componentName}`
-    tags[tagName] = generateTag(frontmatter)
   }
 
   for (const hookName of hooks) {
@@ -91,6 +84,5 @@ export async function readIndexesAndHints() {
 
   return {
     indexes,
-    tags,
   }
 }

@@ -4,12 +4,13 @@
     :options="options"
     placeholder="Placeholder"
     :callback="callback"
-  ></agm-select>
+  />
 </template>
 
 <script lang="ts" setup>
+import { ISelectOption } from './src/useOption'
 import AgmSelect from './index.vue'
-const options = [
+const options: ISelectOption[] = [
   {
     label: 'Label A',
     value: 'A',
@@ -23,7 +24,10 @@ const options = [
     value: 'C',
   },
 ]
-const currentOption = ref({})
+const currentOption = ref<ISelectOption>({
+  label: '',
+  value: '',
+})
 
 function callback(val: any) {
   // eslint-disable-next-line no-console
