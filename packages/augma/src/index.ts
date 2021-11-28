@@ -1,9 +1,8 @@
-import { install } from '@augma/components/index'
 import pkg from '../package.json'
 
-import '@augma/components/styles/index.scss'
+export * from '@augma/components'
+export * from './styles'
 
-export default {
-  version: pkg.version,
-  install,
-}
+export const version = pkg.version
+
+export default version

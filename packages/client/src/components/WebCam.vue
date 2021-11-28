@@ -2,10 +2,11 @@
   <video id="webcam" ref="videoRef" :class="classes" autoplay></video>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useWebcam } from '@augma/hooks'
-import { useStore } from 'vuex'
+import { useCameraStore } from '~/stores/camera'
+const camera = useCameraStore()
 
 const props = withDefaults(defineProps<{
   isFlip: boolean
@@ -15,7 +16,6 @@ const props = withDefaults(defineProps<{
   isFront: false,
 })
 
-const store = useStore()
 const videoRef = ref(null)
 
 const isFlip = ref(props.isFlip)
@@ -36,10 +36,10 @@ watchEffect(async() => {
 
 onMounted(async() => {
   await changeWebcamStream(props.isFront)
-  store.commit('camera/setVideoEl', videoRef.value)
-  store.commit('camera/setSettings', settings)
+  camera.videoEl = videoRef.value
+  camera.settings = settings.value
   const ratio = document.body.clientWidth / settings.value.width
-  store.commit('camera/setRatio', ratio)
+  camera.ratio = ratio
 })
 </script>
 

@@ -1,43 +1,34 @@
 <template>
-  <div class="agm-icon" :style="styles">
-    <span v-if="icon" class="iconify" :data-icon="icon"></span>
-    <span v-else v-html="svg"></span>
+  <div class="agm-icon" :class="name" :style="styles">
+    <span v-if="svg" v-html="svg"></span>
+    <component :is="icon" v-if="icon"></component>
+    <slot></slot>
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import './index.scss'
-import { computed, defineComponent } from 'vue'
 import { getAgmColorByType } from '@augma/shared'
 
-export default defineComponent({
-  name: 'AgmIcon',
-  props: {
-    icon: {
-      type: String,
-      default: '',
-    },
-    color: {
-      type: String,
-      default: '',
-    },
-    size: {
-      type: String,
-      default: '1.5rem',
-    },
-    svg: String,
-  },
-  setup(props) {
-    const styles = computed(() => {
-      return {
-        color: getAgmColorByType(props.color) || 'inherit',
-        fontSize: props.size,
-      }
-    })
+const props = withDefaults(defineProps<{
+  /**
+   * 图标 Class 名称，通过 unocss 实现
+   */
+  name?: string
+  icon?: string
+  color?: string
+  size?: string
+  svg?: string
+}>(), {
+  icon: '',
+  color: '',
+  size: '1.5rem',
+})
 
-    return {
-      styles,
-    }
-  },
+const styles = computed(() => {
+  return {
+    color: getAgmColorByType(props.color) || 'inherit',
+    fontSize: props.size,
+  }
 })
 </script>

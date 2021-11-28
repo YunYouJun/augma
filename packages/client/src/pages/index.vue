@@ -1,22 +1,13 @@
 <template>
-  <web-cam
-    v-if="$store.state.camera.display"
-    :is-flip="$store.state.camera.flipScreen"
-    :is-front="$store.state.camera.front"
-  ></web-cam>
-  <augma-ui :opacity="0.95"></augma-ui>
+  <WebCam
+    v-if="camera.display"
+    :is-flip="camera.flipScreen"
+    :is-front="camera.front"
+  />
+  <AugmaUi :opacity="0.95" />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import AugmaUi from '~/components/AugmaUi.vue'
-import WebCam from '~/components/WebCam.vue'
-
-export default defineComponent({
-  name: 'App',
-  components: {
-    AugmaUi,
-    WebCam,
-  },
-})
+<script lang="ts" setup>
+import { useCameraStore } from '~/stores/camera'
+const camera = useCameraStore()
 </script>

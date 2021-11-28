@@ -1,21 +1,19 @@
-import { Store } from 'vuex'
-
-import { State as CameraState } from './store/modules/camera'
+/* eslint-disable import/no-duplicates */
+import { PluginApi } from 'vue-loading-overlay'
 
 declare interface Window {
   // extend the window
 }
 
-declare module '@vue/runtime-core' {
-  // declare your own store states
-  interface State {
-    app: any
-    camera: CameraState
-    faceApi: any
-  }
+// with vite-plugin-md, markdowns can be treat as Vue components
+declare module '*.md' {
+  import { ComponentOptions } from 'vue'
+  const component: ComponentOptions
+  export default component
+}
 
-  // provide typings for `this.$store`
-  interface ComponentCustomProperties {
-    $store: Store<State>
+declare module '@vue/runtime-core' {
+  interface ComponentInternalInstance {
+    $loading: PluginApi
   }
 }

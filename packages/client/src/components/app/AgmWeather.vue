@@ -1,7 +1,9 @@
 <template>
   <agm-card color="#e5bb63" dark>
     <div class="weather-logo">
-      <agm-icon :icon="icon" style="transform: scale(3)"></agm-icon>
+      <AgmIcon style="transform: scale(3)">
+        <i-mdi-weather-partly-cloudy />
+      </AgmIcon>
     </div>
     <div class="weather-info">
       <div class="weather-city">
@@ -14,17 +16,9 @@
   </agm-card>
 </template>
 
-<script>
-import { mdiWeatherPartlyCloudy } from '@mdi/js'
-export default {
-  data() {
-    return {
-      icon: mdiWeatherPartlyCloudy,
-      city: '北京市',
-      temperature: '-4°',
-    }
-  },
-}
+<script lang="ts" setup>
+const city = ref('北京市')
+const temperature = ref('-3°C')
 </script>
 
 <style lang="scss">

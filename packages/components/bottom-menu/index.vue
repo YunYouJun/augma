@@ -9,16 +9,15 @@
           icon
           @click="item.do"
         >
-          <agm-icon :icon="item.icon" :color="item.color"></agm-icon>
+          <agm-icon :name="item.icon" :color="item.color" />
         </agm-button>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import './index.scss'
-import { defineComponent, PropType } from 'vue'
 import AgmButton from '../button/index.vue'
 import AgmIcon from '../icon/index.vue'
 
@@ -28,19 +27,7 @@ interface IMenuItem {
   do: () => void
 }
 
-export default defineComponent({
-  name: 'AgmBottomMenu',
-  components: {
-    AgmButton,
-    AgmIcon,
-  },
-  props: {
-    menuItems: {
-      type: Array as PropType<IMenuItem[]>,
-      default() {
-        return []
-      },
-    },
-  },
+withDefaults(defineProps<{menuItems: IMenuItem[]}>(), {
+  menuItems: () => [],
 })
 </script>

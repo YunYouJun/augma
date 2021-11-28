@@ -1,42 +1,44 @@
 <template>
   <div id="augma-ui" class="augma-ui" :style="styles">
-    <div id="agm-loading-container" v-loading="$store.state.app.loading"></div>
+    <div id="agm-loading-container" ref="loadingContainer"></div>
 
-    <system-bar />
-    <agm-window />
-    <face-api :enable="$store.state.faceApi.faceDetection" />
-    <tfjs-yolo :enable="$store.state.app.yolo" />
+    <SystemBar />
+    <AgmWindow />
+    <!-- <FaceApi :enable="app.faceDetection" /> -->
+    <!-- <TfjsYolo :enable="app.yolo" /> -->
     <div class="augma-bottom-menu-container">
-      <bottom-menu />
+      <BottomMenu />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import AgmWindow from './ui/AgmWindow.vue'
-import SystemBar from './ui/SystemBar.vue'
-import BottomMenu from './ui/BottomMenu.vue'
-import FaceApi from './examples/FaceApi.vue'
-import TfjsYolo from './examples/TfjsYolo.vue'
-export default defineComponent({
-  components: {
-    AgmWindow,
-    BottomMenu,
-    SystemBar,
-    FaceApi,
-    TfjsYolo,
-  },
-  props: {
-    opacity: Number,
-  },
-  computed: {
-    styles(): any {
-      return {
-        opacity: this.opacity,
-      }
-    },
-  },
+<script lang="ts" setup>
+import type { PluginApi } from 'vue-loading-overlay'
+import { useAppStore } from '~/stores/app'
+
+const loadingContainer = ref()
+
+const props = defineProps<{opacity: number}>()
+
+const app = useAppStore()
+
+const styles = computed(() => ({
+  opacity: props.opacity,
+}))
+
+// app.loading
+
+onMounted(() => {
+  const $loading = inject<PluginApi>('$loading')
+  const loader = $loading.show({
+    container: loadingContainer.value,
+  })
+  // todo
+  // add custom components/loading.scss
+
+  setTimeout(() => {
+    loader && loader.hide()
+  }, 100)
 })
 </script>
 

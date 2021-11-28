@@ -38,4 +38,4 @@ export function getAgmColorByType(type: string) {
     return type
 }
 
-export type ComponentSize = 'large' | 'medium' | 'small' | 'mini'
+export type ComponentSize = 'large' | 'medium' | 'small' | ''

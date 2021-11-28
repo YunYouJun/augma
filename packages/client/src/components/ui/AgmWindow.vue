@@ -1,6 +1,6 @@
 <template>
-  <agm-weather v-if="$store.state.app.weather" />
-  <agm-dialog v-if="browser" v-model="browser">
+  <agm-weather v-if="app.weather" />
+  <agm-dialog v-if="app.browser" v-model="app.browser">
     <iframe
       frameborder="0"
       src="https://docs.augma.elpsy.cn"
@@ -8,23 +8,10 @@
       height="100%"
     ></iframe>
   </agm-dialog>
-  <agm-map :enable="$store.state.app.subwayMap" />
+  <agm-map :enable="app.subwayMap" />
 </template>
 
-<script>
-import AgmWeather from '../app/AgmWeather.vue'
-import AgmMap from '../app/AgmMap.vue'
-export default {
-  components: { AgmMap, AgmWeather },
-  computed: {
-    browser: {
-      get() {
-        return this.$store.state.windows.browser
-      },
-      set(value) {
-        this.$store.commit('windows/setBrowser', value)
-      },
-    },
-  },
-}
+<script setup lang="ts">
+import { useAppStore } from '~/stores/app'
+const app = useAppStore()
 </script>

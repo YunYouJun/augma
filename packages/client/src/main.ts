@@ -1,21 +1,30 @@
-import { createApp } from 'vue'
-import augma from 'augma'
-import { createRouter, createWebHashHistory } from 'vue-router'
-import routes from 'pages-generated'
-
+// register vue composition api globally
+import { ViteSSG } from 'vite-ssg'
+import generatedRoutes from 'virtual:generated-pages'
+import { setupLayouts } from 'virtual:generated-layouts'
 import App from './App.vue'
-import store from './store'
 
-// css
+// https://github.com/antfu/unocss
+// 'uno:[layer-name].css'
+import 'uno:components.css'
+// layers that are not 'components' and 'utilities' will fallback to here
+import 'uno.css'
+
+// custom css
 import './index.css'
-
 import '@augma/components/styles/index.scss'
 
-const router = createRouter({
-  history: createWebHashHistory(),
-  routes,
-})
+// "utilities" layer will have the highest priority
+import 'uno:utilities.css'
 
-const app = createApp(App)
+const routes = setupLayouts(generatedRoutes)
 
-app.use(router).use(store).use(augma).mount('#app')
+// https://github.com/antfu/vite-ssg
+export const createApp = ViteSSG(
+  App,
+  { routes },
+  (ctx) => {
+    // install all modules under `modules/`
+    Object.values(import.meta.globEager('./modules/*.ts')).map(i => i.install?.(ctx))
+  },
+)

@@ -2,50 +2,27 @@ import type { App } from 'vue'
 
 import type { InstallOptions } from '@augma/utils/config'
 import { ComponentSize } from '@augma/shared'
-import AgmButton from './button/index.vue'
-import AgmBottomMenu from './bottom-menu/index.vue'
-import AgmCard from './card/index.vue'
-import AgmClock from './clock/index.vue'
-import AgmDialog from './dialog/index.vue'
-import AgmIcon from './icon/index.vue'
-import AgmIndicator from './indicator/index.vue'
-import AgmMenu from './menu/index.vue'
-import AgmSelect from './select/index.vue'
 
-import AgmNotification from './notification/index'
-import AgmLoading from './loading/index'
+export * from './notification'
+export * from './dialog'
+export * from './select/index.vue'
+export * from './menu'
+export * from './indicator/index.vue'
+export * from './clock'
+export * from './card'
+export * from './bottom-menu'
+export * from './button'
+export * from './icon'
 
 const defaultInstallOpt: InstallOptions = {
   size: '' as ComponentSize,
   zIndex: 2000,
 }
 
-const components = [
-  AgmButton,
-  AgmBottomMenu,
-  AgmCard,
-  AgmClock,
-  AgmDialog,
-  AgmIcon,
-  AgmIndicator,
-  AgmMenu,
-  AgmSelect,
-]
-
-const plugins = [AgmNotification, AgmLoading]
-
 // register component & plugin
 const install = (app: App, opt: InstallOptions): void => {
   const option = Object.assign(defaultInstallOpt, opt)
   app.config.globalProperties.$AUGMA = option
-
-  components.forEach((component) => {
-    app.component(component.name, component)
-  })
-
-  plugins.forEach((plugin) => {
-    app.use(plugin as any)
-  })
 }
 
 export { install }

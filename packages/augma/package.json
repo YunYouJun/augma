@@ -33,8 +33,8 @@
     "vue": "^3.0.7"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.1.5",
-    "sass": "^1.32.8"
+    "@vitejs/plugin-vue": "^1.10.1",
+    "sass": "^1.43.5"
   },
   "dependencies": {
     "@popperjs/core": "^2.9.1"

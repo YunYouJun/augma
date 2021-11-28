@@ -8,14 +8,19 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Markdown from 'vite-plugin-md'
-import WindiCSS from 'vite-plugin-windicss'
 import { VitePWA } from 'vite-plugin-pwa'
 import VueI18n from '@intlify/vite-plugin-vue-i18n'
 import Inspect from 'vite-plugin-inspect'
+
+import Unocss from 'unocss/vite'
+import { presetUno, presetAttributify } from 'unocss'
+import presetIcons from '@unocss/preset-icons'
+
 import Prism from 'markdown-it-prism'
 import LinkAttributes from 'markdown-it-link-attributes'
 
 import { alias } from '../shared/src/config'
+import { AugmaResolver } from '../augma/src/resolver'
 
 const markdownWrapperClasses = 'prose prose-sm m-auto text-left'
 
@@ -24,6 +29,14 @@ export default defineConfig({
     alias,
   },
   plugins: [
+    Unocss({
+      presets: [
+        presetAttributify({ /* preset options */}),
+        presetUno(),
+        presetIcons({ /* options */ }),
+      ],
+    }),
+
     Vue({
       include: [/\.vue$/, /\.md$/],
     }),
@@ -61,9 +74,12 @@ export default defineConfig({
         // auto import icons
         // https://github.com/antfu/unplugin-icons
         IconsResolver({
-          componentPrefix: '',
+          // componentPrefix: '',
           // enabledCollections: ['carbon']
         }),
+
+        // augma resolver
+        AugmaResolver(),
       ],
 
       dts: 'src/components.d.ts',
@@ -72,11 +88,6 @@ export default defineConfig({
     // https://github.com/antfu/unplugin-icons
     Icons({
       autoInstall: true,
-    }),
-
-    // https://github.com/antfu/vite-plugin-windicss
-    WindiCSS({
-      safelist: markdownWrapperClasses,
     }),
 
     // https://github.com/antfu/vite-plugin-md

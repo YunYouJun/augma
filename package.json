@@ -26,7 +26,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@antfu/eslint-config": "^0.10.0",
+    "@antfu/eslint-config": "^0.11.1",
     "@types/minimist": "^1.2.2",
     "@types/semver": "^7.3.9",
     "@yunyoujun/logger": "^0.1.4",
@@ -36,18 +36,18 @@
     "fast-glob": "^3.2.7",
     "gray-matter": "^4.0.3",
     "minimist": "^1.2.5",
-    "pnpm": "^6.23.1",
+    "pnpm": "^6.23.2",
     "semver": "^7.3.5",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.2",
-    "unplugin-icons": "^0.12.18",
+    "unplugin-icons": "^0.12.20",
     "unplugin-vue-components": "^0.17.2",
     "vite": "^2.6.14",
-    "vite-plugin-pwa": "^0.11.6",
+    "vite-plugin-pwa": "^0.11.7",
     "vitepress": "^0.20.1"
   },
   "dependencies": {
-    "@vueuse/core": "^7.0.1"
+    "@vueuse/core": "^7.1.2"
   },
   "vetur": {
     "tags": "./vetur/tags.json",

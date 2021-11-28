@@ -2,6 +2,7 @@
   "name": "@augma/components",
   "version": "0.0.1",
   "private": true,
+  "main": "index.ts",
   "author": {
     "email": "me@yunyoujun.cn",
     "name": "YunYouJun",

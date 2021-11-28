@@ -11,7 +11,10 @@
 
 <script lang="ts" setup>
 import * as faceapi from 'face-api.js'
+import { useAppStore } from '~/stores/app'
+import { useCameraStore } from '~/stores/camera'
 // import * as faceapi from "@vladmandic/face-api";
+const app = useAppStore()
 
 const props = withDefaults(defineProps<{
   enable?: boolean
@@ -39,18 +42,19 @@ const indicatorStyle = computed(() => {
   }
 })
 
-watchEffect(() => props.enable, () => {
+watch(() => props.enable, async() => {
   if (props.enable) {
-    this.$store.commit('app/setLoading', true)
-    await this.loadModel()
-    this.$store.commit('app/setLoading', false)
-    this.onPlay()
+    app.loading = true
+    await loadModel()
+    app.loading = false
+    onPlay()
   }
 })
 
+const camera = useCameraStore()
+
 onMounted(() => {
-  videoEl.value = this.$store.state.camera.videoEl
-  overlay.value = this.$refs.overlay
+  videoEl.value = camera.videoEl
 
   overlay.value.width = document.body.clientWidth
   overlay.value.height = document.body.clientHeight
@@ -117,7 +121,7 @@ function drawDetectionsResults(result) {
 }
 
 function setIndicatorByBox(box) {
-  const ratio = this.$store.state.camera.ratio
+  const ratio = camera.ratio
   this.indicatorStyle.top = `${box.top - 180}px`
   this.indicatorStyle.left = `${(box.left + box.width / 2) * ratio}px`
 }

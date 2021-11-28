@@ -1,50 +1,43 @@
 <template>
   <div>
-    <agm-menu v-model="open">
+    <AgmMenu v-model="open">
       <template #activator>
-        <agm-button icon>
-          <agm-icon v-if="open" icon="mdi:dots-vertical" color="black" />
-          <agm-icon v-else icon="mdi:dots-horizontal" color="black" />
-        </agm-button>
+        <AgmButton icon>
+          <AgmIcon v-if="open" icon="mdi:dots-vertical" color="black">
+            <i-mdi-dots-vertical />
+          </AgmIcon>
+          <AgmIcon v-else icon="mdi:dots-horizontal" color="black">
+            <i-mdi-dots-horizontal />
+          </AgmIcon>
+        </AgmButton>
       </template>
-      <fullscreen-btn></fullscreen-btn>
-      <agm-button
+      <FullscreenBtn />
+      <AgmButton
         v-for="(item, i) in menuItems"
         :key="i"
         icon
         :color="item.color"
         @click="item.do"
       >
-        <agm-icon v-if="item.icon" :icon="item.icon" />
-      </agm-button>
-    </agm-menu>
+        <AgmIcon v-if="item.icon" :icon="item.icon" />
+      </AgmButton>
+    </AgmMenu>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import FullscreenBtn from './FullscreenBtn.vue'
+<script lang="ts" setup>
+import { useCameraStore } from '~/stores/camera'
 
-export default defineComponent({
-  components: {
-    FullscreenBtn,
+import IconMdiCameraFlip from '~icons/mdi/camera-flip'
+
+const camera = useCameraStore()
+
+const open = ref(false)
+const menuItems = [
+  {
+    color: '#4dade0',
+    icon: IconMdiCameraFlip,
+    do: camera.toggleFront,
   },
-  data() {
-    return {
-      open: false,
-      menuItems: [
-        {
-          color: '#4dade0',
-          icon: 'mdi:camera-flip',
-          do: this.toggleCameraFront,
-        },
-      ],
-    }
-  },
-  methods: {
-    toggleCameraFront() {
-      this.$store.commit('camera/toggleFront')
-    },
-  },
-})
+]
 </script>

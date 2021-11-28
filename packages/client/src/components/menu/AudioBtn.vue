@@ -1,6 +1,8 @@
 <template>
   <agm-button icon @click="handleAudio">
-    <agm-icon :icon="icon" :color="color"></agm-icon>
+    <agm-icon :color="color">
+      <i-mdi-microphone />
+    </agm-icon>
   </agm-button>
 </template>
 
@@ -12,7 +14,6 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   data() {
     return {
-      icon: 'mdi:microphone',
       color: 'success',
       recognition: null,
       keywords: ['fullscreen'],

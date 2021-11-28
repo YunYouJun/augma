@@ -1,34 +1,21 @@
 <template>
-  <agm-button icon title="Fullscreen" @click="toggle">
-    <agm-icon :icon="icon" color="black" />
-  </agm-button>
+  <AgmButton icon title="Fullscreen" @click="toggle">
+    <AgmIcon color="black">
+      <i-mdi-fullscreen-exit v-if="isFullscreen" />
+      <i-mdi-fullscreen v-else />
+    </AgmIcon>
+  </AgmButton>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { useFullscreen } from '@vueuse/core'
-import { computed } from 'vue'
-export default {
-  setup() {
-    const { isFullscreen, toggle } = useFullscreen()
+const { isFullscreen, toggle } = useFullscreen()
 
-    const icon = computed(() => {
-      return isFullscreen.value ? 'mdi:fullscreen-exit' : 'mdi:fullscreen'
-    })
+const fullscreen = ref(document.fullscreenElement)
 
-    return {
-      icon,
-      toggle,
-    }
-  },
-  data() {
-    return {
-      fullscreen: document.fullscreenElement,
-    }
-  },
-  mounted() {
-    document.onfullscreenchange = () => {
-      this.fullscreen = document.fullscreenElement
-    }
-  },
-}
+onMounted(() => {
+  document.onfullscreenchange = () => {
+    fullscreen.value = document.fullscreenElement
+  }
+})
 </script>
