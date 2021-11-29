@@ -1,1 +1,1 @@
-export { default as AgmIcon } from './index.vue'
+export { default as AgmIcon } from './src/index.vue'

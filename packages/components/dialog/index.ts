@@ -1,1 +1,2 @@
-export { default as AgmDialog } from './index.vue'
+export * from './dialog'
+export { default as AgmDialog } from './src/index.vue'

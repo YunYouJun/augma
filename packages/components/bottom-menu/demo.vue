@@ -5,24 +5,28 @@
 </template>
 
 <script lang="ts" setup>
-import AgmBottomMenu from './index.vue'
+import consola from 'consola'
+import AgmBottomMenu from './src/index.vue'
 const menuItems = [
   {
     color: 'black',
-    icon: 'mdi:github',
+    icon: 'i-mdi-github',
     do: () => {
+      consola.info('https://github.com/YunYouJun/augma')
     },
   },
   {
     color: 'var(--agm-color-success)',
-    icon: 'mdi:check',
+    icon: 'i-mdi-check',
     do: () => {
+      consola.success('success')
     },
   },
   {
     color: 'var(--agm-color-danger)',
-    icon: 'mdi:error',
+    icon: 'i-mdi-error',
     do: () => {
+      consola.error('error')
     },
   },
 ]

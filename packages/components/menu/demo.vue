@@ -17,9 +17,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import AgmButton from '../button/index.vue'
-import AgmIcon from '../icon/index.vue'
-import AgmMenu from './index.vue'
+import { AgmButton, AgmIcon, AgmMenu } from 'augma'
 
 const open = ref(false)
 </script>

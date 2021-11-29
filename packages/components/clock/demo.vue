@@ -17,5 +17,5 @@
 
 <script lang="ts" setup>
 import { AgmTypeMap } from '@augma/shared'
-import AgmClock from './index.vue'
+import AgmClock from './src/index.vue'
 </script>

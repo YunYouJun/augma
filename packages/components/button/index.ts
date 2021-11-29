@@ -1,1 +1,1 @@
-export { default as AgmButton } from './index.vue'
+export { default as AgmButton } from './src/index.vue'

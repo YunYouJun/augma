@@ -1,1 +1,1 @@
-export { default as AgmCard } from './index.vue'
+export { default as AgmCard } from './src/index.vue'

@@ -1,5 +1,5 @@
 import { capitalize } from "vue";
-import indexes from "../../meta/indexes.json";
+import indexes from "../../indexes.json";
 import categories from "../../meta/categories.json";
 
 import mdConfig from "./plugins/markdown";

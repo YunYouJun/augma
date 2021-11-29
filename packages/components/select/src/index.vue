@@ -15,7 +15,7 @@
             :key="i"
             :label="item.label"
             :value="item.value"
-          ></agm-option>
+          />
         </agm-select-menu>
       </template>
     </agm-popper>
@@ -23,8 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import AgmPopper from '@augma/components/popper'
-import AgmInput from '@augma/components/input/index.vue'
+import { AgmPopper, AgmInput } from 'augma'
 import { onClickOutside } from '@vueuse/core'
 import {
   onMounted,
@@ -33,10 +32,10 @@ import {
   reactive,
 } from 'vue'
 import { UPDATE_MODEL_EVENT } from '@augma/utils/constants'
-import AgmSelectMenu from './src/SelectMenu.vue'
-import AgmOption from './src/Option.vue'
+import AgmSelectMenu from './SelectMenu.vue'
+import AgmOption from './Option.vue'
 
-import { selectKey, ISelectOption } from './src/useOption'
+import { selectKey, ISelectOption } from './useOption'
 
 const props = defineProps<{
   modelValue: ISelectOption

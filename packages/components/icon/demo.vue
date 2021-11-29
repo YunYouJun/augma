@@ -48,15 +48,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import AgmButton from '../button/index.vue'
-import AgmIcon from './index.vue'
-export default {
-  components: {
-    AgmButton,
-    AgmIcon,
-  },
-}
+<script lang="ts" setup>
+import { AgmButton, AgmIcon } from 'augma'
 </script>
 
 <style lang="scss" scoped>

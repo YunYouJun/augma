@@ -1,1 +1,1 @@
-export { default as AgmBottomMenu } from './index.vue'
+export { default as AgmBottomMenu } from './src/index.vue'

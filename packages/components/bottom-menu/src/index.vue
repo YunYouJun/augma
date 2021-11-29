@@ -1,6 +1,6 @@
 <template>
   <div class="agm-bottom-menu">
-    <div class="agm-down-arrow"></div>
+    <div class="agm-down-arrow" />
     <div class="agm-bottom-menu--inner">
       <div class="agm-menu-container">
         <agm-button
@@ -17,14 +17,13 @@
 </template>
 
 <script lang="ts" setup>
+import { AgmButton, AgmIcon } from 'augma'
 import './index.scss'
-import AgmButton from '../button/index.vue'
-import AgmIcon from '../icon/index.vue'
 
-interface IMenuItem {
-  color: string
-  icon: string
-  do: () => void
+export interface IMenuItem {
+  color?: string
+  icon?: string
+  do?: () => void
 }
 
 withDefaults(defineProps<{menuItems: IMenuItem[]}>(), {

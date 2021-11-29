@@ -22,7 +22,7 @@
     <template v-if="type !== 'textarea'">
       <!-- 前置元素 -->
       <div v-if="$slots.prepend" class="agm-input-group__prepend">
-        <slot name="prepend"></slot>
+        <slot name="prepend" />
       </div>
       <input
         v-if="type !== 'textarea'"
@@ -41,17 +41,17 @@
         @blur="handleBlur"
         @change="handleChange"
         @keydown="handleKeydown"
-      />
+      >
       <!-- 前置内容 -->
       <span v-if="$slots.prefix || prefixIcon" class="agm-input__prefix">
-        <slot name="prefix"></slot>
-        <i v-if="prefixIcon" :class="['agm-input__icon', prefixIcon]"></i>
+        <slot name="prefix" />
+        <i v-if="prefixIcon" :class="['agm-input__icon', prefixIcon]" />
       </span>
       <!-- 后置内容 -->
       <span v-if="getSuffixVisible()" class="agm-input__suffix">
         <template v-if="!showClear || !showPwdVisible || !isWordLimitVisible">
-          <slot name="suffix"></slot>
-          <i v-if="suffixIcon" :class="['agm-input__icon', suffixIcon]"></i>
+          <slot name="suffix" />
+          <i v-if="suffixIcon" :class="['agm-input__icon', suffixIcon]" />
         </template>
         <agm-icon
           v-if="showClear"
@@ -60,7 +60,7 @@
           @click="clear"
         />
 
-        <i v-if="showPwdVisible" @click="handlePasswordVisible"></i>
+        <i v-if="showPwdVisible" @click="handlePasswordVisible" />
         <span v-if="isWordLimitVisible" class="agm-input__count">
           <span class="agm-input__count-inner">
             {{ textLength }}/{{ upperLimit }}
@@ -70,11 +70,11 @@
         <i
           v-if="validateState"
           :class="['agm-input__icon', 'agm-input__validateIcon', validateIcon]"
-        ></i>
+        />
       </span>
       <!-- 后置元素 -->
       <div v-if="$slots.append" class="agm-input-group__append">
-        <slot name="append"></slot>
+        <slot name="append" />
       </div>
     </template>
 
@@ -94,8 +94,7 @@
       @focus="handleFocus"
       @blur="handleBlur"
       @change="handleChange"
-    >
-    </textarea>
+    />
     <span
       v-if="isWordLimitVisible && type === 'textarea'"
       class="agm-input__count"
@@ -125,16 +124,15 @@ import { isObject } from '@vue/shared'
 import { useGlobalConfig } from '@augma/utils/util'
 import isServer from '@augma/utils/isServer'
 import { isValidComponentSize } from '@augma/utils/validators'
-import { agmFormKey, agmFormItemKey } from '@augma/components/form'
+import { agmFormKey, agmFormItemKey, AgmIcon } from 'augma'
 
 import type { PropType } from 'vue'
 import type {
   AgmFormContext,
   AgmFormItemContext,
-} from '@augma/components/form'
+} from 'augma'
 import type { ComponentSize } from '@augma/shared'
-import AgmIcon from '../icon/index.vue'
-import calcTextareaHeight from './calcTextareaHeight'
+import calcTextareaHeight from '../calcTextareaHeight'
 
 type AutosizeProp =
   | {

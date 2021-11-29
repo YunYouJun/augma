@@ -8,6 +8,7 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 
 import { VitePWA } from 'vite-plugin-pwa'
+
 import { capitalize } from 'vue'
 
 import Unocss from 'unocss/vite'
@@ -16,8 +17,12 @@ import presetIcons from '@unocss/preset-icons'
 
 import { augmaChildren } from '../meta/indexes'
 import { hasDemo } from '../scripts/utils'
-import { AugmaResolver } from './augma/src/resolver'
+
 import { alias } from './shared/src/config'
+// do not use './augma/src' directly to avoid ts load *.vue
+import { AugmaResolver } from './augma/src/resolver'
+import { presetAugma } from './augma/src/preset'
+import { safelist } from './augma/src/preset/safelist'
 
 export default defineConfig({
   resolve: {
@@ -33,14 +38,14 @@ export default defineConfig({
         presetIcons({
           /* options */
         }),
+        presetAugma(),
       ],
+      safelist,
     }),
 
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({
-      imports: [
-        'vue',
-      ],
+      imports: ['vue'],
       dts: 'packages/.vitepress/auto-imports.d.ts',
     }),
 
@@ -91,6 +96,10 @@ export default defineConfig({
       },
     }),
   ],
+
+  optimizeDeps: {
+    include: ['vue', '@vueuse/core', 'vue-toastification'],
+  },
 })
 
 function MarkdownTransform(): Plugin {

@@ -12,8 +12,8 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import AgmButton from '../button/index.vue'
-import AgmDialog from './index.vue'
+import AgmButton from '../button/src/index.vue'
+import AgmDialog from './src/index.vue'
 
 const dialogVisible = ref(false)
 </script>

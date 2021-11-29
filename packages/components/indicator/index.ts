@@ -1,1 +1,1 @@
-export { default as AgmIndicator } from './index.vue'
+export { default as AgmIndicator } from './src/index.vue'

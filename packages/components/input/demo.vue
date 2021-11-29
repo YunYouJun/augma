@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import AgmInput from './index.vue'
+import AgmInput from './src/index.vue'
 
 const input = ref('')
 </script>

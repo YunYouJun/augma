@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   icon: '',
   color: '',
-  size: '1.5rem',
+  size: '',
 })
 
 const styles = computed(() => {

@@ -4,13 +4,7 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
-    AgmButton: typeof import('augma')['AgmButton']
-    AgmCard: typeof import('augma')['AgmCard']
-    AgmClock: typeof import('augma')['AgmClock']
-    AgmDialog: typeof import('augma')['AgmDialog']
     AgmIcon: typeof import('augma')['AgmIcon']
-    AgmIndicator: typeof import('augma')['AgmIndicator']
-    AgmMenu: typeof import('augma')['AgmMenu']
     CategoriesTable: typeof import('./theme/components/CategoriesTable.vue')['default']
     DemoBlock: typeof import('./theme/components/DemoBlock.vue')['default']
     DemoContainer: typeof import('./theme/components/DemoContainer.vue')['default']

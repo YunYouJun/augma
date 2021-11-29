@@ -21,10 +21,10 @@
       "@augma/utils/*": ["packages/utils/src/*"],
       "@augma/components": ["packages/components/index.ts"],
       "@augma/components/*": ["packages/components/*"],
+      "augma": ["packages/augma/src/index.ts"],
       "@augma/*": ["packages/*/src"],
-      "augma": ["packages/augma/src/index.ts"]
     }
   },
-  "include": ["./meta/**/*", "./packages/**/*", "packages/.vitepress/**/*"],
+  "include": ["meta/**/*", "packages/**/*", "packages/.vitepress/**/*"],
   "exclude": ["dist", "node_modules"]
 }

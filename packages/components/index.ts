@@ -1,18 +1,21 @@
 import type { App } from 'vue'
 
 import type { InstallOptions } from '@augma/utils/config'
-import { ComponentSize } from '@augma/shared'
+import type { ComponentSize } from '@augma/shared'
 
-export * from './notification'
-export * from './dialog'
-export * from './select/index.vue'
-export * from './menu'
-export * from './indicator/index.vue'
-export * from './clock'
-export * from './card'
 export * from './bottom-menu'
 export * from './button'
+export * from './card'
+export * from './clock'
+export * from './dialog'
+export * from './form'
+export * from './indicator'
 export * from './icon'
+export * from './input'
+export * from './menu'
+export * from './popper'
+export * from './select'
+export * from './toast'
 
 const defaultInstallOpt: InstallOptions = {
   size: '' as ComponentSize,
