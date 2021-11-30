@@ -7,11 +7,11 @@ $--input-hover-border: $--input-placeholder-color;
 .agm-input {
   position: relative;
   font-size: 1rem;
-  display: inline-block;
+  display: inline-flex;
   width: 100%;
   line-height: $--input-height;
 
-  &::placeholder {
+  input::placeholder {
     color: $--input-placeholder-color;
   }
 
@@ -19,6 +19,14 @@ $--input-hover-border: $--input-placeholder-color;
     border-color: $--input-hover-border;
   }
 
+  // has suffix
+  &--suffix {
+    .agm-input__inner {
+      padding-right: 1.8rem;
+    }
+  }
+
+  // suffix container
   &__suffix {
     position: absolute;
     height: 100%;
@@ -31,25 +39,20 @@ $--input-hover-border: $--input-placeholder-color;
     color: inherit;
     transition: all 0.3s;
     cursor: pointer;
-
-    &-inner {
-    }
   }
 
   &__inner {
     -webkit-appearance: none;
     background-color: transparent;
     background-image: none;
-    border-radius: 4px;
+    border-radius: 2px;
     border: 1px solid lightgray;
     box-sizing: border-box;
     color: black;
-    display: inline-block;
+    display: inline-flex;
     font-size: inherit;
-    height: $--input-height;
-    line-height: $--input-height;
     outline: none;
-    padding: 0 15px;
+    padding: 0.5rem 1rem;
     transition: 0.2s;
     width: 100%;
 
@@ -72,7 +75,7 @@ $--input-hover-border: $--input-placeholder-color;
 
   @include when(disabled) {
     .agm-input__inner {
-      color: #555;
+      color: #666;
       background-color: #eee;
     }
   }

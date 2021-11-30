@@ -15,9 +15,7 @@
         <td>{{ prop.description }}</td>
         <td><code>{{ prop.type }}</code></td>
         <td>
-          <code>
-            {{ formatValues(prop.acceptedValues) }}
-          </code>
+          <OptionalValue :type="prop.type" :accepted-values="prop.acceptedValues" />
         </td>
         <td><code>{{ prop.default || "-" }}</code></td>
       </tr>
@@ -26,12 +24,14 @@
 </template>
 
 <script lang="ts" setup>
-import { AgmTypeArray } from "@augma/shared";
+import { agmColors } from "augma";
+
+export type OptionalType = 'AgmColorType' | 'string' | 'boolean' | 'any' | ''
 
 export interface ComponentPropType {
   name: string;
   description: string;
-  type: string;
+  type: OptionalType;
   acceptedValues: string;
   default: string;
 }
@@ -41,14 +41,5 @@ defineProps<{
 }>()
 
 
-function formatValues(values) {
-  if (values === "AgmTypeArray") {
-    values = AgmTypeArray;
-  }
-  if (Array.isArray(values)) {
-    return values.join(" / ");
-  } else {
-    return values || "-";
-  }
-}
+
 </script>

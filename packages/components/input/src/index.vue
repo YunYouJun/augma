@@ -55,7 +55,7 @@
         </template>
         <agm-icon
           v-if="showClear"
-          icon="mdi:close"
+          name="i-mdi-close"
           @mousedown.prevent
           @click="clear"
         />

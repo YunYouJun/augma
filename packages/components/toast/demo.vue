@@ -24,7 +24,7 @@ const sendMessage = () => {
     icon: {
       iconClass: 'i-mdi-github',
     },
-    timeout: 300000,
+    timeout: 3000,
   })
 }
 </script>

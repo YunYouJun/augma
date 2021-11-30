@@ -8,12 +8,15 @@ props:
     type: string
     acceptedValues: AgmTypeArray
     default: default
+  - name: color
+    description: 色彩
+    type: AgmColorType
   - name: icon
     description: 图标按钮
     type: boolean
     default: false
-  - name: outline
-    description: 描边按钮
+  - name: plain
+    description: 朴素按钮
     type: boolean
     default: false
 ---

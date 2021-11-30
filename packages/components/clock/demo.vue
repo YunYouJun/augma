@@ -1,21 +1,24 @@
 <template>
+  <agm-clock class="mx-2" />
   <agm-clock
-    v-for="(type, i) in AgmTypeMap"
+    v-for="(color, i) in agmColors"
     :key="i"
-    :color="type"
-    style="margin: 1rem"
+    :color="color"
+    class="mx-2"
   />
-  <hr style="opacity: 0.1; margin: 1rem">
+  <hr class="my-4 opacity-20">
+  <agm-clock class="mx-2" :add-zero="false" />
   <agm-clock
-    v-for="(type, i) in AgmTypeMap"
+    v-for="(color, i) in agmColors"
     :key="i"
-    :color="type"
+    :color="color"
     :add-zero="false"
-    style="margin: 1rem"
+    class="mx-2"
   />
 </template>
 
 <script lang="ts" setup>
 import { AgmTypeMap } from '@augma/shared'
+import { agmColors } from 'augma'
 import AgmClock from './src/index.vue'
 </script>

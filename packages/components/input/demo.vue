@@ -1,5 +1,5 @@
 <template>
-  <div class="demo-input">
+  <form class="grid gap-4">
     <agm-input v-model="input" placeholder="请输入内容" />
     <agm-input
       v-model="input"
@@ -10,7 +10,7 @@
       <!-- <template #suffix> s </template> -->
     </agm-input>
     <agm-input v-model="input" placeholder="密码框" show-password />
-  </div>
+  </form>
 </template>
 
 <script lang="ts" setup>
@@ -19,11 +19,3 @@ import AgmInput from './src/index.vue'
 
 const input = ref('')
 </script>
-
-<style lang="scss">
-.demo-input {
-  .agm-input {
-    margin: 0.5rem 0;
-  }
-}
-</style>

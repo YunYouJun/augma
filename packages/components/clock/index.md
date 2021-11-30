@@ -5,10 +5,7 @@ description: 自动显示当前时间
 props:
   - name: color
     description: 色彩
-    type: string
-    acceptedValues:
-      - AgmTypeArray
-      - CSS3 Color
+    type: AgmColorType
   - name: addZero
     description: 是否补零
     type: boolean

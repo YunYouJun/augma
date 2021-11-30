@@ -18,13 +18,11 @@ const props = withDefaults(defineProps<{
   icon?: boolean
   type?: AgmColorType
   plain?: boolean
-  outline?: boolean
   onClick?: () => void
 }>(), {
   color: '',
   icon: false,
   plain: false,
-  outline: false,
 })
 
 const emit = defineEmits(['click'])
@@ -37,7 +35,6 @@ const classes = computed(() => {
   const btnClasses = [
     props.icon && 'agm-button--icon',
     props.type && `agm-button--${props.type}`,
-    props.outline && 'is-outline',
   ]
   const colorClasses = []
   if (props.color) {

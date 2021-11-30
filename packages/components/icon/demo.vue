@@ -1,47 +1,31 @@
 <template>
-  <div class="button-demo">
-    <agm-button icon>
-      <agm-icon icon="mdi:github" color="black" />
-    </agm-button>
-    <agm-button icon type="primary">
-      <agm-icon icon="mdi:vector-square" />
-    </agm-button>
-    <agm-button icon type="success">
-      <agm-icon icon="mdi:check" />
-    </agm-button>
-    <agm-button icon type="warning">
-      <agm-icon icon="mdi:warning" />
-    </agm-button>
-    <agm-button icon type="danger">
-      <agm-icon icon="mdi:error" />
-    </agm-button>
-    <agm-button icon type="info">
-      <agm-icon icon="mdi:information-variant" />
+  <div class="flex justify-between flex-wrap">
+    <agm-button
+      v-for="(item,i) in iconItems"
+      :key="i"
+      class="m-2"
+      icon
+      :color="item.color"
+    >
+      <agm-icon :name="item.icon" />
     </agm-button>
   </div>
-  <div class="button-demo">
-    <agm-button icon outline style="background: black">
-      <agm-icon icon="mdi:github" color="white" />
-    </agm-button>
-    <agm-button icon type="primary" outline>
-      <agm-icon icon="mdi:vector-square" />
-    </agm-button>
-    <agm-button icon type="success" outline>
-      <agm-icon icon="mdi:check" />
-    </agm-button>
-    <agm-button icon type="warning" outline>
-      <agm-icon icon="mdi:warning" />
-    </agm-button>
-    <agm-button icon type="danger" outline>
-      <agm-icon icon="mdi:error" />
-    </agm-button>
-    <agm-button icon type="info" outline>
-      <agm-icon icon="mdi:information-variant" />
+
+  <div class="flex justify-between flex-wrap">
+    <agm-button
+      v-for="(item,i) in iconItems"
+      :key="i"
+      class="m-2"
+      icon
+      :color="item.color"
+      plain
+    >
+      <agm-icon :name="item.icon" />
     </agm-button>
   </div>
-  <div class="logo-demo text-center">
+  <div class="logo-demo text-center mt-5">
     <agm-icon
-      icon="mdi:do-not-disturb-off"
+      name="i-mdi-do-not-disturb-off"
       color="var(--agm-color-danger)"
       size="10rem"
     />
@@ -50,21 +34,30 @@
 
 <script lang="ts" setup>
 import { AgmButton, AgmIcon } from 'augma'
+const iconItems = [
+  {
+    color: '',
+    icon: 'i-mdi-github',
+  },
+  {
+    color: 'blue',
+    icon: 'i-mdi-vector-square',
+  },
+  {
+    color: 'green',
+    icon: 'i-mdi-check',
+  },
+  {
+    color: 'yellow',
+    icon: 'i-mdi-warning',
+  },
+  {
+    color: 'red',
+    icon: 'i-mdi-error',
+  },
+  {
+    color: 'cyan',
+    icon: 'i-mdi-information-variant',
+  },
+]
 </script>
-
-<style lang="scss" scoped>
-.text-center {
-  text-align: center;
-}
-
-.button-demo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-
-  & > * {
-    margin: 0 1rem 1rem 0;
-  }
-}
-</style>

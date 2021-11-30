@@ -1,23 +1,18 @@
 <template>
   <div
-    class="agm-select-dropdown"
+    class="agm-select-dropdown cursor-pointer"
     :style="{
       minWidth: minWidth,
     }"
   >
-    <slot></slot>
+    <slot />
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-export default defineComponent({
-  name: 'AgmSelectDropdown',
-  props: {
-    minWidth: String,
-  },
-  setup() {},
-})
+<script lang="ts" setup>
+defineProps<{
+  minWidth?: string
+}>()
 </script>
 
 <style lang="scss">

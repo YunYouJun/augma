@@ -1,16 +1,42 @@
 ---
 title: 图标
 category: misc
+description: 图标使用及其解决方案
+props:
+  - name: icon
+    type: string
+    description: 图标名称（见 icones.js.org）
+  - name: color
+    type: string
+    description: 图标颜色
+    default: "black"
+  - name: size
+    type: string
+    description: 图标大小
+    default: "1.5rem"
 ---
 
-## 图标
+你可以基于 [iconify](https://iconify.design/) 与 [unplugin-icons](https://github.com/antfu/unplugin-icons) 来快速使用各类扩展图标
 
-你可以使用各类扩展图标
+- [iconify](https://iconify.design/): Unified icons framework
+- [unplugin-icons](https://github.com/antfu/unplugin-icons): 🤹 Access thousands of icons as components on-demand universally.
+- [浏览图标 ｜ icones.js.org](https://icones.js.org/): 在这里快速查看各类图标名称
 
-[iconify](https://iconify.design/): Unified icons framework
+## 推荐方式
 
-- [浏览图标](https://icones.js.org/)
+### 在 Vite 中使用
 
+使用 unplugin-icons 将其渲染为 SVG，并按需加载图标。
+
+[unplugin-icons](https://github.com/antfu/unplugin-icons): 🤹 Access thousands of icons as components on-demand universally.
+
+- 使用方式：参考 README
+  - [配置自动加载 | unplugin-icons](https://github.com/antfu/unplugin-icons#auto-importing)
+- 使用示例: [@augma/client](https://github.com/YunYouJun/augma/blob/6884551c5f288d49eb3a37ec510903b02e27253b/packages/client/vite.config.ts#L89)
+
+## 关于 Iconify
+
+- [Simple icon bundle for SVG Framework](https://docs.iconify.design/icon-components/bundles/examples/svg-framework-simple.html)
 ### 导入图标集
 
 安装依赖
@@ -42,52 +68,4 @@ Iconify.addCollection(mdiIcons);
 
 ##### 自定义图标 Bundle
 
-> [Simple icon bundle for SVG Framework](https://docs.iconify.design/sources/bundles/examples/svg-framework-simple.html)
-
-### 使用
-
-```vue
-<template>
-  <agm-icon icon="carbon:logo-github"></agm-icon>
-</template>
-```
-
-| 参数  | 说明                                             | 类型   | 可选值 | 默认值 |
-| ----- | ------------------------------------------------ | ------ | ------ | ------ |
-| icon  | 图标名称（见 [icones](https://icones.js.org/) ） | string | -      | -      |
-| color | 图标颜色                                         | string | -      | black  |
-| size  | 图标大小                                         | string | -      | 1.5rem |
-
-## 其它方式
-
-其他一些使用图标的方式。
-
-### 在 Vite 中使用
-
-将其渲染为 SVG，并按需加载。
-
-[vite-plugin-icons](https://github.com/antfu/vite-plugin-icons): Access thousands of icons as Vue components in Vite
-
-```bash
-yarn add -D vite-plugin-icons @iconify/json
-```
-
-```ts
-import Vue from "@vitejs/plugin-vue";
-import VueIcons from "vite-plugin-icons";
-
-export default {
-  plugins: [Vue(), VueIcons()],
-};
-```
-
-你还可以自动按需加载图标
-
-```html
-<template>
-  <i-carbon-accessibility />
-  <i-mdi-account-box style="font-size: 2em; color: red" />
-</template>
-```
-
-> [配置自动加载](https://github.com/antfu/vite-plugin-icons#auto-importing)
+- [Simple icon bundle for SVG Framework](https://docs.iconify.design/sources/bundles/examples/svg-framework-simple.html)

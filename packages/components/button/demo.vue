@@ -7,10 +7,8 @@
       {{ color.toUpperCase() }}
     </agm-button>
   </div>
+
   <div class="button-demo">
-    <agm-button class="m-2" icon>
-      <agm-icon name="i-mdi-github" color="black" />
-    </agm-button>
     <agm-button
       v-for="(item,i) in iconItems"
       :key="i"
@@ -21,10 +19,8 @@
       <agm-icon :name="item.icon" />
     </agm-button>
   </div>
+
   <div class="button-demo">
-    <agm-button class="m-2 bg-black" icon>
-      <agm-icon name="i-mdi-github" color="white" />
-    </agm-button>
     <agm-button
       v-for="(item,i) in iconItems"
       :key="i"
@@ -42,6 +38,10 @@
 import { AgmIcon, AgmButton, agmColors } from 'augma'
 
 const iconItems = [
+  {
+    color: '',
+    icon: 'i-mdi-github',
+  },
   {
     color: 'blue',
     icon: 'i-mdi-vector-square',

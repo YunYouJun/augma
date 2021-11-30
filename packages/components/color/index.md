@@ -29,59 +29,7 @@ category: misc
     border-radius: 0 0 4px 4px;
   }
 }
-
-.text-black {
-  color: black;
-}
-
-.text-capitalize {
-  text-transform: capitalize;
-}
-
-.text-uppercase {
-  text-transform: uppercase;
-}
 </style>
-
-<script>
-export default {
-  data() {
-    return {
-      auxiliaryColors: [
-        {
-          name: "brand",
-          value: "",
-        },
-        {
-          name: "success",
-          value: ""
-        },
-        {
-          name: "warning",
-          value: ""
-        },
-        {
-          name: "danger",
-          value: ""
-        },
-        {
-          name: "info",
-          value: ""
-        },
-        {
-          name: "tooltip",
-          value: ""
-        }
-      ]
-    }
-  },
-  mounted() {
-    this.auxiliaryColors.forEach((color)=> {
-      color.value = getComputedStyle(document.documentElement).getPropertyValue(`--agm-${color.name}`);
-    })
-  }
-}
-</script>
 
 Augma 是面向 AR 交互的 UI 框架，应避免过于复杂的色彩，并能够与复杂的背景区分开。
 
@@ -99,13 +47,4 @@ White <div class="value">#FFFFFF</div>
 
 除了主色调外，需要不同的颜色以区分不同的操作状态。
 
-<div class="demo-color-box-group">
-  <div
-    v-for="color in auxiliaryColors"
-    class="demo-color-box demo-color-box-other demo-color-box-lite"
-    :style="{ background: color.value }"
-  >
-    <div class="name text-capitalize">{{color.name}}</div>
-    <div class="value text-uppercase">{{color.value}}</div>
-  </div>
-</div>
+<auxiliary />

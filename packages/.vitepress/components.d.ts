@@ -5,9 +5,11 @@
 declare module 'vue' {
   export interface GlobalComponents {
     AgmIcon: typeof import('augma')['AgmIcon']
+    Auxiliary: typeof import('./examples/color/auxiliary.vue')['default']
     CategoriesTable: typeof import('./theme/components/CategoriesTable.vue')['default']
     DemoBlock: typeof import('./theme/components/DemoBlock.vue')['default']
     DemoContainer: typeof import('./theme/components/DemoContainer.vue')['default']
+    OptionalValue: typeof import('./theme/components/OptionalValue.vue')['default']
     PropsTable: typeof import('./theme/components/PropsTable.vue')['default']
   }
 }

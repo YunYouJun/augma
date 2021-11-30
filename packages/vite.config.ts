@@ -51,7 +51,7 @@ export default defineConfig({
 
     // https://github.com/antfu/unplugin-vue-components
     Components({
-      dirs: ['.vitepress/theme/components'],
+      dirs: ['.vitepress'],
 
       // allow auto load markdown components under `./src/components/`
       extensions: ['vue', 'md'],
@@ -124,13 +124,16 @@ function MarkdownTransform(): Plugin {
           const demoCode = `\n::: demo\n\n<<< ./packages/${pkg}/${name}/demo.vue\n\n:::\n`
           // const demoCode = '\n<DemoContainer><Demo/></DemoContainer>\n'
           // header = `${insertedCode}\n# ${capitalize(name)}\n${demoCode}`
-          header
-            = `${insertedCode}\n# ${capitalize(name)} {{ $frontmatter.title }} \n> {{ $frontmatter.description || '简要描述' }}${demoCode}`
+
+          const apiTable = '## API \n\n<PropsTable v-if="$frontmatter" :props="$frontmatter.props" />'
+          header = `${insertedCode}\n# ${capitalize(
+            name,
+          )} {{ $frontmatter.title }} \n> {{ $frontmatter.description || '简要描述' }}${demoCode}${apiTable}`
         }
 
         if (header) {
           code
-              = `${code.slice(0, frontmatterEnds) + header + code.slice(frontmatterEnds)}<PropsTable v-if='$frontmatter' :props='$frontmatter.props' />`
+              = `${code.slice(0, frontmatterEnds) + header + code.slice(frontmatterEnds)}`
         }
       }
 

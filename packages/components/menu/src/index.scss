@@ -1,13 +1,19 @@
 .agm-menu {
+  display: inline-flex;
+  flex-direction: column;
   position: relative;
+
+  &--activator {
+    display: inline-flex;
+  }
 }
 
 .agm-menu-items {
   position: absolute;
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 3rem;
   z-index: 10;
 }
 

@@ -24,13 +24,14 @@ const options: ISelectOption[] = [
     value: 'C',
   },
 ]
-const currentOption = ref<ISelectOption>({
+
+const currentOption = reactive<ISelectOption>({
   label: '',
   value: '',
 })
 
 function callback(val: any) {
   // eslint-disable-next-line no-console
-  console.log(val, this.currentOption)
+  console.log(val, currentOption)
 }
 </script>

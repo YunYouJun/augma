@@ -1,10 +1,10 @@
 <template>
-  <span class="agm-clock" :style="styles">{{ now }}</span>
+  <span class="agm-clock" :class="classes">{{ now }}</span>
 </template>
 
 <script lang="ts" setup>
 import './index.scss'
-import { AgmColorType, getAgmColorByType } from '@augma/shared'
+import { AgmColorType } from '@augma/shared'
 import { computed, onMounted } from 'vue'
 
 interface DisplayTime {
@@ -27,10 +27,14 @@ function getTime() {
   return { hour: date.getHours(), minute: date.getMinutes() }
 }
 
-const styles = computed(() => {
-  return {
-    color: getAgmColorByType(props.color),
-  }
+// const styles = computed(() => {
+//   return {
+//     color: getAgmColorByType(props.color),
+//   }
+// })
+
+const classes = computed(() => {
+  return [`text-${props.color}-500`]
 })
 
 const now = computed(() => {

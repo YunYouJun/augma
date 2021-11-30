@@ -6,50 +6,29 @@
   </li>
 </template>
 
-<script lang="ts">
-import {
-  toRefs,
-  defineComponent,
-  getCurrentInstance,
-  onBeforeUnmount,
-  reactive,
-} from 'vue'
+<script lang="ts" setup>
 import { useOption } from './useOption'
 
-export default defineComponent({
-  name: 'AgmOption',
-  props: {
-    disable: {
-      type: Boolean,
-      default: false,
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    value: {
-      type: String,
-      default: '',
-    },
-  },
-  setup(props) {
-    const { select } = useOption(props)
-
-    function selectOptionClick() {
-      if (props.disable) return
-
-      select.handleOptionSelect({
-        label: props.label,
-        value: props.value,
-      })
-    }
-
-    return {
-      select,
-      selectOptionClick,
-    }
-  },
+const props = withDefaults(defineProps<{
+  disable: boolean
+  label: string
+  value: string
+}>(), {
+  disable: false,
+  label: '',
+  value: '',
 })
+
+const { select } = useOption()
+
+function selectOptionClick() {
+  if (props.disable) return
+
+  select.handleOptionSelect({
+    label: props.label,
+    value: props.value,
+  })
+}
 </script>
 
 <style lang="scss">

@@ -50,7 +50,7 @@ const selectWrapper = ref(null)
 const popperRef = ref(null)
 const minWidth = ref('0')
 
-const currentOption = reactive<ISelectOption>({ label: '', value: '' })
+const currentOption = reactive<ISelectOption>(props.modelValue)
 
 function calculateMinWidth() {
   return getComputedStyle(selectWrapper.value).width
@@ -67,10 +67,12 @@ onMounted(() => {
  * handle child option
  */
 function handleOptionSelect(val: ISelectOption) {
-  currentOption.value = val
+  currentOption.label = val.label
+  currentOption.value = val.value
   emit(UPDATE_MODEL_EVENT, val)
 
   props.callback(val)
+  popperRef.value.visibility = false
 }
 
 onClickOutside(selectWrapper, () => {
