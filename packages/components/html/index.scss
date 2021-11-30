@@ -12,20 +12,4 @@ table[class*="agm-table"] {
   width: 100%;
   text-align: left;
   font-size: 14px;
-
-  border: 1px solid var(--c-bg-secondary);
-
-  tr:nth-child(2n) {
-    background-color: rgba(0, 0, 0, 0.01);
-  }
-
-  th {
-    background: rgba(0, 0, 0, 0.04);
-    border-color: var(--c-bg-secondary);
-  }
-
-  td {
-    border-width: 1px 0;
-    border-color: var(--c-bg-secondary);
-  }
 }

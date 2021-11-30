@@ -15,6 +15,9 @@ const config: UserConfig = {
   },
 
   themeConfig: {
+    iconClass: "i-ri-drag-move-line",
+    logo: "/favicon.svg",
+
     repo: "YunYouJun/augma",
     docsBranch: "main",
     docsDir: "docs",
@@ -37,7 +40,7 @@ const config: UserConfig = {
   },
 
   head: [
-    ["link", { rel: "icon", href: "/logo.png", type: "image/png" }],
+    ["link", { rel: "icon", href: "/favicon.svg", type: "image/png" }],
     ["meta", { name: "author", content: "YunYouJun" }],
   ],
 };

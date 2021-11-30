@@ -1,5 +1,5 @@
 <template>
-  <div class="demo-block">
+  <div class="demo-block hover:shadow-md">
     <div class="demo-content">
       <slot name="demo"></slot>
     </div>
@@ -8,7 +8,10 @@
     </div>
     <details>
       <summary>Code 代码</summary>
-      <slot name="code"></slot>
+      <div class="-m-2">
+        <slot name="code" ></slot>
+
+      </div>
     </details>
   </div>
 </template>
@@ -29,9 +32,7 @@ export default defineComponent({
 
 <style lang="scss">
 .demo-block {
-  --demo-border-color: #eee;
-
-  border: solid 1px #ebebeb;
+  border: solid 1px var(--c-divider);
   border-radius: 3px;
   transition: 0.2s;
   margin-top: 15px;
@@ -39,10 +40,10 @@ export default defineComponent({
 
   details {
     outline: none;
-    border-top: 1px solid var(--demo-border-color);
+    border-top: 1px solid var(--c-divider);
 
     &[open] {
-      padding: 1rem 1rem 0 1rem;
+      padding: 1rem 1rem 0.5rem 1rem;
     }
   }
 
@@ -50,18 +51,14 @@ export default defineComponent({
     outline: none;
     font-weight: bold;
     padding: 0.8rem 0.8rem 0.8rem 1rem;
-    background-color: #fafafa;
+    background-color: var(--c-divider-light);
   }
 
   details[open] summary {
-    border-bottom: 1px solid var(--demo-border-color);
+    border-bottom: 1px solid var(--c-divider);
     margin: -1rem -1rem 1rem -1rem;
   }
 
-  &:hover {
-    box-shadow: 0 0 8px 0 rgba(232, 237, 250, 0.6),
-      0 2px 4px 0 rgba(232, 237, 250, 0.5);
-  }
 
   .demo-content {
     padding: 1rem;
@@ -69,8 +66,8 @@ export default defineComponent({
 
   .description {
     padding: 1px 1rem;
-    border-top: solid 1px var(--demo-border-color);
-    background-color: #fcfcfc;
+    border-top: solid 1px var(--c-divider);
+    background-color: var(--c-bg);
   }
 }
 </style>

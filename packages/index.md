@@ -1,6 +1,6 @@
 ---
 home: true
-heroImage: /logo.png
+heroIconClass: i-ri-drag-move-line
 heroAlt: Logo image
 actionText: Link Start
 actionLink: /guide/link-start.html
@@ -11,7 +11,12 @@ features:
     details: 基于 Vue3 与 TypeScript ，搭配极速的 Vite 开始你的极致开发体验
   - title: 交互友好
     details: 针对 AR 场景的 UI 交互组件
-footer: MIT Licensed | Copyright © 2020-present YunYouJun
+footer: 
+  license: MIT Licensed
+  since: 2020
+  author:
+    name: YunYouJun
+    url: https://www.yunyoujun.cn
 ---
 
 WIP: Work In Progress

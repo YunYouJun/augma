@@ -10,7 +10,7 @@
 import { useOption } from './useOption'
 
 const props = withDefaults(defineProps<{
-  disable: boolean
+  disable?: boolean
   label: string
   value: string
 }>(), {

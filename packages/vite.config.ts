@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import type { Plugin } from 'vite'
 
@@ -24,9 +25,28 @@ import { AugmaResolver } from './augma/src/resolver'
 import { presetAugma } from './augma/src/preset'
 import { safelist } from './augma/src/preset/safelist'
 
+/**
+ * to develop vitepress-theme-you
+ */
+const curAlias = process.env.NODE_ENV === 'dev:theme'
+  ? {
+    'vitepress-theme-you/': `${resolve(
+      __dirname,
+      '../../vitepress-theme-you/src',
+    )}/`,
+    'vitepress-theme-you': resolve(
+      __dirname,
+      '../../vitepress-theme-you/src/index.ts',
+    ),
+  }
+  : {}
+
 export default defineConfig({
   resolve: {
-    alias,
+    alias: {
+      ...alias,
+      ...curAlias,
+    },
   },
   plugins: [
     Unocss({

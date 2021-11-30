@@ -1,5 +1,4 @@
-import DefaultTheme from "vitepress/dist/client/theme-default";
-import Layout from "./Layout.vue";
+import YouTheme from 'vitepress-theme-you'
 
 // https://github.com/antfu/unocss
 import 'uno.css'
@@ -15,8 +14,8 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
 const theme = {
-  ...DefaultTheme,
-  Layout,
+  // ...DefaultTheme,
+  ...YouTheme,
   async enhanceApp({ app }) {
     app.use(Toast)
   },
