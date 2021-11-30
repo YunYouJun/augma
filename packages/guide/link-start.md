@@ -13,7 +13,7 @@ Augma 是使用 Vite 开发并基于 Vue3 实现的实验性 AR UI 框架
 [![npm](https://img.shields.io/npm/v/augma)](https://www.npmjs.com/package/augma)
 
 ```bash
-yarn add augma
+pnpm add augma
 ```
 
 ## 在 Vue3 中引入

@@ -17,21 +17,13 @@
   </div>
 </template>
 
-<script lang="ts">
-import categories from "../../../../meta/categories.json";
-import { defineComponent, capitalize } from "vue";
-export default defineComponent({
-  props: {
-    type: {
-      type: String,
-      default: "components",
-    },
-  },
-  setup(props) {
-    return {
-      categories: categories[props.type],
-      capitalize,
-    };
-  },
-});
+<script lang="ts" setup>
+import categoriesData from "../../../../../meta/categories.json";
+import { capitalize } from "vue";
+
+const props = withDefaults(defineProps<{type?: string}>(), {
+  type: 'components'
+})
+
+const categories = categoriesData[props.type]
 </script>

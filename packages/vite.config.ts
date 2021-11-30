@@ -45,7 +45,7 @@ export default defineConfig({
 
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({
-      imports: ['vue'],
+      imports: ['vue', '@vueuse/core'],
       dts: 'packages/.vitepress/auto-imports.d.ts',
     }),
 

@@ -7,7 +7,7 @@ Docs: <https://docs.augma.elpsy.cn>
 ## Usage
 
 ```bash
-yarn add augma
+pnpm add augma
 ```
 
 ```ts

@@ -1,6 +1,45 @@
 @use "@augma/components/color" as *;
 
 :root {
+  --c-bg: #fff;
+  --c-bg-semi: rgba(255, 255, 255, 0.8);
+  --c-bg-secondary: #f3f5f7;
+
+  --c-white: #ffffff;
+  --c-black: #000000;
+
+  --c-divider-light: rgba(60, 60, 67, 0.12);
+  --c-divider-dark: rgba(84, 84, 88, 0.48);
+
+  --c-text-light-1: #2c3e50;
+  --c-text-light-2: #476582;
+  --c-text-light-3: #90a4b7;
+
   --c-brand: #{$agm-brand};
   --c-brand-light: #{lighten($agm-brand, 5%)};
+
+  --c-disabled-bg: #e5e5e5;
+  --c-disabled-fg: #666;
+
+  --code-bg-color: #f8f8f8;
+  --code-inline-bg-color: rgba(27, 31, 35, 0.04);
+  --code-highlight: rgba(0, 0, 0, 0.04);
+}
+
+html.dark {
+  --c-bg: #25272a;
+  --c-bg-semi: rgba(17, 17, 17, 0.8);
+  --c-bg-secondary: #222;
+  --c-text: #f0f6fc;
+  --c-text-light: #f0f6fc;
+  --c-text-lighter: #ffffff;
+
+  --c-divider-light: rgba(200, 200, 200, 0.12);
+  --c-divider-dark: rgba(200, 200, 200, 0.48);
+  --code-bg-color: #191919;
+  --code-inline-bg-color: rgba(255, 255, 255, 0.04);
+  --code-highlight: rgba(0, 0, 0, 0.66);
+
+  --c-disabled-bg: #333;
+  --c-disabled-fg: #aaa;
 }

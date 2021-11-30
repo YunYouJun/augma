@@ -15,7 +15,7 @@ const config: UserConfig = {
   },
 
   themeConfig: {
-    repo: "SAO-UI/augma",
+    repo: "YunYouJun/augma",
     docsBranch: "main",
     docsDir: "docs",
 
@@ -26,7 +26,7 @@ const config: UserConfig = {
     nav: [
       { text: "指南", link: "/guide/link-start.html" },
       { text: "组件", link: "/components/" },
-      { text: "钩子函数", link: "/hooks/" },
+      { text: "Use", link: "/hooks/" },
     ],
 
     sidebar: {

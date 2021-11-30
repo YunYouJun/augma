@@ -15,6 +15,10 @@ const shortcuts: UserShortcuts = [
   {
     'agm-clock': 'text-white text-shadow',
   },
+  {
+    'icon-button':
+      'inline-flex justify-center items-center m-1 border-none cursor-pointer bg-transparent p-0 text-base',
+  },
 ]
 
 export { shortcuts }

@@ -29,6 +29,8 @@ Augma 是 [刀剑神域：序列之争](https://zh.wikipedia.org/zh-sg/%E5%88%80
   - 同时这也意味着 element-plus 等组件库完全可以在此之上对子组件进一步抽象，做到样式与逻辑完全分离。
 - AR 场景下的 Composition API
   - [VueUse](https://github.com/vueuse/vueuse) 是使用 Vue3 Compositon API 构建的很方便的工具库，而 AR 场景下也有很多可以抽象的地方。譬如，全屏（适配桌面、移动端）的 Web Camera、[mediapipe](https://github.com/google/mediapipe) 的一些封装……
+- Augma Client
+  - 使用上述组件库与 Compositon API 构建的 AR 操作终端，可以做各种看起来很酷的事情！
 
 那就开始吧？Link Start.
 
@@ -70,7 +72,10 @@ pnpm docs:dev
 
 ## Monorepo
 
-- [@augma/client]: Use augma ui to build a AR client like Augma
+- augma
+  - [@augma/components](https://github.com/YunYouJun/augma/tree/main/packages/client): Augma UI Components
+  - [@augma/hooks]: Augma Composition API
+- [@augma/client](https://github.com/YunYouJun/augma/tree/main/packages/client): Use augma ui to build a AR client like Augma
 
 ## Todo
 

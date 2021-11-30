@@ -24,6 +24,7 @@
   "license": "MIT",
   "devDependencies": {
     "@antfu/eslint-config": "^0.11.1",
+    "@iconify-json/ri": "^1.0.1",
     "@types/minimist": "^1.2.2",
     "@types/semver": "^7.3.9",
     "@yunyoujun/logger": "^0.1.4",

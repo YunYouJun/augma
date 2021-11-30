@@ -34,6 +34,8 @@ props:
   - [配置自动加载 | unplugin-icons](https://github.com/antfu/unplugin-icons#auto-importing)
 - 使用示例: [@augma/client](https://github.com/YunYouJun/augma/blob/6884551c5f288d49eb3a37ec510903b02e27253b/packages/client/vite.config.ts#L89)
 
+> By the way, I like [remixicon](https://remixicon.com/).
+
 ## 关于 Iconify
 
 - [Simple icon bundle for SVG Framework](https://docs.iconify.design/icon-components/bundles/examples/svg-framework-simple.html)
@@ -42,7 +44,7 @@ props:
 安装依赖
 
 ```bash
-yarn add -D @iconify/iconify @iconify/json
+pnpm add -D @iconify/iconify @iconify/json
 ```
 
 #### 使用线上的图标 API

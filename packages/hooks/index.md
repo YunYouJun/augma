@@ -9,5 +9,5 @@ Hooks 是利用 Vue3 Composition API 实现的一系列辅助工具。
 ## 单独使用
 
 ```bash
-yarn add @augma/hooks
+pnpm add @augma/hooks
 ```
