@@ -1,5 +1,6 @@
 <template>
-  <table v-if="props" class="agm-table">
+  <div class="overflow-auto">
+    <table v-if="props" class="agm-table m-0">
     <thead>
       <tr>
         <th>参数</th>
@@ -17,10 +18,14 @@
         <td>
           <OptionalValue :type="prop.type" :accepted-values="prop.acceptedValues" />
         </td>
-        <td><code>{{ prop.default || "-" }}</code></td>
+        <td>
+          <code v-if="typeof prop.default === 'boolean'" class="text-red-600">{{ prop.default.toString() }}</code>
+          <code v-else>{{ prop.default || "-" }}</code>
+        </td>
       </tr>
     </tbody>
   </table>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -33,7 +38,7 @@ export interface ComponentPropType {
   description: string;
   type: OptionalType;
   acceptedValues: string;
-  default: string;
+  default: any;
 }
 
 defineProps<{

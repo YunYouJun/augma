@@ -20,7 +20,7 @@ const config: UserConfig = {
 
     repo: "YunYouJun/augma",
     docsBranch: "main",
-    docsDir: "docs",
+    docsDir: "packages",
 
     editLinks: true,
     editLinkText: "帮助咱们改善文档！",

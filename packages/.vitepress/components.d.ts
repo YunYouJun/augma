@@ -4,6 +4,7 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AgmButton: typeof import('augma')['AgmButton']
     AgmIcon: typeof import('augma')['AgmIcon']
     Auxiliary: typeof import('./examples/color/auxiliary.vue')['default']
     CategoriesTable: typeof import('./theme/components/demo/CategoriesTable.vue')['default']

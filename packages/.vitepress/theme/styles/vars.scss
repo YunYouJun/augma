@@ -1,6 +1,7 @@
 @use "@augma/components/color" as *;
 
-:root {
-  --c-brand: #{$agm-brand};
-  --c-brand-light: #{lighten($agm-brand, 5%)};
-}
+@forward "vitepress-theme-you/styles/vars.scss" with (
+  $colors: (
+    'brand': $agm-brand,
+  ),
+);

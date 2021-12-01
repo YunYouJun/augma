@@ -1,5 +1,5 @@
 <template>
-  <div class="button-demo">
+  <div class="flex justify-between flex-wrap">
     <agm-button class="m-2">
       Button
     </agm-button>
@@ -8,7 +8,7 @@
     </agm-button>
   </div>
 
-  <div class="button-demo">
+  <div class="flex justify-between flex-wrap">
     <agm-button
       v-for="(item,i) in iconItems"
       :key="i"
@@ -20,7 +20,7 @@
     </agm-button>
   </div>
 
-  <div class="button-demo">
+  <div class="flex justify-between flex-wrap">
     <agm-button
       v-for="(item,i) in iconItems"
       :key="i"
@@ -64,12 +64,3 @@ const iconItems = [
   },
 ]
 </script>
-
-<style lang="scss">
-.button-demo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-</style>

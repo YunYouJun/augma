@@ -9,10 +9,12 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 
 import { VitePWA } from 'vite-plugin-pwa'
+// import WindiCSS from 'vite-plugin-windicss'
 
 import { capitalize } from 'vue'
 
 import Unocss from 'unocss/vite'
+// use windicss is more stead?
 import { presetUno, presetAttributify } from 'unocss'
 import presetIcons from '@unocss/preset-icons'
 
@@ -98,6 +100,11 @@ export default defineConfig({
       autoInstall: true,
     }),
 
+    // https://github.com/antfu/vite-plugin-windicss
+    // WindiCSS({
+    //   safelist,
+    // }),
+
     MarkdownTransform(),
 
     VitePWA({
@@ -118,7 +125,7 @@ export default defineConfig({
   ],
 
   optimizeDeps: {
-    include: ['vue', '@vueuse/core', 'vue-toastification'],
+    include: ['vue', '@vueuse/core', 'vue-toastification', 'v-tooltip'],
   },
 })
 

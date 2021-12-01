@@ -1,6 +1,6 @@
 import { agmColors } from './common'
 
-const safelist = []
+const safelist = ['shadow-lg']
 
 agmColors.forEach((color) => {
   safelist.push(`bg-${color}-500`)

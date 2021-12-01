@@ -16,7 +16,7 @@ props:
   - name: showClose
     type: boolean
     description: 是否显示关闭按钮
-    default: "false"
+    default: false
 ---
 
 ::: info

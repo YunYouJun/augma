@@ -1,4 +1,4 @@
 @use "../../../components/styles/index.scss" as *;
 
-@use "./vars.scss";
 @use "./custom.scss";
+@import "./vars.scss";

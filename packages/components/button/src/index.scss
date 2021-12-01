@@ -3,7 +3,7 @@
   line-height: 1;
 
   &:active {
-    box-shadow: 0 0 20px rgba(31, 82, 144, 0.15);
+    box-shadow: 0 0 20px rgba(var(--un-shadow-color,31, 82, 144), 0.15);
   }
 
   &--icon {

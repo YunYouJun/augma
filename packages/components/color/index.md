@@ -48,3 +48,25 @@ White <div class="value">#FFFFFF</div>
 除了主色调外，需要不同的颜色以区分不同的操作状态。
 
 <auxiliary />
+
+## 阴影色
+
+我们在 Augma 中发现不同元素的 shadow 色是统一的，但是在不同场景下则会有不同的阴影色彩。
+
+这对于增加元素与场景的对比度应该会很有用。
+
+譬如我们可以这样设置，来改变全局的阴影色彩。
+
+```css
+<style>
+.agm-shadow {
+  --un-shadow-color: 255,0,0;
+}
+</style>
+```
+
+<style>
+.agm-shadow {
+  --un-shadow-color: 255,0,0;
+}
+</style>

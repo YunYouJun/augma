@@ -6,7 +6,7 @@ props:
   - name: v-model
     description: 是否展开
     type: boolean
-    default: "false"
+    default: false
 ---
 
 菜单内容

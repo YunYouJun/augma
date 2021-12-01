@@ -1,6 +1,6 @@
 <template>
   <button
-    class="agm-button"
+    class="agm-button agm-shadow"
     :class="classes"
     @click="handleClick"
   >
@@ -38,10 +38,8 @@ const classes = computed(() => {
   ]
   const colorClasses = []
   if (props.color) {
-    colorClasses.push(`shadow-${props.color}-500`)
     if (props.plain) {
       colorClasses.push('bg-white')
-      colorClasses.push('shadow-md')
       colorClasses.push(`text-${props.color}-500`)
     }
     else {
