@@ -1,16 +1,16 @@
-import { computed, CSSProperties, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { createPopper } from '@popperjs/core'
 
 import PopupManager from '@augma/utils/popup-manager'
-import type { ComponentPublicInstance, SetupContext } from 'vue'
+import type { CSSProperties, ComponentPublicInstance, SetupContext } from 'vue'
 
 import { isBool, isHTMLElement } from '@augma/utils/util'
-import { WindowEventName } from '@vueuse/core'
+import type { WindowEventName } from '@vueuse/core'
 import type {
   IPopperOptions,
+  PopperInstance,
   RefElement,
   TriggerType,
-  PopperInstance,
 } from './default'
 
 export const UPDATE_VISIBLE_EVENT = 'update:visible'

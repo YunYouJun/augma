@@ -18,7 +18,7 @@
         :style="{
           transform: 'translateY(-150%)',
         }"
-      ></agm-indicator>
+      />
     </div>
   </div>
 </template>

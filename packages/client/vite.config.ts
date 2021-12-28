@@ -13,7 +13,7 @@ import VueI18n from '@intlify/vite-plugin-vue-i18n'
 import Inspect from 'vite-plugin-inspect'
 
 import Unocss from 'unocss/vite'
-import { presetUno, presetAttributify } from 'unocss'
+import { presetAttributify, presetUno } from 'unocss'
 import presetIcons from '@unocss/preset-icons'
 
 import Prism from 'markdown-it-prism'

@@ -15,7 +15,7 @@ import { capitalize } from 'vue'
 
 import Unocss from 'unocss/vite'
 // use windicss is more stead?
-import { presetUno, presetAttributify } from 'unocss'
+import { presetAttributify, presetUno } from 'unocss'
 import presetIcons from '@unocss/preset-icons'
 
 import { augmaChildren } from '../meta/indexes'

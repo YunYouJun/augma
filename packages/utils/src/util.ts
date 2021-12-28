@@ -1,6 +1,6 @@
 import { getCurrentInstance } from 'vue'
 import { toRawType } from '@vue/shared'
-import { AugmaOptions } from './config'
+import type { AugmaOptions } from './config'
 import type { Hash } from './types'
 
 /**

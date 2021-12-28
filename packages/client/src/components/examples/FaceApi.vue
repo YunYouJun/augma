@@ -1,5 +1,5 @@
 <template>
-  <canvas v-show="enable" id="overlay" ref="overlay"></canvas>
+  <canvas v-show="enable" id="overlay" ref="overlay" />
   <agm-indicator
     v-show="enable"
     :class="customClass"

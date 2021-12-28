@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ISelectOption } from './src/useOption'
+import type { ISelectOption } from './src/useOption'
 import AgmSelect from './src/index.vue'
 const options: ISelectOption[] = [
   {

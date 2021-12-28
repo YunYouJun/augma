@@ -106,16 +106,16 @@
 <script lang='ts'>
 import './index.scss'
 import {
-  defineComponent,
-  inject,
   computed,
-  watch,
-  nextTick,
+  defineComponent,
   getCurrentInstance,
-  ref,
-  shallowRef,
+  inject,
+  nextTick,
   onMounted,
   onUpdated,
+  ref,
+  shallowRef,
+  watch,
 } from 'vue'
 
 import { useAttrs } from '@augma/hooks'
@@ -124,7 +124,7 @@ import { isObject } from '@vue/shared'
 import { useGlobalConfig } from '@augma/utils/util'
 import isServer from '@augma/utils/isServer'
 import { isValidComponentSize } from '@augma/utils/validators'
-import { agmFormKey, agmFormItemKey, AgmIcon } from 'augma'
+import { AgmIcon, agmFormItemKey, agmFormKey } from 'augma'
 
 import type { PropType } from 'vue'
 import type {

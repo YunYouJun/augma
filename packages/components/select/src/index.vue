@@ -23,19 +23,20 @@
 </template>
 
 <script lang="ts" setup>
-import { AgmPopper, AgmInput } from 'augma'
+import { AgmInput, AgmPopper } from 'augma'
 import { onClickOutside } from '@vueuse/core'
 import {
   onMounted,
-  ref,
   provide,
   reactive,
+  ref,
 } from 'vue'
 import { UPDATE_MODEL_EVENT } from '@augma/utils/constants'
 import AgmSelectMenu from './SelectMenu.vue'
 import AgmOption from './Option.vue'
 
-import { selectKey, ISelectOption } from './useOption'
+import type { ISelectOption } from './useOption'
+import { selectKey } from './useOption'
 
 const props = defineProps<{
   modelValue: ISelectOption

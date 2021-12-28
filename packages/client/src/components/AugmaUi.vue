@@ -1,6 +1,6 @@
 <template>
   <div id="augma-ui" class="augma-ui" :style="styles">
-    <div id="agm-loading-container" ref="loadingContainer"></div>
+    <div id="agm-loading-container" ref="loadingContainer" />
 
     <SystemBar />
     <AgmWindow />

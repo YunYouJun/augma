@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import { AgmIcon, AgmButton, agmColors } from 'augma'
+import { AgmButton, AgmIcon, agmColors } from 'augma'
 
 const iconItems = [
   {

@@ -6,7 +6,7 @@
       src="https://docs.augma.elpsy.cn"
       width="100%"
       height="100%"
-    ></iframe>
+    />
   </agm-dialog>
   <agm-map :enable="app.subwayMap" />
 </template>

@@ -1,5 +1,5 @@
 /* eslint-disable import/no-duplicates */
-import { PluginApi } from 'vue-loading-overlay'
+import type { PluginApi } from 'vue-loading-overlay'
 
 declare interface Window {
   // extend the window
@@ -7,7 +7,7 @@ declare interface Window {
 
 // with vite-plugin-md, markdowns can be treat as Vue components
 declare module '*.md' {
-  import { ComponentOptions } from 'vue'
+  import type { ComponentOptions } from 'vue'
   const component: ComponentOptions
   export default component
 }

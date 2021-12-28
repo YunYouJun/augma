@@ -1,5 +1,5 @@
 <template>
-  <video id="webcam" ref="videoRef" :class="classes" autoplay></video>
+  <video id="webcam" ref="videoRef" :class="classes" autoplay />
 </template>
 
 <script lang="ts" setup>

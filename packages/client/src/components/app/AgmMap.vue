@@ -1,5 +1,5 @@
 <template>
-  <div v-show="enable" id="subway-container" :style="style"></div>
+  <div v-show="enable" id="subway-container" :style="style" />
 </template>
 
 <script lang="ts" setup>

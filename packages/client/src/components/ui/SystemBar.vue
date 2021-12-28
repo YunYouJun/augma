@@ -3,7 +3,7 @@
     <audio-btn class="agm-top-left-btn" />
     <menu-btn class="agm-top-right-btn" />
     <agm-clock />
-    <hr class="agm-hr system-bar-line" />
+    <hr class="agm-hr system-bar-line">
   </div>
 </template>
 

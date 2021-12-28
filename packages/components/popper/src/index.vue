@@ -1,7 +1,7 @@
 <template>
   <div class="agm-popper">
     <div ref="triggerRef" class="agm-popper--trigger" v-on="{ ...events }">
-      <slot name="trigger"></slot>
+      <slot name="trigger" />
     </div>
     <div
       v-show="visibility"
@@ -9,7 +9,7 @@
       class="agm-popper--body"
       :style="popperStyle"
     >
-      <slot name="default"></slot>
+      <slot name="default" />
     </div>
   </div>
 </template>
@@ -19,10 +19,10 @@ import './index.scss'
 
 import {
   defineComponent,
-  onMounted,
-  onBeforeUnmount,
   onActivated,
+  onBeforeUnmount,
   onDeactivated,
+  onMounted,
 } from 'vue'
 import throwError from '@augma/utils/error'
 import defaultProps from './usePopper/default'

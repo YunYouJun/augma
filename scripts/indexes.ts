@@ -3,7 +3,7 @@ import path from 'path'
 import fg from 'fast-glob'
 import matter from 'gray-matter'
 
-import { PackageIndexes, Component, Hook } from '../meta/types'
+import type { Component, Hook, PackageIndexes } from '../meta/types'
 
 import { DIR_SRC, hasDemo } from './utils'
 

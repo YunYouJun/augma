@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
 import isServer from './isServer'
 import { getConfig } from './config'
-import { addClass, removeClass, on } from './dom'
+import { addClass, on, removeClass } from './dom'
 import { EVENT_CODE } from './aria'
 
 let hasModal = false
