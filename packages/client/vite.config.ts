@@ -19,11 +19,12 @@ import presetIcons from '@unocss/preset-icons'
 import Prism from 'markdown-it-prism'
 import LinkAttributes from 'markdown-it-link-attributes'
 
+import { presetAugma } from '../augma/src/preset'
 import { alias } from '../shared/src/config'
 import { AugmaResolver } from '../augma/src/resolver'
+import { safelist } from '../augma/src/preset/safelist'
 
 const markdownWrapperClasses = 'prose prose-sm m-auto text-left'
-
 export default defineConfig({
   resolve: {
     alias,
@@ -34,7 +35,9 @@ export default defineConfig({
         presetAttributify({ /* preset options */}),
         presetUno(),
         presetIcons({ /* options */ }),
+        presetAugma(),
       ],
+      safelist,
     }),
 
     Vue({

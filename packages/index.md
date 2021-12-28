@@ -2,8 +2,9 @@
 home: true
 heroIconClass: i-ri-drag-move-line
 heroAlt: Logo image
-actionText: Link Start
-actionLink: /guide/link-start.html
+actions:
+  - text: Link Start
+    link: /guide/link-start
 features:
   - title: 简单易用
     details: 引入几行代码开始你的开发工作

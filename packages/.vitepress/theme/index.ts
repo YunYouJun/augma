@@ -1,4 +1,5 @@
 import YouTheme from 'vitepress-theme-you'
+import 'vitepress-theme-you/css'
 
 // windicss layers
 // import 'virtual:windi-base.css'
@@ -19,13 +20,14 @@ import "vue-toastification/dist/index.css";
 
 import VTooltip from 'v-tooltip'
 import 'v-tooltip/dist/v-tooltip.css'
+import { Theme } from 'vitepress';
 
 // windicss utilities should be the last style import
 // import 'virtual:windi-utilities.css'
 // windicss devtools support (dev only)
 // import 'virtual:windi-devtools'
 
-const theme = {
+const theme: Theme = {
   // ...DefaultTheme,
   ...YouTheme,
   async enhanceApp({ app }) {

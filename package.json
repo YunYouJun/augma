@@ -8,7 +8,7 @@
     "build:lib": "pnpm build -C packages/augma",
     "build": "ts-node-script scripts/build.ts",
     "dev": "pnpm dev -C packages/client",
-    "docs:dev": "vitepress dev packages --host",
+    "docs:dev": "vitepress dev packages --host --port 3002",
     "docs:build": "vitepress build packages",
     "docs:serve": "vitepress serve packages",
     "docs:theme": "cross-env NODE_ENV=dev:theme vitepress dev packages",
@@ -41,14 +41,14 @@
     "semver": "^7.3.5",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.4",
-    "unocss": "^0.19.0",
+    "unocss": "^0.20.0",
     "unplugin-icons": "^0.13.0",
     "unplugin-vue-components": "^0.17.11",
     "vite": "^2.7.7",
     "vite-plugin-pwa": "^0.11.12",
     "vite-plugin-windicss": "^1.6.1",
     "vitepress": "^0.20.10",
-    "vitepress-theme-you": "^0.0.18"
+    "vitepress-theme-you": "^0.0.19"
   },
   "dependencies": {
     "@vueuse/core": "^7.4.1",

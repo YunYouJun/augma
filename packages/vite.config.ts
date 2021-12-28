@@ -125,7 +125,7 @@ export default defineConfig({
   ],
 
   optimizeDeps: {
-    include: ['vue', '@vueuse/core', 'vue-toastification', 'v-tooltip'],
+    include: ['vue', '@vueuse/core', 'vue-toastification', 'v-tooltip', 'dayjs'],
   },
 })
 

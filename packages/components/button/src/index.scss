@@ -6,10 +6,10 @@
     box-shadow: 0 0 20px rgba(var(--un-shadow-color,31, 82, 144), 0.15);
   }
 
-  &--icon {
+  &.agm-button--icon {
     box-sizing: border-box;
     border-radius: 50%;
-    padding: 0.6rem;
-    font-size: 1rem;
+    padding: 0.5rem;
+    font-size: 1.2rem;
   }
 }

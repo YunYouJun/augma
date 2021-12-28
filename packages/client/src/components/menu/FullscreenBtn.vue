@@ -10,12 +10,4 @@
 <script lang="ts" setup>
 import { useFullscreen } from '@vueuse/core'
 const { isFullscreen, toggle } = useFullscreen()
-
-const fullscreen = ref(document.fullscreenElement)
-
-onMounted(() => {
-  document.onfullscreenchange = () => {
-    fullscreen.value = document.fullscreenElement
-  }
-})
 </script>
