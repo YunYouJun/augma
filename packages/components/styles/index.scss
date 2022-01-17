@@ -2,6 +2,8 @@
 @use "../html/" as *;
 @use "variables" as *;
 @use "reset";
+@use "global";
+
 @use "mixins" as *;
 @use "common";
 

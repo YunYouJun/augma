@@ -18,7 +18,7 @@ import { useAppStore } from '~/stores/app'
 
 const loadingContainer = ref()
 
-const props = defineProps<{opacity: number}>()
+const props = defineProps<{ opacity: number }>()
 
 const app = useAppStore()
 
@@ -56,7 +56,7 @@ onMounted(() => {
 .augma-bottom-menu-container {
   position: fixed;
   left: 0;
-  bottom: 1rem;
+  bottom: 0;
 
   width: 100%;
   margin: 0 auto;

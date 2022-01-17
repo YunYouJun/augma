@@ -34,11 +34,11 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.0.1",
-    "sass": "^1.45.1",
+    "sass": "^1.48.0",
     "v-tooltip": "^4.0.0-beta.2",
     "vue-toastification": "^2.0.0-rc.5"
   },
   "dependencies": {
-    "@popperjs/core": "^2.11.0"
+    "@popperjs/core": "^2.11.2"
   }
 }

@@ -3,10 +3,10 @@
     <AgmMenu v-model="open">
       <template #activator>
         <AgmButton icon>
-          <AgmIcon v-if="open" class="i-mdi-dots-vertical" color="black">
+          <AgmIcon v-if="open" class="i-mdi-dots-vertical">
             <i-mdi-dots-vertical />
           </AgmIcon>
-          <AgmIcon v-else icon="mdi:dots-horizontal" color="black">
+          <AgmIcon v-else icon="mdi:dots-horizontal">
             <i-mdi-dots-horizontal />
           </AgmIcon>
         </AgmButton>
@@ -27,15 +27,21 @@
 
 <script lang="ts" setup>
 import { useCameraStore } from '~/stores/camera'
+import { isDark, toggleDark } from '~/composables'
 
 const camera = useCameraStore()
 
 const open = ref(false)
-const menuItems = [
+const menuItems = computed(() => ([
   {
     color: '#4dade0',
     icon: 'i-mdi-camera-flip',
     do: camera.toggleFront,
   },
-]
+  {
+    color: '#4dade0',
+    icon: isDark.value ? 'i-ri-moon-line' : 'i-ri-sun-line',
+    do: toggleDark,
+  },
+]))
 </script>

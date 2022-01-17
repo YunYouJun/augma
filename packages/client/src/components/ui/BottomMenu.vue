@@ -71,7 +71,6 @@ const menuItems = [
   },
 
   {
-    color: 'black',
     icon: 'i-mdi-github',
     do: openGithubNotification,
   },

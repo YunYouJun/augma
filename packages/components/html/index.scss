@@ -3,7 +3,7 @@ $agm-line-width: 2px;
 .agm-hr {
   height: $agm-line-width;
   border: none;
-  background: white;
+  background: var(--agm-bg-color);
   margin: 0.5rem 3.5rem;
 }
 

@@ -14,7 +14,7 @@
 
 const recognitionRef  = ref()
 const color = ref('success')
-const keywords = ref('fullscreen')
+const keywords = ref(['fullscreen'])
 const content = ref('')
 const icon = ref('')
 const status = ref('')

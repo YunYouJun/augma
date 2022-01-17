@@ -1,7 +1,7 @@
 import type { Indexable } from '@augma/utils/types'
 
 export type AgmColorType =
-  | 'default'
+  | ''
   | 'primary'
   | 'success'
   | 'warning'
@@ -9,7 +9,7 @@ export type AgmColorType =
   | 'info'
 
 export const AgmTypeArray: AgmColorType[] = [
-  'default',
+  '',
   'primary',
   'success',
   'warning',
@@ -18,7 +18,7 @@ export const AgmTypeArray: AgmColorType[] = [
 ]
 
 export const AgmTypeMap: Indexable<AgmColorType> = {
-  default: 'default',
+  default: '',
   primary: 'primary',
   success: 'success',
   warning: 'warning',

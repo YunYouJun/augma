@@ -1,4 +1,12 @@
 .agm-button {
+  --agm-button-bg-color: white;
+  --agm-button-text-color: rgba(55,65,81,var(--un-text-opacity));
+}
+
+.agm-button {
+  color: var(--agm-button-text-color);
+  background-color: var(--agm-button-bg-color);
+
   font-size: 1rem;
   line-height: 1;
 
@@ -11,5 +19,12 @@
     border-radius: 50%;
     padding: 0.5rem;
     font-size: 1.2rem;
+  }
+}
+
+.dark{
+  .agm-button {
+    --agm-button-bg-color: black;
+    --agm-button-text-color: white;
   }
 }

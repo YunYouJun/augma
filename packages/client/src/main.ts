@@ -11,7 +11,7 @@ import 'uno:components.css'
 import 'uno.css'
 
 // custom css
-import './index.css'
+import './styles/index.scss'
 import '@augma/components/styles/index.scss'
 
 // "utilities" layer will have the highest priority

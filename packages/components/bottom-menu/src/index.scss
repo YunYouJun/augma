@@ -1,5 +1,4 @@
 @use "@augma/components/styles/mixins/" as *;
-$bottom-nav-color: white;
 
 .agm-bottom-menu {
   position: relative;
@@ -12,7 +11,7 @@ $bottom-nav-color: white;
     min-width: 20rem;
     margin: 0 2rem;
     padding: 1.2rem 0.5rem 1.5rem 0.5rem;
-    border-top: 2px solid $bottom-nav-color;
+    border-top: 2px solid var(--agm-bg-color);
 
     @include mobile {
       margin: 0;
@@ -28,8 +27,8 @@ $bottom-nav-color: white;
   right: 0;
   width: 0;
   height: 0;
-  border: 10px solid $bottom-nav-color;
-  border-color: $bottom-nav-color transparent transparent transparent;
+  border: 10px solid var(--agm-bg-color);
+  border-color: var(--agm-bg-color) transparent transparent transparent;
 }
 
 .agm-menu-container {

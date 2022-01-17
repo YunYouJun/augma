@@ -1,6 +1,6 @@
 <template>
   <AgmButton icon title="Fullscreen" @click="toggle">
-    <AgmIcon color="black">
+    <AgmIcon>
       <i-mdi-fullscreen-exit v-if="isFullscreen" />
       <i-mdi-fullscreen v-else />
     </AgmIcon>

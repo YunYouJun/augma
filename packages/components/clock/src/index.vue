@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<{
   color?: AgmColorType
   addZero?: boolean
 }>(), {
-  color: 'default',
+  color: '',
   addZero: true,
 })
 
@@ -34,7 +34,7 @@ function getTime() {
 // })
 
 const classes = computed(() => {
-  return [`text-${props.color}-500`]
+  return [props.color && `text-${props.color}-500`]
 })
 
 const now = computed(() => {
