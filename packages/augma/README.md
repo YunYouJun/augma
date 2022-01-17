@@ -1,5 +1,7 @@
 # Augma
 
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/augma)
+
 AR UI Framework
 
 Docs: <https://docs.augma.elpsy.cn>

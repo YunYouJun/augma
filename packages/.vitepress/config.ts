@@ -5,8 +5,11 @@ import categories from "../../meta/categories.json";
 import mdConfig from "./plugins/markdown";
 
 import type { UserConfig } from "vitepress";
+// import baseConfig from 'vitepress-theme-you/config'
 
 const config: UserConfig = {
+  // extends: baseConfig,
+
   title: "Augma UI",
   description: "AR UI Framework",
 

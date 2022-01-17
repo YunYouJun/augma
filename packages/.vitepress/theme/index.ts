@@ -1,5 +1,4 @@
-import YouTheme from 'vitepress-theme-you'
-import 'vitepress-theme-you/css'
+import { VPTheme } from 'vitepress-theme-you'
 
 // windicss layers
 // import 'virtual:windi-base.css'
@@ -29,7 +28,7 @@ import { Theme } from 'vitepress';
 
 const theme: Theme = {
   // ...DefaultTheme,
-  ...YouTheme,
+  ...VPTheme,
   async enhanceApp({ app }) {
     app.use(Toast)
     app.use(VTooltip)

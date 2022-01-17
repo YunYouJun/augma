@@ -6,7 +6,7 @@
   "scripts": {
     "build:client": "pnpm build -C packages/client",
     "build:lib": "pnpm build -C packages/augma",
-    "build": "ts-node-script scripts/build.ts",
+    "build": "esno scripts/build.ts",
     "dev": "pnpm dev -C packages/client",
     "docs:dev": "vitepress dev packages --host --port 3002",
     "docs:build": "vitepress build packages",
@@ -32,6 +32,7 @@
     "cross-env": "^7.0.3",
     "enquirer": "^2.3.6",
     "eslint": "^8.7.0",
+    "esno": "^0.14.0",
     "execa": "^6.0.0",
     "fast-glob": "^3.2.11",
     "gray-matter": "^4.0.3",

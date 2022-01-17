@@ -68,12 +68,12 @@ export default defineConfig({
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({
       imports: ['vue', '@vueuse/core'],
-      dts: 'packages/.vitepress/auto-imports.d.ts',
+      dts: '.vitepress/auto-imports.d.ts',
     }),
 
     // https://github.com/antfu/unplugin-vue-components
     Components({
-      dirs: ['.vitepress'],
+      dirs: [resolve(__dirname, './.vitepress')],
 
       // allow auto load markdown components under `./src/components/`
       extensions: ['vue', 'md'],
