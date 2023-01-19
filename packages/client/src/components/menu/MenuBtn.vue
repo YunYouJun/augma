@@ -1,3 +1,24 @@
+<script lang="ts" setup>
+import { useCameraStore } from '~/stores/camera'
+import { isDark, toggleDark } from '~/composables'
+
+const camera = useCameraStore()
+
+const open = ref(false)
+const menuItems = computed(() => ([
+  {
+    color: '#4dade0',
+    icon: 'i-mdi-camera-flip',
+    do: camera.toggleFront,
+  },
+  {
+    color: '#4dade0',
+    icon: isDark.value ? 'i-ri-moon-line' : 'i-ri-sun-line',
+    do: toggleDark,
+  },
+]))
+</script>
+
 <template>
   <div>
     <AgmMenu v-model="open">
@@ -24,24 +45,3 @@
     </AgmMenu>
   </div>
 </template>
-
-<script lang="ts" setup>
-import { useCameraStore } from '~/stores/camera'
-import { isDark, toggleDark } from '~/composables'
-
-const camera = useCameraStore()
-
-const open = ref(false)
-const menuItems = computed(() => ([
-  {
-    color: '#4dade0',
-    icon: 'i-mdi-camera-flip',
-    do: camera.toggleFront,
-  },
-  {
-    color: '#4dade0',
-    icon: isDark.value ? 'i-ri-moon-line' : 'i-ri-sun-line',
-    do: toggleDark,
-  },
-]))
-</script>

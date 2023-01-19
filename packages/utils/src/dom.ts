@@ -1,11 +1,11 @@
 import { camelize } from '@vue/shared'
 import isServer from './isServer'
 
-const trim = function(s: string) {
+const trim = function (s: string) {
   return (s || '').replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, '')
 }
 
-export const on = function(
+export const on = function (
   element: HTMLElement | Document | Window,
   event: string,
   handler: EventListenerOrEventListenerObject,
@@ -15,7 +15,7 @@ export const on = function(
     element.addEventListener(event, handler, useCapture)
 }
 
-export const off = function(
+export const off = function (
   element: HTMLElement | Document | Window,
   event: string,
   handler: EventListenerOrEventListenerObject,
@@ -25,7 +25,8 @@ export const off = function(
 }
 
 export function hasClass(el: HTMLElement, cls: string): boolean {
-  if (!el || !cls) return false
+  if (!el || !cls)
+    return false
   if (cls.includes(' '))
     throw new Error('className should not contain space.')
   if (el.classList)
@@ -35,13 +36,15 @@ export function hasClass(el: HTMLElement, cls: string): boolean {
 }
 
 export function addClass(el: HTMLElement, cls: string): void {
-  if (!el) return
+  if (!el)
+    return
   let curClass = el.className
   const classes = (cls || '').split(' ')
 
   for (let i = 0, j = classes.length; i < j; i++) {
     const clsName = classes[i]
-    if (!clsName) continue
+    if (!clsName)
+      continue
 
     if (el.classList)
       el.classList.add(clsName)
@@ -53,13 +56,15 @@ export function addClass(el: HTMLElement, cls: string): void {
 }
 
 export function removeClass(el: HTMLElement, cls: string): void {
-  if (!el || !cls) return
+  if (!el || !cls)
+    return
   const classes = cls.split(' ')
   let curClass = ` ${el.className} `
 
   for (let i = 0, j = classes.length; i < j; i++) {
     const clsName = classes[i]
-    if (!clsName) continue
+    if (!clsName)
+      continue
 
     if (el.classList)
       el.classList.remove(clsName)
@@ -70,19 +75,22 @@ export function removeClass(el: HTMLElement, cls: string): void {
     el.className = trim(curClass)
 }
 
-export const getStyle = function(
+export const getStyle = function (
   element: HTMLElement,
   styleName: string,
 ): string {
-  if (isServer) return
-  if (!element || !styleName) return null
+  if (isServer)
+    return
+  if (!element || !styleName)
+    return null
   styleName = camelize(styleName)
   if (styleName === 'float')
     styleName = 'cssFloat'
 
   try {
     const style = element.style[styleName]
-    if (style) return style
+    if (style)
+      return style
     const computed = document.defaultView.getComputedStyle(element, '')
     return computed ? computed[styleName] : ''
   }

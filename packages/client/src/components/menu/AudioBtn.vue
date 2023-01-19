@@ -1,13 +1,3 @@
-<template>
-  <agm-button icon @click="handleAudio">
-    <agm-icon :color="color">
-      <i-mdi-microphone v-if="!status" color="var(--agm-color-success)" />
-      <i-mdi-microphone-settings v-else-if="status === 'settings'" />
-      <i-mdi-alert v-else-if="status==='alert'" color="var(--agm-error)" />
-    </agm-icon>
-  </agm-button>
-</template>
-
 <script lang="ts" setup>
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
@@ -93,3 +83,13 @@ const handleAudio = () => {
   recognitionRef.value.start()
 }
 </script>
+
+<template>
+  <agm-button icon @click="handleAudio">
+    <agm-icon :color="color">
+      <i-mdi-microphone v-if="!status" color="var(--agm-color-success)" />
+      <i-mdi-microphone-settings v-else-if="status === 'settings'" />
+      <i-mdi-alert v-else-if="status==='alert'" color="var(--agm-error)" />
+    </agm-icon>
+  </agm-button>
+</template>

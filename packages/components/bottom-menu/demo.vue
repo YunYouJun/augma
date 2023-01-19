@@ -1,9 +1,3 @@
-<template>
-  <div class="demo-dark-bg">
-    <agm-bottom-menu :menu-items="menuItems" />
-  </div>
-</template>
-
 <script lang="ts" setup>
 import consola from 'consola'
 import AgmBottomMenu from './src/index.vue'
@@ -31,6 +25,12 @@ const menuItems = [
   },
 ]
 </script>
+
+<template>
+  <div class="demo-dark-bg">
+    <AgmBottomMenu :menu-items="menuItems" />
+  </div>
+</template>
 
 <style>
 .demo-dark-bg {

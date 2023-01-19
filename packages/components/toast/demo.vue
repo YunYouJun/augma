@@ -1,9 +1,3 @@
-<template>
-  <agm-button type="primary" @click="sendMessage">
-    弹出消息通知
-  </agm-button>
-</template>
-
 <script lang="ts" setup>
 import { AgmButton, useAgmToast } from 'augma'
 import pkg from '../../../package.json'
@@ -28,3 +22,9 @@ const sendMessage = () => {
   })
 }
 </script>
+
+<template>
+  <AgmButton type="primary" @click="sendMessage">
+    弹出消息通知
+  </AgmButton>
+</template>

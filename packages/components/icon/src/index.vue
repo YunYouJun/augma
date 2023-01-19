@@ -1,11 +1,3 @@
-<template>
-  <div class="agm-icon" :class="name" :style="styles">
-    <span v-if="svg" v-html="svg" />
-    <component :is="icon" v-if="icon" />
-    <slot />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 import './index.scss'
@@ -33,3 +25,11 @@ const styles = computed(() => {
   }
 })
 </script>
+
+<template>
+  <div class="agm-icon" :class="name" :style="styles">
+    <span v-if="svg" v-html="svg" />
+    <component :is="icon" v-if="icon" />
+    <slot />
+  </div>
+</template>

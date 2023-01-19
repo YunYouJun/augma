@@ -35,7 +35,7 @@ const PopperProps = {
 }
 export default PopperProps
 
-export type IPopperOptions = {
+export interface IPopperOptions {
   disabled: boolean
   placement: Placement
   popperOptions: PopperOptions

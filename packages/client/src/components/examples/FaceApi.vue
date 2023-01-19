@@ -1,21 +1,7 @@
-<template>
-  <canvas v-show="enable" id="overlay" ref="overlay" />
-  <agm-indicator
-    v-show="enable"
-    :class="customClass"
-    :name="name"
-    :info="score"
-    :style="indicatorStyle"
-  />
-</template>
-
 <script lang="ts" setup>
 import * as faceapi from 'face-api.js'
 import { useAppStore } from '~/stores/app'
 import { useCameraStore } from '~/stores/camera'
-// import * as faceapi from "@vladmandic/face-api";
-const app = useAppStore()
-
 const props = withDefaults(defineProps<{
   enable?: boolean
   customClass?: string[]
@@ -23,6 +9,9 @@ const props = withDefaults(defineProps<{
   enable: false,
   customClass: () => [],
 })
+
+// import * as faceapi from "@vladmandic/face-api";
+const app = useAppStore()
 
 const name = ref('YunYouJun')
 const score = ref(0)
@@ -42,7 +31,7 @@ const indicatorStyle = computed(() => {
   }
 })
 
-watch(() => props.enable, async() => {
+watch(() => props.enable, async () => {
   if (props.enable) {
     app.loading = true
     await loadModel()
@@ -69,7 +58,8 @@ async function loadModel() {
 }
 
 async function onPlay() {
-  if (!props.enable) return
+  if (!props.enable)
+    return
 
   const videoEl = this.videoEl
 
@@ -126,6 +116,17 @@ function setIndicatorByBox(box) {
   this.indicatorStyle.left = `${(box.left + box.width / 2) * ratio}px`
 }
 </script>
+
+<template>
+  <canvas v-show="enable" id="overlay" ref="overlay" />
+  <agm-indicator
+    v-show="enable"
+    :class="customClass"
+    :name="name"
+    :info="score"
+    :style="indicatorStyle"
+  />
+</template>
 
 <style lang="scss">
 #overlay {

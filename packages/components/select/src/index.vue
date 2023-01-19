@@ -1,27 +1,3 @@
-<template>
-  <div ref="selectWrapper" class="agm-select" @click.stop="">
-    <agm-popper ref="popperRef" placement="bottom" trigger="click">
-      <template #trigger>
-        <agm-input
-          v-model="currentOption.label"
-          readonly
-          :placeholder="placeholder"
-        />
-      </template>
-      <template #default>
-        <agm-select-menu :min-width="minWidth">
-          <agm-option
-            v-for="(item, i) in options"
-            :key="i"
-            :label="item.label"
-            :value="item.value"
-          />
-        </agm-select-menu>
-      </template>
-    </agm-popper>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { AgmInput, AgmPopper } from 'augma'
 import { onClickOutside } from '@vueuse/core'
@@ -88,3 +64,27 @@ provide(
   }),
 )
 </script>
+
+<template>
+  <div ref="selectWrapper" class="agm-select" @click.stop="">
+    <AgmPopper ref="popperRef" placement="bottom" trigger="click">
+      <template #trigger>
+        <AgmInput
+          v-model="currentOption.label"
+          readonly
+          :placeholder="placeholder"
+        />
+      </template>
+      <template #default>
+        <AgmSelectMenu :min-width="minWidth">
+          <AgmOption
+            v-for="(item, i) in options"
+            :key="i"
+            :label="item.label"
+            :value="item.value"
+          />
+        </AgmSelectMenu>
+      </template>
+    </AgmPopper>
+  </div>
+</template>

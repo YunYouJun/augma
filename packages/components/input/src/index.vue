@@ -1,108 +1,3 @@
-<template>
-  <div
-    :class="[
-      type === 'textarea' ? 'agm-textarea' : 'agm-input',
-      inputSize ? 'agm-input--' + inputSize : '',
-      {
-        'is-disabled': inputDisabled,
-        'is-exceed': inputExceed,
-        'agm-input-group': $slots.prepend || $slots.append,
-        'agm-input-group--append': $slots.append,
-        'agm-input-group--prepend': $slots.prepend,
-        'agm-input--prefix': $slots.prefix || prefixIcon,
-        'agm-input--suffix':
-          $slots.suffix || suffixIcon || clearable || showPassword,
-      },
-      $attrs.class,
-    ]"
-    :style="$attrs.style"
-    @mouseenter="onMouseEnter"
-    @mouseleave="onMouseLeave"
-  >
-    <template v-if="type !== 'textarea'">
-      <!-- 前置元素 -->
-      <div v-if="$slots.prepend" class="agm-input-group__prepend">
-        <slot name="prepend" />
-      </div>
-      <input
-        v-if="type !== 'textarea'"
-        ref="input"
-        class="agm-input__inner"
-        v-bind="attrs"
-        :type="showPassword ? (passwordVisible ? 'text' : 'password') : type"
-        :disabled="inputDisabled"
-        :readonly="readonly"
-        :autocomplete="autocomplete"
-        :tabindex="tabindex"
-        :aria-label="label"
-        :placeholder="placeholder"
-        @input="handleInput"
-        @focus="handleFocus"
-        @blur="handleBlur"
-        @change="handleChange"
-        @keydown="handleKeydown"
-      >
-      <!-- 前置内容 -->
-      <span v-if="$slots.prefix || prefixIcon" class="agm-input__prefix">
-        <slot name="prefix" />
-        <i v-if="prefixIcon" :class="['agm-input__icon', prefixIcon]" />
-      </span>
-      <!-- 后置内容 -->
-      <span v-if="getSuffixVisible()" class="agm-input__suffix">
-        <template v-if="!showClear || !showPwdVisible || !isWordLimitVisible">
-          <slot name="suffix" />
-          <i v-if="suffixIcon" :class="['agm-input__icon', suffixIcon]" />
-        </template>
-        <agm-icon
-          v-if="showClear"
-          name="i-mdi-close"
-          @mousedown.prevent
-          @click="clear"
-        />
-
-        <i v-if="showPwdVisible" @click="handlePasswordVisible" />
-        <span v-if="isWordLimitVisible" class="agm-input__count">
-          <span class="agm-input__count-inner">
-            {{ textLength }}/{{ upperLimit }}
-          </span>
-        </span>
-
-        <i
-          v-if="validateState"
-          :class="['agm-input__icon', 'agm-input__validateIcon', validateIcon]"
-        />
-      </span>
-      <!-- 后置元素 -->
-      <div v-if="$slots.append" class="agm-input-group__append">
-        <slot name="append" />
-      </div>
-    </template>
-
-    <!-- v-bind="attrs" -->
-    <textarea
-      v-else
-      ref="textarea"
-      class="agm-textarea__inner"
-      :tabindex="tabindex"
-      :disabled="inputDisabled"
-      :readonly="readonly"
-      :autocomplete="autocomplete"
-      :style="textareaStyle"
-      :aria-label="label"
-      :placeholder="placeholder"
-      @input="handleInput"
-      @focus="handleFocus"
-      @blur="handleBlur"
-      @change="handleChange"
-    />
-    <span
-      v-if="isWordLimitVisible && type === 'textarea'"
-      class="agm-input__count"
-    >{{ textLength }}/{{ upperLimit }}
-    </span>
-  </div>
-</template>
-
 <script lang='ts'>
 import './index.scss'
 import {
@@ -318,7 +213,8 @@ export default defineComponent({
     const resizeTextarea = () => {
       const { type, autosize } = props
 
-      if (isServer || type !== 'textarea') return
+      if (isServer || type !== 'textarea')
+        return
 
       if (autosize) {
         const minRows = isObject(autosize) ? autosize.minRows : undefined
@@ -338,7 +234,8 @@ export default defineComponent({
 
     const setNativeInputValue = () => {
       const input = inputOrTextarea.value
-      if (!input || input.value === nativeInputValue.value) return
+      if (!input || input.value === nativeInputValue.value)
+        return
       input.value = nativeInputValue.value
     }
 
@@ -349,7 +246,8 @@ export default defineComponent({
       )
       const target = elList.find(item => item.parentNode === el)
 
-      if (!target) return
+      if (!target)
+        return
 
       const pendant = PENDANT_MAP[place]
 
@@ -373,11 +271,13 @@ export default defineComponent({
 
       // should not emit input during composition
       // see: https://github.com/ElemeFE/element/issues/10516
-      if (isComposing.value) return
+      if (isComposing.value)
+        return
 
       // hack for https://github.com/ElemeFE/element/issues/8548
       // should remove the following line when we don't support IE
-      if (value === nativeInputValue.value) return
+      if (value === nativeInputValue.value)
+        return
 
       ctx.emit(UPDATE_MODEL_EVENT, value)
       ctx.emit('input', value)
@@ -519,3 +419,108 @@ export default defineComponent({
   },
 })
 </script>
+
+<template>
+  <div
+    :class="[
+      type === 'textarea' ? 'agm-textarea' : 'agm-input',
+      inputSize ? `agm-input--${inputSize}` : '',
+      {
+        'is-disabled': inputDisabled,
+        'is-exceed': inputExceed,
+        'agm-input-group': $slots.prepend || $slots.append,
+        'agm-input-group--append': $slots.append,
+        'agm-input-group--prepend': $slots.prepend,
+        'agm-input--prefix': $slots.prefix || prefixIcon,
+        'agm-input--suffix':
+          $slots.suffix || suffixIcon || clearable || showPassword,
+      },
+      $attrs.class,
+    ]"
+    :style="$attrs.style"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
+  >
+    <template v-if="type !== 'textarea'">
+      <!-- 前置元素 -->
+      <div v-if="$slots.prepend" class="agm-input-group__prepend">
+        <slot name="prepend" />
+      </div>
+      <input
+        v-if="type !== 'textarea'"
+        ref="input"
+        class="agm-input__inner"
+        v-bind="attrs"
+        :type="showPassword ? (passwordVisible ? 'text' : 'password') : type"
+        :disabled="inputDisabled"
+        :readonly="readonly"
+        :autocomplete="autocomplete"
+        :tabindex="tabindex"
+        :aria-label="label"
+        :placeholder="placeholder"
+        @input="handleInput"
+        @focus="handleFocus"
+        @blur="handleBlur"
+        @change="handleChange"
+        @keydown="handleKeydown"
+      >
+      <!-- 前置内容 -->
+      <span v-if="$slots.prefix || prefixIcon" class="agm-input__prefix">
+        <slot name="prefix" />
+        <i v-if="prefixIcon" class="agm-input__icon" :class="[prefixIcon]" />
+      </span>
+      <!-- 后置内容 -->
+      <span v-if="getSuffixVisible()" class="agm-input__suffix">
+        <template v-if="!showClear || !showPwdVisible || !isWordLimitVisible">
+          <slot name="suffix" />
+          <i v-if="suffixIcon" class="agm-input__icon" :class="[suffixIcon]" />
+        </template>
+        <AgmIcon
+          v-if="showClear"
+          name="i-mdi-close"
+          @mousedown.prevent
+          @click="clear"
+        />
+
+        <i v-if="showPwdVisible" @click="handlePasswordVisible" />
+        <span v-if="isWordLimitVisible" class="agm-input__count">
+          <span class="agm-input__count-inner">
+            {{ textLength }}/{{ upperLimit }}
+          </span>
+        </span>
+
+        <i
+          v-if="validateState"
+          class="agm-input__icon agm-input__validateIcon" :class="[validateIcon]"
+        />
+      </span>
+      <!-- 后置元素 -->
+      <div v-if="$slots.append" class="agm-input-group__append">
+        <slot name="append" />
+      </div>
+    </template>
+
+    <!-- v-bind="attrs" -->
+    <textarea
+      v-else
+      ref="textarea"
+      class="agm-textarea__inner"
+      :tabindex="tabindex"
+      :disabled="inputDisabled"
+      :readonly="readonly"
+      :autocomplete="autocomplete"
+      :style="textareaStyle"
+      :aria-label="label"
+      :placeholder="placeholder"
+      @input="handleInput"
+      @focus="handleFocus"
+      @blur="handleBlur"
+      @change="handleChange"
+    />
+    <span
+      v-if="isWordLimitVisible && type === 'textarea'"
+      class="agm-input__count"
+    >{{ textLength }}/{{ upperLimit }}
+    </span>
+  </div>
+</template>

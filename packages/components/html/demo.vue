@@ -1,3 +1,8 @@
+<script lang="ts" setup>
+import { AgmTypeArray } from '@augma/shared'
+import './index.scss'
+</script>
+
 <template>
   <div class="dark-bg">
     <hr class="agm-hr">
@@ -26,11 +31,6 @@
     </tbody>
   </table>
 </template>
-
-<script lang="ts" setup>
-import { AgmTypeArray } from '@augma/shared'
-import './index.scss'
-</script>
 
 <style lang="scss">
 .dark-bg {

@@ -1,7 +1,1 @@
 @use "@augma/components/color" as *;
-
-@forward "vitepress-theme-you/src/vitepress/styles/vars.scss" with (
-  $colors: (
-    'brand': $agm-brand,
-  ),
-);

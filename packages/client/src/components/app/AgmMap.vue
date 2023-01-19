@@ -1,7 +1,3 @@
-<template>
-  <div v-show="enable" id="subway-container" :style="style" />
-</template>
-
 <script lang="ts" setup>
 const props = withDefaults(defineProps<{
   enable?: boolean
@@ -54,6 +50,10 @@ onMounted(() => {
   createScript()
 })
 </script>
+
+<template>
+  <div v-show="enable" id="subway-container" :style="style" />
+</template>
 
 <style lang="scss">
 #subway-container {

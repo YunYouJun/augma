@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import { useAppStore } from '~/stores/app'
+const app = useAppStore()
+</script>
+
 <template>
   <agm-weather v-if="app.weather" />
   <agm-dialog v-if="app.browser" v-model="app.browser">
@@ -10,8 +15,3 @@
   </agm-dialog>
   <agm-map :enable="app.subwayMap" />
 </template>
-
-<script setup lang="ts">
-import { useAppStore } from '~/stores/app'
-const app = useAppStore()
-</script>

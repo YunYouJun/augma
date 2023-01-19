@@ -1,14 +1,3 @@
-<template>
-  <div :class="classes">
-    <div class="agm-card--header">
-      <slot name="header" />
-    </div>
-    <div class="agm-card--body">
-      <slot />
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import './index.scss'
 
@@ -28,3 +17,14 @@ const classes = computed(() => {
   ]
 })
 </script>
+
+<template>
+  <div :class="classes">
+    <div class="agm-card--header">
+      <slot name="header" />
+    </div>
+    <div class="agm-card--body">
+      <slot />
+    </div>
+  </div>
+</template>

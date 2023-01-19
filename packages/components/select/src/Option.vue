@@ -1,11 +1,3 @@
-<template>
-  <li class="agm-select-dropdown__item" @click.stop="selectOptionClick">
-    <slot>
-      <span>{{ label }}</span>
-    </slot>
-  </li>
-</template>
-
 <script lang="ts" setup>
 import { useOption } from './useOption'
 
@@ -22,7 +14,8 @@ const props = withDefaults(defineProps<{
 const { select } = useOption()
 
 function selectOptionClick() {
-  if (props.disable) return
+  if (props.disable)
+    return
 
   select.handleOptionSelect({
     label: props.label,
@@ -30,6 +23,14 @@ function selectOptionClick() {
   })
 }
 </script>
+
+<template>
+  <li class="agm-select-dropdown__item" @click.stop="selectOptionClick">
+    <slot>
+      <span>{{ label }}</span>
+    </slot>
+  </li>
+</template>
 
 <style lang="scss">
 .agm-select-dropdown__item {

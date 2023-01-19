@@ -1,24 +1,10 @@
-<template>
-  <div id="augma-ui" class="augma-ui" :style="styles">
-    <div id="agm-loading-container" ref="loadingContainer" />
-
-    <SystemBar />
-    <AgmWindow />
-    <!-- <FaceApi :enable="app.faceDetection" /> -->
-    <!-- <TfjsYolo :enable="app.yolo" /> -->
-    <div class="augma-bottom-menu-container">
-      <BottomMenu />
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import type { PluginApi } from 'vue-loading-overlay'
 import { useAppStore } from '~/stores/app'
 
-const loadingContainer = ref()
-
 const props = defineProps<{ opacity: number }>()
+
+const loadingContainer = ref()
 
 const app = useAppStore()
 
@@ -41,6 +27,20 @@ onMounted(() => {
   }, 100)
 })
 </script>
+
+<template>
+  <div id="augma-ui" class="augma-ui" :style="styles">
+    <div id="agm-loading-container" ref="loadingContainer" />
+
+    <SystemBar />
+    <AgmWindow />
+    <!-- <FaceApi :enable="app.faceDetection" /> -->
+    <!-- <TfjsYolo :enable="app.yolo" /> -->
+    <div class="augma-bottom-menu-container">
+      <BottomMenu />
+    </div>
+  </div>
+</template>
 
 <style lang="scss">
 .augma-ui {

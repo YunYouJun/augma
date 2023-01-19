@@ -1,7 +1,3 @@
-<template>
-  <agm-bottom-menu :menu-items="menuItems" />
-</template>
-
 <script lang="ts" setup>
 import pkg from '../../../package.json'
 import { useCameraStore } from '~/stores/camera'
@@ -96,3 +92,7 @@ function openGithubNotification() {
   })
 }
 </script>
+
+<template>
+  <agm-bottom-menu :menu-items="menuItems" />
+</template>

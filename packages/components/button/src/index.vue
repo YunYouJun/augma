@@ -1,13 +1,3 @@
-<template>
-  <button
-    class="agm-button agm-shadow"
-    :class="classes"
-    @click="handleClick"
-  >
-    <slot />
-  </button>
-</template>
-
 <script lang="ts" setup>
 import { computed } from 'vue'
 import './index.scss'
@@ -50,3 +40,13 @@ const classes = computed(() => {
   return btnClasses.concat(colorClasses)
 })
 </script>
+
+<template>
+  <button
+    class="agm-button agm-shadow"
+    :class="classes"
+    @click="handleClick"
+  >
+    <slot />
+  </button>
+</template>

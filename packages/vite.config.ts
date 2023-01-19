@@ -2,8 +2,6 @@ import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import type { Plugin } from 'vite'
 
-import AutoImport from 'unplugin-auto-import/vite'
-
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
@@ -27,27 +25,10 @@ import { AugmaResolver } from './augma/src/resolver'
 import { presetAugma } from './augma/src/preset'
 import { safelist } from './augma/src/preset/safelist'
 
-/**
- * to develop vitepress-theme-you
- */
-const curAlias = process.env.NODE_ENV === 'dev:theme'
-  ? {
-    'vitepress-theme-you/': `${resolve(
-      __dirname,
-      '../../vitepress-theme-you/src',
-    )}/`,
-    'vitepress-theme-you': resolve(
-      __dirname,
-      '../../vitepress-theme-you/src/index.ts',
-    ),
-  }
-  : {}
-
 export default defineConfig({
   resolve: {
     alias: {
       ...alias,
-      ...curAlias,
     },
   },
   plugins: [
@@ -63,12 +44,6 @@ export default defineConfig({
         presetAugma(),
       ],
       safelist,
-    }),
-
-    // https://github.com/antfu/unplugin-auto-import
-    AutoImport({
-      imports: ['vue', '@vueuse/core'],
-      dts: '.vitepress/auto-imports.d.ts',
     }),
 
     // https://github.com/antfu/unplugin-vue-components
@@ -134,7 +109,8 @@ function MarkdownTransform(): Plugin {
     name: 'md-transform',
     enforce: 'pre',
     transform(code, id) {
-      if (!id.endsWith('.md')) return null
+      if (!id.endsWith('.md'))
+        return null
 
       const [pkg, name, i] = id.split('/').slice(-3)
 

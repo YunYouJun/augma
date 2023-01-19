@@ -1,7 +1,3 @@
-<template>
-  <span class="agm-clock" :class="classes">{{ now }}</span>
-</template>
-
 <script lang="ts" setup>
 import './index.scss'
 import type { AgmColorType } from '@augma/shared'
@@ -58,3 +54,7 @@ onMounted(() => {
   }, 1000)
 })
 </script>
+
+<template>
+  <span class="agm-clock" :class="classes">{{ now }}</span>
+</template>

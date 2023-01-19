@@ -1,12 +1,3 @@
-<template>
-  <agm-select
-    v-model="currentOption"
-    :options="options"
-    placeholder="Placeholder"
-    :callback="callback"
-  />
-</template>
-
 <script lang="ts" setup>
 import type { ISelectOption } from './src/useOption'
 import AgmSelect from './src/index.vue'
@@ -35,3 +26,12 @@ function callback(val: any) {
   console.log(val, currentOption)
 }
 </script>
+
+<template>
+  <AgmSelect
+    v-model="currentOption"
+    :options="options"
+    placeholder="Placeholder"
+    :callback="callback"
+  />
+</template>

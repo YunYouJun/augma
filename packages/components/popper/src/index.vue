@@ -1,19 +1,3 @@
-<template>
-  <div class="agm-popper">
-    <div ref="triggerRef" class="agm-popper--trigger" v-on="{ ...events }">
-      <slot name="trigger" />
-    </div>
-    <div
-      v-show="visibility"
-      ref="popperRef"
-      class="agm-popper--body"
-      :style="popperStyle"
-    >
-      <slot name="default" />
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
 import './index.scss'
 
@@ -50,3 +34,19 @@ export default defineComponent({
   },
 })
 </script>
+
+<template>
+  <div class="agm-popper">
+    <div ref="triggerRef" class="agm-popper--trigger" v-on="{ ...events }">
+      <slot name="trigger" />
+    </div>
+    <div
+      v-show="visibility"
+      ref="popperRef"
+      class="agm-popper--body"
+      :style="popperStyle"
+    >
+      <slot name="default" />
+    </div>
+  </div>
+</template>

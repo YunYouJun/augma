@@ -1,15 +1,3 @@
-<template>
-  <div class="agm-indicator" :style="styles">
-    <h2 class="agm-indicator__title">
-      {{ title }}
-    </h2>
-    <div class="agm-indicator__info">
-      {{ info }}
-    </div>
-    <div class="agm-indicator__cursor" />
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { getAgmColorByType } from '@augma/shared'
 import './index.scss'
@@ -30,3 +18,15 @@ const styles = computed(() => {
   }
 })
 </script>
+
+<template>
+  <div class="agm-indicator" :style="styles">
+    <h2 class="agm-indicator__title">
+      {{ title }}
+    </h2>
+    <div class="agm-indicator__info">
+      {{ info }}
+    </div>
+    <div class="agm-indicator__cursor" />
+  </div>
+</template>

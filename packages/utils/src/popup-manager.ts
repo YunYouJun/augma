@@ -16,7 +16,7 @@ interface Instance {
   handleAction?: (action: string) => void
 }
 
-type StackFrame = { id: string; zIndex: number; modalClass: string }
+interface StackFrame { id: string; zIndex: number; modalClass: string }
 
 interface IPopupManager {
   getInstance: (id: string) => Instance
@@ -72,7 +72,8 @@ const PopupManager: IPopupManager = {
 
   doOnModalClick() {
     const topItem = PopupManager.modalStack[PopupManager.modalStack.length - 1]
-    if (!topItem) return
+    if (!topItem)
+      return
 
     const instance = PopupManager.getInstance(topItem.id)
     if (instance && instance.closeOnClickModal.value)
@@ -80,8 +81,10 @@ const PopupManager: IPopupManager = {
   },
 
   openModal(id, zIndex, dom, modalClass, modalFade) {
-    if (isServer) return
-    if (!id || zIndex === undefined) return
+    if (isServer)
+      return
+    if (!id || zIndex === undefined)
+      return
     this.modalFade = modalFade
 
     const modalStack = this.modalStack
@@ -92,7 +95,6 @@ const PopupManager: IPopupManager = {
         return
     }
 
-    // eslint-disable-next-line no-use-before-define
     const modalDom = getModal()
 
     addClass(modalDom, 'v-modal')
@@ -123,7 +125,7 @@ const PopupManager: IPopupManager = {
 
   closeModal(id) {
     const modalStack = this.modalStack
-    // eslint-disable-next-line no-use-before-define
+
     const modalDom = getModal()
 
     if (modalStack.length > 0) {
@@ -154,7 +156,8 @@ const PopupManager: IPopupManager = {
 
       setTimeout(() => {
         if (modalStack.length === 0) {
-          if (modalDom.parentNode) modalDom.parentNode.removeChild(modalDom)
+          if (modalDom.parentNode)
+            modalDom.parentNode.removeChild(modalDom)
           modalDom.style.display = 'none'
           // off(modalDom, 'touchmove', onTouchMove)
           // off(modalDom, 'click', onModalClick)
@@ -170,8 +173,9 @@ const onModalClick = () => {
   PopupManager?.doOnModalClick()
 }
 
-const getModal = function(): HTMLElement {
-  if (isServer) return
+const getModal = function (): HTMLElement {
+  if (isServer)
+    return
   let modalDom = PopupManager.modalDom
   if (modalDom) {
     hasModal = true
@@ -201,12 +205,14 @@ Object.defineProperty(PopupManager, 'zIndex', {
   },
 })
 
-const getTopPopup = function() {
-  if (isServer) return
+const getTopPopup = function () {
+  if (isServer)
+    return
   if (PopupManager.modalStack.length > 0) {
     const topPopup
       = PopupManager.modalStack[PopupManager.modalStack.length - 1]
-    if (!topPopup) return
+    if (!topPopup)
+      return
     const instance = PopupManager.getInstance(topPopup.id)
 
     return instance

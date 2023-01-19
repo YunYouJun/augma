@@ -1,34 +1,33 @@
+<script lang="ts">
+import { defineComponent, onErrorCaptured, ref } from 'vue'
+
+export default defineComponent({
+  setup() {
+    const error = ref(null)
+
+    onErrorCaptured((err) => {
+      error.value = err
+    })
+  },
+})
+</script>
+
 <template>
   <div class="demo-block hover:shadow-md">
     <div class="demo-content">
-      <slot name="demo"></slot>
+      <slot name="demo" />
     </div>
     <div v-if="$slots.description" class="description">
-      <slot name="description" class="description"></slot>
+      <slot name="description" class="description" />
     </div>
     <details>
       <summary>Code 代码</summary>
       <div class="-m-2">
-        <slot name="code" ></slot>
-
+        <slot name="code" />
       </div>
     </details>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, onErrorCaptured, ref } from "vue";
-
-export default defineComponent({
-  setup() {
-    const error = ref(null);
-
-    onErrorCaptured((err) => {
-      error.value = err;
-    });
-  },
-});
-</script>
 
 <style lang="scss">
 .demo-block {
@@ -58,7 +57,6 @@ export default defineComponent({
     border-bottom: 1px solid var(--c-divider);
     margin: -1rem -1rem 1rem -1rem;
   }
-
 
   .demo-content {
     padding: 1rem;

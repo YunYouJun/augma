@@ -30,20 +30,21 @@ const CONTEXT_STYLE = [
   'box-sizing',
 ]
 
-type NodeStyle = {
+interface NodeStyle {
   contextStyle: string
   boxSizing: string
   paddingSize: number
   borderSize: number
 }
 
-type TextAreaHeight = {
+interface TextAreaHeight {
   height: string
   minHeight?: string
 }
 
 function calculateNodeStyling(targetElement): NodeStyle {
-  if (isServer) return
+  if (isServer)
+    return
   const style = getComputedStyle(targetElement)
 
   const boxSizing = style.getPropertyValue('box-sizing')

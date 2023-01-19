@@ -12,8 +12,8 @@
   "license": "MIT",
   "dependencies": {
     "@tensorflow/tfjs": "^3.13.0",
-    "@vueuse/core": "^7.5.3",
-    "@vueuse/head": "^0.7.4",
+    "@vueuse/core": "^9.11.0",
+    "@vueuse/head": "^1.0.22",
     "augma": "workspace:latest",
     "face-api.js": "^0.22.2",
     "nprogress": "^0.2.0",
@@ -41,7 +41,6 @@
     "markdown-it-link-attributes": "^4.0.0",
     "markdown-it-prism": "^2.2.2",
     "unocss": "^0.22.4",
-    "unplugin-auto-import": "^0.5.11",
     "unplugin-icons": "^0.13.0",
     "unplugin-vue-components": "^0.17.13",
     "vite": "^2.7.12",
@@ -51,7 +50,7 @@
     "vite-plugin-pwa": "^0.11.13",
     "vite-plugin-vue-layouts": "^0.5.0",
     "vite-ssg": "^0.17.6",
-    "vue-tsc": "^0.30.5"
+    "vue-tsc": "^1.0.24"
   },
   "scripts": {
     "build": "vite build",

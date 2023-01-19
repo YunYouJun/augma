@@ -1,28 +1,3 @@
-<template>
-  <div v-if="enable" id="rects">
-    <div
-      v-for="(box, i) in boxes"
-      :key="i"
-      class="agm-rect"
-      :style="{
-        top: `${box.top}px`,
-        left: `${box.left * $store.state.camera.ratio}px`,
-        width: `${box.width}px`,
-        height: `${box.height}px`,
-        boxShadow: `0 0 5px rgba(0,0,0,0.3)`,
-      }"
-    >
-      <agm-indicator
-        :name="box.class"
-        :info="box.score.toFixed(2)"
-        :style="{
-          transform: 'translateY(-150%)',
-        }"
-      />
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
 import yolo from 'tfjs-yolo'
 import { defineComponent } from 'vue'
@@ -85,6 +60,31 @@ export default defineComponent({
   },
 })
 </script>
+
+<template>
+  <div v-if="enable" id="rects">
+    <div
+      v-for="(box, i) in boxes"
+      :key="i"
+      class="agm-rect"
+      :style="{
+        top: `${box.top}px`,
+        left: `${box.left * $store.state.camera.ratio}px`,
+        width: `${box.width}px`,
+        height: `${box.height}px`,
+        boxShadow: `0 0 5px rgba(0,0,0,0.3)`,
+      }"
+    >
+      <agm-indicator
+        :name="box.class"
+        :info="box.score.toFixed(2)"
+        :style="{
+          transform: 'translateY(-150%)',
+        }"
+      />
+    </div>
+  </div>
+</template>
 
 <style lang="scss">
 #rects {

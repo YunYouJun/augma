@@ -18,7 +18,7 @@ export const UPDATE_VISIBLE_EVENT = 'update:visible'
 // popper trigger element can be component
 export type ElementType = ComponentPublicInstance | HTMLElement
 
-export default function(props: IPopperOptions, ctx: SetupContext) {
+export default function (props: IPopperOptions, ctx: SetupContext) {
   const arrowRef = ref<RefElement>(null)
   const triggerRef = ref<ElementType>(null)
   const popperRef = ref<RefElement>(null)
@@ -69,12 +69,14 @@ export default function(props: IPopperOptions, ctx: SetupContext) {
   }
 
   function show() {
-    if (props.disabled) return
+    if (props.disabled)
+      return
     visibility.value = true
   }
 
   function hide() {
-    if (props.disabled) return
+    if (props.disabled)
+      return
     visibility.value = false
   }
 
@@ -105,7 +107,8 @@ export default function(props: IPopperOptions, ctx: SetupContext) {
   }
 
   function doDestroy(forceDestroy?: boolean) {
-    if (!popperInstance || (visibility.value && !forceDestroy)) return
+    if (!popperInstance || (visibility.value && !forceDestroy))
+      return
     popperInstance?.destroy?.()
     popperInstance = null
   }
@@ -130,7 +133,8 @@ export default function(props: IPopperOptions, ctx: SetupContext) {
     bindEvents(props.trigger)
 
   watch(popperOptions, (val) => {
-    if (!popperInstance) return
+    if (!popperInstance)
+      return
     popperInstance.setOptions(val)
     popperInstance.update()
   })

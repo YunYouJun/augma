@@ -1,3 +1,8 @@
+<script lang="ts" setup>
+const city = ref('北京市')
+const temperature = ref('-3°C')
+</script>
+
 <template>
   <agm-card color="#e5bb63" dark>
     <div class="weather-logo">
@@ -15,11 +20,6 @@
     </div>
   </agm-card>
 </template>
-
-<script lang="ts" setup>
-const city = ref('北京市')
-const temperature = ref('-3°C')
-</script>
 
 <style lang="scss">
 .weather-logo {

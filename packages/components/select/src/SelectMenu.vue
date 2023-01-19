@@ -1,19 +1,19 @@
-<template>
-  <div
-    class="agm-select-dropdown cursor-pointer"
-    :style="{
-      minWidth: minWidth,
-    }"
-  >
-    <slot />
-  </div>
-</template>
-
 <script lang="ts" setup>
 defineProps<{
   minWidth?: string
 }>()
 </script>
+
+<template>
+  <div
+    class="agm-select-dropdown cursor-pointer"
+    :style="{
+      minWidth,
+    }"
+  >
+    <slot />
+  </div>
+</template>
 
 <style lang="scss">
 .agm-select-dropdown {

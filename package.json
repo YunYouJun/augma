@@ -6,8 +6,9 @@
   "scripts": {
     "build:client": "pnpm build -C packages/client",
     "build:lib": "pnpm build -C packages/augma",
-    "build": "esno scripts/build.ts",
+    "build": "tsx scripts/build.ts",
     "dev": "pnpm dev -C packages/client",
+    "docs": "pnpm run docs:dev",
     "docs:dev": "vitepress dev packages --host --port 3002",
     "docs:build": "vitepress build packages",
     "docs:serve": "vitepress serve packages",
@@ -24,7 +25,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@antfu/eslint-config": "^0.16.0",
+    "@antfu/eslint-config": "^0.34.1",
     "@iconify-json/ri": "^1.0.2",
     "@types/minimist": "^1.2.2",
     "@types/semver": "^7.3.9",
@@ -32,7 +33,6 @@
     "cross-env": "^7.0.3",
     "enquirer": "^2.3.6",
     "eslint": "^8.7.0",
-    "esno": "^0.14.0",
     "execa": "^6.0.0",
     "fast-glob": "^3.2.11",
     "gray-matter": "^4.0.3",
@@ -41,6 +41,7 @@
     "pnpm": "^6.26.1",
     "semver": "^7.3.5",
     "ts-node": "^10.4.0",
+    "tsx": "^3.12.2",
     "typescript": "^4.5.4",
     "unocss": "^0.22.4",
     "unplugin-icons": "^0.13.0",
@@ -48,11 +49,10 @@
     "vite": "^2.7.12",
     "vite-plugin-pwa": "^0.11.13",
     "vite-plugin-windicss": "^1.6.2",
-    "vitepress": "^0.21.5",
-    "vitepress-theme-you": "^0.0.31"
+    "vitepress": "1.0.0-alpha.38"
   },
   "dependencies": {
-    "@vueuse/core": "^7.5.3",
+    "@vueuse/core": "^9.11.0",
     "prism-theme-vars": "^0.2.2"
   }
 }

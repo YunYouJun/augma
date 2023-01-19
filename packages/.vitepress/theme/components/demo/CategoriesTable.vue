@@ -1,3 +1,14 @@
+<script lang="ts" setup>
+import { capitalize } from 'vue'
+import categoriesData from '../../../../../meta/categories.json'
+
+const props = withDefaults(defineProps<{ type?: string }>(), {
+  type: 'components',
+})
+
+const categories = categoriesData[props.type]
+</script>
+
 <template>
   <div>
     <table class="agm-table">
@@ -16,14 +27,3 @@
     </table>
   </div>
 </template>
-
-<script lang="ts" setup>
-import categoriesData from "../../../../../meta/categories.json";
-import { capitalize } from "vue";
-
-const props = withDefaults(defineProps<{type?: string}>(), {
-  type: 'components'
-})
-
-const categories = categoriesData[props.type]
-</script>

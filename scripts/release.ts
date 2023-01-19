@@ -113,7 +113,8 @@ function updatePackage(pkgRoot: string, version: string) {
 
 function updateDeps(pkg: any, depType: string, version: string) {
   const deps = pkg[depType]
-  if (!deps) return
+  if (!deps)
+    return
   const pkgName = 'augma'
   Object.keys(deps).forEach((dep) => {
     if (
