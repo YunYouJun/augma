@@ -13,8 +13,7 @@ import { capitalize } from 'vue'
 
 import Unocss from 'unocss/vite'
 // use windicss is more stead?
-import { presetAttributify, presetUno } from 'unocss'
-import presetIcons from '@unocss/preset-icons'
+import { presetAttributify, presetIcons, presetUno } from 'unocss'
 
 import { augmaChildren } from '../meta/indexes'
 import { hasDemo } from '../scripts/utils'
@@ -100,7 +99,7 @@ export default defineConfig({
   ],
 
   optimizeDeps: {
-    include: ['vue', '@vueuse/core', 'vue-toastification', 'v-tooltip', 'dayjs'],
+    include: ['vue', '@vueuse/core', 'vue-toastification', 'v-tooltip'],
   },
 })
 

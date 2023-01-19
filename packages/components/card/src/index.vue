@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
 import './index.scss'
 
 const props = withDefaults(defineProps<{

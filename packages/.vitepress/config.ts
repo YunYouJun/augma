@@ -34,6 +34,13 @@ const config: UserConfig<DefaultTheme.Config> = {
       '/components/': getComponentsSidebar(),
       '/hooks/': getHooksSidebar(),
     },
+
+    socialLinks: [
+      {
+        icon: 'github',
+        link: 'https://github.com/YunYouJun/augma'
+      }
+    ]
   },
 
   head: [

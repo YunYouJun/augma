@@ -4,27 +4,24 @@ import generatedRoutes from 'virtual:generated-pages'
 import { setupLayouts } from 'virtual:generated-layouts'
 import App from './App.vue'
 
-// https://github.com/antfu/unocss
-// 'uno:[layer-name].css'
-import 'uno:components.css'
-// layers that are not 'components' and 'utilities' will fallback to here
-import 'uno.css'
-
 // custom css
 import './styles/index.scss'
 import '@augma/components/styles/index.scss'
 
-// "utilities" layer will have the highest priority
-import 'uno:utilities.css'
+// https://github.com/antfu/unocss
+import 'uno.css'
+
+import type { UserModule } from './types'
 
 const routes = setupLayouts(generatedRoutes)
 
 // https://github.com/antfu/vite-ssg
 export const createApp = ViteSSG(
   App,
-  { routes },
+  { routes, base: import.meta.env.BASE_URL },
   (ctx) => {
     // install all modules under `modules/`
-    Object.values(import.meta.globEager('./modules/*.ts')).map(i => i.install?.(ctx))
+    Object.values(import.meta.glob<{ install: UserModule }>('./modules/*.ts', { eager: true }))
+      .forEach(i => i.install?.(ctx))
   },
 )
