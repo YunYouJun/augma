@@ -1,6 +1,7 @@
 <script lang="ts">
 import yolo from 'tfjs-yolo'
 import { defineComponent } from 'vue'
+
 export default defineComponent({
   props: {
     enable: {

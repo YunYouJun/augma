@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { capitalize } from 'vue'
-import categoriesData from '../../../../../meta/categories.json'
+import { categories as _categories } from '@augma/metadata'
 
 const props = withDefaults(defineProps<{ type?: string }>(), {
   type: 'components',
 })
 
-const categories = categoriesData[props.type]
+const categories = _categories[props.type]
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const categories = categoriesData[props.type]
         </tr>
       </thead>
       <tbody>
-        <tr v-for="category in categories">
+        <tr v-for="category in categories" :key="category.name">
           <td>{{ capitalize(category.name) }} {{ category.title }}</td>
           <td>{{ category.description }}</td>
         </tr>

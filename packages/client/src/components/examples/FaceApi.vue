@@ -2,6 +2,7 @@
 import * as faceapi from 'face-api.js'
 import { useAppStore } from '~/stores/app'
 import { useCameraStore } from '~/stores/camera'
+
 const props = withDefaults(defineProps<{
   enable?: boolean
   customClass?: string[]

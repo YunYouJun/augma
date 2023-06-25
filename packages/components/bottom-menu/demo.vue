@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import consola from 'consola'
 import AgmBottomMenu from './src/index.vue'
+
 const menuItems = [
   {
     color: 'black',

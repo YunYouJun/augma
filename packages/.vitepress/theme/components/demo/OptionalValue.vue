@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { agmColors } from 'augma'
-import { AgmTypeArray } from '@augma/shared'
 import type { OptionalType } from './PropsTable.vue'
 
 defineProps<{

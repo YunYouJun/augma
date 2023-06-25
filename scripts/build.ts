@@ -1,8 +1,9 @@
-import fs from 'fs'
-import path from 'path'
-import os from 'os'
+import fs from 'node:fs'
+import path from 'node:path'
+import os from 'node:os'
 import { execa } from 'execa'
-import { logger, targets } from './utils'
+import consola from 'consola'
+import { targets } from './utils'
 
 async function buildAll(targets: string[]) {
   await runParallel(os.cpus().length, targets, build)
@@ -34,7 +35,7 @@ async function runParallel(
  * @param target packageName
  */
 async function build(target: string) {
-  logger.info(`Build [${target}]`)
+  consola.info(`Build [${target}]`)
   const pkgDir = path.resolve(`packages/${target}`)
 
   const distDir = `${pkgDir}/dist`

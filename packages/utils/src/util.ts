@@ -7,7 +7,7 @@ import type { Hash } from './types'
  * 清除定时器
  * @param timer
  */
-export const clearTimer = (timer: any) => {
+export function clearTimer(timer: any) {
   if (timer)
     clearTimeout(timer)
 
@@ -34,5 +34,6 @@ export function useGlobalConfig(): AugmaOptions {
 }
 
 export const isBool = (val: unknown) => typeof val === 'boolean'
-export const isHTMLElement = (val: unknown) =>
-  toRawType(val).startsWith('HTML')
+export function isHTMLElement(val: unknown) {
+  return toRawType(val).startsWith('HTML')
+}

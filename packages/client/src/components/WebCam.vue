@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useWebcam } from '@augma/hooks'
 import { useCameraStore } from '~/stores/camera'
+
 const props = withDefaults(defineProps<{
   isFlip: boolean
   isFront: boolean

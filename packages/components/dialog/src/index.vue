@@ -5,6 +5,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useFullscreen } from '@vueuse/core'
 import { AgmIcon } from 'augma'
 import { UPDATE_MODEL_EVENT } from '../dialog'
+
 const props = withDefaults(defineProps<{
   modelValue: boolean
 }>(), {

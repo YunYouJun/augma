@@ -1,5 +1,8 @@
-import fs from 'fs'
+import fs from 'node:fs'
+import path from 'node:path'
 import { readIndexesAndHints } from './indexes'
+
+const metadataFolder = path.resolve(__dirname, '../packages/metadata')
 
 /**
  * 格式化 JSON
@@ -11,7 +14,7 @@ function formatJSON(json: object) {
 
 async function run() {
   const { indexes } = await readIndexesAndHints()
-  fs.writeFileSync('indexes.json', formatJSON(indexes))
+  fs.writeFileSync(path.resolve(metadataFolder, 'indexes.json'), formatJSON(indexes))
 }
 
 run()

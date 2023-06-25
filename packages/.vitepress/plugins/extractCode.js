@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 
 function extractCodeFromVueSFC(md, options = {}) {
   const root = options.root || path.join(process.cwd())

@@ -1,8 +1,10 @@
 import _indexes from '../indexes.json'
+import { categories } from './categories'
 import type { PackageIndexes } from './types'
 
-const indexes = _indexes as PackageIndexes
-export default indexes
+export * from './categories'
+
+export const indexes = _indexes as PackageIndexes
 
 const componentNames = indexes.components.map(component => component.name)
 const hookNames = indexes.hooks.map(hook => hook.name)
@@ -10,8 +12,7 @@ const hookNames = indexes.hooks.map(hook => hook.name)
 export const augmaChildren = componentNames.concat(hookNames)
 
 export async function getCategories(type: 'components' | 'hooks') {
-  const categories = await import('./categories.json')
-  return categories.default[type]
+  return categories[type]
 }
 
 /**

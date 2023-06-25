@@ -1,7 +1,6 @@
 import { capitalize } from 'vue'
-import type { UserConfig, DefaultTheme } from 'vitepress'
-import indexes from '../../indexes.json'
-import categories from '../../meta/categories.json'
+import type { DefaultTheme, UserConfig } from 'vitepress'
+import { categories, indexes } from '@augma/metadata'
 
 import mdConfig from './plugins/markdown'
 
@@ -38,9 +37,9 @@ const config: UserConfig<DefaultTheme.Config> = {
     socialLinks: [
       {
         icon: 'github',
-        link: 'https://github.com/YunYouJun/augma'
-      }
-    ]
+        link: 'https://github.com/YunYouJun/augma',
+      },
+    ],
   },
 
   head: [

@@ -7,7 +7,7 @@ const dialogVisible = ref(false)
 </script>
 
 <template>
-  <AgmButton type="primary" @click="dialogVisible = !dialogVisible">
+  <AgmButton type="primary" @click="() => dialogVisible = !dialogVisible">
     点击打开 Dialog
   </AgmButton>
   <AgmDialog v-model="dialogVisible">

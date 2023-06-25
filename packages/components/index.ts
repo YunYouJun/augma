@@ -23,7 +23,7 @@ const defaultInstallOpt: InstallOptions = {
 }
 
 // register component & plugin
-const install = (app: App, opt: InstallOptions): void => {
+function install(app: App, opt: InstallOptions): void {
   const option = Object.assign(defaultInstallOpt, opt)
   app.config.globalProperties.$AUGMA = option
 }

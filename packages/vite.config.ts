@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import type { Plugin } from 'vite'
 
@@ -7,18 +7,18 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 
 import { VitePWA } from 'vite-plugin-pwa'
-// import WindiCSS from 'vite-plugin-windicss'
 
 import { capitalize } from 'vue'
 
 import Unocss from 'unocss/vite'
-// use windicss is more stead?
+
 import { presetAttributify, presetIcons, presetUno } from 'unocss'
 
-import { augmaChildren } from '../meta/indexes'
 import { hasDemo } from '../scripts/utils'
+import { augmaChildren } from './metadata/src'
 
 import { alias } from './shared/src/config'
+
 // do not use './augma/src' directly to avoid ts load *.vue
 import { AugmaResolver } from './augma/src/resolver'
 import { presetAugma } from './augma/src/preset'

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { ISelectOption } from './src/useOption'
 import AgmSelect from './src/index.vue'
+
 const options: ISelectOption[] = [
   {
     label: 'Label A',

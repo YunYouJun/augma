@@ -38,7 +38,7 @@ interface IPopupManager {
   closeModal: (id: string) => void
 }
 
-const onTouchMove = (e: Event) => {
+function onTouchMove(e: Event) {
   e.preventDefault()
   e.stopPropagation()
 }
@@ -169,7 +169,7 @@ const PopupManager: IPopupManager = {
   },
 }
 
-const onModalClick = () => {
+function onModalClick() {
   PopupManager?.doOnModalClick()
 }
 

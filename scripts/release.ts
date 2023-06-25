@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 
 import minimist from 'minimist'
 import { prompt } from 'enquirer'
@@ -24,8 +24,9 @@ const versionIncrements = [
 ]
 
 const inc = (i: semver.ReleaseType) => semver.inc(currentVersion, i, preId)
-const run = (bin: string, args: string[], opts = {}) =>
-  execa(bin, args, { stdio: 'inherit', ...opts })
+function run(bin: string, args: string[], opts = {}) {
+  return execa(bin, args, { stdio: 'inherit', ...opts })
+}
 
 async function main() {
   let targetVersion = args._[0]
@@ -92,8 +93,9 @@ const packages = fs
       && fs.existsSync(path.resolve(p, 'packages.json')),
   )
 
-const getPkgRoot = (pkg: string) =>
-  path.resolve(__dirname, `../packages/${pkg}`)
+function getPkgRoot(pkg: string) {
+  return path.resolve(__dirname, `../packages/${pkg}`)
+}
 
 function updateVersions(version: string) {
   // 1. update root package.json

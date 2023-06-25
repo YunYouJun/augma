@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { agmColors } from 'augma'
-
 export type OptionalType = 'AgmColorType' | 'string' | 'boolean' | 'any' | ''
 
 export interface ComponentPropType {

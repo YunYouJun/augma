@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useCameraStore } from '~/stores/camera'
+
 const camera = useCameraStore()
 </script>
 

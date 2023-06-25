@@ -9,11 +9,11 @@ export type AugmaOptions = InstallOptions
 
 let $AUGMA = {} as InstallOptions
 
-const setConfig = (option: InstallOptions): void => {
+function setConfig(option: InstallOptions): void {
   $AUGMA = option
 }
 
-const getConfig = (key: keyof InstallOptions): unknown => {
+function getConfig(key: keyof InstallOptions): unknown {
   return $AUGMA[key]
 }
 

@@ -9,7 +9,7 @@ const camera = useCameraStore()
 const mode = ref('use')
 const browser = ref(false)
 
-const screenshot = () => {
+function screenshot() {
   const video = camera.videoEl
   if (!video) {
     console.error('No camera is opened.')

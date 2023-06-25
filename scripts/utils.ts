@@ -1,8 +1,5 @@
-import fs from 'fs'
-import path from 'path'
-
-import { Logger } from '@yunyoujun/logger'
-export const logger = new Logger()
+import fs from 'node:fs'
+import path from 'node:path'
 
 // const DOCS_URL = "https://docs.augma.elpsy.cn";
 export const DIR_SRC = path.resolve(__dirname, '../packages')

@@ -4,7 +4,7 @@ import pkg from '../../../package.json'
 
 const toast = useAgmToast()
 
-const sendMessage = () => {
+function sendMessage() {
   // notify({
   //   title: 'GitHub',
   //   icon: 'mdi:github',
