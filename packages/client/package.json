@@ -31,7 +31,7 @@
     "@types/markdown-it-link-attributes": "^3.0.1",
     "@types/nprogress": "^0.2.0",
     "@vitejs/plugin-vue": "^4.2.3",
-    "critters": "^0.0.18",
+    "critters": "^0.0.19",
     "cross-env": "^7.0.3",
     "https-localhost": "^4.7.1",
     "markdown-it-link-attributes": "^4.0.1",

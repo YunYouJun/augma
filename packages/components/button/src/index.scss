@@ -1,9 +1,13 @@
 .agm-button {
   --agm-button-bg-color: white;
-  --agm-button-text-color: rgba(55,65,81,var(--un-text-opacity));
+  --agm-button-text-color: rgba(55, 65, 81, var(--un-text-opacity));
 }
 
 .agm-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   color: var(--agm-button-text-color);
   background-color: var(--agm-button-bg-color);
 
@@ -11,7 +15,7 @@
   line-height: 1;
 
   &:active {
-    box-shadow: 0 0 20px rgba(var(--un-shadow-color,31, 82, 144), 0.15);
+    box-shadow: 0 0 20px rgba(var(--un-shadow-color, 31, 82, 144), 0.15);
   }
 
   &.agm-button--icon {
@@ -22,7 +26,7 @@
   }
 }
 
-.dark{
+.dark {
   .agm-button {
     --agm-button-bg-color: black;
     --agm-button-text-color: white;

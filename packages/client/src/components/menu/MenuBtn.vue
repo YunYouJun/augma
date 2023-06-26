@@ -14,7 +14,10 @@ const menuItems = computed(() => ([
   {
     color: '#4dade0',
     icon: isDark.value ? 'i-ri-moon-line' : 'i-ri-sun-line',
-    do: toggleDark,
+    do: () => { 
+      console.log('toggledark')
+      toggleDark()
+    },
   },
 ]))
 </script>
@@ -38,7 +41,7 @@ const menuItems = computed(() => ([
         :key="i"
         icon
         :color="item.color"
-        @click="item.do"
+        @click="() => { item.do() }"
       >
         <AgmIcon :name="item.icon" />
       </AgmButton>
