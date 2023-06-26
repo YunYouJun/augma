@@ -9,7 +9,7 @@
     "url": "https://www.yunyoujun.cn"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsup"
   },
   "license": "MIT"
 }

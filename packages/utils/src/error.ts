@@ -5,6 +5,6 @@ class AugmaError extends Error {
   }
 }
 
-export default (scope: string, msg: string) => {
+export function throwAugmaError(scope: string, msg: string) {
   throw new AugmaError(`[${scope}] ${msg}`)
 }

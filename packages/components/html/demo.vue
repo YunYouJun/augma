@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AgmTypeArray } from '@augma/shared'
+import { AgmTypeArray } from '@augma/utils'
 import './index.scss'
 </script>
 

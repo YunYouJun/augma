@@ -1,4 +1,4 @@
-import type { ComponentSize } from '@augma/shared'
+import type { ComponentSize } from '@augma/utils'
 
 export interface InstallOptions {
   size: ComponentSize

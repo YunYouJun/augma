@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import isServer from './isServer'
+import { isServer } from '@augma/utils'
 import { getConfig } from './config'
 import { addClass, on, removeClass } from './dom'
 import { EVENT_CODE } from './aria'
@@ -236,4 +236,4 @@ if (!isServer) {
   })
 }
 
-export default PopupManager
+export { PopupManager }

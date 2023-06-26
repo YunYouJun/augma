@@ -8,12 +8,13 @@ import {
   onDeactivated,
   onMounted,
 } from 'vue'
-import throwError from '@augma/utils/error'
+import {throwAugmaError} from '@augma/utils'
 import defaultProps from './usePopper/default'
 
 import usePopper from './usePopper'
 
 const compName = 'AgmPopper'
+
 export default defineComponent({
   name: compName,
   props: defaultProps,

@@ -28,7 +28,7 @@ export function entries<T>(obj: Hash<T>): [string, T][] {
 export function useGlobalConfig(): AugmaOptions {
   const vm = getCurrentInstance()
   if ('$AUGMA' in vm.proxy)
-    return vm.proxy.$AUGMA
+    return vm.proxy.$AUGMA as AugmaOptions
 
   return {} as AugmaOptions
 }

@@ -1,7 +1,7 @@
 import type { App } from 'vue'
 
 import type { InstallOptions } from '@augma/utils/config'
-import type { ComponentSize } from '@augma/shared'
+import type { ComponentSize } from '@augma/utils'
 
 export * from './bottom-menu'
 export * from './button'

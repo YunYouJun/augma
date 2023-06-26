@@ -1,5 +1,5 @@
 import type { PropType } from 'vue'
-import type { Nullable } from '@augma/utils/types'
+import type { Nullable } from '@augma/types'
 import type {
   Placement,
   Instance as PopperInstance,

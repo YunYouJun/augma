@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import './index.scss'
-import type { AgmColorType } from '@augma/shared'
+import type { AgmColorType } from '@augma/utils'
 import { computed, onMounted } from 'vue'
 
 interface DisplayTime {

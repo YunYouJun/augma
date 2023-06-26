@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AgmTypeMap } from '@augma/shared'
+import { AgmTypeMap } from '@augma/utils'
 import AgmIndicator from './src/index.vue'
 </script>
 

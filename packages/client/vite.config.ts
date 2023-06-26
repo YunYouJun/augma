@@ -7,39 +7,26 @@ import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
-import Markdown from 'vite-plugin-md'
+import Markdown from 'vite-plugin-vue-markdown'
 import { VitePWA } from 'vite-plugin-pwa'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import Inspect from 'vite-plugin-inspect'
-
-import Unocss from 'unocss/vite'
-import { presetAttributify, presetUno } from 'unocss'
-import presetIcons from '@unocss/preset-icons'
+import UnoCSS from 'unocss/vite'
 
 import Prism from 'markdown-it-prism'
 import LinkAttributes from 'markdown-it-link-attributes'
 
-import { presetAugma } from '../augma/src/preset'
-import { alias } from '../shared/src/config'
+import { alias } from '../augma/node'
+
 import { AugmaResolver } from '../augma/src/resolver'
-import { safelist } from '../augma/src/preset/safelist'
 
 const markdownWrapperClasses = 'prose prose-sm m-auto text-left'
+
 export default defineConfig({
   resolve: {
     alias,
   },
   plugins: [
-    Unocss({
-      presets: [
-        presetAttributify({ /* preset options */}),
-        presetUno(),
-        presetIcons({ /* options */ }),
-        presetAugma(),
-      ],
-      safelist,
-    }),
-
     Vue({
       include: [/\.vue$/, /\.md$/],
     }),
@@ -67,6 +54,8 @@ export default defineConfig({
     // https://github.com/antfu/unplugin-vue-components
     Components({
       // allow auto load markdown components under `./src/components/`
+      dirs: ['src/components', '../src/components'],
+
       extensions: ['vue', 'md'],
 
       // allow auto import and register components used in markdown
@@ -88,13 +77,14 @@ export default defineConfig({
       dts: 'src/components.d.ts',
     }),
 
+    UnoCSS(),
+
     // https://github.com/antfu/unplugin-icons
     Icons({
       autoInstall: true,
     }),
 
-    // https://github.com/antfu/vite-plugin-md
-    // Don't need this? Try vitesse-lite: https://github.com/antfu/vitesse-lite
+    // https://github.com/antfu/vite-plugin-vue-markdown
     Markdown({
       wrapperClasses: markdownWrapperClasses,
       headEnabled: true,
@@ -154,27 +144,12 @@ export default defineConfig({
     }),
   ],
 
-  server: {
-    fs: {
-      strict: true,
-    },
-  },
-
   // https://github.com/antfu/vite-ssg
   ssgOptions: {
     script: 'async',
     formatting: 'minify',
-  },
-
-  optimizeDeps: {
-    include: [
-      'vue',
-      'vue-router',
-      '@vueuse/core',
-      '@vueuse/head',
-    ],
-    exclude: [
-      'vue-demi',
-    ],
+    crittersOptions: {
+      reduceInlineStyles: false,
+    },
   },
 })

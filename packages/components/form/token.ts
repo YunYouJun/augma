@@ -1,5 +1,5 @@
 import type { InjectionKey } from 'vue'
-import type { ComponentSize } from '@augma/shared'
+import type { ComponentSize } from '@augma/utils'
 
 export interface AgmFormContext {
   registerLabelWidth(width: number, oldWidth: number): void

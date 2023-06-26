@@ -2,5 +2,7 @@
   "name": "@augma/utils",
   "version": "0.0.0",
   "private": true,
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "license": "MIT"
 }

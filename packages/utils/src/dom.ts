@@ -1,5 +1,5 @@
 import { camelize } from '@vue/shared'
-import isServer from './isServer'
+import { isServer } from '@augma/utils'
 
 const trim = function (s: string) {
   return (s || '').replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, '')

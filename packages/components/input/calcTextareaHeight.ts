@@ -1,4 +1,4 @@
-import isServer from '@augma/utils/isServer'
+import { isServer } from '@augma/utils'
 
 let hiddenTextarea
 

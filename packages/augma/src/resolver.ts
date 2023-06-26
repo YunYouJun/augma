@@ -9,7 +9,7 @@ export function AugmaResolver(options: AugmaResolverOptions = {}): ComponentReso
       if (name.startsWith('Agm')) {
         return {
           from: 'augma',
-          importName: name,
+          name,
         }
       }
     },

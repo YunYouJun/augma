@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { AgmTypeMap } from '@augma/shared'
+import { AgmTypeMap } from '@augma/utils'
 import AgmCard from './src/index.vue'
 
 const types = ref(AgmTypeMap)

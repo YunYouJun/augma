@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getAgmColorByType } from '@augma/shared'
+import { getAgmColorByType } from '@augma/utils'
 import './index.scss'
 
 const props = withDefaults(defineProps<{

@@ -7,7 +7,7 @@ import {
   reactive,
   ref,
 } from 'vue'
-import { UPDATE_MODEL_EVENT } from '@augma/utils/constants'
+import { UPDATE_MODEL_EVENT } from '@augma/utils'
 import AgmSelectMenu from './SelectMenu.vue'
 import AgmOption from './Option.vue'
 

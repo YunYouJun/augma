@@ -17,7 +17,7 @@ import { presetAttributify, presetIcons, presetUno } from 'unocss'
 import { hasDemo } from '../scripts/utils'
 import { augmaChildren } from './metadata/src'
 
-import { alias } from './shared/src/config'
+import { alias } from './augma/src/node'
 
 // do not use './augma/src' directly to avoid ts load *.vue
 import { AugmaResolver } from './augma/src/resolver'
@@ -74,11 +74,6 @@ export default defineConfig({
       autoInstall: true,
     }),
 
-    // https://github.com/antfu/vite-plugin-windicss
-    // WindiCSS({
-    //   safelist,
-    // }),
-
     MarkdownTransform(),
 
     VitePWA({
@@ -97,10 +92,6 @@ export default defineConfig({
       },
     }),
   ],
-
-  optimizeDeps: {
-    include: ['vue', '@vueuse/core', 'vue-toastification', 'v-tooltip'],
-  },
 })
 
 function MarkdownTransform(): Plugin {

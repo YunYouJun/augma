@@ -4,11 +4,13 @@ import generatedRoutes from 'virtual:generated-pages'
 import { setupLayouts } from 'virtual:generated-layouts'
 import App from './App.vue'
 
+// https://github.com/antfu/unocss
+import '@unocss/reset/tailwind.css'
+
 // custom css
 import './styles/index.scss'
 import '@augma/components/styles/index.scss'
 
-// https://github.com/antfu/unocss
 import 'uno.css'
 
 import type { UserModule } from './types'

@@ -1,10 +1,9 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { createPopper } from '@popperjs/core'
 
-import PopupManager from '@augma/utils/popup-manager'
+import { PopupManager, isBool, isHTMLElement } from '@augma/utils'
 import type { CSSProperties, ComponentPublicInstance, SetupContext } from 'vue'
 
-import { isBool, isHTMLElement } from '@augma/utils/util'
 import type { WindowEventName } from '@vueuse/core'
 import type {
   IPopperOptions,

@@ -19,7 +19,6 @@
     "outDir": "dist",
     "paths": {
        "~/*": ["packages/client/src/*"],
-      "@augma/utils/*": ["packages/utils/src/*"],
       "@augma/components": ["packages/components/index.ts"],
       "@augma/components/*": ["packages/components/*"],
       "augma": ["packages/augma/src/index.ts"],

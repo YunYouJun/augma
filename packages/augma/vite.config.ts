@@ -2,7 +2,7 @@ import path from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-import { alias } from '../shared/src/config'
+import { alias } from './node'
 
 export default defineConfig({
   resolve: {
@@ -25,6 +25,7 @@ export default defineConfig({
         globals: {
           vue: 'Vue',
         },
+        exports: 'named',
       },
     },
   },

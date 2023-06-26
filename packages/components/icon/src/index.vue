@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import './index.scss'
-import { getAgmColorByType } from '@augma/shared'
+import { getAgmColorByType } from '@augma/utils'
 
 const props = withDefaults(defineProps<{
   /**
