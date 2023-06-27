@@ -1,4 +1,4 @@
-import { Color3, Engine, EnvironmentHelper, Scene, WebXRSessionManager } from '@babylonjs/core'
+import { Color4, Engine, Scene, WebXRSessionManager } from '@babylonjs/core'
 import { GlobalInstance } from './instance'
 
 // Required for EnvironmentHelper
@@ -12,7 +12,7 @@ import '@babylonjs/loaders/glTF'
 //  Uncaught (in promise) Build of NodeMaterial failed: input rgba from block
 //  FragmentOutput[FragmentOutputBlock] is not connected and is not optional.
 import '@babylonjs/core/Materials/Node/Blocks'
-import { createAugmaScene } from './augma'
+import { createARScene } from './augma'
 
 export function createEngine(canvas: HTMLCanvasElement) {
   const engine = new Engine(canvas, true)
@@ -42,31 +42,15 @@ export async function createWebXR(canvas: HTMLCanvasElement) {
 
   const engine = createEngine(canvas)
 
-  const augmaScene = createAugmaScene()
-  const scene = augmaScene
-
-  augmaScene.createDefaultXRExperienceAsync()
-
-  // Create a default environment (skybox, ground mesh, etc)
-  const envHelper = new EnvironmentHelper({
-    skyboxSize: 30,
-    groundColor: new Color3(0.5, 0.5, 0.5),
-  }, scene)
-
-  // Setup default WebXR experience
-  // Use the enviroment floor to enable teleportation
-  const xr = await augmaScene.createDefaultXRExperienceAsync({
-    floorMeshes: [envHelper.ground],
-    optionalFeatures: true,
-  })
+  // createVRScene
+  const scene = await createARScene()
+  scene.clearColor = new Color4(0, 0, 0, 0)
 
   engine.runRenderLoop(() => {
-    augmaScene.render()
+    scene.render()
   })
 
   return {
     engine,
-
-    xr,
   }
 }

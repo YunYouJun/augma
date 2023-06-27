@@ -11,7 +11,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@tensorflow/tfjs": "^3.13.0",
     "@vueuse/core": "^10.2.0",
     "@vueuse/head": "^1.1.26",
     "augma": "workspace:*",
@@ -50,7 +49,7 @@
   },
   "scripts": {
     "build": "vite build",
-    "dev": "vite",
+    "dev": "vite --host",
     "serve": "vite serve"
   }
 }
