@@ -12,6 +12,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import Inspect from 'vite-plugin-inspect'
 import UnoCSS from 'unocss/vite'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 import Prism from 'markdown-it-prism'
 import LinkAttributes from 'markdown-it-link-attributes'
@@ -142,7 +143,13 @@ export default defineConfig({
       // change this to enable inspect for debugging
       enabled: false,
     }),
+
+    basicSsl(),
   ],
+
+  server: {
+    https: true,
+  },
 
   // https://github.com/antfu/vite-ssg
   ssgOptions: {

@@ -1,10 +1,11 @@
 import path from 'node:path'
 
-export const alias = {
-  '~/': `${path.resolve(__dirname, '../../client/src')}/`,
-  'augma': `${path.resolve(__dirname, '../../augma/src/index.ts')}`,
-  '@augma/components/': `${path.resolve(__dirname, '../../components')}/`,
-  '@augma/components': `${path.resolve(__dirname, '../../components/index.ts')}`,
-  '@augma/utils': `${path.resolve(__dirname, '../../utils/src/index.ts')}`,
-  '@augma/hooks': `${path.resolve(__dirname, '../../hooks/src')}/`,
-}
+export const alias = [
+  { find: '~/', replacement: `${path.resolve(__dirname, '../../client/src')}/` },
+  { find: 'augma', replacement: `${path.resolve(__dirname, '../../augma/src/index.ts')}` },
+  { find: '@augma/components/', replacement: `${path.resolve(__dirname, '../../components')}/` },
+  { find: '@augma/components', replacement: `${path.resolve(__dirname, '../../components/index.ts')}` },
+  { find: '@augma/utils', replacement: `${path.resolve(__dirname, '../../utils/src/index.ts')}` },
+  { find: '@augma/hooks', replacement: `${path.resolve(__dirname, '../../hooks/src')}/` },
+  { find: /^@augma\/(.*)/, replacement: `${path.resolve(__dirname, '../../$1/src/index.ts')}` },
+]

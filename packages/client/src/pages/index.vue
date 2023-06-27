@@ -10,5 +10,6 @@ const camera = useCameraStore()
     :is-flip="camera.flipScreen"
     :is-front="camera.front"
   />
+  <AgmBabylon />
   <AugmaUi :opacity="0.95" />
 </template>

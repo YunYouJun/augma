@@ -1,6 +1,8 @@
 declare interface Window {
   // extend the window
+  WebXRPolyfill?: any
 }
+
 
 declare module '*.vue' {
   import type { DefineComponent } from 'vue'

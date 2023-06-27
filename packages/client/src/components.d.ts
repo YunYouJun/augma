@@ -7,12 +7,14 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AgmBabylon: typeof import('./components/AgmBabylon.vue')['default']
     AgmBottomMenu: typeof import('augma')['AgmBottomMenu']
     AgmButton: typeof import('augma')['AgmButton']
     AgmCard: typeof import('augma')['AgmCard']
     AgmClock: typeof import('augma')['AgmClock']
     AgmDialog: typeof import('augma')['AgmDialog']
     AgmIcon: typeof import('augma')['AgmIcon']
+    AgmIndicator: typeof import('augma')['AgmIndicator']
     AgmMap: typeof import('./components/app/AgmMap.vue')['default']
     AgmMenu: typeof import('augma')['AgmMenu']
     AgmSystemBar: typeof import('./components/ui/AgmSystemBar.vue')['default']

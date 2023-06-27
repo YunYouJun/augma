@@ -42,16 +42,16 @@ pnpm add augma
 ```
 
 ```ts
-import { createApp } from "vue";
-import App from "./App.vue";
+import { createApp } from 'vue'
+import augma from 'augma'
+import App from './App.vue'
 
-import augma from "augma";
-import "augma/style";
+import 'augma/style'
 
-const app = createApp(App);
+const app = createApp(App)
 
-app.use(augma);
-app.mount("#app");
+app.use(augma)
+app.mount('#app')
 ```
 
 ## Dev
@@ -69,6 +69,12 @@ pnpm dev
 # docs
 pnpm docs:dev
 ```
+
+### WebXR
+
+- [https://github.com/meta-quest/immersive-web-emulator/](https://github.com/meta-quest/immersive-web-emulator/)
+
+More Info see [WebXR | Babylon.js](https://doc.babylonjs.com/features/featuresDeepDive/webXR/introToWebXR).
 
 ## Monorepo
 
@@ -89,7 +95,3 @@ pnpm docs:dev
 - [vite](https://github.com/vitejs/vite)
 - [vitepress](https://github.com/vuejs/vitepress)
 - [vueuse](https://github.com/vueuse/vueuse)
-
-## Dependencies
-
-Use `@tensorflow/tfjs@1` for `tfjs-yolo` & `face-api.js`.

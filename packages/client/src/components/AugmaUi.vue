@@ -32,7 +32,6 @@ onMounted(() => {
 
     <AgmSystemBar />
     <AgmWindow />
-    <!-- <FaceApi :enable="app.faceDetection" /> -->
     <!-- <TfjsYolo :enable="app.yolo" /> -->
     <div class="augma-bottom-menu-container">
       <BottomMenu />

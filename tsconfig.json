@@ -2,12 +2,14 @@
   "compilerOptions": {
     "baseUrl": ".",
     "module": "ESNext",
-    "target": "es2016",
+    "target": "ESNext",
     "declaration": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "lib": ["ESNext", "DOM"],
     "types": [
+      "@babylonjs/core",
+      "webxr",
       "vite/client",
       "vite-plugin-pages/client",
       "vite-plugin-vue-layouts/client"
@@ -25,6 +27,6 @@
       "@augma/*": ["packages/*/src"],
     }
   },
-  "include": ["meta/**/*", "packages/**/*", "packages/.vitepress/**/*"],
+  "include": ["meta/**/*", "packages/**/*", "packages/.vitepress/**/*", "packages/shims.d.ts"],
   "exclude": ["dist", "node_modules"]
 }
