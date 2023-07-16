@@ -9,10 +9,12 @@ async function buildAll(targets: string[]) {
   await runParallel(os.cpus().length, targets, build)
 }
 
+type IteratorFn = (item: string, source: string[]) => Promise<void>
+
 async function runParallel(
   maxConcurrency: number,
   source: string[],
-  iteratorFn: Function,
+  iteratorFn: IteratorFn,
 ) {
   const ret = []
   const executing = []
