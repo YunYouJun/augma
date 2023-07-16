@@ -41,6 +41,7 @@ onMounted(() => {
   <div class="demo-color-box-group">
     <div
       v-for="color in auxiliaryColors"
+      :key="color.name"
       class="demo-color-box demo-color-box-other demo-color-box-lite"
       :style="{ background: color.value }"
     >

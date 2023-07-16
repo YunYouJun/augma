@@ -1,11 +1,10 @@
-const mdContainer = require('markdown-it-container')
+import mdContainer from 'markdown-it-container'
+import { extractCodeFromVueSFC } from './markdown-it/extractCode'
 
 const componentName = 'demo-block'
 
-const mdExtractCode = require('./extractCode')
-
-module.exports = (md) => {
-  md.use(mdExtractCode)
+export function markdownTransform(md: any) {
+  md.use(extractCodeFromVueSFC)
   md.use(mdContainer, 'demo', {
     render: (tokens, idx) => {
       const m = tokens[idx].info.trim().match(/^demo\s*(.*)$/)

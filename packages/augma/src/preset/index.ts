@@ -5,7 +5,7 @@ export * from './common'
 
 export interface AugmaOptions { }
 
-export function presetAugma(options = {}): Preset<{}> {
+export function presetAugma(_options = {}): Preset {
   return {
     name: 'unocss-preset-augma',
     theme: {

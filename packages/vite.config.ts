@@ -17,7 +17,7 @@ import { presetAttributify, presetIcons, presetUno } from 'unocss'
 import { hasDemo } from '../scripts/utils'
 import { augmaChildren } from './metadata/src'
 
-import { alias } from './augma/src/node'
+import { alias } from './augma/node'
 
 // do not use './augma/src' directly to avoid ts load *.vue
 import { AugmaResolver } from './augma/src/resolver'
@@ -26,9 +26,7 @@ import { safelist } from './augma/src/preset/safelist'
 
 export default defineConfig({
   resolve: {
-    alias: {
-      ...alias,
-    },
+    alias,
   },
   plugins: [
     Unocss({
@@ -114,7 +112,7 @@ function MarkdownTransform(): Plugin {
         if (hasDemo(pkg, name)) {
           const insertedCode
               = '\n<script setup>\nimport Demo from \'./demo.vue\'\n</script>\n'
-          const demoCode = `\n::: demo\n\n<<< ./packages/${pkg}/${name}/demo.vue\n\n:::\n`
+          const demoCode = '\n::: demo\n\n<<< ./demo.vue\n\n:::\n'
           // const demoCode = '\n<DemoContainer><Demo/></DemoContainer>\n'
           // header = `${insertedCode}\n# ${capitalize(name)}\n${demoCode}`
 

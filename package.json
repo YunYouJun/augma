@@ -1,8 +1,14 @@
 {
   "name": "@augma/monorepo",
-  "private": true,
   "version": "0.1.1",
+  "private": true,
   "packageManager": "pnpm@8.6.7",
+  "author": {
+    "name": "YunYouJun",
+    "email": "me@yunyoujun.cn",
+    "url": "https://www.yunyoujun.cn"
+  },
+  "license": "MIT",
   "repository": "https://github.com/YunYouJun/augma.git",
   "scripts": {
     "build:client": "pnpm -C packages/client build",
@@ -14,28 +20,30 @@
     "docs:build": "vitepress build packages",
     "docs:serve": "vitepress serve packages",
     "docs:theme": "cross-env NODE_ENV=dev:theme vitepress dev packages",
-    "lint": "eslint \"**/*.{vue,ts,js}\"",
-    "lint:fix": "eslint \"**/*.{vue,ts,js}\" --fix",
-    "release": "ts-node-script scripts/release.ts",
+    "lint": "eslint .",
+    "preinstall": "npm run update",
+    "release": "tsx scripts/release.ts",
     "typecheck": "vue-tsc --noEmit",
     "test:unit": "vitest",
     "test": "npm run test:unit",
-    "update": "ts-node-script scripts/update.ts"
+    "update": "tsx scripts/update.ts"
   },
-  "author": {
-    "name": "YunYouJun",
-    "email": "me@yunyoujun.cn",
-    "url": "https://www.yunyoujun.cn"
+  "dependencies": {
+    "@babylonjs/core": "^6.12.3",
+    "@vueuse/core": "^10.2.1",
+    "prism-theme-vars": "^0.2.4"
   },
-  "license": "MIT",
   "devDependencies": {
-    "@antfu/eslint-config": "^0.39.8",
+    "@antfu/eslint-config": "^0.39.7",
+    "@augma/components": "workspace:*",
+    "@augma/metadata": "workspace:*",
     "@augma/types": "workspace:*",
     "@iconify-json/ri": "^1.1.10",
     "@types/minimist": "^1.2.2",
     "@types/semver": "^7.5.0",
     "@types/webxr": "^0.5.2",
     "@unocss/eslint-config": "^0.53.5",
+    "augma": "workspace:*",
     "cross-env": "^7.0.3",
     "enquirer": "^2.3.6",
     "eslint": "^8.45.0",
@@ -56,10 +64,5 @@
     "vite-plugin-pwa": "^0.16.4",
     "vitepress": "1.0.0-beta.5",
     "vitest": "^0.33.0"
-  },
-  "dependencies": {
-    "@babylonjs/core": "^6.12.3",
-    "@vueuse/core": "^10.2.1",
-    "prism-theme-vars": "^0.2.4"
   }
 }

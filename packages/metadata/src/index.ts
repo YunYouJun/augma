@@ -3,6 +3,7 @@ import { categories } from './categories'
 import type { PackageIndexes } from './types'
 
 export * from './categories'
+export * from './types'
 
 export const indexes = _indexes as PackageIndexes
 

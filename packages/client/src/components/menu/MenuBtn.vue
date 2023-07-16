@@ -14,8 +14,7 @@ const menuItems = computed(() => ([
   {
     color: '#4dade0',
     icon: isDark.value ? 'i-ri-moon-line' : 'i-ri-sun-line',
-    do: () => { 
-      console.log('toggledark')
+    do: () => {
       toggleDark()
     },
   },

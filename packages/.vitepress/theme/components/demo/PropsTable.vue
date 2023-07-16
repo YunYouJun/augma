@@ -9,9 +9,11 @@ export interface ComponentPropType {
   default: any
 }
 
-defineProps<{
+withDefaults(defineProps<{
   props: ComponentPropType[]
-}>()
+}>(), {
+  props: () => [],
+})
 </script>
 
 <template>

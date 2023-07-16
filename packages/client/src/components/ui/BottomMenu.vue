@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import pkg from '../../../package.json'
 import { useCameraStore } from '~/stores/camera'
 import { useAppStore } from '~/stores/app'
 
@@ -7,7 +6,7 @@ const app = useAppStore()
 const camera = useCameraStore()
 
 const mode = ref('use')
-const browser = ref(false)
+// const browser = ref(false)
 
 function screenshot() {
   const video = camera.videoEl
@@ -83,13 +82,14 @@ onMounted(() => {
 })
 
 function openGithubNotification() {
-  this.$notify({
-    title: 'GitHub',
-    icon: 'mdi:github',
-    color: 'black',
-    message: `<a href="${pkg.repository}" target="_blank">${pkg.repository}</a>`,
-    // showClose: true,
-  })
+  // todo composition api
+  // this.$notify({
+  //   title: 'GitHub',
+  //   icon: 'mdi:github',
+  //   color: 'black',
+  //   message: `<a href="${pkg.repository}" target="_blank">${pkg.repository}</a>`,
+  //   // showClose: true,
+  // })
 }
 </script>
 

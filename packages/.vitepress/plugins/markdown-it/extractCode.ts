@@ -1,7 +1,10 @@
-const fs = require('node:fs')
-const path = require('node:path')
+import fs from 'node:fs'
+import path from 'node:path'
+import process from 'node:process'
 
-function extractCodeFromVueSFC(md, options = {}) {
+export function extractCodeFromVueSFC(md: any, options = {
+  root: '',
+}) {
   const root = options.root || path.join(process.cwd())
 
   md.core.ruler.after('block', 'extract-code', (state) => {
@@ -27,7 +30,7 @@ function extractCodeFromVueSFC(md, options = {}) {
       return regex.test(content.trim())
     }
 
-    function getHandledTokens(htmlToken, toks) {
+    function getHandledTokens(htmlToken, toks = []) {
       const tokens = toks || []
       let content = htmlToken.content
 
@@ -49,6 +52,7 @@ function extractCodeFromVueSFC(md, options = {}) {
       const filename = rawPath.split(/\?/).shift()
       const partName = rawPath.replace(filename, '').substr(1)
       token.info = filename.split('.').pop()
+
       content = fs.existsSync(filename)
         ? fs.readFileSync(filename).toString()
         : `Not found: ${filename}`
@@ -79,15 +83,16 @@ function extractCodeFromVueSFC(md, options = {}) {
       token.block = true
 
       if (nesting < 0)
+        // eslint-disable-next-line @typescript-eslint/no-invalid-this
         this.level--
 
+      // eslint-disable-next-line @typescript-eslint/no-invalid-this
       token.level = this.level
       if (nesting > 0)
+        // eslint-disable-next-line @typescript-eslint/no-invalid-this
         this.level++
 
       return token
     }
   })
 }
-
-module.exports = extractCodeFromVueSFC

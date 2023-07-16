@@ -2,11 +2,15 @@
   "name": "@augma/components",
   "version": "0.0.1",
   "private": true,
-  "main": "index.ts",
   "author": {
     "email": "me@yunyoujun.cn",
     "name": "YunYouJun",
     "url": "https://www.yunyoujun.cn"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "exports": {
+    ".": "./index.ts",
+    "./*": "./*"
+  },
+  "main": "index.ts"
 }

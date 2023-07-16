@@ -1,5 +1,6 @@
 /* eslint-disable no-new */
 import { AnimationPropertiesOverride, ArcRotateCamera, Color3, DirectionalLight, EnvironmentHelper, FreeCamera, HemisphericLight, MeshBuilder, PolygonMeshBuilder, Quaternion, Scene, SceneLoader, ShadowGenerator, StandardMaterial, Vector2, Vector3, WebXRAnchorSystem, WebXRBackgroundRemover, WebXRHitTest, WebXRPlaneDetector, WebXRState } from '@babylonjs/core'
+import consola from 'consola'
 import { GlobalInstance } from './instance'
 
 export async function createVRScene() {
@@ -140,9 +141,9 @@ export async function createARScene() {
   mat2.diffuseColor = Color3.Blue()
 
   if (anchors) {
-    console.log('anchors attached')
+    consola.info('anchors attached')
     anchors.onAnchorAddedObservable.add((anchor) => {
-      console.log('attaching', anchor)
+      consola.log('attaching', anchor)
       b.isVisible = true
       anchor.attachedNode = b.clone('mensch')
       anchor.attachedNode.skeleton = skeleton.clone('skelet')
@@ -152,7 +153,7 @@ export async function createARScene() {
     })
 
     anchors.onAnchorRemovedObservable.add((anchor) => {
-      console.log('disposing', anchor)
+      consola.log('disposing', anchor)
       if (anchor) {
         anchor.attachedNode.isVisible = false
         anchor.attachedNode.dispose()
@@ -215,7 +216,9 @@ export async function createARScene() {
 
   xr.baseExperience.sessionManager.onXRSessionInit.add(() => {
     planes.forEach(plane => plane.dispose())
-    while (planes.pop()) { }
+    while (planes.pop()) {
+      //
+    }
   })
 
   return scene

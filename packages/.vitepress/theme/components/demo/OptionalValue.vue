@@ -25,10 +25,10 @@ function acceptedValuesByType(type: OptionalType) {
 
 <template>
   <VMenu v-if="type === 'AgmColorType'">
-    <code class="text-purple-600 cursor-pointer">{{ type }}</code>
+    <code class="cursor-pointer text-purple-600">{{ type }}</code>
 
     <template #popper>
-      <code v-for="(value) in acceptedValuesByType(type)" class="mr-1 " text="sm" :class="`text-${value}-500`">
+      <code v-for="(value) in acceptedValuesByType(type)" :key="value" class="mr-1" text="sm" :class="`text-${value}-500`">
         <span>
           {{ value }}
         </span>
@@ -36,10 +36,10 @@ function acceptedValuesByType(type: OptionalType) {
     </template>
   </VMenu>
   <template v-else-if="type === 'boolean'">
-    <code class="text-green-600 mr-1">true</code>
+    <code class="mr-1 text-green-600">true</code>
     <code class="text-red-600">false</code>
   </template>
-  <code v-for="(value) in acceptedValuesByType(type)" v-else class="mr-1">
+  <code v-for="(value) in acceptedValuesByType(type)" v-else :key="value" class="mr-1">
     <span>
       {{ value }}
       <!-- {{ formatValues(acceptedValuesByType(type)) }} -->

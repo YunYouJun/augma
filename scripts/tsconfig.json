@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@augma/*": ["../packages/*/src/index.ts"]
+    }
   }
 }

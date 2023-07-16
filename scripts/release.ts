@@ -1,13 +1,14 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
+import process from 'node:process'
 import minimist from 'minimist'
 import { prompt } from 'enquirer'
 import { execa } from 'execa'
 import semver from 'semver'
 
+import consola from 'consola'
 import pkg from '../package.json'
-import { logger } from './utils'
 
 const currentVersion = pkg.version
 
@@ -67,16 +68,16 @@ async function main() {
     return
 
   // update all package versions and inter-dependencies
-  logger.debug('Updating cross dependencies...')
+  consola.debug('Updating cross dependencies...')
   updateVersions(targetVersion)
 
   // build packages
-  logger.debug('Building all packages...')
+  consola.debug('Building all packages...')
   await run('pnpm', ['build'])
 
   // publish package
   console.log()
-  logger.debug('Publishing packages...')
+  consola.debug('Publishing packages...')
   await publishPackage('augma', targetVersion)
 }
 
@@ -124,7 +125,7 @@ function updateDeps(pkg: any, depType: string, version: string) {
       || (dep.startsWith(`@${pkgName}`)
         && packages.includes(dep.replace(`@${pkgName}`, '')))
     ) {
-      logger.warning(`${pkg.name} -> ${depType} -> ${dep}@${version}`)
+      consola.warn(`${pkg.name} -> ${depType} -> ${dep}@${version}`)
       deps[dep] = version
     }
   })
@@ -137,7 +138,7 @@ async function publishPackage(pkgName: string, version: string) {
   if (pkg.private)
     return
 
-  logger.debug(`Publishing [${pkgName}]...`)
+  consola.debug(`Publishing [${pkgName}]...`)
   try {
     await run(
       'pnpm',
@@ -147,11 +148,11 @@ async function publishPackage(pkgName: string, version: string) {
         stdio: 'pipe',
       },
     )
-    logger.success(`Successfully published ${pkgName}@${version}`)
+    consola.success(`Successfully published ${pkgName}@${version}`)
   }
   catch (e) {
     if (e.stderr.match(/previously published/))
-      logger.error(`Skipping already published: ${pkgName}`)
+      consola.error(`Skipping already published: ${pkgName}`)
     else
       throw e
   }

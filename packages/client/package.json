@@ -2,14 +2,19 @@
   "name": "@augma/client",
   "version": "0.0.1",
   "private": "true",
-  "main": "index.js",
-  "repository": "https://github.com/YunYouJun/augma.git",
   "author": {
     "email": "me@yunyoujun.cn",
     "name": "YunYouJun",
     "url": "https://www.yunyoujun.cn"
   },
   "license": "MIT",
+  "repository": "https://github.com/YunYouJun/augma.git",
+  "main": "index.js",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite --host",
+    "serve": "vite serve"
+  },
   "dependencies": {
     "@vueuse/core": "^10.2.1",
     "@vueuse/head": "^1.1.26",
@@ -46,10 +51,5 @@
     "vite-plugin-vue-markdown": "^0.23.5",
     "vite-ssg": "^0.23.0",
     "vue-tsc": "^1.8.5"
-  },
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite --host",
-    "serve": "vite serve"
   }
 }

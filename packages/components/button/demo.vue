@@ -30,7 +30,7 @@ const iconItems = [
 </script>
 
 <template>
-  <div class="flex justify-between flex-wrap">
+  <div class="flex flex-wrap justify-between">
     <AgmButton class="m-2">
       Button
     </AgmButton>
@@ -39,7 +39,7 @@ const iconItems = [
     </AgmButton>
   </div>
 
-  <div class="flex justify-between flex-wrap">
+  <div class="flex flex-wrap justify-between">
     <AgmButton
       v-for="(item, i) in iconItems"
       :key="i"
@@ -51,7 +51,7 @@ const iconItems = [
     </AgmButton>
   </div>
 
-  <div class="flex justify-between flex-wrap">
+  <div class="flex flex-wrap justify-between">
     <AgmButton
       v-for="(item, i) in iconItems"
       :key="i"

@@ -1,15 +1,15 @@
 {
   "name": "@augma/hooks",
   "version": "0.0.1",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "author": {
     "email": "me@yunyoujun.cn",
     "name": "YunYouJun",
     "url": "https://www.yunyoujun.cn"
   },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup"
-  },
-  "license": "MIT"
+  }
 }

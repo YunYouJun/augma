@@ -2,7 +2,7 @@ import type { ComponentResolver } from 'unplugin-vue-components'
 
 export interface AugmaResolverOptions {}
 
-export function AugmaResolver(options: AugmaResolverOptions = {}): ComponentResolver {
+export function AugmaResolver(_options: AugmaResolverOptions = {}): ComponentResolver {
   return {
     type: 'component',
     resolve(name: string) {

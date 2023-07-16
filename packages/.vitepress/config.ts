@@ -1,8 +1,8 @@
 import { capitalize } from 'vue'
 import type { DefaultTheme, UserConfig } from 'vitepress'
-import { categories, indexes } from '@augma/metadata'
+import { categories, indexes } from '../metadata/src'
 
-import mdConfig from './plugins/markdown'
+import { markdownTransform } from './plugins/markdown'
 
 const config: UserConfig<DefaultTheme.Config> = {
   // extends: baseConfig,
@@ -11,7 +11,7 @@ const config: UserConfig<DefaultTheme.Config> = {
   description: 'AR UI Framework',
 
   markdown: {
-    config: mdConfig,
+    config: markdownTransform,
   },
 
   themeConfig: {
@@ -62,10 +62,6 @@ function getGuideSidebar() {
       ],
     },
   ]
-}
-
-function getCategories(type) {
-  return categories[type]
 }
 
 /**

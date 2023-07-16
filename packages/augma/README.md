@@ -13,14 +13,14 @@ pnpm add augma
 ```
 
 ```ts
-import { createApp } from "vue";
-import App from "./App.vue";
+import { createApp } from 'vue'
+import augma from 'augma'
+import App from './App.vue'
 
-import augma from "augma";
-import "augma/style";
+import 'augma/style'
 
-const app = createApp(App);
+const app = createApp(App)
 
-app.use(augma);
-app.mount("#app");
+app.use(augma)
+app.mount('#app')
 ```

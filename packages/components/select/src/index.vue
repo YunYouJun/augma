@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { AgmInput, AgmPopper } from 'augma'
 import { onClickOutside } from '@vueuse/core'
 import {
   onMounted,
@@ -8,8 +7,6 @@ import {
   ref,
 } from 'vue'
 import { UPDATE_MODEL_EVENT } from '@augma/utils'
-import AgmSelectMenu from './SelectMenu.vue'
-import AgmOption from './Option.vue'
 
 import type { ISelectOption } from './useOption'
 import { selectKey } from './useOption'
@@ -18,7 +15,7 @@ const props = defineProps<{
   modelValue: ISelectOption
   options: ISelectOption[]
   placeholder: string
-  callback: Function
+  callback: (val: ISelectOption) => void
 }>()
 
 const emit = defineEmits([UPDATE_MODEL_EVENT])
@@ -67,7 +64,7 @@ provide(
 
 <template>
   <div ref="selectWrapper" class="agm-select" @click.stop="">
-    <AgmPopper ref="popperRef" placement="bottom" trigger="click">
+    <!-- <AgmPopper ref="popperRef" placement="bottom" trigger="click">
       <template #trigger>
         <AgmInput
           v-model="currentOption.label"
@@ -85,6 +82,6 @@ provide(
           />
         </AgmSelectMenu>
       </template>
-    </AgmPopper>
+    </AgmPopper> -->
   </div>
 </template>

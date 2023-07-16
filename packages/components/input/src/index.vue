@@ -14,11 +14,8 @@ import {
 } from 'vue'
 
 import { useAttrs } from '@augma/hooks'
-import { UPDATE_MODEL_EVENT, VALIDATE_STATE_MAP } from '@augma/utils'
+import { UPDATE_MODEL_EVENT, VALIDATE_STATE_MAP, isServer, isValidComponentSize, useGlobalConfig } from '@augma/utils'
 import { isObject } from '@vue/shared'
-import { useGlobalConfig } from '@augma/utils'
-import { isServer } from '@augma/utils'
-import { isValidComponentSize } from '@augma/utils'
 import { AgmIcon, agmFormItemKey, agmFormKey } from 'augma'
 
 import type { PropType } from 'vue'
@@ -420,31 +417,35 @@ export default defineComponent({
 </script>
 
 <template>
-  <div :class="[
-    type === 'textarea' ? 'agm-textarea' : 'agm-input',
-    inputSize ? `agm-input--${inputSize}` : '',
-    {
-      'is-disabled': inputDisabled,
-      'is-exceed': inputExceed,
-      'agm-input-group': $slots.prepend || $slots.append,
-      'agm-input-group--append': $slots.append,
-      'agm-input-group--prepend': $slots.prepend,
-      'agm-input--prefix': $slots.prefix || prefixIcon,
-      'agm-input--suffix':
-        $slots.suffix || suffixIcon || clearable || showPassword,
-    },
-    $attrs.class,
-  ]" :style="$attrs.style" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+  <div
+    :class="[
+      type === 'textarea' ? 'agm-textarea' : 'agm-input',
+      inputSize ? `agm-input--${inputSize}` : '',
+      {
+        'is-disabled': inputDisabled,
+        'is-exceed': inputExceed,
+        'agm-input-group': $slots.prepend || $slots.append,
+        'agm-input-group--append': $slots.append,
+        'agm-input-group--prepend': $slots.prepend,
+        'agm-input--prefix': $slots.prefix || prefixIcon,
+        'agm-input--suffix':
+          $slots.suffix || suffixIcon || clearable || showPassword,
+      },
+      $attrs.class,
+    ]" :style="$attrs.style" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave"
+  >
     <template v-if="type !== 'textarea'">
       <!-- 前置元素 -->
       <div v-if="$slots.prepend" class="agm-input-group__prepend">
         <slot name="prepend" />
       </div>
-      <input v-if="type !== 'textarea'" ref="input" class="agm-input__inner" v-bind="attrs"
+      <input
+        v-if="type !== 'textarea'" ref="input" class="agm-input__inner" v-bind="attrs"
         :type="showPassword ? (passwordVisible ? 'text' : 'password') : type" :disabled="inputDisabled"
         :readonly="readonly" :autocomplete="autocomplete" :tabindex="tabindex" :aria-label="label"
         :placeholder="placeholder" @input="handleInput" @focus="handleFocus" @blur="handleBlur" @change="handleChange"
-        @keydown="handleKeydown">
+        @keydown="handleKeydown"
+      >
       <!-- 前置内容 -->
       <span v-if="$slots.prefix || prefixIcon" class="agm-input__prefix">
         <slot name="prefix" />
@@ -474,9 +475,11 @@ export default defineComponent({
     </template>
 
     <!-- v-bind="attrs" -->
-    <textarea v-else ref="textarea" class="agm-textarea__inner" :tabindex="tabindex" :disabled="inputDisabled"
+    <textarea
+      v-else ref="textarea" class="agm-textarea__inner" :tabindex="tabindex" :disabled="inputDisabled"
       :readonly="readonly" :autocomplete="autocomplete" :style="textareaStyle" :aria-label="label"
-      :placeholder="placeholder" @input="handleInput" @focus="handleFocus" @blur="handleBlur" @change="handleChange" />
+      :placeholder="placeholder" @input="handleInput" @focus="handleFocus" @blur="handleBlur" @change="handleChange"
+    />
     <span v-if="isWordLimitVisible && type === 'textarea'" class="agm-input__count">{{ textLength }}/{{ upperLimit }}
     </span>
   </div>

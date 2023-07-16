@@ -2,28 +2,28 @@
   "name": "augma",
   "version": "0.1.1",
   "description": "AR UI Framework",
-  "main": "dist/augma.es.js",
-  "module": "dist/augma.es.js",
-  "exports": {
-    ".": {
-      "import": "./dist/augma.es.js",
-      "require": "./dist/augma.umd.js"
-    },
-    "./style": "./dist/style.css"
-  },
-  "style": "dist/style.css",
-  "repository": "https://github.com/YunYouJun/augma.git",
   "author": {
     "email": "me@yunyoujun.cn",
     "name": "YunYouJun",
     "url": "https://www.yunyoujun.cn"
   },
+  "license": "MIT",
+  "repository": "https://github.com/YunYouJun/augma.git",
   "keywords": [
     "AR",
     "UI",
     "Framework"
   ],
-  "license": "MIT",
+  "exports": {
+    ".": {
+      "require": "./dist/augma.umd.js",
+      "import": "./dist/augma.es.js"
+    },
+    "./style": "./dist/style.css"
+  },
+  "main": "dist/augma.es.js",
+  "module": "dist/augma.es.js",
+  "style": "dist/style.css",
   "scripts": {
     "build": "vite build",
     "dev": "vite"
@@ -32,14 +32,14 @@
     "@vueuse/core": "^4.4.1",
     "vue": "^3.0.7"
   },
+  "dependencies": {
+    "@popperjs/core": "^2.11.8"
+  },
   "devDependencies": {
     "@vitejs/plugin-basic-ssl": "^1.0.1",
     "@vitejs/plugin-vue": "^4.2.3",
     "sass": "^1.63.6",
     "v-tooltip": "^4.0.0-beta.17",
     "vue-toastification": "^2.0.0-rc.5"
-  },
-  "dependencies": {
-    "@popperjs/core": "^2.11.8"
   }
 }

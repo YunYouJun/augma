@@ -2,8 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import fg from 'fast-glob'
 import matter from 'gray-matter'
-
-import type { Component, Hook, PackageIndexes } from '../meta/types'
+import type { Component, Hook, PackageIndexes } from '@augma/metadata'
 
 import { DIR_SRC, hasDemo } from './utils'
 

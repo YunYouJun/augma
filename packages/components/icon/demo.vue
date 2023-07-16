@@ -30,7 +30,7 @@ const iconItems = [
 </script>
 
 <template>
-  <div class="flex justify-between flex-wrap">
+  <div class="flex flex-wrap justify-between">
     <AgmButton
       v-for="(item, i) in iconItems"
       :key="i"
@@ -42,7 +42,7 @@ const iconItems = [
     </AgmButton>
   </div>
 
-  <div class="flex justify-between flex-wrap">
+  <div class="flex flex-wrap justify-between">
     <AgmButton
       v-for="(item, i) in iconItems"
       :key="i"
@@ -54,7 +54,7 @@ const iconItems = [
       <AgmIcon :name="item.icon" />
     </AgmButton>
   </div>
-  <div class="logo-demo text-center mt-5">
+  <div class="logo-demo mt-5 text-center">
     <AgmIcon
       name="i-mdi-do-not-disturb-off"
       color="var(--agm-color-danger)"

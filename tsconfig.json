@@ -20,11 +20,11 @@
     "allowSyntheticDefaultImports": true,
     "outDir": "dist",
     "paths": {
-       "~/*": ["packages/client/src/*"],
-      "@augma/components": ["packages/components/index.ts"],
+      "~/*": ["packages/client/src/*"],
       "@augma/components/*": ["packages/components/*"],
-      "augma": ["packages/augma/src/index.ts"],
-      "@augma/*": ["packages/*/src"],
+      "@augma/components": ["packages/components/index.ts"],
+      "@augma/*": ["packages/*/src/index.ts"],
+      "augma": ["packages/augma/src/index.ts"]
     }
   },
   "include": ["meta/**/*", "packages/**/*", "packages/.vitepress/**/*", "packages/shims.d.ts"],

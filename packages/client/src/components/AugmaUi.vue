@@ -1,11 +1,7 @@
 <script lang="ts" setup>
-import { useAppStore } from '~/stores/app'
-
 const props = defineProps<{ opacity: number }>()
 
 const loadingContainer = ref()
-
-const app = useAppStore()
 
 const styles = computed(() => ({
   opacity: props.opacity,

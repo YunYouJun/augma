@@ -51,7 +51,7 @@ pnpm add -D @iconify/iconify @iconify/json
 
 ```ts
 // import "https://code.iconify.design/2/2.0.0-rc.6/iconify.min.js";
-import "@iconify/iconify";
+import '@iconify/iconify'
 ```
 
 #### Without API
@@ -61,10 +61,11 @@ import "@iconify/iconify";
 ##### 添加图标集
 
 ```ts
-import Iconify from "@iconify/iconify/dist/iconify.without-api.min.js";
-import mdiIcons from "@iconify/json/json/mdi.json";
+import Iconify from '@iconify/iconify/dist/iconify.without-api.min.js'
+import mdiIcons from '@iconify/json/json/mdi.json'
+
 // import carbonIcons from "@iconify/json/json/carbon.json";
-Iconify.addCollection(mdiIcons);
+Iconify.addCollection(mdiIcons)
 // Iconify.addCollection(carbonIcons);
 ```
 
