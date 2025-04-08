@@ -2,25 +2,25 @@
 // import 'virtual:windi-base.css'
 // import 'virtual:windi-components.css'
 
-// https://github.com/antfu/unocss
-import 'uno.css'
+import type { Theme } from 'vitepress'
+
+import VTooltip from 'v-tooltip'
 
 import DefaultTheme from 'vitepress/theme'
+
+import Toast from 'vue-toastification'
+
+// https://github.com/antfu/unocss
+import 'uno.css'
 
 // custom css
 // import augma from "augma";
 // import "@augma/components/styles/index.scss";
 // custom css
 import './styles/index.scss'
-
-import Toast from 'vue-toastification'
-
 // Import the CSS or use your own!
 import 'vue-toastification/dist/index.css'
-
-import VTooltip from 'v-tooltip'
 import 'v-tooltip/dist/v-tooltip.css'
-import type { Theme } from 'vitepress'
 
 // windicss utilities should be the last style import
 // import 'virtual:windi-utilities.css'

@@ -9,7 +9,7 @@ export interface SelectContext {
   props: {
     placeholder: string
   }
-  handleOptionSelect(val: ISelectOption): void
+  handleOptionSelect: (val: ISelectOption) => void
 }
 
 export const selectKey = ('AgmSelect' as unknown) as InjectionKey<SelectContext>

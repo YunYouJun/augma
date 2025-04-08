@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import './index.scss'
 import { UPDATE_MODEL_EVENT } from 'augma'
+import './index.scss'
 
 const props = withDefaults(defineProps<{
   modelValue: boolean

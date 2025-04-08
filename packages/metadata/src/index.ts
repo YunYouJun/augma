@@ -1,6 +1,6 @@
+import type { PackageIndexes } from './types'
 import _indexes from '../indexes.json'
 import { categories } from './categories'
-import type { PackageIndexes } from './types'
 
 export * from './categories'
 export * from './types'

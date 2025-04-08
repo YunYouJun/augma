@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useWebcam } from '@augma/hooks'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useCameraStore } from '~/stores/camera'
 
 const props = withDefaults(defineProps<{

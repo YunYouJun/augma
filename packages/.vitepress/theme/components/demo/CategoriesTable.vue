@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { capitalize } from 'vue'
 import { categories as _categories } from '@augma/metadata'
+import { capitalize } from 'vue'
 
 const props = withDefaults(defineProps<{ type?: string }>(), {
   type: 'components',

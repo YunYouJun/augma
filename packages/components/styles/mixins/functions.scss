@@ -1,4 +1,4 @@
-@use "config" as *;
+@use 'config' as *;
 
 @mixin mobile {
   @media screen and (max-width: 768px) {
@@ -7,7 +7,7 @@
 }
 
 @mixin b($block) {
-  $B: $namespace + "-" + $block !global;
+  $B: $namespace + '-' + $block !global;
 
   .#{$B} {
     @content;

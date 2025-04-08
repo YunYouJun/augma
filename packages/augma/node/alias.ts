@@ -1,5 +1,5 @@
-import path from 'node:path'
 import type { Alias } from 'vite'
+import path from 'node:path'
 
 export const alias: Alias[] = [
   { find: '~/', replacement: `${path.resolve(__dirname, '../../client/src')}/` },

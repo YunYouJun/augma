@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import './index.scss'
 import type { AgmColorType } from '@augma/utils'
 import { computed, onMounted } from 'vue'
+import './index.scss'
 
 interface DisplayTime {
   hour: number

@@ -1,6 +1,6 @@
-import type { App } from 'vue'
-
 import type { ComponentSize, InstallOptions } from '@augma/utils'
+
+import type { App } from 'vue'
 
 export * from './bottom-menu'
 export * from './button'
@@ -8,8 +8,8 @@ export * from './card'
 export * from './clock'
 export * from './dialog'
 export * from './form'
-export * from './indicator'
 export * from './icon'
+export * from './indicator'
 export * from './input'
 export * from './menu'
 export * from './select'

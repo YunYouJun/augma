@@ -1,9 +1,9 @@
-import type { InjectionKey } from 'vue'
 import type { ComponentSize } from '@augma/utils'
+import type { InjectionKey } from 'vue'
 
 export interface AgmFormContext {
-  registerLabelWidth(width: number, oldWidth: number): void
-  deregisterLabelWidth(width: number): void
+  registerLabelWidth: (width: number, oldWidth: number) => void
+  deregisterLabelWidth: (width: number) => void
   autoLabelWidth: string | undefined
   emit: (evt: string, ...args: any[]) => void
   labelSuffix: string
@@ -23,11 +23,11 @@ export interface AgmFormItemContext {
   prop?: string
   size: ComponentSize
   validateState: string
-  updateComputedLabelWidth(width: number): void
-  addValidateEvents(): void
-  removeValidateEvents(): void
-  resetField(): void
-  clearValidate(): void
+  updateComputedLabelWidth: (width: number) => void
+  addValidateEvents: () => void
+  removeValidateEvents: () => void
+  resetField: () => void
+  clearValidate: () => void
 }
 
 // provide form ctx

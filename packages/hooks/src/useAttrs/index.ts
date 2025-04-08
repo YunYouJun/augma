@@ -1,5 +1,5 @@
-import { getCurrentInstance, reactive, shallowRef, watchEffect } from 'vue'
 import { entries } from '@augma/utils'
+import { getCurrentInstance, reactive, shallowRef, watchEffect } from 'vue'
 
 interface Params {
   excludeListeners?: boolean
@@ -23,8 +23,9 @@ export function useAttrs(params: Params = {}) {
       if (
         !allExcludeKeys.includes(key)
         && !(excludeListeners && LISTENER_PREFIX.test(key))
-      )
+      ) {
         acm[key] = val
+      }
 
       return acm
     }, {})

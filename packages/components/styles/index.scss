@@ -1,13 +1,13 @@
-@use "../color/" as *;
-@use "../html/" as *;
-@use "variables" as *;
-@use "reset";
-@use "global";
+@use '../color/' as *;
+@use '../html/' as *;
+@use 'variables' as *;
+@use 'reset';
+@use 'global';
 
-@use "mixins" as *;
-@use "common";
+@use 'mixins' as *;
+@use 'common';
 
-@use "components";
+@use 'components';
 
 :root {
   --agm-color-brand: #{$agm-brand};

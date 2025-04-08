@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useCameraStore } from '~/stores/camera'
 import { useAppStore } from '~/stores/app'
+import { useCameraStore } from '~/stores/camera'
 
 const app = useAppStore()
 const camera = useCameraStore()

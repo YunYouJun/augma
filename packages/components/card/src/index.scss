@@ -39,9 +39,9 @@
     padding-top: 0.6rem;
   }
 
-  @include card-type("primary");
-  @include card-type("success");
-  @include card-type("warning");
-  @include card-type("danger");
-  @include card-type("info");
+  @include card-type('primary');
+  @include card-type('success');
+  @include card-type('warning');
+  @include card-type('danger');
+  @include card-type('info');
 }

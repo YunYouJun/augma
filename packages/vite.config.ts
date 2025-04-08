@@ -1,24 +1,22 @@
-import { resolve } from 'node:path'
-import { defineConfig } from 'vite'
 import type { Plugin } from 'vite'
+import { resolve } from 'node:path'
+import Unocss from 'unocss/vite'
 
-import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
+import Icons from 'unplugin-icons/vite'
 import Components from 'unplugin-vue-components/vite'
 
-import { VitePWA } from 'vite-plugin-pwa'
+import { defineConfig } from 'vite'
 
 import { capitalize } from 'vue'
 
-import Unocss from 'unocss/vite'
-
 import { hasDemo } from '../scripts/utils'
-import { augmaChildren } from './metadata/src'
-
 import { alias } from './augma/node'
 
 // do not use './augma/src' directly to avoid ts load *.vue
 import { AugmaResolver } from './augma/src/resolver'
+
+import { augmaChildren } from './metadata/src'
 
 export default defineConfig({
   resolve: {
@@ -29,7 +27,7 @@ export default defineConfig({
 
     // https://github.com/antfu/unplugin-vue-components
     Components({
-      dirs: [resolve(__dirname, './.vitepress')],
+      dirs: [resolve(import.meta.dirname, './.vitepress')],
 
       // allow auto load markdown components under `./src/components/`
       extensions: ['vue', 'md'],
@@ -57,22 +55,6 @@ export default defineConfig({
     }),
 
     MarkdownTransform(),
-
-    VitePWA({
-      outDir: '.vitepress/dist',
-      manifest: {
-        name: 'Augma Docs',
-        short_name: 'Augma',
-        theme_color: '#557591',
-        icons: [
-          {
-            src: '/logo.png',
-            sizes: '240x240',
-            type: 'image/png',
-          },
-        ],
-      },
-    }),
   ],
 })
 

@@ -1,5 +1,5 @@
-import { capitalize } from 'vue'
 import type { DefaultTheme, UserConfig } from 'vitepress'
+import { capitalize } from 'vue'
 import { categories, indexes } from '../metadata/src'
 
 import { markdownTransform } from './plugins/markdown'

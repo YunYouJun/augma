@@ -1,7 +1,7 @@
-import { getCurrentInstance } from 'vue'
-import { toRawType } from '@vue/shared'
 import type { AugmaOptions } from './config'
 import type { Hash } from './types'
+import { toRawType } from '@vue/shared'
+import { getCurrentInstance } from 'vue'
 
 /**
  * 清除定时器

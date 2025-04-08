@@ -1,11 +1,11 @@
 $placements: (
-  "top": "bottom",
-  "bottom": "top",
-  "left": "right",
-  "right": "left",
+  'top': 'bottom',
+  'bottom': 'top',
+  'left': 'right',
+  'right': 'left',
 );
 
-$arrow-selector: ".agm-select--arrow";
+$arrow-selector: '.agm-select--arrow';
 
 .agm-select {
   &--list {
@@ -26,7 +26,7 @@ $arrow-selector: ".agm-select--arrow";
 
     &::before {
       visibility: visible;
-      content: "";
+      content: '';
       transform: rotate(45deg);
       position: absolute;
       width: 8px;
@@ -36,7 +36,7 @@ $arrow-selector: ".agm-select--arrow";
   }
 
   @each $placement, $opposite in $placements {
-    &--popper[data-popper-placement^="#{$placement}"] > #{$arrow-selector} {
+    &--popper[data-popper-placement^='#{$placement}'] > #{$arrow-selector} {
       #{$opposite}: -5px;
     }
   }

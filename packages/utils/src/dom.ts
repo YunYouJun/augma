@@ -1,25 +1,16 @@
-import { camelize } from '@vue/shared'
 import { isServer } from '@augma/utils'
+import { camelize } from '@vue/shared'
 
-const trim = function (s: string) {
-  return (s || '').replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, '')
+function trim(s: string) {
+  return (s || '').replace(/^\s+|\s+$/g, '')
 }
 
-export const on = function (
-  element: HTMLElement | Document | Window,
-  event: string,
-  handler: EventListenerOrEventListenerObject,
-  useCapture = false,
-): void {
+export function on(element: HTMLElement | Document | Window, event: string, handler: EventListenerOrEventListenerObject, useCapture = false): void {
   if (element && event && handler)
     element.addEventListener(event, handler, useCapture)
 }
 
-export const off = function (
-  element: HTMLElement | Document | Window,
-  event: string,
-  handler: EventListenerOrEventListenerObject,
-): void {
+export function off(element: HTMLElement | Document | Window, event: string, handler: EventListenerOrEventListenerObject): void {
   if (element && event && handler)
     element.removeEventListener(event, handler, false)
 }
@@ -75,10 +66,7 @@ export function removeClass(el: HTMLElement, cls: string): void {
     el.className = trim(curClass)
 }
 
-export const getStyle = function (
-  element: HTMLElement,
-  styleName: string,
-): string {
+export function getStyle(element: HTMLElement, styleName: string) {
   if (isServer)
     return
   if (!element || !styleName)
@@ -88,13 +76,14 @@ export const getStyle = function (
     styleName = 'cssFloat'
 
   try {
-    const style = element.style[styleName]
+    const style = element.style[styleName as any]
     if (style)
       return style
-    const computed = document.defaultView.getComputedStyle(element, '')
-    return computed ? computed[styleName] : ''
+    const computed = document.defaultView?.getComputedStyle(element, '')
+    return computed ? computed[styleName as any] : ''
   }
-  catch (e) {
-    return element.style[styleName]
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  catch (_e) {
+    return element.style[styleName as any]
   }
 }

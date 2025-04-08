@@ -1,8 +1,8 @@
 import fs from 'node:fs'
-import path from 'node:path'
 import os from 'node:os'
-import { execa } from 'execa'
+import path from 'node:path'
 import consola from 'consola'
+import { execa } from 'execa'
 import { targets } from './utils'
 
 async function buildAll(targets: string[]) {

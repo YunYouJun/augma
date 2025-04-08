@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 /* eslint-disable no-new */
 import { AnimationPropertiesOverride, ArcRotateCamera, Color3, DirectionalLight, EnvironmentHelper, FreeCamera, HemisphericLight, MeshBuilder, PolygonMeshBuilder, Quaternion, Scene, SceneLoader, ShadowGenerator, StandardMaterial, Vector2, Vector3, WebXRAnchorSystem, WebXRBackgroundRemover, WebXRHitTest, WebXRPlaneDetector, WebXRState } from '@babylonjs/core'
 import consola from 'consola'
@@ -5,6 +6,9 @@ import { GlobalInstance } from './instance'
 
 export async function createVRScene() {
   const engine = GlobalInstance.engine
+  if (!engine)
+    throw new Error('engine not initialized')
+
   const scene = new Scene(engine)
 
   // Add a basic light
@@ -33,7 +37,7 @@ export async function createVRScene() {
   // Setup default WebXR experience
   // Use the enviroment floor to enable teleportation
   await scene.createDefaultXRExperienceAsync({
-    floorMeshes: [envHelper.ground],
+    floorMeshes: [envHelper.ground!],
     optionalFeatures: true,
   })
 
@@ -42,6 +46,8 @@ export async function createVRScene() {
 
 export async function createARScene() {
   const { engine, canvas } = GlobalInstance
+  if (!engine || !canvas)
+    throw new Error('engine not initialized')
 
   const scene = new Scene(engine)
   // const light = new HemisphericLight('light1', new Vector3(0, 1, 0), scene)
@@ -117,7 +123,7 @@ export async function createARScene() {
   const runRange = skeleton.getAnimationRange('YBot_Run')
   const leftRange = skeleton.getAnimationRange('YBot_LeftStrafeWalk')
   const rightRange = skeleton.getAnimationRange('YBot_RightStrafeWalk')
-  scene.beginAnimation(skeleton, idleRange.from, idleRange.to, true)
+  scene.beginAnimation(skeleton, idleRange!.from, idleRange!.to, true)
 
   let hitTest
 

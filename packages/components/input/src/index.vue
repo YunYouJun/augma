@@ -1,5 +1,17 @@
 <script lang='ts'>
-import './index.scss'
+import type { ComponentSize } from '@augma/utils'
+import type {
+  AgmFormContext,
+  AgmFormItemContext,
+} from 'augma'
+
+import type { PropType } from 'vue'
+import { useAttrs } from '@augma/hooks'
+import { isServer, isValidComponentSize, UPDATE_MODEL_EVENT, useGlobalConfig, VALIDATE_STATE_MAP } from '@augma/utils'
+// eslint-disable-next-line vue/prefer-import-from-vue
+import { isObject } from '@vue/shared'
+
+import { agmFormItemKey, agmFormKey, AgmIcon } from 'augma'
 import {
   computed,
   defineComponent,
@@ -12,19 +24,8 @@ import {
   shallowRef,
   watch,
 } from 'vue'
-
-import { useAttrs } from '@augma/hooks'
-import { UPDATE_MODEL_EVENT, VALIDATE_STATE_MAP, isServer, isValidComponentSize, useGlobalConfig } from '@augma/utils'
-import { isObject } from '@vue/shared'
-import { AgmIcon, agmFormItemKey, agmFormKey } from 'augma'
-
-import type { PropType } from 'vue'
-import type {
-  AgmFormContext,
-  AgmFormItemContext,
-} from 'augma'
-import type { ComponentSize } from '@augma/utils'
 import calcTextareaHeight from '../calcTextareaHeight'
+import './index.scss'
 
 type AutosizeProp =
   | {
@@ -250,7 +251,7 @@ export default defineComponent({
 
       if (ctx.slots[pendant]) {
         target.style.transform = `translateX(${place === 'suffix' ? '-' : ''}${el.querySelector(`.agm-input-group__${pendant}`).offsetWidth
-          }px)`
+        }px)`
       }
       else {
         target.removeAttribute('style')

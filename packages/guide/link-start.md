@@ -19,8 +19,8 @@ pnpm add augma
 ## 在 Vue3 中引入
 
 ```js
-import { createApp } from 'vue'
 import augma from 'augma'
+import { createApp } from 'vue'
 import App from './App.vue'
 
 // 引入 Augma 组件

@@ -1,19 +1,19 @@
+import type { UserModule } from './types'
+import { setupLayouts } from 'virtual:generated-layouts'
+import generatedRoutes from 'virtual:generated-pages'
 // register vue composition api globally
 import { ViteSSG } from 'vite-ssg'
-import generatedRoutes from 'virtual:generated-pages'
-import { setupLayouts } from 'virtual:generated-layouts'
+
 import App from './App.vue'
 
 // https://github.com/antfu/unocss
 import '@unocss/reset/tailwind.css'
-
 // custom css
 import './styles/index.scss'
+
 import '@augma/components/styles/index.scss'
 
 import 'uno.css'
-
-import type { UserModule } from './types'
 
 const routes = setupLayouts(generatedRoutes)
 

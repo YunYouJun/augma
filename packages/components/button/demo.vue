@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AgmButton, AgmIcon, agmColors } from 'augma'
+import { AgmButton, agmColors, AgmIcon } from 'augma'
 
 const iconItems = [
   {

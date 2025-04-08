@@ -1,14 +1,14 @@
 <script lang="ts" setup>
+import type { ISelectOption } from './useOption'
+import { UPDATE_MODEL_EVENT } from '@augma/utils'
 import { onClickOutside } from '@vueuse/core'
+
 import {
   onMounted,
   provide,
   reactive,
   ref,
 } from 'vue'
-import { UPDATE_MODEL_EVENT } from '@augma/utils'
-
-import type { ISelectOption } from './useOption'
 import { selectKey } from './useOption'
 
 const props = defineProps<{

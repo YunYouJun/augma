@@ -35,7 +35,6 @@ Augma 由 Vue3 构建，因此我打算基于 [vue-toastification](https://githu
 ```js
 // todo use Composition API
 
-// eslint-disable-next-line @typescript-eslint/no-invalid-this
 this.$notify({
   title: 'GitHub',
   icon: mdiGithub,

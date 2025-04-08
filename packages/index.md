@@ -19,7 +19,7 @@ features:
   - title: 交互友好
     details: 针对 AR 场景的 UI 交互组件
 
-footer: 
+footer:
   license: MIT Licensed
   since: 2020
   author:
@@ -31,4 +31,5 @@ footer:
 WIP: Work In Progress
 
 开发中...
+
 </div>

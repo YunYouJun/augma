@@ -54,3 +54,29 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style lang="scss">
+.demo-color-box {
+  border-radius: 4px;
+  padding: 20px;
+  height: 5rem;
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 1rem;
+  margin: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.demo-color-box-group {
+  .demo-color-box {
+    border-radius: 0;
+    margin: 0 5px;
+  }
+  .demo-color-box:first-child {
+    border-radius: 4px 4px 0 0;
+  }
+  .demo-color-box:last-child {
+    border-radius: 0 0 4px 4px;
+  }
+}
+</style>

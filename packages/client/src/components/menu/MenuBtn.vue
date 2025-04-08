@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useCameraStore } from '~/stores/camera'
 import { isDark, toggleDark } from '~/composables'
+import { useCameraStore } from '~/stores/camera'
 
 const camera = useCameraStore()
 

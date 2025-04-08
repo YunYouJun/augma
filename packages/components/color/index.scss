@@ -9,14 +9,14 @@ $agm-tooltip: #00959c;
 $agm-colors: () !default;
 $agm-colors: map-merge(
   (
-    "success": $agm-success,
-    "warning": $agm-warning,
-    "danger": $agm-danger,
-    "info": $agm-info,
-    "tooltip": $agm-tooltip,
-    "green": $agm-success,
-    "orange": $agm-warning,
-    "red": $agm-danger,
+    'success': $agm-success,
+    'warning': $agm-warning,
+    'danger': $agm-danger,
+    'info': $agm-info,
+    'tooltip': $agm-tooltip,
+    'green': $agm-success,
+    'orange': $agm-warning,
+    'red': $agm-danger,
   ),
   $agm-colors
 );

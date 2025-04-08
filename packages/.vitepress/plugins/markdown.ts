@@ -6,7 +6,8 @@ const componentName = 'demo-block'
 export function markdownTransform(md: any) {
   md.use(extractCodeFromVueSFC)
   md.use(mdContainer, 'demo', {
-    render: (tokens, idx) => {
+    render: (tokens: any, idx: any) => {
+      // eslint-disable-next-line regexp/no-super-linear-backtracking
       const m = tokens[idx].info.trim().match(/^demo\s*(.*)$/)
       if (tokens[idx].nesting === 1) {
         // opening tag

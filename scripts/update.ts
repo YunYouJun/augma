@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { readIndexesAndHints } from './indexes'
 
-const metadataFolder = path.resolve(__dirname, '../packages/metadata')
+const metadataFolder = path.resolve(import.meta.dirname, '../packages/metadata')
 
 /**
  * 格式化 JSON

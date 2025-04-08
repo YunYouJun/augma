@@ -2,12 +2,12 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import process from 'node:process'
-import minimist from 'minimist'
+import consola from 'consola'
 import { prompt } from 'enquirer'
 import { execa } from 'execa'
-import semver from 'semver'
+import minimist from 'minimist'
 
-import consola from 'consola'
+import semver from 'semver'
 import pkg from '../package.json'
 
 const currentVersion = pkg.version
@@ -15,7 +15,7 @@ const currentVersion = pkg.version
 const args = minimist(process.argv.slice(2))
 const preId
   = args.preid
-  || (semver.prerelease(currentVersion) && semver.prerelease(currentVersion)[0])
+    || (semver.prerelease(currentVersion) && semver.prerelease(currentVersion)[0])
 
 const versionIncrements = [
   'patch',
