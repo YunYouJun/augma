@@ -15,4 +15,4 @@
 
 框架无关样式使用 `@augma/core`。Vue 包需要 Vue 3.5+，复杂行为由 Reka UI 提供。首版没有提供全局组件注册插件或 React 包。
 
-文档和展示统一于 `augma.yunyoujun.cn`；`augma.yyj.moe` 是计划中的同路径跳转入口。旧域名的迁移状态取决于实际托管切换，不能通过升级 npm 包自动完成。
+文档和展示统一于 `augma.yunyoujun.cn`，并在 `augma.yyj.moe` 的 Cloudflare Pages 部署提供相同内容。旧域名的迁移状态取决于实际托管切换，不能通过升级 npm 包自动完成。

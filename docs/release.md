@@ -1,6 +1,6 @@
 # 0.2 发布与域名迁移
 
-站点部署到 EdgeOne Pages；npm 包发布、别名域跳转和旧站迁移分别处理。公开安装命令依赖 0.2.0 包发布。
+站点分别部署到 EdgeOne Pages 与 Cloudflare Pages；npm 包发布和旧站迁移分别处理。公开安装命令依赖 0.2.0 包发布。
 
 ## 本地与 CI
 
@@ -46,17 +46,11 @@ OIDC 需要支持 trusted publishing 的 npm CLI（Node 24 环境），参照 [n
 - `augma.yunyoujun.cn` 在 EdgeOne Pages 项目中绑定到 Production。Cloudflare DNS 配置两条 DNS-only CNAME：`augma.yunyoujun.cn → augma.yunyoujun.cn.pages.dnsoe5.com` 用于站点访问，`_dnsauth.augma.yunyoujun.cn → augma.yunyoujun.cn.eoacme0.com` 用于免费 HTTPS 证书验证和续期。核对 HTTPS 证书和公网访问。
 - canonical、sitemap、Skill 与生成索引均采用主域。域名绑定与 DNS 配置需在托管平台完成。
 
-## 别名域跳转
+## Cloudflare Pages 域名
 
-`deploy/redirect/` 提供独立 Cloudflare Worker：只接管 `augma.yyj.moe`，返回保留路径与查询参数的 308。主域不会被此 Worker 接管，不会形成跳转循环。
+`augma.yyj.moe` 由现有 Cloudflare Pages 项目 `augma`（`augma.pages.dev`）直接托管同一站点，不再作为跳转入口。项目连接 GitHub `YunYouJun/augma` 的 `main` 分支，使用 Node 24 和 pnpm 12.5.1；构建命令为 `pnpm build`，输出目录为 `apps/site/.vitepress/dist`。推送 `main` 后检查 Pages 构建与部署状态。
 
-在 yyj.moe 已加入目标 Cloudflare 账户、核对现有 DNS 后，用已认证的 Wrangler 执行：
-
-```sh
-wrangler deploy --config deploy/redirect/wrangler.jsonc
-```
-
-此操作需要 Cloudflare 账户和 zone 权限，未在本地实施中运行。Custom Domain 会管理该域名的路由与证书，参照 [Cloudflare 官方说明](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/)。若使用其他托管商，同样应在服务端配置保留路径与查询参数的 301 / 308，不能依赖前端 JavaScript 跳转。
+在 Pages 项目中将 `augma.yyj.moe` 添加为 Custom Domain，并确认 `yyj.moe` zone 中的 `augma` CNAME 指向 `augma.pages.dev`。Pages 与 DNS 的绑定都完成后，核对 HTTPS 证书和公网访问。站点 canonical 与 sitemap 仍指向主域 `https://augma.yunyoujun.cn`。
 
 ## 旧域名
 
@@ -77,4 +71,4 @@ wrangler deploy --config deploy/redirect/wrangler.jsonc
 
 ## 公网验收
 
-发布后检查：首页、一个组件页、`/ar/`、`/llms.txt`、`/components.json`、`/r/button.json`、Markdown 下载；别名域 `/components/button?theme=dark` 应单次跳转到主域对应 URL。验证 HTTPS、404、移动布局和无路径丢失；重新执行公开 npm / Registry 安装。摄像头与 immersive-ar 需要在实际支持的设备上单独记录结果。
+发布后分别在两个域名检查：首页、一个组件页、`/ar/`、`/llms.txt`、`/components.json`、`/r/button.json`、Markdown 下载。验证 HTTPS、404、移动布局和无路径丢失；重新执行公开 npm / Registry 安装。摄像头与 immersive-ar 需要在实际支持的设备上单独记录结果。

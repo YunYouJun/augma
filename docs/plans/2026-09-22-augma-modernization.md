@@ -15,7 +15,7 @@
 | 使用方式 | npm 包 + 核心组件源码 Registry，两者由同一份组件源文件生成 |
 | 组件范围 | 基础交互组件 + Augma Panel / HUD，优先完整可用 |
 | 站点组织 | 一个主站，中文文档优先；代码与 AI Skill 使用英文 |
-| 新站域名 | `augma.yunyoujun.cn` 为主域，`augma.yyj.moe` 保留路径与查询参数永久跳转到主域 |
+| 新站域名 | `augma.yunyoujun.cn` 为主域，`augma.yyj.moe` 由 Cloudflare Pages 托管同一站点 |
 | 展示深度 | 实时预览、源码复制、API、主题切换和预设状态示例 |
 | 行为实现 | 优先复用 Reka UI 等成熟无样式组件 |
 | 依赖政策 | 稳定版本优先；VitePress 2.x 另列升级阶段 |
@@ -44,7 +44,7 @@ ak-ui 的 A2UI 是本地模拟实验；仓库未发现 `llms.txt` 及对应生�
 
 ## 3. 目标结构与公开边界
 
-以下为工程组织提案；包名与发布权限在 P0 核查。新站以 `augma.yunyoujun.cn` 为主域，`augma.yyj.moe` 跳转到主域，DNS、证书、托管与跳转配置在 P6 核查。
+以下为工程组织提案；包名与发布权限在 P0 核查。新站以 `augma.yunyoujun.cn` 为主域，`augma.yyj.moe` 由 Cloudflare Pages 托管同一站点，DNS、证书与托管配置在 P6 核查。
 
 ```text
 apps/
@@ -195,9 +195,9 @@ VitePress 1.6.4 自身依赖 Vite 5.x。接受文档与库工具链暂时并存�
 7. AR 的依赖按需加载，用户主动开启摄像头；能力不支持、权限拒绝和资源销毁均有可验证行为。
 8. README 安装步骤从发布产物验证，公共入口不依赖仓库别名；旧版变更说明明确不兼容的接口和旧功能去向。
 
-新站域名策略已由用户确认：`https://augma.yunyoujun.cn` 为主域，`https://augma.yyj.moe` 作为跳转入口。
+新站域名最初规划为 `https://augma.yunyoujun.cn` 主域与 `https://augma.yyj.moe` 跳转入口。2026-09-24 的部署要求改为在 Cloudflare Pages 上为 `augma.yyj.moe` 直接提供相同站点；以 `docs/release.md` 中的现行配置为准。
 
-- `augma.yyj.moe` 以保留路径与查询参数的永久重定向指向 `augma.yunyoujun.cn`。例如 `https://augma.yyj.moe/components/button?theme=dark` 跳转到 `https://augma.yunyoujun.cn/components/button?theme=dark`。
+- `augma.yyj.moe` 由 Cloudflare Pages 提供与主域相同的页面。例如 `https://augma.yyj.moe/components/button?theme=dark` 直接返回组件页。
 - 发布链接、canonical、sitemap、Skill、机器可读文档和 Registry 地址统一使用 `https://augma.yunyoujun.cn`。
 - 展示与文档合并于主站，采用各自布局；两个域名不承担不同内容分区。
 - P6 检查两个域名的 DNS、证书和托管能力；根据旧站的实际可控性，为 `docs.augma.elpsy.cn` 与 `augma.elpsy.cn` 制定逐路径迁移映射，其中旧 Client 入口指向新站 `/ar/`。

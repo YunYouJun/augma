@@ -1,7 +1,0 @@
-{
-  "name": "augma-domain-redirect",
-  "main": "worker.mjs",
-  "compatibility_date": "2026-09-22",
-  "workers_dev": false,
-  "routes": [{ "pattern": "augma.yyj.moe", "custom_domain": true }]
-}
