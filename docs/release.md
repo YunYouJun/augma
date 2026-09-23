@@ -43,7 +43,7 @@ OIDC 需要支持 trusted publishing 的 npm CLI（Node 24 环境），参照 [n
   edgeone pages deploy apps/site/.vitepress/dist -n augma -e production -a overseas
   ```
 
-- `augma.yunyoujun.cn` 在 EdgeOne Pages 项目中绑定到 Production，Cloudflare DNS 配置为 EdgeOne 分配的 CNAME（关闭 Cloudflare 代理）。核对归属验证、HTTPS 证书和公网访问。
+- `augma.yunyoujun.cn` 在 EdgeOne Pages 项目中绑定到 Production。Cloudflare DNS 配置两条 DNS-only CNAME：`augma.yunyoujun.cn → augma.yunyoujun.cn.pages.dnsoe5.com` 用于站点访问，`_dnsauth.augma.yunyoujun.cn → augma.yunyoujun.cn.eoacme0.com` 用于免费 HTTPS 证书验证和续期。核对 HTTPS 证书和公网访问。
 - canonical、sitemap、Skill 与生成索引均采用主域。域名绑定与 DNS 配置需在托管平台完成。
 
 ## 别名域跳转
