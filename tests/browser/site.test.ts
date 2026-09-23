@@ -57,6 +57,7 @@ test('component catalog, previews and source are available', async ({
   for (const name of components) {
     await page.goto(`/components/${name}`)
     await expect(page.locator('.demo-canvas')).toBeVisible()
+    await expect(page.locator('.demo-canvas')).toHaveAttribute('aria-busy', 'false')
     await page.getByText('查看 Vue 源码', { exact: true }).click()
     await expect(page.locator('.demo-source pre')).toContainText('from \'augma\'')
   }

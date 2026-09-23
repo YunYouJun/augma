@@ -102,6 +102,24 @@ test('display settings persist and reset with keyboard focus restored', async ({
 })
 
 test('sound playback survives panel changes and stops on standby', async ({ page }) => {
+  await page.addInitScript(() => {
+    class TestAudioContext {
+      destination = {}
+      currentTime = 0
+      createGain() {
+        return { gain: { value: 0, setTargetAtTime() {} }, connect() {}, disconnect() {} }
+      }
+
+      createOscillator() {
+        return { frequency: { value: 0 }, detune: { value: 0 }, connect() {}, start() {}, stop() {}, disconnect() {} }
+      }
+
+      async resume() {}
+      async suspend() {}
+      async close() {}
+    }
+    Object.defineProperty(window, 'AudioContext', { configurable: true, value: TestAudioContext })
+  })
   await page.goto('/ar/')
   await page.getByRole('button', { name: '声音', exact: true }).click()
   await page.getByRole('button', { name: '播放声音', exact: true }).click()
