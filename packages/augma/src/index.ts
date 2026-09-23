@@ -1,12 +1,13 @@
-import pkg from '../package.json'
-
-// export * from '@augma/components'
-export * from '../../components'
-// export * from './styles'
-
-export const version = pkg.version
-
-export * from './preset'
-export * from './resolver'
-
-export default version
+export { default as AgmButton } from './components/AgmButton.vue'
+export { default as AgmDialog } from './components/AgmDialog.vue'
+export { default as AgmHudProgress } from './components/AgmHudProgress.vue'
+export { default as AgmHudStatus } from './components/AgmHudStatus.vue'
+export { default as AgmIconButton } from './components/AgmIconButton.vue'
+export { default as AgmInput } from './components/AgmInput.vue'
+export { default as AgmPanel } from './components/AgmPanel.vue'
+export { default as AgmSelect } from './components/AgmSelect.vue'
+export { default as AgmSlider } from './components/AgmSlider.vue'
+export { default as AgmSwitch } from './components/AgmSwitch.vue'
+export { default as AgmToast } from './components/AgmToast.vue'
+export { default as AgmTooltip } from './components/AgmTooltip.vue'
+export const version = '0.2.0'

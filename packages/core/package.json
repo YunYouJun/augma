@@ -1,0 +1,29 @@
+{
+  "name": "@augma/core",
+  "type": "module",
+  "version": "0.2.0",
+  "description": "Framework-independent Augma AR design tokens and styles",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YunYouJun/augma.git",
+    "directory": "packages/core"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    "./tokens.css": "./dist/tokens.css",
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build-core.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

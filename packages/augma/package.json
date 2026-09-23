@@ -1,45 +1,49 @@
 {
   "name": "augma",
-  "version": "0.1.1",
-  "description": "AR UI Framework",
-  "author": {
-    "email": "me@yunyoujun.cn",
-    "name": "YunYouJun",
-    "url": "https://www.yunyoujun.cn"
-  },
+  "type": "module",
+  "version": "0.2.0",
+  "description": "Lightweight AR-inspired Vue components",
   "license": "MIT",
-  "repository": "https://github.com/YunYouJun/augma.git",
-  "keywords": [
-    "AR",
-    "UI",
-    "Framework"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YunYouJun/augma.git",
+    "directory": "packages/augma"
+  },
+  "sideEffects": [
+    "**/*.css"
   ],
   "exports": {
     ".": {
-      "import": "./dist/augma.es.js",
-      "require": "./dist/augma.umd.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
-    "./style": "./dist/style.css"
+    "./style.css": "./dist/style.css"
   },
-  "main": "dist/augma.es.js",
-  "module": "dist/augma.es.js",
-  "style": "dist/style.css",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "README.md",
+    "dist"
+  ],
   "scripts": {
-    "build": "vite build",
-    "dev": "vite"
+    "build": "vite build && vue-tsc -p tsconfig.build.json && node ../../scripts/build-vue-style.mjs"
   },
   "peerDependencies": {
-    "@vueuse/core": "^4.4.1",
-    "vue": "^3.0.7"
+    "vue": "^3.5.0"
   },
   "dependencies": {
-    "@popperjs/core": "^2.11.8"
+    "@augma/core": "workspace:^",
+    "reka-ui": "2.10.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-basic-ssl": "^2.0.0",
-    "@vitejs/plugin-vue": "^5.2.3",
-    "sass": "^1.86.3",
-    "v-tooltip": "^4.0.0-beta.17",
-    "vue-toastification": "^2.0.0-rc.5"
+    "@vitejs/plugin-vue": "6.0.9",
+    "typescript": "5.9.3",
+    "vite": "8.3.0",
+    "vue": "3.5.43",
+    "vue-tsc": "3.3.11"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

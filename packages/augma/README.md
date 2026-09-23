@@ -1,26 +1,5 @@
-# Augma
+# augma
 
-![npm bundle size](https://img.shields.io/bundlephobia/minzip/augma)
+Vue 3.5+ AR-inspired UI components. Import named exports such as `AgmButton`, `AgmDialog`, `AgmPanel` and `AgmHudProgress`; load `augma/style.css` once. Components use native semantics and Reka UI for complex interaction.
 
-AR UI Framework
-
-Docs: <https://docs.augma.elpsy.cn>
-
-## Usage
-
-```bash
-pnpm add augma
-```
-
-```ts
-import augma from 'augma'
-import { createApp } from 'vue'
-import App from './App.vue'
-
-import 'augma/style'
-
-const app = createApp(App)
-
-app.use(augma)
-app.mount('#app')
-```
+No global plugin registration is needed. See https://augma.yunyoujun.cn/guide/ for installation, API and editable source Registry.

@@ -1,2 +1,28 @@
+minimumReleaseAgeExcludePrune: true
+minimumReleaseAgeExclude:
+  - reka-ui@2.10.5
+
+trustPolicy: no-downgrade
+# Legacy maintenance releases predate their siblings' provenance adoption.
+# Exact reviewed versions only; keep no-downgrade for every other release.
+# https://github.com/orgs/pnpm/discussions/11084
+trustPolicyExclude:
+  - semver@6.3.1
+  - chokidar@4.0.3
+  - undici-types@6.21.0
+  # VitePress 1.x uses Vite 5; 5.4.21 has provenance, predating OIDC on Vite 7.
+  - vite@5.4.21
+
+autoInstallPeers: true
+strictPeerDependencies: true
+shellEmulator: true
+
 packages:
-  - packages/*
+  - apps/*
+  - packages/core
+  - packages/augma
+
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  vue-demi: true

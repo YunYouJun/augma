@@ -1,23 +1,17 @@
-# assets
-models
-
-cache/
-
-# lock
-yarn.lock
-package-lock.json
-
-.DS_Store
 node_modules
 dist
-dist-ssr
+apps/mac/.build
+.DS_Store
 *.local
-tmp
-temp
 *.log
-
 .temp
 .cache
-
-# for meta
-indexes.json
+**/.vitepress/cache
+**/.vitepress/dist
+playwright-report
+test-results
+apps/site/public/r
+apps/site/public/components.json
+apps/site/public/llms*.txt
+apps/site/public/markdown
+*.tgz

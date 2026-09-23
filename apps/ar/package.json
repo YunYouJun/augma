@@ -1,0 +1,21 @@
+{
+  "name": "@augma/ar",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 3003",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@augma/core": "workspace:*",
+    "@babylonjs/core": "9.27.1",
+    "@fontsource/exo-2": "5.3.0",
+    "augma": "workspace:*",
+    "vue": "3.5.43"
+  },
+  "devDependencies": {
+    "@types/webxr": "^0.5.21",
+    "@vitejs/plugin-vue": "6.0.9",
+    "vite": "8.3.0"
+  }
+}

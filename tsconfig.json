@@ -1,33 +1,47 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["ESNext", "DOM"],
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "baseUrl": ".",
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "Bundler",
     "paths": {
-      "~/*": ["packages/client/src/*"],
-      "@augma/components/*": ["packages/components/*"],
-      "@augma/components": ["packages/components/index.ts"],
-      "@augma/*": ["packages/*/src/index.ts"],
-      "augma": ["packages/augma/src/index.ts"]
+      "augma": [
+        "packages/augma/src/index.ts"
+      ],
+      "@augma/core/*": [
+        "packages/core/src/*"
+      ]
     },
     "resolveJsonModule": true,
     "types": [
-      "@babylonjs/core",
-      "webxr",
       "vite/client",
-      "vite-plugin-pages/client",
-      "vite-plugin-vue-layouts/client"
+      "node",
+      "webxr"
     ],
+    "allowJs": true,
     "strict": true,
-    "declaration": true,
-    "outDir": "dist",
-    "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["meta/**/*", "packages/**/*", "packages/.vitepress/**/*", "packages/shims.d.ts"],
-  "exclude": ["dist", "node_modules"]
+  "include": [
+    "packages/augma/src/**/*.ts",
+    "packages/augma/src/**/*.vue",
+    "apps/**/*.ts",
+    "apps/**/*.vue",
+    "examples/**/*.vue",
+    "tests/**/*.ts",
+    "apps/site/.vitepress/**/*.ts",
+    "apps/site/.vitepress/**/*.vue"
+  ],
+  "exclude": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "apps/site/.vitepress/cache/**"
+  ]
 }

@@ -1,97 +1,72 @@
 # Augma
 
-[![GitHub Pages](https://github.com/YunYouJun/augma/workflows/client/badge.svg)](https://augma.elpsy.cn/)
-[![docs](https://github.com/YunYouJun/augma/workflows/docs/badge.svg)](https://docs.augma.elpsy.cn)
+为 Web 构建轻盈的 AR 风格界面。设计参考《刀剑神域：序列之争》中 Augma 设备的透明面板、环形状态和轻量交互。
 
-🎨 AR UI Framework (Work In Progress)
+- 主站：[augma.yunyoujun.cn](https://augma.yunyoujun.cn)
+- 展示、组件文档、AI 接入统一维护；AR 演示独立构建到 `/ar/`。
+- `@augma/core` 提供无框架运行时依赖的 tokens / CSS；`augma` 提供 Vue 3.5+ 组件。
 
-> Because many new features are used, you'd better use the latest version of Chrome Browser.
+## 使用
 
-- Docs: <https://docs.augma.elpsy.cn>
-- Client: <https://augma.elpsy.cn/>
-
-## What is Augma?
-
-Augma 是 [刀剑神域：序列之争](https://zh.wikipedia.org/zh-sg/%E5%88%80%E5%8A%8D%E7%A5%9E%E5%9F%9F%E5%8A%87%E5%A0%B4%E7%89%88%EF%BC%9A%E5%BA%8F%E5%88%97%E7%88%AD%E6%88%B0) 中虚构的 AR（增强现实）型情报终端。
-
-> 「但凡人能想象到的事物，必定有人能将它实现。」——儒勒·凡尔纳
-
-我们希望参考此构建一套专门针对 AR 场景的 UI 组件。
-
-我想，实现它将会是一件非常有趣的事情。
-
-除了对于动漫的热情，我也希望它在作为各类新技术的试验地同时也可以是一个真正可用的产物。
-
-譬如：
-
-- 针对 AR 场景 UI 风格组件
-  - 但这并非意味着造轮子，部分通用的组件完全可以复用 [element-plus](https://github.com/element-plus/element-plus) 或 Vue 生态等现有的组件（如 popper/dialog/notification/select），而只自定义 UI。既避免了细节的重复处理，也能有着良好的体验。
-  - 同时这也意味着 element-plus 等组件库完全可以在此之上对子组件进一步抽象，做到样式与逻辑完全分离。
-- AR 场景下的 Composition API
-  - [VueUse](https://github.com/vueuse/vueuse) 是使用 Vue3 Compositon API 构建的很方便的工具库，而 AR 场景下也有很多可以抽象的地方。譬如，全屏（适配桌面、移动端）的 Web Camera、[mediapipe](https://github.com/google/mediapipe) 的一些封装……
-- Augma Client
-  - 使用上述组件库与 Compositon API 构建的 AR 操作终端，可以做各种看起来很酷的事情！
-
-那就开始吧？Link Start.
-
-## Usage
-
-```bash
-# Please wait for it to be available
+```sh
 pnpm add augma
 ```
 
-```ts
-import augma from 'augma'
-import { createApp } from 'vue'
-import App from './App.vue'
+```vue
+<script setup lang="ts">
+import { AgmButton, AgmPanel } from 'augma'
+import 'augma/style.css'
+</script>
 
-import 'augma/style'
-
-const app = createApp(App)
-
-app.use(augma)
-app.mount('#app')
+<template>
+  <AgmPanel title="连接设备">
+    <AgmButton>开始连接</AgmButton>
+  </AgmPanel>
+</template>
 ```
 
-## Dev
+上面的 API 对应 0.2；公开安装需等待该版本发布。开发期间可以构建并通过 `pnpm pack` 验证产物。
 
-You need [Node.js](https://nodejs.org/en/).
+只需样式时安装 `@augma/core`，导入 `@augma/core/tokens.css` 或 `@augma/core/style.css`。
 
-```bash
-# install dependencies
-pnpm i
+## AI 编程接入
+
+```sh
+npx skills add YunYouJun/augma --skill augma
 ```
 
-```bash
-# client
-pnpm dev
-# docs
-pnpm docs:dev
+本地 Skill 位于 [skills/augma/SKILL.md](skills/augma/SKILL.md)。组件示例、API 文档、Registry、`components.json` 和 llms 索引共用正式源码与契约。首版不包含站内模型调用。
+
+## 开发
+
+需要 Node 24，packageManager 固定 pnpm 12.5.1。
+
+```sh
+pnpm install --frozen-lockfile
+pnpm generate
+pnpm build:lib
+pnpm dev          # 主站 http://127.0.0.1:3002
+pnpm dev:ar       # AR http://127.0.0.1:3003/ar/
 ```
 
-### WebXR
+```sh
+pnpm build       # CSS / Vue + 主站 + AR，组合到 apps/site/.vitepress/dist
+pnpm preview     # http://127.0.0.1:4317
+pnpm check       # lint、types、unit、build、包消费、Registry 与浏览器验证
+```
 
-- [https://github.com/meta-quest/immersive-web-emulator/](https://github.com/meta-quest/immersive-web-emulator/)
+首次浏览器测试前执行 `pnpm exec playwright install chromium firefox webkit`。摄像头需要 HTTPS 或 localhost；WebXR 还需要支持设备与浏览器。
 
-More Info see [WebXR | Babylon.js](https://doc.babylonjs.com/features/featuresDeepDive/webXR/introToWebXR).
+## 结构
 
-## Monorepo
+- `packages/core`：语义 tokens 与组件样式。
+- `packages/augma`：12 个 Vue 组件及类型。
+- `apps/site`：VitePress 展示与文档。
+- `apps/ar`：摄像头、HUD、按需加载的 WebXR 演示。
+- `examples/components`：展示、源码复制与测试的共同示例。
+- `scripts/catalog.mjs`：组件描述与行为说明；API 类型与默认值从 Vue 源码提取。
+- `skills/augma`：可安装的 Agent Skill。
 
-- augma
-  - [@augma/components](https://github.com/YunYouJun/augma/tree/main/packages/client): Augma UI Components
-  - [@augma/hooks]: Augma Composition API
-- [@augma/client](https://github.com/YunYouJun/augma/tree/main/packages/client): Use augma ui to build a AR client like Augma
+发布、域名与旧站迁移见 [发布说明](docs/release.md)。0.1 → 0.2 是不兼容重构，详见 [迁移指南](apps/site/guide/migration.md)。
 
-## Todo
-
-- [ ] button to hide ui
-
-## Thanks
-
-- [element-plus](https://github.com/element-plus/element-plus)
-- [icones](https://icones.js.org/)
-- [unocss](https://github.com/antfu/unocss)
-- [vite](https://github.com/vitejs/vite)
-- [vitepress](https://github.com/vuejs/vitepress)
-- [vueuse](https://github.com/vueuse/vueuse)
+MIT · 原创界面实验，与《刀剑神域》版权方无关联。

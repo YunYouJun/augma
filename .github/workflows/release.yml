@@ -1,0 +1,42 @@
+name: Publish packages
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          registry-url: https://registry.npmjs.org
+      - uses: pnpm/action-setup@v6
+      - run: pnpm install --frozen-lockfile
+      - name: Verify tag and all public versions
+        run: node scripts/check-release.mjs
+      - run: pnpm exec playwright install --with-deps chromium firefox webkit
+      - run: pnpm check
+      - name: Pack verified files
+        run: |
+          mkdir -p release-artifacts
+          pnpm --dir packages/core pack --pack-destination ../../release-artifacts
+          pnpm --dir packages/augma pack --pack-destination ../../release-artifacts
+      - uses: actions/upload-artifact@v7
+        with:
+          name: augma-packages-${{ github.sha }}
+          path: release-artifacts/*.tgz
+      - name: Publish Core then Vue via trusted publishing
+        run: |
+          npm publish release-artifacts/augma-core-*.tgz --access public --provenance
+          npm publish release-artifacts/augma-0*.tgz --access public --provenance

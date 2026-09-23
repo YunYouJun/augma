@@ -1,32 +1,4 @@
-import path from 'node:path'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 
-import { alias } from './node'
-
-export default defineConfig({
-  resolve: {
-    alias,
-  },
-  plugins: [vue()],
-  build: {
-    lib: {
-      entry: path.resolve(__dirname, 'src/index.ts'),
-      name: 'augma',
-    },
-    // fix Symbol()
-    rollupOptions: {
-      // make sure to externalize deps that shouldn't be bundled
-      // into your library
-      external: ['vue'],
-      output: {
-        // Provide global variables to use in the UMD build
-        // for externalized deps
-        globals: {
-          vue: 'Vue',
-        },
-        exports: 'named',
-      },
-    },
-  },
-})
+export default defineConfig({ plugins: [vue()], build: { lib: { entry: 'src/index.ts', formats: ['es'], fileName: 'index' }, rollupOptions: { external: ['vue', 'reka-ui'] } } })

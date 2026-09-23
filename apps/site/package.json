@@ -1,0 +1,19 @@
+{
+  "name": "@augma/site",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vitepress dev --host 127.0.0.1 --port 3002",
+    "build": "vitepress build"
+  },
+  "dependencies": {
+    "@augma/core": "workspace:*",
+    "@fontsource/exo-2": "5.3.0",
+    "augma": "workspace:*",
+    "reka-ui": "2.10.5",
+    "vue": "3.5.43"
+  },
+  "devDependencies": {
+    "vitepress": "1.6.4"
+  }
+}
