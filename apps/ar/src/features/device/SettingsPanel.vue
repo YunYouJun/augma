@@ -38,9 +38,9 @@ function reset() {
       <p>将上下白线和底部图标排列为浅弧形。</p>
       <p v-if="reducedMotion" class="motion-note" role="status">系统已开启减少动态效果，景深动画暂停；弧线外观仍可使用。</p>
     </fieldset>
-    <p class="settings-hint">专注模式收起场景锚点，保留当前应用。镜像仅作用于摄像头画面。</p>
+    <p class="settings-hint">拖动应用面板标题可调整位置；聚焦标题后也可用方向键移动。专注模式收起场景锚点，保留当前应用。镜像仅作用于摄像头画面。</p>
     <p class="settings-storage" role="status">{{ storageAvailable ? '显示与音量设置已自动保存在此浏览器。' : '当前浏览器无法保存设置，本次体验仍可正常使用。' }}</p>
-    <AgmDialog v-model:open="resetOpen" title="恢复默认设置" description="恢复面板、主题、声音、HUD 和视界效果的初始设置。当前模拟场景不变。">
+    <AgmDialog v-model:open="resetOpen" title="恢复默认设置" description="恢复面板位置、主题、声音、HUD 和视界效果的初始设置。当前模拟场景不变。">
       <template #trigger><AgmButton class="full-button" variant="outline" @click="focusResetTrigger">恢复默认设置</AgmButton></template>
       <template #footer><AgmButton variant="ghost" @click="resetOpen = false">取消</AgmButton><AgmButton @click="reset">确认恢复</AgmButton></template>
     </AgmDialog>

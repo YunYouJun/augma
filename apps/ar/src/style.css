@@ -23,6 +23,12 @@ a { color: inherit; text-decoration: none; }
 button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid white; outline-offset: 3px; }
 .ar-app { position: fixed; inset: 0; background: #757575; --device-panel: rgb(65 65 65 / var(--window-alpha, .616)); }
 .ar-app.is-dark { background: #393939; }
+html.augma-desktop-immersive, html.augma-desktop-immersive body, html.augma-desktop-immersive #app,
+.ar-app.is-desktop-immersive, .ar-app.is-desktop-immersive.is-dark { background: transparent; }
+.is-desktop-immersive .system-clock time, .is-desktop-immersive .world-marker, .is-desktop-immersive .device-window { text-shadow: 0 1px 4px rgb(0 0 0 / 65%); }
+.is-desktop-immersive .device-window { backdrop-filter: none; }
+.is-desktop-immersive .device-window--weather { background: rgb(40 48 52 / 72%); }
+.is-desktop-immersive .system-clock, .is-desktop-immersive .device-dock { filter: drop-shadow(0 1px 3px rgb(0 0 0 / 55%)); }
 .camera-feed, .xr-canvas { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .camera-feed.mirrored { transform: scaleX(-1); }
 .xr-canvas { z-index: 1; }
@@ -61,6 +67,7 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .agm-toast { background: #626262; border-radius: 3px; }
 .has-curves .device-workspace { bottom: 100px; }
 .has-depth .device-window { translate: calc(var(--depth-x, 0) * 8px) calc(var(--depth-y, 0) * 6px); transform: translateX(var(--window-center, -50%)) perspective(1000px) rotateX(calc(var(--depth-y, 0) * -1.4deg)) rotateY(calc(var(--depth-x, 0) * 1.8deg)); transition: translate 180ms ease-out, transform 180ms ease-out; animation: depth-arrive 280ms ease-out both; box-shadow: 0 9px 26px rgb(0 0 0 / 10%); }
+.has-depth .device-window.is-positioned { transform: perspective(1000px) rotateX(calc(var(--depth-y, 0) * -1.4deg)) rotateY(calc(var(--depth-x, 0) * 1.8deg)); }
 .has-depth .world-scene { translate: calc(var(--depth-x, 0) * -7px) calc(var(--depth-y, 0) * -5px); transition: translate 220ms ease-out; }
 .has-depth .world-markers { translate: calc(var(--depth-x, 0) * 4px) calc(var(--depth-y, 0) * 3px); transition: translate 180ms ease-out; }
 .has-depth .spatial-map { filter: blur(.6px); }

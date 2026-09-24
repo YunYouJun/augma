@@ -10,6 +10,8 @@
   "scripts": {
     "dev": "pnpm --filter @augma/site dev",
     "dev:ar": "pnpm --filter @augma/ar dev",
+    "mac:run": "./script/build_and_run.sh",
+    "mac:verify": "./script/build_and_run.sh --verify",
     "generate": "node scripts/generate.mjs",
     "build:lib": "pnpm --filter @augma/core build && pnpm --filter augma build",
     "build:ar": "pnpm --filter @augma/ar build",
