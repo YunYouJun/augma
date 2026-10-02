@@ -4,6 +4,8 @@ import {
   AgmButton,
   AgmHudProgress,
   AgmInput,
+  AgmPanel,
+  AgmSelect,
   AgmSwitch,
 } from '../../packages/augma/src'
 
@@ -41,6 +43,59 @@ describe('component contracts', () => {
     expect(wrapper.get('[role="switch"]').attributes('aria-checked')).toBe(
       'true',
     )
+  })
+  it('retains field hints and external descriptions when validation changes', async () => {
+    const wrapper = mount(AgmInput, {
+      props: { id: 'name', label: '名称', hint: '用于识别设备' },
+      attrs: { 'aria-describedby': 'external-help', 'required': true },
+    })
+    const input = wrapper.get('input')
+    expect(input.attributes('aria-describedby')).toBe('external-help name-hint')
+    await wrapper.setProps({ error: '请输入名称' })
+    expect(input.attributes('aria-invalid')).toBe('true')
+    expect(input.attributes('aria-describedby')).toBe('external-help name-hint name-error')
+    await wrapper.setProps({ error: undefined })
+    expect(input.attributes('aria-invalid')).toBe('false')
+    expect(input.attributes('aria-describedby')).toBe('external-help name-hint')
+    expect(wrapper.find('#name-error').exists()).toBe(false)
+    expect(input.attributes('required')).toBeDefined()
+  })
+  it('forwards select attributes and connects labels, hints and validation to its trigger', async () => {
+    const wrapper = mount(AgmSelect, {
+      props: {
+        id: 'mode',
+        label: '模式',
+        hint: '选择可用模式',
+        error: '请选择模式',
+        required: true,
+        options: [{ label: '专注', value: 'focus' }],
+      },
+      attrs: { 'aria-describedby': 'external-help', 'data-field': 'mode', 'class': 'custom-field', 'style': 'max-width: 300px' },
+    })
+    const trigger = wrapper.get('[role="combobox"]')
+    expect(trigger.attributes('id')).toBe('mode')
+    expect(wrapper.get('label').attributes('for')).toBe('mode')
+    expect(trigger.attributes('aria-labelledby')).toBe('mode-label')
+    expect(trigger.attributes('data-field')).toBe('mode')
+    expect(wrapper.classes()).toContain('custom-field')
+    expect(wrapper.attributes('style')).toContain('max-width: 300px')
+    expect(trigger.classes()).not.toContain('custom-field')
+    expect(trigger.attributes('aria-required')).toBe('true')
+    expect(trigger.attributes('aria-invalid')).toBe('true')
+    expect(trigger.attributes('aria-describedby')).toBe('external-help mode-hint mode-error')
+    await wrapper.setProps({ error: undefined, hint: undefined })
+    expect(trigger.attributes('aria-describedby')).toBe('external-help')
+    expect(trigger.attributes('aria-invalid')).toBe('false')
+    expect(wrapper.find('#mode-error').exists()).toBe(false)
+  })
+  it('renders panel actions without requiring a heading and keeps its footer separate', () => {
+    const wrapper = mount(AgmPanel, {
+      slots: { default: '内容', actions: '<button>刷新</button>', footer: '<button>保存</button>' },
+    })
+    expect(wrapper.get('header').text()).toBe('刷新')
+    expect(wrapper.find('h2').exists()).toBe(false)
+    expect(wrapper.get('footer').text()).toBe('保存')
+    expect(wrapper.text()).toContain('内容')
   })
   it('distinguishes unknown progress from zero and clamps finite values', async () => {
     const wrapper = mount(AgmHudProgress, { props: { label: '同步' } })

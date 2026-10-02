@@ -11,13 +11,15 @@
 
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
+| `description` | string | undefined | 标题下方的辅助说明；自定义 header 时由插槽接管 |
 | `title` | string | undefined | 面板标题 |
 
 ### 插槽
 
 - default：内容
-- header：自定义标题
-- actions：标题栏操作
+- header：自定义标题与说明
+- actions：标题栏操作，无标题时也可使用
+- footer：底部操作区
 
 ## 键盘操作与使用边界
 

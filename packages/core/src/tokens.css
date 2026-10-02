@@ -1,4 +1,5 @@
-:root {
+:root,
+[data-agm-theme='light'] {
   --agm-font:
     'Exo 2', 'Avenir Next', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --agm-bg: #ffffff;

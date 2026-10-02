@@ -11,6 +11,10 @@
 
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
+| `id` | string | undefined | 可选的触发元素 ID，默认自动生成 |
+| `hint` | string | undefined | 辅助说明，与选择器关联并在错误时保留 |
+| `error` | string | undefined | 错误说明，同时标记无效状态 |
+| `required` | boolean | false | 表单必选项 |
 | `modelValue` | string | undefined | 通过 v-model 更新 |
 | `label` | string | 必填 | 可见标签 |
 | `options` | { label: string, value: string, disabled?: boolean }[] | 必填 | value 必须为非空且唯一的字符串 |
@@ -24,7 +28,7 @@
 
 ## 键盘操作与使用边界
 
-Enter / Space 打开，方向键移动，Enter 选择，Escape 关闭；支持字符搜索。
+Enter / Space 打开，方向键移动，Enter 选择，Escape 关闭；支持字符搜索并跳过禁用项。class / style 保留在字段容器，其余额外属性和监听器传递到触发按钮；hint / error 自动关联。
 
 ## 安装
 

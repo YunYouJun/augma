@@ -59,6 +59,7 @@ export const components = [
     description: '清晰的标签与错误信息，让输入始终有方向。',
     props: [
       { name: 'id', description: '可选的输入元素 ID，默认自动生成' },
+      { name: 'hint', description: '辅助说明，与输入关联并在错误时保留' },
       {
         name: 'modelValue',
         description: '通过 v-model 更新',
@@ -92,6 +93,10 @@ export const components = [
     group: '控制',
     description: '在清晰的选项列表中做出选择。',
     props: [
+      { name: 'id', description: '可选的触发元素 ID，默认自动生成' },
+      { name: 'hint', description: '辅助说明，与选择器关联并在错误时保留' },
+      { name: 'error', description: '错误说明，同时标记无效状态' },
+      { name: 'required', description: '表单必选项' },
       {
         name: 'modelValue',
         description: '通过 v-model 更新',
@@ -119,7 +124,7 @@ export const components = [
     ],
     events: ['update:modelValue(string)'],
     keyboard:
-      'Enter / Space 打开，方向键移动，Enter 选择，Escape 关闭；支持字符搜索。',
+      'Enter / Space 打开，方向键移动，Enter 选择，Escape 关闭；支持字符搜索并跳过禁用项。class / style 保留在字段容器，其余额外属性和监听器传递到触发按钮；hint / error 自动关联。',
   },
   {
     slug: 'switch',
@@ -239,8 +244,9 @@ export const components = [
     name: 'AgmToast',
     title: 'Toast 通知',
     group: '反馈',
-    description: '对已完成的操作给出轻量、可关闭的反馈。',
+    description: '为操作结果与提醒提供轻量、可关闭的反馈。',
     props: [
+      { name: 'tone', description: '状态语义；标题应同时说明结果，不能只依赖颜色' },
       {
         name: 'open',
         description: '通过 v-model:open 更新',
@@ -269,12 +275,13 @@ export const components = [
     group: 'HUD',
     description: '轻盈的半透明容器，为相关信息建立层次。',
     props: [
+      { name: 'description', description: '标题下方的辅助说明；自定义 header 时由插槽接管' },
       {
         name: 'title',
         description: '面板标题',
       },
     ],
-    slots: ['default：内容', 'header：自定义标题', 'actions：标题栏操作'],
+    slots: ['default：内容', 'header：自定义标题与说明', 'actions：标题栏操作，无标题时也可使用', 'footer：底部操作区'],
     keyboard: '面板本身不接管焦点；内容遵循自然的文档顺序。',
     registry: true,
   },

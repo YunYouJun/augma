@@ -12,6 +12,7 @@
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `id` | string | undefined | 可选的输入元素 ID，默认自动生成 |
+| `hint` | string | undefined | 辅助说明，与输入关联并在错误时保留 |
 | `modelValue` | string | '' | 通过 v-model 更新 |
 | `label` | string | 必填 | 可见标签 |
 | `error` | string | undefined | 错误说明 |

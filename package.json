@@ -26,7 +26,11 @@
     "test:package": "node scripts/verify-packages.mjs",
     "test:registry": "node scripts/verify-registry.mjs",
     "test": "pnpm test:unit && pnpm test:browser",
-    "check": "pnpm generate && pnpm lint && pnpm typecheck && pnpm test:unit && pnpm build && pnpm test:package && pnpm test:registry && pnpm test:browser"
+    "check": "pnpm generate && pnpm lint && pnpm typecheck && pnpm test:unit && pnpm test:release && pnpm build && pnpm test:package && pnpm test:registry && pnpm test:browser",
+    "test:release": "node --test tests/release/*.test.mjs",
+    "release:pack": "node scripts/check-release.mjs --prepare && node scripts/release-artifacts.mjs pack",
+    "release:verify": "node scripts/release-artifacts.mjs verify",
+    "release:check-published": "node scripts/check-published.mjs"
   },
   "devDependencies": {
     "@antfu/eslint-config": "9.5.1",

@@ -1,28 +1,19 @@
 <script setup lang="ts">
-import { AgmHudProgress, AgmHudStatus, AgmPanel } from 'augma'
+import { AgmButton, AgmHudProgress, AgmHudStatus, AgmPanel } from 'augma'
+import { shallowRef } from 'vue'
+
+const progress = shallowRef(72)
 </script>
 
 <template>
-  <AgmPanel title="设备概览" style="width: 100%; max-width: 360px">
+  <AgmPanel title="设备概览" description="查看同步状态并调整当前进度。" style="width: 100%; max-width: 400px">
     <template #actions>
-      <AgmHudStatus>就绪</AgmHudStatus>
+      <AgmHudStatus :tone="progress === 100 ? 'success' : 'neutral'">{{ progress === 100 ? '已同步' : '待同步' }}</AgmHudStatus>
     </template>
-    <p>将重要信息轻轻放在视野之中。</p>
-    <AgmHudProgress label="示例进度" :value="72" />
+    <AgmHudProgress label="示例进度" :value="progress" />
+    <template #footer>
+      <AgmButton variant="ghost" :disabled="progress === 72" @click="progress = 72">重置</AgmButton>
+      <AgmButton :disabled="progress === 100" @click="progress = 100">完成同步</AgmButton>
+    </template>
   </AgmPanel>
 </template>
-
-<style scoped>
-.example-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px;
-}
-.example-stack {
-  display: grid;
-  gap: 24px;
-  width: 100%;
-  max-width: 360px;
-}
-</style>

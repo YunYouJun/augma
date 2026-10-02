@@ -6,6 +6,7 @@ const props = withDefaults(
   defineProps<{
     id?: string
     label: string
+    hint?: string
     error?: string
     disabled?: boolean
     type?: string
@@ -28,8 +29,11 @@ const resolvedId = computed(() => props.id ?? fallbackId)
       :type="type"
       :disabled="disabled"
       :aria-invalid="!!error"
-      :aria-describedby="[$attrs['aria-describedby'], error ? `${resolvedId}-error` : undefined].filter(Boolean).join(' ') || undefined"
+      :aria-describedby="[$attrs['aria-describedby'], hint ? `${resolvedId}-hint` : undefined, error ? `${resolvedId}-error` : undefined].filter(Boolean).join(' ') || undefined"
     />
+    <span v-if="hint" :id="`${resolvedId}-hint`" class="agm-field-hint">
+      {{ hint }}
+    </span>
     <span v-if="error" :id="`${resolvedId}-error`" class="agm-field-error">
       {{ error }}
     </span>

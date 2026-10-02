@@ -16,3 +16,4 @@ apps/site/public/components.json
 apps/site/public/llms*.txt
 apps/site/public/markdown
 *.tgz
+release-artifacts/

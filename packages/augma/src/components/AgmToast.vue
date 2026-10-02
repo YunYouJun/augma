@@ -10,8 +10,13 @@ import {
 } from 'reka-ui'
 
 withDefaults(
-  defineProps<{ title: string, description?: string, duration?: number }>(),
-  { duration: 5000 },
+  defineProps<{
+    title: string
+    description?: string
+    duration?: number
+    tone?: 'success' | 'warning' | 'danger' | 'neutral'
+  }>(),
+  { duration: 5000, tone: 'success' },
 )
 const open = defineModel<boolean>('open', { default: false })
 </script>
@@ -19,7 +24,7 @@ const open = defineModel<boolean>('open', { default: false })
 <template>
   <ToastProvider :duration="duration">
     <ToastPortal>
-      <ToastRoot v-model:open="open" class="agm-toast">
+      <ToastRoot v-model:open="open" class="agm-toast" :data-tone="tone">
         <ToastTitle class="agm-toast-title">{{ title }}</ToastTitle>
         <ToastDescription v-if="description" class="agm-toast-description">
           {{ description }}

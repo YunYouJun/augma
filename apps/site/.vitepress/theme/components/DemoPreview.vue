@@ -26,6 +26,11 @@ const demo = computed(() =>
 )
 const source = computed(() => String(sources[key.value] ?? ''))
 const ready = shallowRef(false)
+const revision = shallowRef(0)
+function reset() {
+  ready.value = false
+  revision.value++
+}
 watch(key, () => {
   ready.value = false
 })
@@ -51,8 +56,12 @@ onUnmounted(() => clearTimeout(timer))
 
 <template>
   <div class="demo-block">
-    <div class="demo-canvas" :aria-busy="!ready">
-      <component :is="demo" v-if="demo" @vue:mounted="ready = true" />
+    <div class="demo-toolbar">
+      <span>交互预览</span>
+      <button type="button" :disabled="!demo || !ready" @click="reset">重置示例</button>
+    </div>
+    <div class="demo-canvas" :aria-busy="!!demo && !ready">
+      <component :is="demo" v-if="demo" :key="`${key}-${revision}`" @vue:mounted="ready = true" />
       <p v-else>未找到示例。</p>
     </div>
     <details class="demo-source">
@@ -63,6 +72,7 @@ onUnmounted(() => clearTimeout(timer))
           {{ copied ? '已复制' : '复制代码' }}
         </button>
       </div>
+      <span class="agm-sr-only" role="status">{{ copied ? '代码已复制' : '' }}</span>
       <p v-if="failed" role="status">复制失败，请选中下方源码复制。</p>
       <pre>
 <code>{{ source }}</code>
