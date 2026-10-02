@@ -11,11 +11,15 @@ for (const path of [
   const pkg = JSON.parse(await readFile(path, 'utf8'))
   assert.equal(pkg.version, version, `${path}: version mismatch`)
 }
-assert.equal(
-  process.env.GITHUB_REF,
-  `refs/tags/v${version}`,
-  'Publish only a matching release tag',
-)
+const prepare = process.argv.slice(2).includes('--prepare')
+assert(process.argv.slice(2).every(arg => arg === '--prepare'), 'Unknown release check option')
+if (!prepare) {
+  assert.equal(
+    process.env.GITHUB_REF,
+    `refs/tags/v${version}`,
+    'Publish only a matching release tag',
+  )
+}
 console.log(
-  `Release v${version} matches the workspace, packages and component contract.`,
+  `${prepare ? 'Prepared version' : 'Release tag'} v${version} matches the workspace, packages and component contract.`,
 )

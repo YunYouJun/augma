@@ -67,6 +67,6 @@ pnpm check       # lint、types、unit、build、包消费、Registry 与浏览�
 - `scripts/catalog.mjs`：组件描述与行为说明；API 类型与默认值从 Vue 源码提取。
 - `skills/augma`：可安装的 Agent Skill。
 
-发布、域名与旧站迁移见 [发布说明](docs/release.md)。0.1 → 0.2 是不兼容重构，详见 [迁移指南](apps/site/guide/migration.md)。
+版本变化见 [更新记录](CHANGELOG.md)。发布、域名与旧站迁移见 [发布说明](docs/release.md)。0.1 → 0.2 是不兼容重构，详见 [迁移指南](apps/site/guide/migration.md)。
 
 MIT · 原创界面实验，与《刀剑神域》版权方无关联。

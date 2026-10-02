@@ -1,16 +1,57 @@
-name: Publish packages
+name: Prepare or publish packages
 on:
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the verified packages to npm (requires a matching version tag)
+        type: boolean
+        default: false
+        required: true
 permissions:
   contents: read
 concurrency:
   group: npm-release
   cancel-in-progress: false
 jobs:
-  publish:
-    if: startsWith(github.ref, 'refs/tags/v')
+  prepare:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    outputs:
+      artifact: augma-packages-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - name: Require the version tag before publishing
+        if: inputs.publish
+        run: node scripts/check-release.mjs
+      - name: Verify public versions without publishing
+        run: node scripts/check-release.mjs --prepare
+      - uses: pnpm/action-setup@v6
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium firefox webkit
+      - run: pnpm check
+      - name: Ensure generated component docs are current
+        run: git diff --exit-code -- apps/site/components
+      - name: Pack verified files
+        run: pnpm release:pack
+      - uses: actions/upload-artifact@v7
+        with:
+          name: augma-packages-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-artifacts/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: augma-release-site-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: apps/site/.vitepress/dist
+          include-hidden-files: true
+          if-no-files-found: error
+  publish:
+    needs: prepare
+    if: inputs.publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     environment: npm
     permissions:
       contents: read
@@ -21,22 +62,20 @@ jobs:
         with:
           node-version-file: .node-version
           registry-url: https://registry.npmjs.org
-      - uses: pnpm/action-setup@v6
-      - run: pnpm install --frozen-lockfile
-      - name: Verify tag and all public versions
-        run: node scripts/check-release.mjs
-      - run: pnpm exec playwright install --with-deps chromium firefox webkit
-      - run: pnpm check
-      - name: Pack verified files
-        run: |
-          mkdir -p release-artifacts
-          pnpm --dir packages/core pack --pack-destination ../../release-artifacts
-          pnpm --dir packages/augma pack --pack-destination ../../release-artifacts
-      - uses: actions/upload-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
-          name: augma-packages-${{ github.sha }}
-          path: release-artifacts/*.tgz
+          name: ${{ needs.prepare.outputs.artifact }}
+          path: release-artifacts
+      - name: Verify tag, commit and package checksums
+        run: |
+          node scripts/check-release.mjs
+          node scripts/release-artifacts.mjs verify
+      - name: Verify npm supports trusted publishing
+        run: |
+          node --input-type=module -e "import { execFileSync } from 'node:child_process'; const [major, minor, patch] = execFileSync('npm', ['--version'], { encoding: 'utf8' }).trim().split('.').map(Number); if (major < 11 || (major === 11 && (minor < 5 || (minor === 5 && patch < 1)))) throw new Error('npm 11.5.1 or newer is required for trusted publishing')"
       - name: Publish Core then Vue via trusted publishing
         run: |
           npm publish release-artifacts/augma-core-*.tgz --access public --provenance
-          npm publish release-artifacts/augma-0*.tgz --access public --provenance
+          npm publish release-artifacts/augma-[0-9]*.tgz --access public --provenance
+      - name: Verify public package versions and integrity
+        run: node scripts/check-published.mjs
