@@ -98,6 +98,8 @@ npm 发布没有跨包事务。Core 成功而 Vue 失败时，不要直接重跑
 
 这些域名不会随新站发布自动迁移。保留旧站归档，核对旧路径后设置逐路径 301 / 308。2026-10-02 已确认 `augma.elpsy.cn` 与新别名同属 Cloudflare Pages 的 `augma` 项目，旧域迁移应使用按主机名匹配的重定向规则；不要直接添加全站 `/` 重定向，否则会影响新域名。[Pages 的 `_redirects` 不支持域名级匹配](https://developers.cloudflare.com/pages/configuration/redirects/)。
 
+Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run update` 构建命令，锁定 pnpm 版本并输出完整站点（含 `/ar/`）；Git 预览部署用于验证，不代表旧域迁移或生产发布已完成。[Vercel 仓库配置会覆盖控制台构建设置](https://vercel.com/docs/project-configuration/vercel-json)。
+
 ## 公网验收
 
 发布后分别在两个域名检查：首页、一个组件页、`/ar/`、`/llms.txt`、`/components.json`、`/r/button.json`、Markdown 下载。验证 HTTPS、404、移动布局和无路径丢失；重新执行公开 npm / Registry 安装。摄像头与 immersive-ar 需要在实际支持的设备上单独记录结果。
@@ -108,7 +110,7 @@ npm 发布没有跨包事务。Core 成功而 Vue 失败时，不要直接重跑
 - 本地完整 `pnpm check` 通过，包括 38 项组件测试、4 项发布工具测试、72 项浏览器测试、构建、类型及包 / Registry 消费验证；远端最终提交的 CI / 准备工作流仍需记录实际结果。
 - 官方 registry 的 `augma` 最新版本为 `0.1.1`；`@augma/core` 查询返回 404，0.2 尚未完成公开发布。
 - 本机 npm 身份验证返回 401；首次注册及 npm trusted publisher 配置尚未确认。GitHub 当前未预设 `npm` environment。
-- 主域 `components.json` 可读取但尚未包含本轮新增 API；别名站脚本请求返回 403，需从真实浏览器和托管平台完成验收。
+- 主域 `components.json` 可读取但尚未包含本轮新增 API；主域与别名首页已在真实浏览器中确认正常加载。别名站脚本请求曾返回 403，不能据此判断网站故障；新版部署后仍需完成完整公网验收。
 - 旧文档根入口仍返回原站，没有跳转到新站。旧站迁移与实机 AR 验收单独记录。
 
 正式宣布发布前，补充工作流 URL、包版本 / integrity、公网安装和两站点验收结果；发布成功后再更新 README、快速开始和 CHANGELOG 中的待发布状态。

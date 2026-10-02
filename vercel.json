@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npx --yes pnpm@12.5.1 install --frozen-lockfile",
+  "buildCommand": "npx --yes pnpm@12.5.1 run build",
+  "outputDirectory": "apps/site/.vitepress/dist",
+  "cleanUrls": true
+}
