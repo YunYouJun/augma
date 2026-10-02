@@ -111,7 +111,7 @@ async function collect(dir) {
         (_, slug) => `[Vue example](${origin}/markdown/examples/${slug}.vue)`,
       )
       content = content.replace(
-        /<(HomePage|ShowcasePage|ComponentCatalog)\s*\/>/g,
+        /<(HomePage|ShowcasePage|ComponentCatalog|ThemeComparison)\s*\/>/g,
         '',
       )
       const dest = resolve(publicDir, 'markdown', rel)

@@ -10,6 +10,7 @@ const name = shallowRef('Augma')
     <AgmInput
       v-model="name"
       label="设备名称"
+      hint="用于在设备列表中识别当前设备。"
       placeholder="输入设备名称"
       :error="name.trim() ? undefined : '请输入设备名称'"
     />

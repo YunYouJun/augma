@@ -7,7 +7,10 @@ const value = shallowRef(72)
 
 <template>
   <div class="example-stack">
-    <AgmHudProgress label="同步完成" :value="value" variant="ring" />
+    <div class="example-row">
+      <AgmHudProgress label="同步完成" :value="value" variant="ring" />
+      <AgmHudProgress label="正在扫描" variant="ring" />
+    </div>
     <AgmHudProgress label="数据同步" :value="value" />
     <AgmSlider v-model="value" label="调整示例进度" />
     <AgmHudProgress label="正在连接" />

@@ -4,6 +4,7 @@ import ComponentCatalog from './components/ComponentCatalog.vue'
 import DemoPreview from './components/DemoPreview.vue'
 import HomePage from './components/HomePage.vue'
 import ShowcasePage from './components/ShowcasePage.vue'
+import ThemeComparison from './components/ThemeComparison.vue'
 import '@fontsource/exo-2/400.css'
 import '@fontsource/exo-2/500.css'
 import '@fontsource/exo-2/600.css'
@@ -18,5 +19,6 @@ export default {
     app.component('DemoPreview', DemoPreview)
     app.component('ComponentCatalog', ComponentCatalog)
     app.component('ShowcasePage', ShowcasePage)
+    app.component('ThemeComparison', ThemeComparison)
   },
 } satisfies Theme

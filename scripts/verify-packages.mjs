@@ -47,7 +47,7 @@ try {
   run('node', ['verify.mjs'], temp)
   await writeFile(
     join(temp, 'consumer.ts'),
-    'import { AgmButton, AgmDialog, AgmSlider } from \'augma\'\nimport { h } from \'vue\'\nh(AgmButton, { variant: \'outline\' })\nh(AgmDialog, { title: \'Settings\', description: \'Configure\' })\nh(AgmSlider, { label: \'Opacity\', modelValue: 72 })\n',
+    'import { AgmButton, AgmDialog, AgmSlider, AgmInput, AgmSelect, AgmToast } from \'augma\'\nimport { h } from \'vue\'\nh(AgmButton, { variant: \'outline\' })\nh(AgmDialog, { title: \'Settings\', description: \'Configure\' })\nh(AgmSlider, { label: \'Opacity\', modelValue: 72 })\nh(AgmInput, { label: \'Name\', hint: \'Device name\', error: \'Required\' })\nh(AgmSelect, { label: \'Mode\', id: \'mode\', hint: \'Choose a mode\', required: true, error: \'Required\', options: [] })\nh(AgmToast, { title: \'Retry\', tone: \'warning\' })\n',
   )
   run(
     resolve('node_modules/.bin/tsc'),
