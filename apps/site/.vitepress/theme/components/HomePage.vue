@@ -1,13 +1,21 @@
 <script setup lang="ts">
+import { version } from '../../../../../packages/augma/package.json'
+import { components } from '../../../../../scripts/catalog.mjs'
 import AiBand from './AiBand.vue'
+import ArDemo from './ArDemo.vue'
 import ComponentStrip from './ComponentStrip.vue'
+import CopyCommand from './CopyCommand.vue'
 import DevicePreview from './DevicePreview.vue'
+import HeroBackdrop from './HeroBackdrop.vue'
 import UiIcon from './UiIcon.vue'
+
+const release = `v${version.split('.').slice(0, 2).join('.')}`
 </script>
 
 <template>
   <div class="augma-home">
     <section class="hero-shell">
+      <HeroBackdrop />
       <div class="hero">
         <div class="hero-copy">
           <h1>
@@ -30,11 +38,16 @@ import UiIcon from './UiIcon.vue'
               体验 AR
             </a>
           </div>
+          <div class="hero-install">
+            <CopyCommand text="pnpm add augma" />
+            <small>{{ release }} · {{ components.length }} 个组件 · MIT</small>
+          </div>
         </div>
         <DevicePreview />
       </div>
     </section>
     <div class="home-content">
+      <ArDemo />
       <ComponentStrip />
       <AiBand />
       <footer class="home-footer">

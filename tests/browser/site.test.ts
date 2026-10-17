@@ -269,3 +269,25 @@ test('theme samples stay independent and unknown ring progress respects reduced 
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await expect(ring).toHaveCSS('animation-name', 'none')
 })
+
+test('home, showcase and catalog have no horizontal scroll at 390px', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  for (const path of ['/', '/showcase/', '/components/']) {
+    await page.goto(path)
+    await page.waitForLoadState('networkidle')
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), path).toBe(true)
+  }
+})
+
+test('home shows install command, release line and AR demo entry', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('.hero-install code')).toHaveText('pnpm add augma')
+  await expect(page.locator('.hero-install small')).toHaveText(/^v\d+\.\d+ · 12 个组件 · MIT$/)
+  const demo = page.getByRole('region', { name: 'AR 演示' })
+  await expect(demo).toContainText('还原自原版 Augma 网页的设备界面')
+  await expect(demo.getByRole('link', { name: '打开 AR 演示' })).toHaveAttribute('href', '/ar/')
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\.png$/)
+  await page.goto('/showcase/')
+  await expect(page.locator('.device-stage')).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: '从一个按钮，到一整个视界' })).toHaveCount(0)
+})

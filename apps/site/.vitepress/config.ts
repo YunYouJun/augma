@@ -14,13 +14,25 @@ export default defineConfig({
   srcExclude: ['public/**'],
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:site_name', content: 'Augma' }],
+    ['meta', { property: 'og:title', content: 'Augma · 界面，浮现于现实。' }],
+    ['meta', { property: 'og:description', content: '为 Web 构建轻盈的 AR 风格界面。' }],
+    ['meta', { property: 'og:image', content: `${origin}/og.png` }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:image', content: `${origin}/og.png` }],
   ],
   sitemap: { hostname: origin },
   transformHead({ pageData }) {
     const path = pageData.relativePath
       .replace(/(^|\/)index\.md$/, '$1')
       .replace(/\.md$/, '')
-    return [['link', { rel: 'canonical', href: `${origin}/${path}` }]]
+    return [
+      ['link', { rel: 'canonical', href: `${origin}/${path}` }],
+      ['meta', { property: 'og:url', content: `${origin}/${path}` }],
+    ]
   },
   themeConfig: {
     nav: [

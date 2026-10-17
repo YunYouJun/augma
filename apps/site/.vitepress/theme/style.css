@@ -79,9 +79,39 @@
   color: var(--agm-text);
 }
 .hero-shell {
+  position: relative;
+  isolation: isolate;
   background: var(--agm-surface);
   border-bottom: 1px solid var(--agm-border);
   overflow: hidden;
+}
+/* Replaceable real-world layer; .is-fallback keeps the solid surface. */
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.hero-backdrop img,
+.hero-backdrop video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 50%;
+}
+.hero-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--agm-surface) 92%, transparent) 0%,
+    color-mix(in srgb, var(--agm-surface) 70%, transparent) 42%,
+    color-mix(in srgb, var(--agm-surface) 18%, transparent) 100%
+  );
+}
+.hero-backdrop.is-fallback::after {
+  display: none;
 }
 .hero {
   max-width: 1248px;
@@ -130,6 +160,31 @@
 .hero-actions .agm-button {
   min-width: 160px;
   min-height: 50px;
+}
+.hero-install {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  margin-top: 22px;
+  max-width: 338px;
+}
+.hero-install .copy-command {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--agm-border) 70%, transparent);
+  min-height: 44px;
+  padding-block: 0;
+  font-size: 13px;
+}
+.hero-install .copy-command button {
+  min-width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+}
+.hero-install small {
+  font-size: 12px;
+  color: var(--agm-muted);
+  letter-spacing: 0.02em;
 }
 .hero-actions svg,
 .device-settings svg,
@@ -182,6 +237,8 @@
   background: var(--agm-panel);
   outline: 5px solid color-mix(in srgb, var(--agm-bg) 65%, transparent);
   outline-offset: 5px;
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  backdrop-filter: blur(14px) saturate(1.1);
   transition:
     transform 220ms ease,
     background 180ms;
@@ -378,6 +435,45 @@
   width: 17px;
   height: 17px;
 }
+.ar-demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  align-items: center;
+  gap: 48px;
+  padding: 40px 0 36px;
+  border-bottom: 1px solid var(--agm-border);
+}
+.ar-demo h2 {
+  font-size: 29px;
+  line-height: 1.5;
+  font-weight: 500;
+  margin: 0 0 10px;
+}
+.ar-demo p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--agm-muted);
+  margin: 0 0 24px;
+}
+.ar-demo .agm-button {
+  min-height: 50px;
+}
+.ar-demo .agm-button svg {
+  width: 21px;
+  height: 21px;
+}
+.ar-demo-media {
+  min-width: 0;
+  border: 1px solid var(--agm-border);
+  background: #757575;
+  aspect-ratio: 16 / 10;
+}
+.ar-demo-media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .home-footer {
   display: flex;
   justify-content: space-between;
@@ -422,11 +518,14 @@
 }
 .demo-source pre {
   overflow-x: auto;
+  max-width: 100%;
   margin: 0;
   padding: 16px 20px 24px;
   font: 12px/1.8 var(--vp-font-family-mono);
 }
 .demo-source code {
+  display: block;
+  min-width: max-content;
   color: var(--agm-text);
   background: none;
   padding: 0;
@@ -507,10 +606,6 @@
 }
 .showcase-heading a {
   color: var(--agm-accent);
-}
-.showcase-page > .device-stage {
-  max-width: 600px;
-  margin: 40px auto 60px;
 }
 @media (max-width: 1320px) {
   .hero,
@@ -593,8 +688,26 @@
   .home-content {
     margin: 0 24px;
   }
-  .component-strip > h2 {
+  .component-strip > h2,
+  .ar-demo h2 {
     font-size: 24px;
+  }
+  .ar-demo {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-top: 32px;
+  }
+  .hero-install {
+    justify-items: center;
+    margin-inline: auto;
+  }
+  .hero-backdrop::after {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--agm-surface) 90%, transparent) 0%,
+      color-mix(in srgb, var(--agm-surface) 72%, transparent) 48%,
+      color-mix(in srgb, var(--agm-surface) 30%, transparent) 100%
+    );
   }
   .component-columns {
     grid-template-columns: 1fr;

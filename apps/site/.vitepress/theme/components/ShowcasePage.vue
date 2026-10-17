@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import ComponentStrip from './ComponentStrip.vue'
 import DemoPreview from './DemoPreview.vue'
-import DevicePreview from './DevicePreview.vue'
 import UiIcon from './UiIcon.vue'
 </script>
 
@@ -12,8 +10,6 @@ import UiIcon from './UiIcon.vue'
       <p>每个操作都来自真实组件。切换状态、调整参数，再将它们带入你的项目。</p>
       <a href="/components/">查看全部组件</a>
     </div>
-    <DevicePreview />
-    <ComponentStrip />
     <section class="simulator-entry">
       <div>
         <h2>一副属于你的视界。</h2>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <!-- Placeholder: replace with a real-world photo or muted loop (see .vitepress/theme/media.ts). -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c9d6df" />
+      <stop offset=".55" stop-color="#9fb0bd" />
+      <stop offset="1" stop-color="#5f6f7c" />
+    </linearGradient>
+    <filter id="bokeh" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="38" />
+    </filter>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="14" />
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)" />
+  <g filter="url(#bokeh)" opacity=".9">
+    <rect x="860" y="70" width="560" height="430" rx="10" fill="#eef3f6" />
+    <rect x="1130" y="70" width="18" height="430" fill="#8496a3" />
+    <rect x="860" y="280" width="560" height="14" fill="#8496a3" />
+    <ellipse cx="420" cy="700" rx="520" ry="160" fill="#3f4c57" />
+    <ellipse cx="1300" cy="820" rx="560" ry="150" fill="#4b5964" />
+    <circle cx="1460" cy="560" r="120" fill="#e3b27a" opacity=".55" />
+  </g>
+  <g filter="url(#soft)">
+    <circle cx="980" cy="610" r="22" fill="#fff4e0" opacity=".55" />
+    <circle cx="1210" cy="660" r="16" fill="#fff" opacity=".4" />
+    <circle cx="1390" cy="430" r="28" fill="#ffe7c4" opacity=".45" />
+    <circle cx="760" cy="520" r="12" fill="#fff" opacity=".35" />
+  </g>
+</svg>
