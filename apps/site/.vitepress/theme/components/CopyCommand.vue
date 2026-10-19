@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { onUnmounted, shallowRef } from 'vue'
+import { useI18n } from '../i18n'
 import UiIcon from './UiIcon.vue'
 
 const props = defineProps<{ text: string }>()
+const { t } = useI18n()
 const copied = shallowRef(false)
 const error = shallowRef(false)
 let timer: ReturnType<typeof setTimeout> | undefined
@@ -28,13 +30,13 @@ onUnmounted(() => clearTimeout(timer))
     <code>{{ text }}</code>
     <button
       type="button"
-      :aria-label="copied ? '已复制' : '复制命令'"
+      :aria-label="copied ? t('copy.copied') : t('copy.command')"
       @click="copy"
     >
       <UiIcon :name="copied ? 'check' : 'copy'" />
     </button>
     <span class="agm-sr-only" aria-live="polite">
-      {{ copied ? '已复制到剪贴板' : error ? '复制失败，请选中文字复制' : '' }}
+      {{ copied ? t('copy.done') : error ? t('copy.failed') : '' }}
     </span>
   </div>
 </template>

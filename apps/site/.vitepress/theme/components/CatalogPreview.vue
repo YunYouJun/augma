@@ -1,49 +1,52 @@
 <script setup lang="ts">
 import { AgmButton, AgmHudGauge, AgmHudProgress, AgmHudStatus, AgmIconButton, AgmInput, AgmPanel, AgmSlider, AgmSwitch } from 'augma'
 
+import { useI18n } from '../i18n'
+
 defineProps<{ name: string }>()
+const { t } = useI18n()
 </script>
 
 <template>
   <div class="catalog-preview" aria-hidden="true" inert>
-    <AgmButton v-if="name === 'button'">开始连接</AgmButton>
+    <AgmButton v-if="name === 'button'">{{ t('preview.connect') }}</AgmButton>
     <div v-else-if="name === 'icon-button'" class="preview-row">
-      <AgmIconButton label="添加" />
-      <AgmIconButton label="已选中" pressed />
+      <AgmIconButton :label="t('preview.add')" />
+      <AgmIconButton :label="t('preview.selected')" pressed />
     </div>
-    <AgmInput v-else-if="name === 'input'" label="设备名称" model-value="Augma" tabindex="-1" />
+    <AgmInput v-else-if="name === 'input'" :label="t('preview.deviceName')" model-value="Augma" tabindex="-1" />
     <div v-else-if="name === 'select'" class="agm-field">
-      <span class="agm-field-label">显示模式</span>
-      <span class="agm-select">探索模式 <span>⌄</span></span>
+      <span class="agm-field-label">{{ t('preview.displayMode') }}</span>
+      <span class="agm-select">{{ t('preview.explore') }} <span>⌄</span></span>
     </div>
-    <AgmSwitch v-else-if="name === 'switch'" label="显示 HUD" :model-value="true" />
-    <AgmSlider v-else-if="name === 'slider'" label="界面不透明度" :model-value="72" />
+    <AgmSwitch v-else-if="name === 'switch'" :label="t('preview.showHud')" :model-value="true" />
+    <AgmSlider v-else-if="name === 'slider'" :label="t('preview.opacity')" :model-value="72" />
     <div v-else-if="name === 'dialog'" class="preview-dialog">
-      <strong>调整界面</strong>
-      <span>将信息留在舒适的视野中。</span>
-      <span class="preview-dialog-action">保存设置</span>
+      <strong>{{ t('device.adjust') }}</strong>
+      <span>{{ t('preview.dialogText') }}</span>
+      <span class="preview-dialog-action">{{ t('preview.save') }}</span>
     </div>
     <div v-else-if="name === 'tooltip'" class="preview-tooltip">
-      <span class="agm-tooltip">恢复默认的显示参数</span>
-      <AgmIconButton label="恢复默认" />
+      <span class="agm-tooltip">{{ t('preview.restoreHint') }}</span>
+      <AgmIconButton :label="t('preview.restore')" />
     </div>
     <div v-else-if="name === 'toast'" class="agm-toast preview-toast">
-      <strong class="agm-toast-title">设置已保存</strong>
-      <span class="agm-toast-description">新的显示偏好已生效。</span>
+      <strong class="agm-toast-title">{{ t('preview.saved') }}</strong>
+      <span class="agm-toast-description">{{ t('preview.savedDescription') }}</span>
     </div>
     <AgmPanel v-else-if="name === 'panel'" class="preview-panel">
-      <strong>设备概览</strong>
-      <AgmHudStatus>设备已连接</AgmHudStatus>
+      <strong>{{ t('preview.overview') }}</strong>
+      <AgmHudStatus>{{ t('preview.deviceConnected') }}</AgmHudStatus>
     </AgmPanel>
     <div v-else-if="name === 'hud-status'" class="preview-statuses">
-      <AgmHudStatus>已连接</AgmHudStatus>
-      <AgmHudStatus tone="warning">等待连接</AgmHudStatus>
-      <AgmHudStatus tone="danger">连接中断</AgmHudStatus>
+      <AgmHudStatus>{{ t('preview.connected') }}</AgmHudStatus>
+      <AgmHudStatus tone="warning">{{ t('preview.waiting') }}</AgmHudStatus>
+      <AgmHudStatus tone="danger">{{ t('preview.lost') }}</AgmHudStatus>
     </div>
-    <AgmHudProgress v-else-if="name === 'hud-progress'" label="同步进度" :value="72" variant="ring" />
+    <AgmHudProgress v-else-if="name === 'hud-progress'" :label="t('preview.sync')" :value="72" variant="ring" />
     <div v-else-if="name === 'hud-gauge'" class="preview-gauges">
-      <AgmHudGauge label="设备电量" :value="86" />
-      <AgmHudGauge label="剩余存储" :value="12" :max="64" />
+      <AgmHudGauge :label="t('preview.battery')" :value="86" />
+      <AgmHudGauge :label="t('preview.storage')" :value="12" :max="64" />
     </div>
   </div>
 </template>

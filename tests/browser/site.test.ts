@@ -271,9 +271,9 @@ test('theme samples stay independent and unknown ring progress respects reduced 
   await expect(ring).toHaveCSS('animation-name', 'none')
 })
 
-test('home, showcase and catalog have no horizontal scroll at 390px', async ({ page }) => {
+test('home, showcase and catalog have no horizontal scroll at 390px in every language', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
-  for (const path of ['/', '/showcase/', '/components/']) {
+  for (const path of ['/', '/showcase/', '/components/', '/en/', '/en/showcase/', '/ja/', '/ja/components/']) {
     await page.goto(path)
     await page.waitForLoadState('networkidle')
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), path).toBe(true)
@@ -322,4 +322,45 @@ test('macOS client is downloadable from the home page and its guide', async ({ p
     'href',
     'https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS.zip',
   )
+})
+
+test('English and Japanese docs are translated and the language switcher keeps the page', async ({ page }) => {
+  await page.goto('/en/')
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en-US')
+  await expect(page.getByRole('heading', { name: 'Interfaces that surface in reality.' })).toBeVisible()
+  await expect(page.locator('.hero-install small')).toHaveText(/^v\d+\.\d+ · 13 components · MIT$/)
+  await expect(page.getByRole('link', { name: 'Browse components' })).toHaveAttribute('href', '/en/components/')
+
+  await page.goto('/ja/')
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ja-JP')
+  await expect(page.getByRole('heading', { name: 'インターフェースが、現実に浮かび上がる。' })).toBeVisible()
+
+  await page.goto('/ja/guide/')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/クイックスタート/)
+  await page.getByRole('button', { name: '言語を切り替え' }).click()
+  await page.getByRole('link', { name: 'English', exact: true }).click()
+  await expect(page).toHaveURL(/\/en\/guide\/$/)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Quick start/)
+
+  // Component pages are generated for every locale, so switching never lands on a missing page.
+  await page.goto('/en/components/button')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/^Button/)
+  await expect(page.getByText('View Vue source', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Change language' }).click()
+  await page.getByRole('link', { name: '简体中文', exact: true }).click()
+  await expect(page).toHaveURL(/\/components\/button$/)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Button 按钮/)
+})
+
+test('links into the AR demo carry the docs language over', async ({ page }) => {
+  await page.goto('/en/')
+  await page.getByRole('link', { name: 'Try AR' }).click()
+  await expect(page).toHaveURL(/\/ar\/$/)
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en-US')
+  await page.goto('/ja/guide/ar')
+  await page.getByRole('link', { name: 'デバイスシミュレーターを開く' }).click()
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ja-JP')
+  await page.goto('/')
+  await page.getByRole('link', { name: '体验 AR' }).click()
+  await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN')
 })

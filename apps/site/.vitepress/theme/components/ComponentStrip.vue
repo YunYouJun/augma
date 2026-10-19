@@ -10,6 +10,9 @@ import {
   AgmToast,
 } from 'augma'
 import { shallowRef } from 'vue'
+import { useI18n } from '../i18n'
+
+const { t, link } = useI18n()
 
 const visible = shallowRef(true)
 const opacity = shallowRef(72)
@@ -19,40 +22,40 @@ const notification = shallowRef(false)
 
 <template>
   <section class="component-strip">
-    <h2 class="reveal">从一个按钮，到一整个视界</h2>
+    <h2 class="reveal">{{ t('strip.title') }}</h2>
     <div class="component-columns">
       <div class="component-column reveal">
         <h3>
-          <a href="/components/button">操作</a>
+          <a :href="link('/components/button')">{{ t('strip.actions') }}</a>
         </h3>
-        <p>清晰、直接，即刻响应。</p>
+        <p>{{ t('strip.actionsLead') }}</p>
         <div class="button-samples">
-          <AgmButton @click="notification = true">主要按钮</AgmButton>
+          <AgmButton @click="notification = true">{{ t('strip.primary') }}</AgmButton>
           <AgmButton variant="outline" @click="notification = true">
-            次要按钮
+            {{ t('strip.secondary') }}
           </AgmButton>
           <AgmButton variant="ghost" @click="notification = true">
-            轻量操作
+            {{ t('strip.ghost') }}
           </AgmButton>
-          <AgmIconButton label="新增通知" @click="notification = true" />
+          <AgmIconButton :label="t('strip.notify')" @click="notification = true" />
         </div>
       </div>
       <div class="component-column reveal">
         <h3>
-          <a href="/components/switch">控制</a>
+          <a :href="link('/components/switch')">{{ t('strip.controls') }}</a>
         </h3>
-        <p>熟悉的交互，在新的场景中。</p>
+        <p>{{ t('strip.controlsLead') }}</p>
         <div class="settings-fields">
-          <AgmSwitch v-model="visible" label="显示 HUD" />
-          <AgmSlider v-model="opacity" label="界面不透明度" :min="20" />
-          <AgmSwitch v-model="locked" label="空间锚定" />
+          <AgmSwitch v-model="visible" :label="t('preview.showHud')" />
+          <AgmSlider v-model="opacity" :label="t('preview.opacity')" :min="20" />
+          <AgmSwitch v-model="locked" :label="t('strip.anchor')" />
         </div>
       </div>
       <div class="component-column reveal">
         <h3>
-          <a href="/components/panel">信息</a>
+          <a :href="link('/components/panel')">{{ t('strip.info') }}</a>
         </h3>
-        <p>关键信息，轻盈呈现。</p>
+        <p>{{ t('strip.infoLead') }}</p>
         <div class="mini-hud-space">
           <AgmPanel
             v-if="visible"
@@ -60,20 +63,20 @@ const notification = shallowRef(false)
             :style="{ opacity: opacity / 100 }"
           >
             <AgmHudStatus>
-              {{ locked ? '已锚定视界' : '界面已就绪' }}
+              {{ locked ? t('strip.anchored') : t('strip.ready') }}
             </AgmHudStatus>
-            <AgmHudGauge label="界面不透明度" :value="opacity" />
-            <p>让信息自然地融入视野。</p>
-            <a href="/components/hud-progress">探索 HUD 组件</a>
+            <AgmHudGauge :label="t('preview.opacity')" :value="opacity" />
+            <p>{{ t('strip.blend') }}</p>
+            <a :href="link('/components/hud-progress')">{{ t('strip.exploreHud') }}</a>
           </AgmPanel>
-          <p v-else class="hidden-hud">HUD 已隐藏，可通过左侧开关恢复。</p>
+          <p v-else class="hidden-hud">{{ t('strip.hidden') }}</p>
         </div>
       </div>
     </div>
     <AgmToast
       v-model:open="notification"
-      title="操作已响应"
-      description="这是由 Augma Toast 组件呈现的反馈。"
+      :title="t('strip.toastTitle')"
+      :description="t('strip.toastDescription')"
     />
   </section>
 </template>

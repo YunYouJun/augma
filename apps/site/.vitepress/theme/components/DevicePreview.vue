@@ -11,9 +11,11 @@ import {
   AgmSwitch,
 } from 'augma'
 import { onUnmounted, shallowRef, useTemplateRef } from 'vue'
+import { useI18n } from '../i18n'
 import HudOrbit from './HudOrbit.vue'
 import UiIcon from './UiIcon.vue'
 
+const { t } = useI18n()
 const progress = shallowRef(72)
 const energy = shallowRef(86)
 const bright = shallowRef(false)
@@ -57,75 +59,75 @@ onUnmounted(() => cancelAnimationFrame(frame))
     <HudOrbit />
     <AgmPanel
       class="device-panel agm-materialize"
-      title="设备连接"
+      :title="t('device.title')"
       :style="{ '--device-opacity': bright ? '1' : '.88', '--agm-delay': '260ms' }"
     >
       <template #header>
         <div class="device-title">
           <UiIcon name="link" />
-          <h2>设备连接</h2>
+          <h2>{{ t('device.title') }}</h2>
         </div>
       </template>
       <div class="device-overview">
         <div>
-          <div class="device-preview-label">界面预览</div>
-          <AgmHudStatus>交互已就绪</AgmHudStatus>
-          <p>试着调整你的视界。</p>
+          <div class="device-preview-label">{{ t('device.preview') }}</div>
+          <AgmHudStatus>{{ t('device.ready') }}</AgmHudStatus>
+          <p>{{ t('device.hint') }}</p>
         </div>
-        <AgmHudProgress label="示例进度" :value="progress" variant="ring" />
+        <AgmHudProgress :label="t('device.progress')" :value="progress" variant="ring" />
       </div>
-      <AgmHudGauge label="示例电量" :value="energy" />
+      <AgmHudGauge :label="t('device.energy')" :value="energy" />
       <div class="device-controls">
         <div>
           <AgmIconButton
-            label="切换亮度"
+            :label="t('device.toggleBrightness')"
             :pressed="bright"
             @click="bright = !bright"
           >
             <UiIcon name="sun" />
           </AgmIconButton>
-          <span>亮度</span>
+          <span>{{ t('device.brightness') }}</span>
         </div>
         <div>
           <AgmIconButton
-            label="切换声音状态"
+            :label="t('device.toggleSound')"
             :pressed="sound"
             @click="sound = !sound"
           >
             <UiIcon name="volume" />
           </AgmIconButton>
-          <span>{{ sound ? '声音开启' : '声音关闭' }}</span>
+          <span>{{ sound ? t('device.soundOn') : t('device.soundOff') }}</span>
         </div>
         <div>
           <AgmIconButton
-            label="切换空间模式"
+            :label="t('device.toggleSpatial')"
             :pressed="spatial"
             @click="spatial = !spatial"
           >
             <UiIcon name="scan" />
           </AgmIconButton>
-          <span>空间模式</span>
+          <span>{{ t('device.spatial') }}</span>
         </div>
       </div>
       <AgmDialog
         v-model:open="open"
-        title="调整界面"
-        description="即时预览组件状态，找到适合你的显示方式。"
+        :title="t('device.adjust')"
+        :description="t('device.adjustDescription')"
       >
         <template #trigger>
           <AgmButton variant="outline" class="device-settings">
             <UiIcon name="settings" />
-            调整界面
+            {{ t('device.adjust') }}
           </AgmButton>
         </template>
         <div class="settings-fields">
-          <AgmSlider v-model="progress" label="示例进度" />
-          <AgmSlider v-model="energy" label="示例电量" />
-          <AgmSwitch v-model="bright" label="明亮面板" />
-          <AgmSwitch v-model="spatial" label="空间模式" />
+          <AgmSlider v-model="progress" :label="t('device.progress')" />
+          <AgmSlider v-model="energy" :label="t('device.energy')" />
+          <AgmSwitch v-model="bright" :label="t('device.brightPanel')" />
+          <AgmSwitch v-model="spatial" :label="t('device.spatial')" />
         </div>
         <template #footer>
-          <AgmButton @click="open = false">完成</AgmButton>
+          <AgmButton @click="open = false">{{ t('device.done') }}</AgmButton>
         </template>
       </AgmDialog>
     </AgmPanel>

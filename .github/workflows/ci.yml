@@ -23,7 +23,7 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm check
       - name: Ensure generated component docs are current
-        run: git diff --exit-code -- apps/site/components
+        run: git diff --exit-code -- apps/site/components apps/site/en/components apps/site/ja/components
       - uses: actions/upload-artifact@v7
         with:
           name: augma-site-${{ github.sha }}

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { version } from '../../../../../packages/augma/package.json'
 import { components } from '../../../../../scripts/catalog.mjs'
+import { useI18n } from '../i18n'
 import AiBand from './AiBand.vue'
 import ArDemo from './ArDemo.vue'
 import ComponentStrip from './ComponentStrip.vue'
@@ -9,6 +10,7 @@ import DevicePreview from './DevicePreview.vue'
 import HeroBackdrop from './HeroBackdrop.vue'
 import UiIcon from './UiIcon.vue'
 
+const { t, link } = useI18n()
 const release = `v${version.split('.').slice(0, 2).join('.')}`
 </script>
 
@@ -23,25 +25,25 @@ const release = `v${version.split('.').slice(0, 2).join('.')}`
             Augma
             <span aria-hidden="true">/</span>
           </h1>
-          <h2 style="--i: 1">界面，浮现于现实。</h2>
-          <p style="--i: 2">为 Web 构建轻盈的 AR 风格界面。</p>
+          <h2 style="--i: 1">{{ t('home.tagline') }}</h2>
+          <p style="--i: 2">{{ t('home.lead') }}</p>
           <div class="hero-actions" style="--i: 3">
-            <a class="agm-button agm-button--primary" href="/components/">
-              浏览组件
+            <a class="agm-button agm-button--primary" :href="link('/components/')">
+              {{ t('home.browse') }}
               <UiIcon name="arrow" />
             </a>
             <a
               class="agm-button agm-button--outline"
               href="/ar/"
-              data-no-router
+              target="_self"
             >
               <UiIcon name="scan" />
-              体验 AR
+              {{ t('home.tryAr') }}
             </a>
           </div>
           <div class="hero-install" style="--i: 4">
             <CopyCommand text="pnpm add augma" />
-            <small>{{ release }} · {{ components.length }} 个组件 · MIT</small>
+            <small>{{ release }} · {{ t('home.componentCount', { count: components.length }) }} · MIT</small>
           </div>
         </div>
         <DevicePreview />
@@ -53,7 +55,7 @@ const release = `v${version.split('.').slice(0, 2).join('.')}`
       <AiBand />
       <footer class="home-footer">
         <span>Augma · MIT</span>
-        <a href="/guide/">为你的下一个界面，Link Start.</a>
+        <a :href="link('/guide/')">{{ t('home.footer') }}</a>
       </footer>
     </div>
   </div>

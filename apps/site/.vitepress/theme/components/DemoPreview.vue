@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onUnmounted, shallowRef, watch } from 'vue'
+import { useI18n } from '../i18n'
 
 const props = defineProps<{
   name: string
   group?: 'components' | 'compositions'
 }>()
+const { t } = useI18n()
 const examples = import.meta.glob('../../../../../examples/**/*.vue')
 const sources = import.meta.glob('../../../../../examples/**/*.vue', {
   query: '?raw',
@@ -57,23 +59,23 @@ onUnmounted(() => clearTimeout(timer))
 <template>
   <div class="demo-block">
     <div class="demo-toolbar">
-      <span>交互预览</span>
-      <button type="button" :disabled="!demo || !ready" @click="reset">重置示例</button>
+      <span>{{ t('demo.preview') }}</span>
+      <button type="button" :disabled="!demo || !ready" @click="reset">{{ t('demo.reset') }}</button>
     </div>
     <div class="demo-canvas" :aria-busy="!!demo && !ready">
       <component :is="demo" v-if="demo" :key="`${key}-${revision}`" @vue:mounted="ready = true" />
-      <p v-else>未找到示例。</p>
+      <p v-else>{{ t('demo.missing') }}</p>
     </div>
     <details class="demo-source">
-      <summary>查看 Vue 源码</summary>
+      <summary>{{ t('demo.source') }}</summary>
       <div class="source-toolbar">
         <span>Vue · TypeScript</span>
         <button type="button" @click="copy">
-          {{ copied ? '已复制' : '复制代码' }}
+          {{ copied ? t('copy.copied') : t('demo.copy') }}
         </button>
       </div>
-      <span class="agm-sr-only" role="status">{{ copied ? '代码已复制' : '' }}</span>
-      <p v-if="failed" role="status">复制失败，请选中下方源码复制。</p>
+      <span class="agm-sr-only" role="status">{{ copied ? t('demo.copied') : '' }}</span>
+      <p v-if="failed" role="status">{{ t('demo.copyFailed') }}</p>
       <pre>
 <code>{{ source }}</code>
 </pre>

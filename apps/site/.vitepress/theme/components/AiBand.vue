@@ -1,17 +1,20 @@
 <script setup lang="ts">
+import { useI18n } from '../i18n'
 import CopyCommand from './CopyCommand.vue'
 import UiIcon from './UiIcon.vue'
+
+const { t, link } = useI18n()
 </script>
 
 <template>
   <section class="ai-band reveal">
     <div>
-      <h2>AI 也能读懂的设计系统</h2>
-      <p>为人，也为 AI，提供清晰、可组合的界面语言。</p>
+      <h2>{{ t('ai.title') }}</h2>
+      <p>{{ t('ai.lead') }}</p>
     </div>
     <CopyCommand text="npx skills add YunYouJun/augma --skill augma" />
-    <a href="/ai/">
-      AI 接入指南
+    <a :href="link('/ai/')">
+      {{ t('ai.guide') }}
       <UiIcon name="arrow" />
     </a>
   </section>

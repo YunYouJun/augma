@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { onMounted, shallowRef } from 'vue'
+import { useI18n } from '../i18n'
 import { arDemo } from '../media'
 import UiIcon from './UiIcon.vue'
+
+const { t, link } = useI18n()
 
 // Reduced motion keeps the poster with manual controls instead of autoplay.
 const autoplay = shallowRef(false)
@@ -13,16 +16,16 @@ onMounted(() => {
 <template>
   <section class="ar-demo" aria-labelledby="ar-demo-title">
     <div class="ar-demo-copy reveal">
-      <h2 id="ar-demo-title">AR 演示</h2>
-      <p>还原自原版 Augma 网页的设备界面。打开天气、扫描空间，再沿路线导航，全程无需摄像头。</p>
+      <h2 id="ar-demo-title">{{ t('arDemo.title') }}</h2>
+      <p>{{ t('arDemo.lead') }}</p>
       <div class="ar-demo-actions">
-        <a class="agm-button agm-button--primary" href="/ar/" data-no-router>
+        <a class="agm-button agm-button--primary" href="/ar/" target="_self">
           <UiIcon name="scan" />
-          打开 AR 演示
+          {{ t('arDemo.open') }}
         </a>
-        <a class="agm-button agm-button--outline" href="/guide/macos">
+        <a class="agm-button agm-button--outline" :href="link('/guide/macos')">
           <UiIcon name="download" />
-          macOS 客户端
+          {{ t('arDemo.mac') }}
         </a>
       </div>
     </div>
@@ -36,7 +39,7 @@ onMounted(() => {
         loop
         playsinline
         :preload="autoplay ? 'auto' : 'none'"
-        aria-label="AR 演示录屏：打开天气、空间扫描、开始导航"
+        :aria-label="t('arDemo.video')"
       >
         <source :src="arDemo.webm" type="video/webm">
         <source :src="arDemo.mp4" type="video/mp4">

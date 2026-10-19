@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import { useI18n } from '../i18n'
 import ThemeSample from './ThemeSample.vue'
+
+const { t } = useI18n()
 </script>
 
 <template>
   <div class="theme-comparison">
-    <ThemeSample theme="light" label="浅色" />
-    <ThemeSample theme="dark" label="深色" />
+    <ThemeSample theme="light" :label="t('theme.light')" />
+    <ThemeSample theme="dark" :label="t('theme.dark')" />
   </div>
 </template>
 

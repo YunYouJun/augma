@@ -1,31 +1,34 @@
 <script setup lang="ts">
+import { useI18n } from '../i18n'
 import DemoPreview from './DemoPreview.vue'
 import UiIcon from './UiIcon.vue'
+
+const { t, link } = useI18n()
 </script>
 
 <template>
   <div class="showcase-page">
     <div class="showcase-heading">
-      <h1>把界面，带入视界。</h1>
-      <p>每个操作都来自真实组件。切换状态、调整参数，再将它们带入你的项目。</p>
-      <a href="/components/">查看全部组件</a>
+      <h1>{{ t('showcase.title') }}</h1>
+      <p>{{ t('showcase.lead') }}</p>
+      <a :href="link('/components/')">{{ t('showcase.all') }}</a>
     </div>
     <section class="simulator-entry hud-brackets agm-materialize">
       <div>
-        <h2>一副属于你的视界。</h2>
-        <p>扫描空间、沿着路线漫游，或为此刻播放一段声音。把组件放进完整的设备体验里。</p>
-        <a class="agm-button agm-button--primary" href="/ar/" data-no-router><UiIcon name="scan" />打开设备模拟器</a>
+        <h2>{{ t('showcase.simulatorTitle') }}</h2>
+        <p>{{ t('showcase.simulatorLead') }}</p>
+        <a class="agm-button agm-button--primary" href="/ar/" target="_self"><UiIcon name="scan" />{{ t('showcase.openSimulator') }}</a>
       </div>
-      <div class="simulator-features"><span>空间扫描</span><span>路线导航</span><span>声音播放</span><span>通知中心</span><small>无需摄像头，即可开始体验。</small></div>
+      <div class="simulator-features"><span>{{ t('showcase.scan') }}</span><span>{{ t('showcase.route') }}</span><span>{{ t('showcase.sound') }}</span><span>{{ t('showcase.notifications') }}</span><small>{{ t('showcase.noCamera') }}</small></div>
     </section>
     <section class="composition-gallery">
-      <h2>可直接复用的组合</h2>
-      <p>展开源码，将完整的控制面板、HUD 或主题示例带入项目。</p>
-      <h3>控制面板</h3>
+      <h2>{{ t('showcase.compositions') }}</h2>
+      <p>{{ t('showcase.compositionsLead') }}</p>
+      <h3>{{ t('showcase.controlPanel') }}</h3>
       <DemoPreview name="control-panel" group="compositions" />
-      <h3>HUD 状态</h3>
+      <h3>{{ t('showcase.hud') }}</h3>
       <DemoPreview name="hud" group="compositions" />
-      <h3>主题定制</h3>
+      <h3>{{ t('showcase.theme') }}</h3>
       <DemoPreview name="theme" group="compositions" />
     </section>
   </div>
