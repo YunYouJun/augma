@@ -145,7 +145,7 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 按顺序推进，前一项完成后再开始下一项。宣传视频放在最后，避免观众在 npm 发布和生产部署之前访问到旧站或装到 0.1.1。
 
 - [x] 2026-10-19 的动效与 HudGauge 改动合入 `main`；`dev` 与 `codex/*` 分支已清理，默认分支改为 `main`。
-- [ ] 确认 `main` 的 CI 与 Cloudflare Pages 部署结果。
+- [x] 确认 `main` 的 CI 与 Cloudflare Pages 部署结果：2026-10-20 的 `6ac71e0` CI（含 7 个 Registry 条目的真实安装）、Cloudflare Pages 与 Vercel 均通过。
 - [ ] 按上文把 `augma.yunyoujun.cn` 改为 Cloudflare 301 跳转，解绑并删除 EdgeOne Pages 项目。
 - [x] 用 `scripts/capture-media.mjs` 重新生成 README 截图、OG 图与 AR 录屏：README 媒体改为 WebP，OG 图为 JPEG，截图冻结在动画落定的同一时刻；删除未引用的深色与移动端截图。临时截图贴在 issue / PR，不提交到仓库。
 - [x] 接入 bumpp：`pnpm release` 更新 5 个版本文件并推送 `v*` 标签，标签自动触发发布；发布前查询 registry，跳过已发布且一致的版本，不一致即停止。
@@ -153,7 +153,8 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - [ ] 按上文「首次发布 0.2.0」发布：推送 `v0.2.0` 标签触发工作流，用该次 artifact 手动首发 Core 并为它配置 trusted publisher，再对同一次运行 Re-run failed jobs 发布 `augma`。
 - [ ] `v0.2.0` 的 GitHub Release 附带 `Augma-macOS.zip` 后，从 `/guide/macos` 下载，在 Apple 芯片与 Intel Mac 上按页面步骤首次打开。
 - [ ] `augma.yyj.moe` 完成公网验收，从官方 registry 安装 `augma@0.2.0` 并验证 Registry 安装；随后更新 README、快速开始和 CHANGELOG 中的待发布状态。
-- [ ] 旧域跳转：`docs.augma.elpsy.cn` 由 `vercel.json` 按路径 308 到新域（部署后用 curl 核对）；`augma.elpsy.cn` 需在 Cloudflare 添加 Single Redirect 到 `/ar/`。
+- [x] `docs.augma.elpsy.cn` 由 `vercel.json` 按路径 308 到新域，已用 curl 核对根路径、组件页、0.1 旧页面与 `/r/*.json`。
+- [ ] `augma.elpsy.cn` 在 Cloudflare 的 `elpsy.cn` zone 添加 Single Redirect，301 到 `https://augma.yyj.moe/ar/`。
 - [ ] 实机摄像头与 immersive-ar 验收；人工检查 macOS 原生界面（HUD 浮窗、沉浸控制条与开场动画）。
 - [x] HudGauge 进入 Registry（第 7 个条目）；Registry 校验按目录自动计数。
 - [ ] 以上完成后制作宣传视频：从正式站点实录首页入场、组件动效、空间模式、AR 演示与 macOS 沉浸模式。不使用《刀剑神域》的片段、标志、角色或配乐；提及作品时只说明灵感来源，并附上与版权方无关联的声明。

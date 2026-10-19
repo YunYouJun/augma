@@ -106,6 +106,17 @@
       "permanent": true
     },
     {
+      "source": "/hooks/:path*/",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/guide/ar",
+      "permanent": true
+    },
+    {
       "source": "/:path*/",
       "has": [
         {
