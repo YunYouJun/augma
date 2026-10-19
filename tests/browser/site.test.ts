@@ -13,6 +13,7 @@ const components = [
   'panel',
   'hud-status',
   'hud-progress',
+  'hud-gauge',
 ]
 test('home settings, HUD visibility and responsive layout', async ({
   page,
@@ -29,7 +30,7 @@ test('home settings, HUD visibility and responsive layout', async ({
   await expect(dialog).toBeVisible()
   await dialog.getByRole('slider', { name: '示例进度' }).focus()
   await page.keyboard.press('ArrowRight')
-  await expect(dialog.getByRole('slider')).toHaveAttribute(
+  await expect(dialog.getByRole('slider', { name: '示例进度' })).toHaveAttribute(
     'aria-valuenow',
     '73',
   )
@@ -121,7 +122,7 @@ test('machine-readable endpoints and canonical origin', async ({
   ])
     expect((await request.get(path)).ok(), path).toBe(true)
   const contract = await (await request.get('/components.json')).json()
-  expect(contract.components).toHaveLength(12)
+  expect(contract.components).toHaveLength(13)
   await page.goto('/components/button')
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
@@ -194,11 +195,11 @@ test('catalog combines category and search, and recovers from empty results', as
   await expect(page.locator('.catalog-list li')).toHaveCount(3)
   await page.getByLabel('查找组件').fill('Dialog')
   await expect(page.locator('.catalog-list li')).toHaveCount(1)
-  await expect(page.locator('.catalog-count')).toHaveText('显示 1 / 12 个组件')
+  await expect(page.locator('.catalog-count')).toHaveText('显示 1 / 13 个组件')
   await page.getByLabel('查找组件').fill('不存在的组件')
   await expect(page.locator('.catalog-list li')).toHaveCount(0)
   await page.getByRole('button', { name: '清除筛选' }).click()
-  await expect(page.locator('.catalog-list li')).toHaveCount(12)
+  await expect(page.locator('.catalog-list li')).toHaveCount(13)
   await expect(filters.getByRole('button', { name: '全部', exact: true })).toHaveAttribute('aria-pressed', 'true')
   await page.setViewportSize({ width: 390, height: 844 })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
@@ -282,7 +283,7 @@ test('home, showcase and catalog have no horizontal scroll at 390px', async ({ p
 test('home shows install command, release line and AR demo entry', async ({ page }) => {
   await page.goto('/')
   await expect(page.locator('.hero-install code')).toHaveText('pnpm add augma')
-  await expect(page.locator('.hero-install small')).toHaveText(/^v\d+\.\d+ · 12 个组件 · MIT$/)
+  await expect(page.locator('.hero-install small')).toHaveText(/^v\d+\.\d+ · 13 个组件 · MIT$/)
   const demo = page.getByRole('region', { name: 'AR 演示' })
   await expect(demo).toContainText('还原自原版 Augma 网页的设备界面')
   await expect(demo.getByRole('link', { name: '打开 AR 演示' })).toHaveAttribute('href', '/ar/')

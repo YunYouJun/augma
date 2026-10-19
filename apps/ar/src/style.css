@@ -13,6 +13,10 @@
   --agm-success: #c0e497;
   --agm-danger: #ffc0c7;
   --agm-shadow: 0 0 5px rgb(0 0 0 / 10%);
+  --agm-light: rgb(255 255 255 / 12%);
+  --agm-sheen: rgb(255 255 255 / 18%);
+  --agm-glow: rgb(179 226 229 / 30%);
+  --agm-highlight: #b3e2e5;
   --agm-cut: 0px;
 }
 * { box-sizing: border-box; }

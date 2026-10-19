@@ -66,7 +66,7 @@ pnpm check       # lint、types、unit、build、包消费、Registry 与浏览�
 ## 结构
 
 - `packages/core`：语义 tokens 与组件样式。
-- `packages/augma`：12 个 Vue 组件及类型。
+- `packages/augma`：13 个 Vue 组件及类型。
 - `apps/site`：VitePress 展示与文档。
 - `apps/ar`：摄像头、HUD、按需加载的 WebXR 演示。
 - `examples/components`：展示、源码复制与测试的共同示例。

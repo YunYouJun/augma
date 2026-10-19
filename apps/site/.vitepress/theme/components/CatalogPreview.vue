@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AgmButton, AgmHudProgress, AgmHudStatus, AgmIconButton, AgmInput, AgmPanel, AgmSlider, AgmSwitch } from 'augma'
+import { AgmButton, AgmHudGauge, AgmHudProgress, AgmHudStatus, AgmIconButton, AgmInput, AgmPanel, AgmSlider, AgmSwitch } from 'augma'
 
 defineProps<{ name: string }>()
 </script>
@@ -41,6 +41,10 @@ defineProps<{ name: string }>()
       <AgmHudStatus tone="danger">连接中断</AgmHudStatus>
     </div>
     <AgmHudProgress v-else-if="name === 'hud-progress'" label="同步进度" :value="72" variant="ring" />
+    <div v-else-if="name === 'hud-gauge'" class="preview-gauges">
+      <AgmHudGauge label="设备电量" :value="86" />
+      <AgmHudGauge label="剩余存储" :value="12" :max="64" />
+    </div>
   </div>
 </template>
 
@@ -58,4 +62,5 @@ defineProps<{ name: string }>()
 .preview-panel { width: 240px; display: grid; gap: 16px; padding: 20px; box-shadow: none; }
 .preview-statuses { display: grid; gap: 10px; }
 .catalog-preview > .agm-progress--ring { width: 110px; }
+.preview-gauges { display: grid; gap: 14px; width: 100%; max-width: 240px; }
 </style>

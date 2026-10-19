@@ -16,8 +16,17 @@
   --agm-success: #287947;
   --agm-danger: #bc394a;
   --agm-shadow: 0 18px 60px rgb(49 82 109 / 10%);
+  /* Light that sits on glass: top edge highlight, hover sheen and luminous accents. */
+  --agm-light: rgb(255 255 255 / 85%);
+  --agm-sheen: rgb(255 255 255 / 55%);
+  --agm-glow: rgb(242 140 18 / 38%);
   --agm-cut: 10px;
+  /* Motion: HUD elements arrive fast and settle softly; exits are short. */
   --agm-duration: 160ms;
+  --agm-duration-slow: 420ms;
+  --agm-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --agm-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --agm-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .dark,
 [data-agm-theme='dark'] {
@@ -34,4 +43,7 @@
   --agm-success: #7cdaa0;
   --agm-danger: #ff95a4;
   --agm-shadow: 0 18px 60px rgb(0 0 0 / 25%);
+  --agm-light: rgb(255 255 255 / 10%);
+  --agm-sheen: rgb(255 255 255 / 16%);
+  --agm-glow: rgb(241 167 76 / 34%);
 }

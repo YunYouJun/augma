@@ -329,6 +329,29 @@ export const components = [
       '只读进度使用 progressbar 语义；数值被约束到 0 到 max，不确定进度不设置 aria-valuenow。',
     registry: true,
   },
+  {
+    slug: 'hud-gauge',
+    name: 'AgmHudGauge',
+    title: 'HudGauge 计量条',
+    group: 'HUD',
+    description: '分段显示剩余存量，数值下降时留下短暂余影。',
+    props: [
+      {
+        name: 'label',
+        description: '计量名称',
+      },
+      {
+        name: 'value',
+        description: '当前数值，约束到 0 到 max；非有限数值按 0 处理',
+      },
+      {
+        name: 'max',
+        description: '有效上界，非法值回退到 100',
+      },
+    ],
+    keyboard:
+      '只读计量使用 meter 语义，并以“当前 / 上界”提供数值文本。剩余 50% 及以下显示警示色、20% 及以下显示危险色；数值文字始终可见，不单靠颜色。',
+  },
 ]
 export const origin = 'https://augma.yunyoujun.cn'
 export const version = '0.2.0'

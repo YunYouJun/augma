@@ -12,7 +12,8 @@
   .agm-tooltip,
   .agm-toast,
   .agm-status,
-  .agm-progress
+  .agm-progress,
+  .agm-gauge
 ) {
   box-sizing: border-box;
   font-family: var(--agm-font);
@@ -31,6 +32,8 @@
   outline: 2px solid var(--agm-accent);
   outline-offset: 4px;
 }
+
+/* Button: clipped plate, a light sweep on hover and a short press. */
 .agm-button {
   position: relative;
   display: inline-flex;
@@ -46,6 +49,10 @@
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
+  transition:
+    color var(--agm-duration),
+    scale var(--agm-duration) var(--agm-ease),
+    filter var(--agm-duration-slow) var(--agm-ease);
 }
 .agm-button::before,
 .agm-button::after {
@@ -63,34 +70,57 @@
     0 calc(100% - var(--agm-cut)),
     0 var(--agm-cut)
   );
-  background: var(--agm-border);
-  transition: background var(--agm-duration);
+  background-color: var(--agm-border);
+  transition: background-color var(--agm-duration);
 }
 .agm-button::after {
   inset: 1px;
   z-index: -1;
-  background: var(--agm-panel);
+  background-color: var(--agm-panel);
+  background-image: linear-gradient(
+    105deg,
+    transparent 38%,
+    var(--agm-sheen) 50%,
+    transparent 62%
+  );
+  background-repeat: no-repeat;
+  background-size: 250% 100%;
+  background-position: 100% 0;
+}
+/* The sweep only plays on the way in; leaving snaps it back off-plate. */
+.agm-button:hover:not(:disabled)::after {
+  background-position: 0 0;
+  transition:
+    background-color var(--agm-duration),
+    background-position 720ms var(--agm-ease);
+}
+.agm-button:active:not(:disabled) {
+  scale: 0.97;
 }
 .agm-button--primary {
   color: var(--agm-on-accent);
 }
 .agm-button--primary::before,
 .agm-button--primary::after {
-  background: var(--agm-accent);
+  background-color: var(--agm-accent);
 }
 .agm-button--primary:hover:not(:disabled)::before,
 .agm-button--primary:hover:not(:disabled)::after {
-  background: var(--agm-accent-hover);
+  background-color: var(--agm-accent-hover);
+}
+.agm-button--primary:hover:not(:disabled),
+.agm-button--primary:focus-visible {
+  filter: drop-shadow(0 4px 14px var(--agm-glow));
 }
 .agm-button--ghost::before,
 .agm-button--ghost::after {
-  background: transparent;
+  background-color: transparent;
 }
 .agm-button--outline:hover:not(:disabled)::before {
-  background: var(--agm-accent);
+  background-color: var(--agm-accent);
 }
 .agm-button--ghost:hover:not(:disabled)::after {
-  background: var(--agm-surface);
+  background-color: var(--agm-surface);
 }
 .agm-button:disabled,
 .agm-icon-button:disabled,
@@ -109,26 +139,87 @@
   border-radius: 50%;
   animation: agm-spin 0.8s linear infinite;
 }
+
+/* IconButton: two targeting arcs orbit the control; pressed fills like a selected menu orb. */
 .agm-icon-button {
+  position: relative;
   display: inline-grid;
   place-items: center;
   padding: 12px;
   width: 46px;
   height: 46px;
   border: 1px solid var(--agm-border);
-  background: var(--agm-panel);
+  background-color: var(--agm-panel);
   border-radius: 50%;
   cursor: pointer;
+  transition:
+    color var(--agm-duration),
+    border-color var(--agm-duration),
+    background-color var(--agm-duration),
+    box-shadow var(--agm-duration-slow) var(--agm-ease),
+    scale var(--agm-duration) var(--agm-ease);
 }
-.agm-icon-button:hover:not(:disabled),
-.agm-icon-button[aria-pressed='true'] {
+.agm-icon-button::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--agm-ring, currentColor) 0 54deg,
+    transparent 54deg 180deg,
+    var(--agm-ring, currentColor) 180deg 234deg,
+    transparent 234deg
+  );
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 1.5px),
+    #000 calc(100% - 1px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 1.5px),
+    #000 calc(100% - 1px)
+  );
+  opacity: 0;
+  scale: 0.8;
+  pointer-events: none;
+  transition:
+    opacity var(--agm-duration),
+    scale var(--agm-duration-slow) var(--agm-ease);
+}
+.agm-icon-button:hover:not(:disabled)::before,
+.agm-icon-button:focus-visible::before {
+  opacity: 0.8;
+  scale: 1;
+  animation: agm-orbit 5s linear infinite;
+}
+.agm-icon-button:hover:not(:disabled) {
   border-color: var(--agm-accent);
   color: var(--agm-accent);
+}
+.agm-icon-button:active:not(:disabled) {
+  scale: 0.92;
+}
+.agm-icon-button[aria-pressed='true'] {
+  --agm-ring: var(--agm-accent);
+  border-color: var(--agm-accent);
+  background-color: var(--agm-accent);
+  color: var(--agm-on-accent);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--agm-accent) 16%, transparent),
+    0 0 20px var(--agm-glow);
+}
+.agm-icon-button[aria-pressed='true']:hover:not(:disabled) {
+  border-color: var(--agm-accent-hover);
+  background-color: var(--agm-accent-hover);
+  color: var(--agm-on-accent);
 }
 .agm-icon-button svg {
   width: 22px;
   height: 22px;
 }
+
+/* Fields: a scan line draws across the base of the active field. */
 .agm-field {
   display: grid;
   gap: 8px;
@@ -148,11 +239,28 @@
   border: 1px solid var(--agm-border);
   border-radius: 3px;
   padding: 10px 14px;
-  background: var(--agm-panel);
+  background-color: var(--agm-panel);
+  background-image: linear-gradient(var(--agm-scan-line, var(--agm-accent)) 0 0);
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+  background-size: 0% 2px;
   text-align: left;
+  transition:
+    border-color var(--agm-duration),
+    background-size var(--agm-duration-slow) var(--agm-ease);
+}
+.agm-input:hover:not(:disabled),
+.agm-select:hover:not([data-disabled]) {
+  border-color: var(--agm-muted);
+}
+.agm-input:focus-visible,
+.agm-select:focus-visible,
+.agm-select[data-state='open'] {
+  background-size: 100% 2px;
 }
 .agm-input[aria-invalid='true'],
 .agm-select[aria-invalid='true'] {
+  --agm-scan-line: var(--agm-danger);
   border-color: var(--agm-danger);
 }
 .agm-input[aria-invalid='true']:focus-visible,
@@ -177,7 +285,15 @@
   gap: 12px;
   cursor: pointer;
 }
+.agm-select svg {
+  flex-shrink: 0;
+  transition: rotate var(--agm-duration-slow) var(--agm-ease);
+}
+.agm-select[data-state='open'] svg {
+  rotate: 180deg;
+}
 .agm-select-content {
+  --agm-unfold-from: inset(0 0 100% 0);
   z-index: 250;
   min-width: var(--reka-select-trigger-width);
   max-width: calc(100vw - 24px);
@@ -187,9 +303,20 @@
   border: 1px solid var(--agm-border);
   background: var(--agm-bg);
   border-radius: 3px;
-  box-shadow: var(--agm-shadow);
+  box-shadow:
+    var(--agm-shadow),
+    inset 0 2px 0 var(--agm-accent);
   color: var(--agm-text);
   font: 14px/1.5 var(--agm-font);
+}
+.agm-select-content[data-side='top'] {
+  --agm-unfold-from: inset(100% 0 0 0);
+}
+.agm-select-content[data-state='open'] {
+  animation: agm-unfold var(--agm-duration-slow) var(--agm-ease);
+}
+.agm-select-content[data-state='closed'] {
+  animation: agm-fade-out 120ms var(--agm-ease-in) forwards;
 }
 .agm-select-item {
   min-height: 44px;
@@ -201,15 +328,21 @@
   cursor: pointer;
   border-radius: 2px;
   outline: 0;
+  transition:
+    background-color 120ms,
+    box-shadow 120ms;
 }
 .agm-select-item[data-highlighted] {
   background: var(--agm-surface);
   color: var(--agm-accent);
+  box-shadow: inset 2px 0 0 var(--agm-accent);
 }
 .agm-select-item[data-disabled] {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* Switch: the thumb springs into place; an active track glows. */
 .agm-switch-field {
   min-height: 44px;
   display: flex;
@@ -229,6 +362,9 @@
   background: var(--agm-border);
   cursor: pointer;
   flex-shrink: 0;
+  transition:
+    background-color var(--agm-duration),
+    box-shadow var(--agm-duration-slow) var(--agm-ease);
 }
 .agm-switch::before {
   content: '';
@@ -240,6 +376,7 @@
 }
 .agm-switch[data-state='checked'] {
   background: var(--agm-cyan);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--agm-cyan) 45%, transparent);
 }
 .agm-switch-thumb {
   display: block;
@@ -247,11 +384,14 @@
   height: 18px;
   background: white;
   border-radius: 50%;
-  transition: transform var(--agm-duration);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 22%);
+  transition: transform var(--agm-duration-slow) var(--agm-ease-spring);
 }
 .agm-switch-thumb[data-state='checked'] {
   transform: translateX(18px);
 }
+
+/* Slider: a measured scale under a luminous range. */
 .agm-slider {
   display: flex;
   align-items: center;
@@ -268,11 +408,27 @@
   background: var(--agm-border);
   border-radius: 4px;
 }
+.agm-slider-track::after {
+  content: '';
+  position: absolute;
+  inset: 9px 0 auto;
+  height: 4px;
+  background:
+    linear-gradient(var(--agm-border) 0 0) right / 1px 100% no-repeat,
+    repeating-linear-gradient(90deg, var(--agm-border) 0 1px, transparent 1px 10%);
+  opacity: 0.8;
+  pointer-events: none;
+}
 .agm-slider-range {
   position: absolute;
   height: 100%;
-  background: var(--agm-cyan);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--agm-cyan) 35%, transparent),
+    var(--agm-cyan)
+  );
   border-radius: inherit;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--agm-cyan) 40%, transparent);
 }
 .agm-slider-thumb {
   position: relative;
@@ -280,8 +436,22 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: var(--agm-cyan);
+  background: radial-gradient(circle, var(--agm-bg) 0 3px, var(--agm-cyan) 3.5px);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--agm-cyan) 18%, transparent);
   cursor: grab;
+  transition:
+    box-shadow var(--agm-duration-slow) var(--agm-ease),
+    scale var(--agm-duration) var(--agm-ease);
+}
+.agm-slider-thumb:hover,
+.agm-slider-thumb:focus-visible {
+  box-shadow:
+    0 0 0 8px color-mix(in srgb, var(--agm-cyan) 18%, transparent),
+    0 0 14px color-mix(in srgb, var(--agm-cyan) 45%, transparent);
+}
+.agm-slider-thumb:active {
+  cursor: grabbing;
+  scale: 1.15;
 }
 .agm-slider-thumb::before {
   content: '';
@@ -296,13 +466,18 @@
   justify-content: space-between;
   gap: 16px;
 }
+
+/* Panel: glass with a lit top edge and two luminous accent marks. */
 .agm-panel {
   position: relative;
   padding: 26px;
   border: 1px solid var(--agm-border);
   background: var(--agm-panel);
-  box-shadow: var(--agm-shadow);
+  box-shadow:
+    var(--agm-shadow),
+    inset 0 1px 0 var(--agm-light);
   border-radius: 3px;
+  -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
 }
 .agm-panel::before,
@@ -310,8 +485,9 @@
   content: '';
   position: absolute;
   width: 30px;
-  height: 12px;
-  border-top: 2px solid var(--agm-accent);
+  height: 2px;
+  background: var(--agm-accent);
+  box-shadow: 0 0 8px var(--agm-glow);
   pointer-events: none;
 }
 .agm-panel::before {
@@ -321,7 +497,6 @@
 .agm-panel::after {
   bottom: -1px;
   right: 18px;
-  transform: rotate(180deg);
 }
 .agm-panel-heading {
   display: flex;
@@ -358,12 +533,30 @@
   font: 600 17px/1.4 var(--agm-font);
   overflow-wrap: anywhere;
 }
+
+/*
+ * Materialize: a window first appears as a lit horizontal line, then unfolds.
+ * Opt in with .agm-materialize (and --agm-delay); overlays use it automatically.
+ * Fill mode stays "backwards" so the final clip never trims shadows or accents.
+ */
+.agm-materialize {
+  animation: agm-materialize 560ms var(--agm-ease) var(--agm-delay, 0ms) backwards;
+}
+
+/* Dialog */
 .agm-dialog-overlay {
   position: fixed;
   inset: 0;
   z-index: 200;
   background: rgb(17 32 45 / 35%);
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
+}
+.agm-dialog-overlay[data-state='open'] {
+  animation: agm-fade-in var(--agm-duration-slow) var(--agm-ease);
+}
+.agm-dialog-overlay[data-state='closed'] {
+  animation: agm-fade-out 200ms var(--agm-ease-in) forwards;
 }
 .agm-dialog {
   position: fixed;
@@ -378,7 +571,31 @@
   border: 1px solid var(--agm-border);
   border-top: 3px solid var(--agm-accent);
   background: var(--agm-bg);
-  box-shadow: var(--agm-shadow);
+  box-shadow:
+    var(--agm-shadow),
+    inset 0 1px 0 var(--agm-light);
+}
+.agm-dialog[data-state='open'] {
+  animation: agm-materialize 520ms var(--agm-ease);
+}
+.agm-dialog[data-state='closed'] {
+  animation: agm-dematerialize 220ms var(--agm-ease-in) forwards;
+}
+/* A single scan passes over the content once the window has unfolded. */
+.agm-dialog::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--agm-highlight), transparent);
+  box-shadow: 0 0 10px var(--agm-glow);
+  opacity: 0;
+  pointer-events: none;
+}
+.agm-dialog[data-state='open']::after {
+  animation: agm-scan 900ms var(--agm-ease) 260ms;
 }
 .agm-dialog-title {
   font-size: 24px;
@@ -403,14 +620,36 @@
   gap: 12px;
   margin-top: 28px;
 }
+
+/* Tooltip */
 .agm-tooltip {
+  --agm-shift: 0 4px;
   z-index: 300;
   max-width: 260px;
   padding: 8px 12px;
   border: 1px solid var(--agm-border);
+  border-left: 2px solid var(--agm-accent);
   background: var(--agm-bg);
   box-shadow: var(--agm-shadow);
 }
+.agm-tooltip[data-side='bottom'] {
+  --agm-shift: 0 -4px;
+}
+.agm-tooltip[data-side='left'] {
+  --agm-shift: 4px 0;
+}
+.agm-tooltip[data-side='right'] {
+  --agm-shift: -4px 0;
+}
+.agm-tooltip[data-state='delayed-open'],
+.agm-tooltip[data-state='instant-open'] {
+  animation: agm-tooltip-in 260ms var(--agm-ease);
+}
+.agm-tooltip[data-state='closed'] {
+  animation: agm-fade-out 120ms var(--agm-ease-in) forwards;
+}
+
+/* Toast: slides in from the edge; a fine line counts down the remaining time. */
 .agm-toast-viewport {
   position: fixed;
   z-index: 400;
@@ -425,22 +664,57 @@
   width: min(360px, calc(100vw - 48px));
 }
 .agm-toast {
+  --agm-tone: var(--agm-success);
   position: relative;
   padding: 20px 62px 20px 20px;
   background: var(--agm-bg);
   border: 1px solid var(--agm-border);
-  border-left: 3px solid var(--agm-success);
-  box-shadow: var(--agm-shadow);
+  border-left: 3px solid var(--agm-tone);
+  box-shadow:
+    var(--agm-shadow),
+    inset 0 1px 0 var(--agm-light);
   overflow-wrap: anywhere;
 }
 .agm-toast[data-tone='warning'] {
-  border-left-color: var(--agm-accent);
+  --agm-tone: var(--agm-accent);
 }
 .agm-toast[data-tone='danger'] {
-  border-left-color: var(--agm-danger);
+  --agm-tone: var(--agm-danger);
 }
 .agm-toast[data-tone='neutral'] {
-  border-left-color: var(--agm-muted);
+  --agm-tone: var(--agm-muted);
+}
+.agm-toast[data-countdown]::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--agm-tone);
+  opacity: 0.7;
+  transform-origin: left;
+  animation: agm-countdown var(--agm-toast-duration) linear forwards;
+}
+.agm-toast-viewport:hover .agm-toast::after,
+.agm-toast-viewport:focus-within .agm-toast::after {
+  animation-play-state: paused;
+}
+.agm-toast[data-state='open'] {
+  animation: agm-toast-in 480ms var(--agm-ease);
+}
+.agm-toast[data-state='closed'] {
+  animation: agm-toast-out 200ms var(--agm-ease-in) forwards;
+}
+.agm-toast[data-swipe='move'] {
+  transform: translateX(var(--reka-toast-swipe-move-x));
+}
+.agm-toast[data-swipe='cancel'] {
+  transform: translateX(0);
+  transition: transform 200ms var(--agm-ease);
+}
+.agm-toast[data-swipe='end'] {
+  animation: agm-toast-swipe-out 160ms var(--agm-ease-in) forwards;
 }
 .agm-toast-title {
   font-weight: 600;
@@ -449,16 +723,27 @@
 .agm-toast-description {
   color: var(--agm-muted);
 }
+
+/* HudStatus: a live sonar ping around the dot. */
 .agm-status {
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 .agm-status-dot {
+  position: relative;
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: currentColor;
+}
+.agm-status-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  animation: agm-ping 2.4s var(--agm-ease) infinite;
 }
 .agm-status[data-tone='success'] {
   color: var(--agm-success);
@@ -469,9 +754,17 @@
 .agm-status[data-tone='danger'] {
   color: var(--agm-danger);
 }
+.agm-status[data-tone='danger'] .agm-status-dot::after {
+  animation-duration: 1.4s;
+}
 .agm-status[data-tone='neutral'] {
   color: var(--agm-muted);
 }
+.agm-status[data-tone='neutral'] .agm-status-dot::after {
+  display: none;
+}
+
+/* HudProgress: bar with a lit leading edge, ring with a measured scale. */
 .agm-progress {
   display: grid;
   gap: 8px;
@@ -484,15 +777,34 @@
   font-size: 12px;
 }
 .agm-progress-track {
+  position: relative;
   height: 5px;
-  overflow: hidden;
   background: var(--agm-surface);
 }
 .agm-progress-fill {
+  position: relative;
   display: block;
   height: 100%;
-  background: var(--agm-accent);
-  transition: width var(--agm-duration);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--agm-progress-color, var(--agm-accent)) 45%, transparent),
+    var(--agm-progress-color, var(--agm-accent))
+  );
+  box-shadow: 0 0 10px var(--agm-glow);
+  transition: width 360ms var(--agm-ease);
+}
+.agm-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: 0;
+  bottom: -2px;
+  width: 2px;
+  background: var(--agm-progress-color, var(--agm-accent));
+  box-shadow: 0 0 6px var(--agm-progress-color, var(--agm-accent));
+}
+.agm-progress[data-indeterminate='true'] .agm-progress-track {
+  overflow: hidden;
 }
 .agm-progress[data-indeterminate='true'] .agm-progress-fill {
   width: 35%;
@@ -510,19 +822,28 @@
   width: 100%;
   height: 100%;
   transform: rotate(-90deg);
+  overflow: visible;
 }
 .agm-progress-ring circle {
   fill: none;
-  stroke-width: 8;
+}
+.agm-progress-ring .ticks {
+  stroke: var(--agm-muted);
+  stroke-width: 2.5;
+  opacity: 0.45;
 }
 .agm-progress-ring .track {
   stroke: var(--agm-border);
+  stroke-width: 6;
   opacity: 0.35;
 }
 .agm-progress-ring .value {
-  stroke: var(--agm-accent);
-  stroke-dasharray: 289.03;
-  transition: stroke-dashoffset var(--agm-duration);
+  stroke: var(--agm-progress-color, var(--agm-accent));
+  stroke-width: 6;
+  stroke-dasharray: 257.61;
+  filter: drop-shadow(0 0 3px var(--agm-glow));
+  transition: stroke-dashoffset 600ms var(--agm-ease);
+  animation: agm-ring-draw 1s var(--agm-ease) 120ms backwards;
 }
 .agm-progress-ring-text {
   position: absolute;
@@ -537,6 +858,7 @@
   font-size: 28px;
   font-weight: 500;
   line-height: 1.2;
+  font-variant-numeric: tabular-nums;
 }
 .agm-progress-ring-text small {
   color: var(--agm-muted);
@@ -545,14 +867,84 @@
 .agm-progress--ring[data-indeterminate='true'] .agm-progress-ring {
   animation: agm-ring 1.3s linear infinite;
 }
-@keyframes agm-ring {
-  from {
-    transform: rotate(-90deg);
-  }
-  to {
-    transform: rotate(270deg);
-  }
+
+/* HudGauge: a segmented energy bar; a pale trail lingers where value was lost. */
+.agm-gauge {
+  --agm-tone: var(--agm-cyan);
+  display: grid;
+  gap: 8px;
+  width: 100%;
 }
+.agm-gauge[data-tone='warning'] {
+  --agm-tone: var(--agm-highlight);
+}
+.agm-gauge[data-tone='danger'] {
+  --agm-tone: var(--agm-danger);
+}
+.agm-gauge-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.agm-gauge-label {
+  font-size: 13px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.agm-gauge-readout {
+  flex-shrink: 0;
+  color: var(--agm-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.agm-gauge-readout strong {
+  color: var(--agm-text);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+}
+.agm-gauge-bar {
+  position: relative;
+  height: 12px;
+  background: color-mix(in srgb, var(--agm-border) 55%, transparent);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 9px) 100%, 0 100%);
+  -webkit-mask: repeating-linear-gradient(
+    90deg,
+    #000 0 calc(10% - 2px),
+    transparent calc(10% - 2px) 10%
+  );
+  mask: repeating-linear-gradient(
+    90deg,
+    #000 0 calc(10% - 2px),
+    transparent calc(10% - 2px) 10%
+  );
+}
+.agm-gauge-trail,
+.agm-gauge-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--agm-gauge-value, 0%);
+}
+/* The trail flashes near-white so lost value reads apart from the fill. */
+.agm-gauge-trail {
+  background: color-mix(in srgb, var(--agm-tone) 18%, #fff);
+  transition: width 700ms var(--agm-ease) 450ms;
+}
+.agm-gauge-fill {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--agm-tone) 70%, transparent),
+    var(--agm-tone)
+  );
+  transition:
+    width 360ms var(--agm-ease),
+    background-color 300ms;
+}
+.agm-gauge[data-tone='danger'] .agm-gauge-fill {
+  animation: agm-alert 0.9s ease-in-out infinite alternate;
+}
+
 .agm-sr-only {
   position: absolute;
   width: 1px;
@@ -564,9 +956,15 @@
   white-space: nowrap;
   border: 0;
 }
+
 @keyframes agm-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+@keyframes agm-orbit {
+  to {
+    rotate: 360deg;
   }
 }
 @keyframes agm-progress {
@@ -577,17 +975,171 @@
     transform: translateX(385%);
   }
 }
+@keyframes agm-ring {
+  from {
+    transform: rotate(-90deg);
+  }
+  to {
+    transform: rotate(270deg);
+  }
+}
+@keyframes agm-ring-draw {
+  from {
+    stroke-dashoffset: 257.61;
+  }
+}
+@keyframes agm-ping {
+  0% {
+    opacity: 0.55;
+    scale: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    scale: 3.2;
+  }
+}
+@keyframes agm-alert {
+  to {
+    opacity: 0.55;
+  }
+}
+@keyframes agm-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes agm-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes agm-materialize {
+  0% {
+    opacity: 0;
+    clip-path: inset(calc(50% - 1px) 50%);
+    filter: brightness(1.7);
+  }
+  35% {
+    opacity: 1;
+    clip-path: inset(calc(50% - 1px) 0);
+    filter: brightness(1.7);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0);
+    filter: brightness(1);
+  }
+}
+@keyframes agm-dematerialize {
+  0% {
+    clip-path: inset(0);
+  }
+  60% {
+    opacity: 1;
+    clip-path: inset(calc(50% - 1px) 0);
+  }
+  100% {
+    opacity: 0;
+    clip-path: inset(calc(50% - 1px) 50%);
+  }
+}
+@keyframes agm-unfold {
+  from {
+    opacity: 0;
+    clip-path: var(--agm-unfold-from);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+}
+@keyframes agm-scan {
+  0% {
+    top: 0;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+@keyframes agm-tooltip-in {
+  from {
+    opacity: 0;
+    translate: var(--agm-shift);
+    scale: 0.96;
+  }
+}
+@keyframes agm-toast-in {
+  0% {
+    opacity: 0;
+    transform: translateX(calc(100% + 24px));
+  }
+  60% {
+    opacity: 1;
+  }
+}
+@keyframes agm-toast-out {
+  to {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+}
+@keyframes agm-toast-swipe-out {
+  from {
+    transform: translateX(var(--reka-toast-swipe-end-x));
+  }
+  to {
+    transform: translateX(calc(100% + 24px));
+  }
+}
+@keyframes agm-countdown {
+  to {
+    scale: 0 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .agm-spinner,
+  .agm-materialize,
+  .agm-icon-button::before,
+  .agm-status-dot::after,
+  .agm-progress-fill,
   .agm-progress-ring,
-  .agm-progress-fill {
+  .agm-progress-ring .value,
+  .agm-gauge-fill,
+  .agm-dialog,
+  .agm-dialog::after,
+  .agm-dialog-overlay,
+  .agm-select-content,
+  .agm-tooltip,
+  .agm-toast {
     animation: none !important;
   }
+  .agm-button,
+  .agm-button::before,
+  .agm-button::after,
+  .agm-icon-button,
+  .agm-icon-button::before,
+  .agm-input,
+  .agm-select,
+  .agm-select svg,
+  .agm-switch,
   .agm-switch-thumb,
+  .agm-slider-thumb,
   .agm-progress-fill,
   .agm-progress-ring .value,
-  .agm-button::before,
-  .agm-button::after {
-    transition: none;
+  .agm-gauge-trail,
+  .agm-gauge-fill,
+  .agm-toast {
+    transition: none !important;
+  }
+  .agm-status-dot::after,
+  .agm-toast[data-countdown]::after {
+    display: none;
   }
 }

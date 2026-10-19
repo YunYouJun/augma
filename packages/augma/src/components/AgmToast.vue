@@ -24,7 +24,13 @@ const open = defineModel<boolean>('open', { default: false })
 <template>
   <ToastProvider :duration="duration">
     <ToastPortal>
-      <ToastRoot v-model:open="open" class="agm-toast" :data-tone="tone">
+      <ToastRoot
+        v-model:open="open"
+        class="agm-toast"
+        :data-tone="tone"
+        :data-countdown="Number.isFinite(duration) || undefined"
+        :style="Number.isFinite(duration) ? { '--agm-toast-duration': `${duration}ms` } : undefined"
+      >
         <ToastTitle class="agm-toast-title">{{ title }}</ToastTitle>
         <ToastDescription v-if="description" class="agm-toast-description">
           {{ description }}

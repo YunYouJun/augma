@@ -1,5 +1,6 @@
 export { default as AgmButton } from './components/AgmButton.vue'
 export { default as AgmDialog } from './components/AgmDialog.vue'
+export { default as AgmHudGauge } from './components/AgmHudGauge.vue'
 export { default as AgmHudProgress } from './components/AgmHudProgress.vue'
 export { default as AgmHudStatus } from './components/AgmHudStatus.vue'
 export { default as AgmIconButton } from './components/AgmIconButton.vue'

@@ -38,13 +38,15 @@ const percent = computed(() =>
   >
     <template v-if="variant === 'ring'">
       <svg class="agm-progress-ring" viewBox="0 0 100 100" aria-hidden="true">
-        <circle class="track" cx="50" cy="50" r="46" />
+        <!-- 60 scale marks: circumference 2π·48 split into equal dash periods. -->
+        <circle class="ticks" cx="50" cy="50" r="48" stroke-dasharray="1 4.0265" />
+        <circle class="track" cx="50" cy="50" r="41" />
         <circle
           class="value"
           cx="50"
           cy="50"
-          r="46"
-          :stroke-dashoffset="289.03 * (1 - (percent ?? 25) / 100)"
+          r="41"
+          :stroke-dashoffset="257.61 * (1 - (percent ?? 25) / 100)"
         />
       </svg>
       <span class="agm-progress-ring-text">

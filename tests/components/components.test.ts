@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import {
   AgmButton,
+  AgmHudGauge,
   AgmHudProgress,
   AgmInput,
   AgmPanel,
@@ -106,5 +107,24 @@ describe('component contracts', () => {
     expect(wrapper.attributes('aria-valuenow')).toBe('80')
     await wrapper.setProps({ value: Number.NaN })
     expect(wrapper.attributes('aria-valuenow')).toBeUndefined()
+  })
+  it('clamps gauge values and derives tone from the remaining share', async () => {
+    const wrapper = mount(AgmHudGauge, { props: { label: '电量', value: 86 } })
+    expect(wrapper.attributes('role')).toBe('meter')
+    expect(wrapper.attributes('aria-label')).toBe('电量')
+    expect(wrapper.attributes('aria-valuetext')).toBe('86 / 100')
+    expect(wrapper.attributes('data-tone')).toBe('success')
+    await wrapper.setProps({ value: 25, max: 50 })
+    expect(wrapper.attributes('aria-valuemax')).toBe('50')
+    expect(wrapper.attributes('data-tone')).toBe('warning')
+    await wrapper.setProps({ value: 10 })
+    expect(wrapper.attributes('data-tone')).toBe('danger')
+    expect(wrapper.attributes('style')).toContain('--agm-gauge-value: 20%')
+    await wrapper.setProps({ value: 120 })
+    expect(wrapper.attributes('aria-valuenow')).toBe('50')
+    await wrapper.setProps({ value: Number.NaN, max: -1 })
+    expect(wrapper.attributes('aria-valuenow')).toBe('0')
+    expect(wrapper.attributes('aria-valuemax')).toBe('100')
+    expect(wrapper.get('.agm-gauge-readout').text()).toBe('0 / 100')
   })
 })
