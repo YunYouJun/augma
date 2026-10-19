@@ -271,14 +271,15 @@ test('theme samples stay independent and unknown ring progress respects reduced 
   await expect(ring).toHaveCSS('animation-name', 'none')
 })
 
-test('home, showcase and catalog have no horizontal scroll at 390px in every language', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 })
-  for (const path of ['/', '/showcase/', '/components/', '/en/', '/en/showcase/', '/ja/', '/ja/components/']) {
+// One test per page: loading every heavy page in one tab crashed WebKit on Linux CI.
+for (const path of ['/', '/showcase/', '/components/', '/en/', '/en/showcase/', '/ja/', '/ja/components/']) {
+  test(`${path} has no horizontal scroll at 390px`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
     await page.goto(path)
     await page.waitForLoadState('networkidle')
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), path).toBe(true)
-  }
-})
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  })
+}
 
 test('home shows install command, release line and AR demo entry', async ({ page }) => {
   await page.goto('/')
