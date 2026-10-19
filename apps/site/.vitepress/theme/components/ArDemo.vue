@@ -12,7 +12,7 @@ onMounted(() => {
 
 <template>
   <section class="ar-demo" aria-labelledby="ar-demo-title">
-    <div class="ar-demo-copy">
+    <div class="ar-demo-copy reveal">
       <h2 id="ar-demo-title">AR 演示</h2>
       <p>还原自原版 Augma 网页的设备界面。打开天气、扫描空间，再沿路线导航，全程无需摄像头。</p>
       <a class="agm-button agm-button--primary" href="/ar/" data-no-router>
@@ -20,7 +20,7 @@ onMounted(() => {
         打开 AR 演示
       </a>
     </div>
-    <div class="ar-demo-media">
+    <div class="ar-demo-media hud-brackets reveal reveal-unfold">
       <video
         :key="String(autoplay)"
         :poster="arDemo.poster"

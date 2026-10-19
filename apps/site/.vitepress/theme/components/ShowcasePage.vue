@@ -10,7 +10,7 @@ import UiIcon from './UiIcon.vue'
       <p>每个操作都来自真实组件。切换状态、调整参数，再将它们带入你的项目。</p>
       <a href="/components/">查看全部组件</a>
     </div>
-    <section class="simulator-entry">
+    <section class="simulator-entry hud-brackets agm-materialize">
       <div>
         <h2>一副属于你的视界。</h2>
         <p>扫描空间、沿着路线漫游，或为此刻播放一段声音。把组件放进完整的设备体验里。</p>

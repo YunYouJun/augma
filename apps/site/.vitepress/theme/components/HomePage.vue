@@ -16,15 +16,16 @@ const release = `v${version.split('.').slice(0, 2).join('.')}`
   <div class="augma-home">
     <section class="hero-shell">
       <HeroBackdrop />
+      <div class="hero-field" aria-hidden="true" />
       <div class="hero">
         <div class="hero-copy">
-          <h1>
+          <h1 style="--i: 0">
             Augma
             <span aria-hidden="true">/</span>
           </h1>
-          <h2>界面，浮现于现实。</h2>
-          <p>为 Web 构建轻盈的 AR 风格界面。</p>
-          <div class="hero-actions">
+          <h2 style="--i: 1">界面，浮现于现实。</h2>
+          <p style="--i: 2">为 Web 构建轻盈的 AR 风格界面。</p>
+          <div class="hero-actions" style="--i: 3">
             <a class="agm-button agm-button--primary" href="/components/">
               浏览组件
               <UiIcon name="arrow" />
@@ -38,7 +39,7 @@ const release = `v${version.split('.').slice(0, 2).join('.')}`
               体验 AR
             </a>
           </div>
-          <div class="hero-install">
+          <div class="hero-install" style="--i: 4">
             <CopyCommand text="pnpm add augma" />
             <small>{{ release }} · {{ components.length }} 个组件 · MIT</small>
           </div>

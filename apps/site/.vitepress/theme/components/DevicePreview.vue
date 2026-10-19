@@ -2,6 +2,7 @@
 import {
   AgmButton,
   AgmDialog,
+  AgmHudGauge,
   AgmHudProgress,
   AgmHudStatus,
   AgmIconButton,
@@ -9,24 +10,55 @@ import {
   AgmSlider,
   AgmSwitch,
 } from 'augma'
-import { shallowRef } from 'vue'
+import { onUnmounted, shallowRef, useTemplateRef } from 'vue'
+import HudOrbit from './HudOrbit.vue'
 import UiIcon from './UiIcon.vue'
 
 const progress = shallowRef(72)
+const energy = shallowRef(86)
 const bright = shallowRef(false)
 const sound = shallowRef(true)
 const spatial = shallowRef(false)
 const open = shallowRef(false)
+
+// Pointer tilt writes CSS variables once per frame instead of updating Vue state.
+const stage = useTemplateRef<HTMLElement>('stage')
+let frame = 0
+function tilt(event: PointerEvent) {
+  if (event.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches)
+    return
+  const { clientX, clientY } = event
+  cancelAnimationFrame(frame)
+  frame = requestAnimationFrame(() => {
+    const el = stage.value
+    if (!el)
+      return
+    const rect = el.getBoundingClientRect()
+    el.style.setProperty('--tilt-x', (((clientX - rect.left) / rect.width) * 2 - 1).toFixed(3))
+    el.style.setProperty('--tilt-y', (((clientY - rect.top) / rect.height) * 2 - 1).toFixed(3))
+  })
+}
+function settle() {
+  cancelAnimationFrame(frame)
+  stage.value?.style.removeProperty('--tilt-x')
+  stage.value?.style.removeProperty('--tilt-y')
+}
+onUnmounted(() => cancelAnimationFrame(frame))
 </script>
 
 <template>
-  <div class="device-stage" :class="{ 'is-spatial': spatial }">
-    <div class="orbit orbit-one" aria-hidden="true" />
-    <div class="orbit orbit-two" aria-hidden="true" />
+  <div
+    ref="stage"
+    class="device-stage"
+    :class="{ 'is-spatial': spatial }"
+    @pointermove="tilt"
+    @pointerleave="settle"
+  >
+    <HudOrbit />
     <AgmPanel
-      class="device-panel"
+      class="device-panel agm-materialize"
       title="设备连接"
-      :style="{ '--device-opacity': bright ? '1' : '.88' }"
+      :style="{ '--device-opacity': bright ? '1' : '.88', '--agm-delay': '260ms' }"
     >
       <template #header>
         <div class="device-title">
@@ -42,7 +74,7 @@ const open = shallowRef(false)
         </div>
         <AgmHudProgress label="示例进度" :value="progress" variant="ring" />
       </div>
-      <AgmHudProgress label="数据同步演示" :value="progress" />
+      <AgmHudGauge label="示例电量" :value="energy" />
       <div class="device-controls">
         <div>
           <AgmIconButton
@@ -88,6 +120,7 @@ const open = shallowRef(false)
         </template>
         <div class="settings-fields">
           <AgmSlider v-model="progress" label="示例进度" />
+          <AgmSlider v-model="energy" label="示例电量" />
           <AgmSwitch v-model="bright" label="明亮面板" />
           <AgmSwitch v-model="spatial" label="空间模式" />
         </div>

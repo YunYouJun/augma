@@ -36,7 +36,7 @@ function reset() {
     </div>
     <p class="catalog-count" role="status">显示 {{ filtered.length }} / {{ components.length }} 个组件</p>
     <ul class="catalog-list">
-      <li v-for="item in filtered" :key="item.slug">
+      <li v-for="item in filtered" :key="item.slug" class="hud-brackets">
         <CatalogPreview :name="item.slug" />
         <a :href="`/components/${item.slug}`">
           <strong>{{ item.title }}</strong>

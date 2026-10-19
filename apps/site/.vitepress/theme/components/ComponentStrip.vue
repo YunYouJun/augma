@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   AgmButton,
+  AgmHudGauge,
   AgmHudStatus,
   AgmIconButton,
   AgmPanel,
@@ -18,9 +19,9 @@ const notification = shallowRef(false)
 
 <template>
   <section class="component-strip">
-    <h2>从一个按钮，到一整个视界</h2>
+    <h2 class="reveal">从一个按钮，到一整个视界</h2>
     <div class="component-columns">
-      <div class="component-column">
+      <div class="component-column reveal">
         <h3>
           <a href="/components/button">操作</a>
         </h3>
@@ -36,7 +37,7 @@ const notification = shallowRef(false)
           <AgmIconButton label="新增通知" @click="notification = true" />
         </div>
       </div>
-      <div class="component-column">
+      <div class="component-column reveal">
         <h3>
           <a href="/components/switch">控制</a>
         </h3>
@@ -47,7 +48,7 @@ const notification = shallowRef(false)
           <AgmSwitch v-model="locked" label="空间锚定" />
         </div>
       </div>
-      <div class="component-column">
+      <div class="component-column reveal">
         <h3>
           <a href="/components/panel">信息</a>
         </h3>
@@ -61,6 +62,7 @@ const notification = shallowRef(false)
             <AgmHudStatus>
               {{ locked ? '已锚定视界' : '界面已就绪' }}
             </AgmHudStatus>
+            <AgmHudGauge label="界面不透明度" :value="opacity" />
             <p>让信息自然地融入视野。</p>
             <a href="/components/hud-progress">探索 HUD 组件</a>
           </AgmPanel>
