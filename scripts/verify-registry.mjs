@@ -189,7 +189,7 @@ try {
     .join('\n')
   await writeFile(
     join(temp, 'src/main.ts'),
-    `${imports}\nimport {createApp,h} from 'vue'\nimport './style.css'\ncreateApp({render:()=>h('div',{},[${generated.map((_, i) => `h(C${i}, {label:'Consumer',title:'Panel',description:'Example',value:42})`).join(',')}])}).mount('#app')`,
+    `${imports}\nimport {createApp,h} from 'vue'\nimport './style.css'\ncreateApp({render:()=>h('div',{},[${generated.map((p, i) => `h(C${i}, {label:'Consumer',title:'Panel',description:'Example'${p.endsWith('AgmHudGauge.vue') ? ',value:42' : ''}})`).join(',')}])}).mount('#app')`,
   )
   await run(resolve('node_modules/.bin/vue-tsc'), [
     '--noEmit',
