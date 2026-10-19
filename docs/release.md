@@ -21,7 +21,7 @@ pnpm preview
 
 - `main` 是唯一的长期分支，也是默认分支和 Cloudflare Pages 的生产分支，推送即部署。功能分支通过 PR 合入 `main`；CI 覆盖 `main` 的 push 与所有 PR。2026-10-19 起不再使用 `dev`。
 - 正式发布由 `v*` 标签触发：在 `main` 上运行 `pnpm release`（bumpp）更新版本、提交 `chore: release vX.Y.Z`、打标签并推送。先发布 Core，再发布 Vue，然后验证公开安装。
-- 0.2 站点已于 2026-10-19 先于 npm 发布上线：在 `0.2.0` 发布之前，站点上的 `pnpm add augma` 会安装 API 不兼容的 0.1.1，Registry 条目依赖的 `@augma/core@0.2.0` 也无法安装。应尽快完成 npm 发布。
+- `v0.2.0` 已于 2026-10-20 发布：`augma` 与 `@augma/core` 的 0.2.0 都在 npm 上，GitHub Release 附带 macOS 安装包。详见下方「0.2.0 发布记录」。
 - 合并生产分支时保留发布提交历史，不使用 squash / rebase 改写已打标签的提交。
 
 ## 准备产物（不发布）
@@ -52,7 +52,7 @@ GitHub Actions 的 **Prepare or publish packages**（`release.yml`）在推送 `
 
 ### 首次发布 0.2.0
 
-`augma` 已在 npm 上（0.1.1），`@augma/core` 尚未注册。npm 通常只能为已存在的包配置 trusted publisher，所以 Core 的第一个版本由维护者手动发布，并且必须使用工作流打出的同一个 tarball：在本机重新打包可能改变压缩字节和 integrity，工作流就会拒绝跳过。若届时 npm 已支持为未注册的包预先配置 trusted publisher，直接给两个包配置后运行一次即可，跳过第 4–6 步。
+（2026-10-20 已按以下步骤完成。）发布前 `augma` 已在 npm 上（0.1.1），`@augma/core` 尚未注册。npm 通常只能为已存在的包配置 trusted publisher，所以 Core 的第一个版本由维护者手动发布，并且必须使用工作流打出的同一个 tarball：在本机重新打包可能改变压缩字节和 integrity，工作流就会拒绝跳过。若届时 npm 已支持为未注册的包预先配置 trusted publisher，直接给两个包配置后运行一次即可，跳过第 4–6 步。
 
 1. 在 npm 创建 `augma` 组织（提供 `@augma` scope），确认自己是 `augma` 包的维护者。用 `npm whoami --registry=https://registry.npmjs.org` 验证登录；不要把 token 或验证码写入仓库。
 2. 在 npmjs.com 的 `augma` 包设置中添加 Trusted Publisher：GitHub Actions，owner `YunYouJun`，仓库 `augma`，工作流 `release.yml`，environment `npm`。
@@ -138,7 +138,20 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - 主域 `components.json` 可读取但尚未包含本轮新增 API；主域与别名首页已在真实浏览器中确认正常加载。别名站脚本请求曾返回 403，不能据此判断网站故障；新版部署后仍需完成完整公网验收。
 - 旧文档根入口仍返回原站，没有跳转到新站。旧站迁移与实机 AR 验收单独记录。
 
-正式宣布发布前，补充工作流 URL、包版本 / integrity、公网安装和两站点验收结果；发布成功后再更新 README、快速开始和 CHANGELOG 中的待发布状态。
+以上为 2026-10-02 的快照，发布结果见下方「0.2.0 发布记录」。
+
+## 0.2.0 发布记录（2026-10-20）
+
+- 标签 `v0.2.0` 指向 `77609c5`；发布工作流 [run 39295892317](https://github.com/YunYouJun/augma/actions/runs/39295892317) 的准备、mac、GitHub Release 与发布任务全部通过（第 3 次尝试）。
+- `@augma/core@0.2.0`：按首发步骤用该次运行的 artifact 手动发布，integrity `sha512-E0ahzWaZZoTKvV+BFY4D0RggdFZwVrmA4F/90Egh6ZbQRMX6XWEESY6vvv+qplUmtf0b9h+8eUOte5EuFDgSSg==`；随后配置 trusted publisher。首个版本没有 provenance。
+- `augma@0.2.0`：重跑发布任务时跳过一致的 Core，通过 OIDC 发布并附带 SLSA provenance，integrity `sha512-fdV9Xs7poKMAJLV42QF8DxkuS3NEqf+6ELeKmudmDl0OEwvBB9mNTc+RtcnUFwB65MH7moFFJXGWJJAdDkubqA==`。两个包的 `latest` 均为 0.2.0。
+- [GitHub Release v0.2.0](https://github.com/YunYouJun/augma/releases/tag/v0.2.0) 附带 `Augma-macOS.zip`（1,171,547 字节）与 `.sha256`，下载后校验一致。
+- 公网验收：在空目录从官方 registry 安装 `augma@0.2.0`，依赖解析到 `@augma/core@0.2.0`，13 个导出、SSR 渲染、CSS 文件、registry 签名与 attestation 均通过。`augma.yyj.moe` 的首页、组件页、`/ar/`、`/guide/macos`、英文与日文入口、`/llms.txt`、`/components.json`（0.2.0、13 个组件）与 `/r/*.json` 均返回 200。真实 shadcn-vue CLI 安装由 CI 的 Registry 校验覆盖；本机当时无法访问 `shadcn-vue.com`，未对正式域名单独重跑。
+
+发布中的两处问题与修复：
+
+- 第一次标签运行的 mac 任务在全新 checkout 中缺少组件库产物，AR 构建找不到 `augma/style.css`，GitHub Release 被跳过。`77609c5` 让打包脚本先构建组件库；当时 npm 与 Release 都尚未发布，标签随之移到该提交。
+- 发布任务在 `augma` 发布约 15 秒后核对公开版本，npm 尚未可见而判定失败；`8a92be6` 改为每个包最多轮询 10 分钟，并把发布任务超时放宽到 30 分钟。手动发布的 tarball 路径需以 `./` 开头（`37c2a2f`）。
 
 ## 待办（2026-10-19）
 
@@ -151,9 +164,9 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - [x] 用 `scripts/capture-media.mjs` 重新生成 README 截图、OG 图与 AR 录屏：README 媒体改为 WebP，OG 图为 JPEG，截图冻结在动画落定的同一时刻；删除未引用的深色与移动端截图。临时截图贴在 issue / PR，不提交到仓库。
 - [x] 接入 bumpp：`pnpm release` 更新 5 个版本文件并推送 `v*` 标签，标签自动触发发布；发布前查询 registry，跳过已发布且一致的版本，不一致即停止。
 - [x] npm 准备：`augma` 组织早已存在且由 `yunyoujun` 拥有；`augma` 已配置 trusted publisher（GitHub `YunYouJun/augma`、`release.yml`、environment `npm`，权限 publish 与 stage publish）。GitHub 的 `npm` environment 只允许 `v*` 标签部署。
-- [ ] 按上文「首次发布 0.2.0」发布：推送 `v0.2.0` 标签触发工作流，用该次 artifact 手动首发 Core 并为它配置 trusted publisher，再对同一次运行 Re-run failed jobs 发布 `augma`。
+- [x] 按上文「首次发布 0.2.0」完成 `v0.2.0` 发布（2026-10-20），见「0.2.0 发布记录」。
 - [ ] `v0.2.0` 的 GitHub Release 附带 `Augma-macOS.zip` 后，从 `/guide/macos` 下载，在 Apple 芯片与 Intel Mac 上按页面步骤首次打开。
-- [ ] `augma.yyj.moe` 完成公网验收，从官方 registry 安装 `augma@0.2.0` 并验证 Registry 安装；随后更新 README、快速开始和 CHANGELOG 中的待发布状态。
+- [x] `augma.yyj.moe` 公网验收、官方 registry 安装与 README / CHANGELOG 的待发布状态更新已完成，见「0.2.0 发布记录」。
 - [x] `docs.augma.elpsy.cn` 由 `vercel.json` 按路径 308 到新域，已用 curl 核对根路径、组件页、0.1 旧页面与 `/r/*.json`。
 - [x] `augma.elpsy.cn`：`elpsy.cn` zone 的 Single Redirect「Redirect legacy Augma client」301 到 `https://augma.yyj.moe/ar/`，已用 curl 核对。
 - [ ] 实机摄像头与 immersive-ar 验收；人工检查 macOS 原生界面（HUD 浮窗、沉浸控制条与开场动画）。

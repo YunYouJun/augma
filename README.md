@@ -31,7 +31,7 @@ import 'augma/style.css'
 </template>
 ```
 
-上面的 API 对应 0.2；公开安装需等待该版本发布。开发期间可以构建并通过 `pnpm pack` 验证产物。
+上面的 API 对应 0.2.0（2026-10-20 发布）。从 0.1 升级前请先阅读[迁移指南](apps/site/guide/migration.md)。
 
 只需样式时安装 `@augma/core`，导入 `@augma/core/tokens.css` 或 `@augma/core/style.css`。
 
