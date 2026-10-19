@@ -32,8 +32,8 @@ $augma を使って、この Vue プロジェクトにデバイスのコント�
 shadcn-vue を初期化済みの Vue プロジェクトで、次を実行します：
 
 ```sh
-pnpm dlx shadcn-vue@2.8.2 add https://augma.yunyoujun.cn/r/button.json
-pnpm dlx shadcn-vue@2.8.2 add https://augma.yunyoujun.cn/r/dialog.json
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/button.json
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/dialog.json
 ```
 
 最初のバッチは Button、Input、Panel、Dialog、HudStatus、HudProgress に対応しています。Registry は npm のコンポーネントと同じソースファイルをコピーし、スタイルと振る舞いの依存関係も宣言します。

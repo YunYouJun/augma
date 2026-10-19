@@ -32,8 +32,8 @@ npx skills add YunYouJun/augma --skill augma
 在已初始化 shadcn-vue 的 Vue 项目中执行：
 
 ```sh
-pnpm dlx shadcn-vue@2.8.2 add https://augma.yunyoujun.cn/r/button.json
-pnpm dlx shadcn-vue@2.8.2 add https://augma.yunyoujun.cn/r/dialog.json
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/button.json
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/dialog.json
 ```
 
 首批支持 Button、Input、Panel、Dialog、HudStatus、HudProgress。Registry 复制与 npm 组件相同的源文件，同时声明样式与行为依赖。

@@ -15,4 +15,4 @@
 
 Framework-agnostic styles live in `@augma/core`. The Vue package needs Vue 3.5+, and Reka UI provides complex behavior. The first release has no global component registration plugin and no React package.
 
-Docs and the showcase live at `augma.yunyoujun.cn`, and the Cloudflare Pages deployment at `augma.yyj.moe` serves the same content. Moving the old domain depends on the actual hosting switch; upgrading the npm package cannot do it for you.
+Docs, the showcase and the AR demo are deployed together on Cloudflare Pages at `augma.yyj.moe`; `augma.yyj.moe` permanently redirects there. Moving the old domain depends on the actual hosting switch; upgrading the npm package cannot do it for you.

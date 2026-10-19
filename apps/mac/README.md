@@ -10,7 +10,7 @@
 
 主窗口工具栏和菜单栏都提供「始终置顶」开关；开启后演示窗口会显示在其他普通窗口上方，设置会在下次启动时保留。辅助 HUD 和沉浸模式的悬浮层保持各自原有的显示方式。
 
-摄像头和 WebXR 仍取决于 WebKit 对本地页面及设备权限的支持；应用选择和模拟界面不依赖这些权限。沉浸模式的 WebView 透明背景使用 WebKit 的非公开 `_setDrawsBackground:` 方法，系统升级后需要重新验证。推送 `v*` 标签时，发布工作流会把同一个压缩包附加到该版本的 GitHub Release，站点的[下载页](https://augma.yunyoujun.cn/guide/macos)指向最新版本。安装包尚未使用 Developer ID 签名和公证，首次打开需在「系统设置 → 隐私与安全性」中点击「仍要打开」。
+摄像头和 WebXR 仍取决于 WebKit 对本地页面及设备权限的支持；应用选择和模拟界面不依赖这些权限。沉浸模式的 WebView 透明背景使用 WebKit 的非公开 `_setDrawsBackground:` 方法，系统升级后需要重新验证。推送 `v*` 标签时，发布工作流会把同一个压缩包附加到该版本的 GitHub Release，站点的[下载页](https://augma.yyj.moe/guide/macos)指向最新版本。安装包尚未使用 Developer ID 签名和公证，首次打开需在「系统设置 → 隐私与安全性」中点击「仍要打开」。
 
 ## 语音指令
 

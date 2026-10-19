@@ -40,5 +40,5 @@ import 'augma/style.css'
 复制可编辑源码：
 
 ```sh
-pnpm dlx shadcn-vue@2.8.2 add https://augma.yunyoujun.cn/r/dialog.json
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/dialog.json
 ```

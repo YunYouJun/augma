@@ -1,6 +1,6 @@
 # 0.2 发布与域名迁移
 
-站点分别部署到 EdgeOne Pages 与 Cloudflare Pages；npm 包发布和旧站迁移分别处理。公开安装命令依赖 0.2.0 包发布。
+站点只部署到 Cloudflare Pages（`augma.yyj.moe`）；npm 包发布和旧站迁移分别处理。公开安装命令依赖 0.2.0 包发布。
 
 ## 本地与 CI
 
@@ -22,7 +22,7 @@ pnpm preview
 - `main` 是唯一的长期分支，也是默认分支和 Cloudflare Pages 的生产分支，推送即部署。功能分支通过 PR 合入 `main`；CI 覆盖 `main` 的 push 与所有 PR。2026-10-19 起不再使用 `dev`。
 - 正式发布由 `v*` 标签触发：在 `main` 上运行 `pnpm release`（bumpp）更新版本、提交 `chore: release vX.Y.Z`、打标签并推送。先发布 Core，再发布 Vue，然后验证公开安装。
 - 0.2 站点已于 2026-10-19 先于 npm 发布上线：在 `0.2.0` 发布之前，站点上的 `pnpm add augma` 会安装 API 不兼容的 0.1.1，Registry 条目依赖的 `@augma/core@0.2.0` 也无法安装。应尽快完成 npm 发布。
-- 合并生产分支时保留发布提交历史，不使用 squash / rebase 改写已打标签的提交。EdgeOne 使用该发布工作流保存的站点 artifact，两个站点保持相同内容。
+- 合并生产分支时保留发布提交历史，不使用 squash / rebase 改写已打标签的提交。
 
 ## 准备产物（不发布）
 
@@ -88,26 +88,21 @@ npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运
 
 站点 `/guide/macos` 与首页 AR 演示区链接 `releases/latest/download/Augma-macOS.zip`，因此文件名固定、不带版本号；第一个带安装包的 Release 发布之前，该链接返回 404。安装包只有 ad-hoc 签名，首次打开需要在「系统设置 → 隐私与安全性」中确认。改用 Developer ID 签名与公证需要 Apple Developer Program 账号，并把证书和 App Store Connect API 密钥配置为仓库 secrets。
 
-## 主域名与站点
+## 站点与域名
 
-主站是 `https://augma.yunyoujun.cn`，文档、展示、AI 静态入口和 `/ar/` 一起部署。
+站点只部署在 Cloudflare Pages，主站是 `https://augma.yyj.moe`，文档、展示、AI 静态入口和 `/ar/` 一起部署。canonical、sitemap、Skill、npm 包 README、macOS 客户端和生成索引都使用这个域名，来源是 `scripts/catalog.mjs` 的 `origin`。
 
-- EdgeOne Pages 项目 `augma`（`makers-qvfxx56v4tcl`）使用海外加速区，生产环境部署 `apps/site/.vitepress/dist`。
-- 代码推送到 `main` 后，CI 验证并保存站点 artifact；生产部署使用该发布工作流的站点 artifact，或在对应干净提交上重新验证的构建：
+- Pages 项目 `augma`（`augma.pages.dev`）连接 GitHub `YunYouJun/augma` 的 `main` 分支，使用 Node 24 和 pnpm 12.5.1；构建命令为 `pnpm build`，输出目录为 `apps/site/.vitepress/dist`。推送 `main` 即部署生产环境，PR 生成预览部署。推送后检查 Pages 构建与部署状态。
+- `augma.yyj.moe` 是 Pages 项目的 Custom Domain，`yyj.moe` zone 中的 `augma` CNAME 指向 `augma.pages.dev`。
+- 2026-10-20 起不再使用 EdgeOne Pages：Augma 是业余项目，一处托管、推送即部署比国内加速更重要。代价是中国大陆访问 Cloudflare 免费计划较慢，偶尔不稳定；`*.pages.dev` 在大陆通常无法访问，对外只使用 `augma.yyj.moe`。CI 与发布工作流仍保存站点 artifact，仅用于排查。
 
-  ```sh
-  pnpm check
-  edgeone pages deploy apps/site/.vitepress/dist -n augma -e production -a overseas
-  ```
+### `augma.yunyoujun.cn` 跳转
 
-- `augma.yunyoujun.cn` 在 EdgeOne Pages 项目中绑定到 Production。Cloudflare DNS 配置两条 DNS-only CNAME：`augma.yunyoujun.cn → augma.yunyoujun.cn.pages.dnsoe5.com` 用于站点访问，`_dnsauth.augma.yunyoujun.cn → augma.yunyoujun.cn.eoacme0.com` 用于免费 HTTPS 证书验证和续期。核对 HTTPS 证书和公网访问。
-- canonical、sitemap、Skill 与生成索引均采用主域。域名绑定与 DNS 配置需在托管平台完成。
+`yunyoujun.cn` 与 `yyj.moe` 在同一个 Cloudflare 账号下，跳转全部在 Cloudflare 完成，按顺序操作以免中断：
 
-## Cloudflare Pages 域名
-
-`augma.yyj.moe` 由现有 Cloudflare Pages 项目 `augma`（`augma.pages.dev`）直接托管同一站点，不再作为跳转入口。项目连接 GitHub `YunYouJun/augma` 的 `main` 分支，使用 Node 24 和 pnpm 12.5.1；构建命令为 `pnpm build`，输出目录为 `apps/site/.vitepress/dist`。推送 `main` 后检查 Pages 构建与部署状态。
-
-在 Pages 项目中将 `augma.yyj.moe` 添加为 Custom Domain，并确认 `yyj.moe` zone 中的 `augma` CNAME 指向 `augma.pages.dev`。Pages 与 DNS 的绑定都完成后，核对 HTTPS 证书和公网访问。站点 canonical 与 sitemap 仍指向主域 `https://augma.yunyoujun.cn`。
+1. 在 `yunyoujun.cn` zone 添加 Single Redirect：主机名等于 `augma.yunyoujun.cn` 时，以 301 跳转到动态表达式 `concat("https://augma.yyj.moe", http.request.uri.path)`，并保留查询字符串。路径不变，旧的 `/r/*.json` 与 `/llms.txt` 链接继续可用。
+2. 把 `augma` 记录从指向 EdgeOne 的 DNS-only CNAME 改为代理的占位记录（`AAAA 100::`），删除 `_dnsauth.augma` 记录。
+3. 确认跳转生效后，在 EdgeOne Pages 项目 `augma`（`makers-qvfxx56v4tcl`）中解绑该域名，再删除项目。
 
 ## 旧域名
 
@@ -115,8 +110,8 @@ npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运
 
 | 旧入口 | 新入口 |
 | --- | --- |
-| `augma.elpsy.cn/`（旧 Client） | `https://augma.yunyoujun.cn/ar/` |
-| `docs.augma.elpsy.cn/` | `https://augma.yunyoujun.cn/guide/` |
+| `augma.elpsy.cn/`（旧 Client） | `https://augma.yyj.moe/ar/` |
+| `docs.augma.elpsy.cn/` | `https://augma.yyj.moe/guide/` |
 | `docs.augma.elpsy.cn/components/button/` 等保留组件 | 对应 `/components/button` |
 | 旧 card | `/components/panel` |
 | 旧 clock、menu、bottom-menu | `/showcase/` |
@@ -130,7 +125,7 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 
 ## 公网验收
 
-发布后分别在两个域名检查：首页、一个组件页、`/ar/`、`/llms.txt`、`/components.json`、`/r/button.json`、Markdown 下载。验证 HTTPS、404、移动布局和无路径丢失；重新执行公开 npm / Registry 安装。摄像头与 immersive-ar 需要在实际支持的设备上单独记录结果。
+发布后在 `augma.yyj.moe` 检查：首页、一个组件页、`/ar/`、`/llms.txt`、`/components.json`、`/r/button.json`、Markdown 下载。验证 HTTPS、404 和移动布局；确认 `augma.yunyoujun.cn` 的任意路径都 301 到新域且路径不变；重新执行公开 npm / Registry 安装。摄像头与 immersive-ar 需要在实际支持的设备上单独记录结果。
 
 
 ## 2026-10-02 收尾状态
@@ -148,13 +143,14 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 按顺序推进，前一项完成后再开始下一项。宣传视频放在最后，避免观众在 npm 发布和生产部署之前访问到旧站或装到 0.1.1。
 
 - [x] 2026-10-19 的动效与 HudGauge 改动合入 `main`；`dev` 与 `codex/*` 分支已清理，默认分支改为 `main`。
-- [ ] 确认 `main` 的 CI、Cloudflare Pages 部署结果，并按需用工作流产物同步 EdgeOne。
+- [ ] 确认 `main` 的 CI 与 Cloudflare Pages 部署结果。
+- [ ] 按上文把 `augma.yunyoujun.cn` 改为 Cloudflare 301 跳转，解绑并删除 EdgeOne Pages 项目。
 - [x] 用 `scripts/capture-media.mjs` 重新生成 README 截图、OG 图与 AR 录屏：README 媒体改为 WebP，OG 图为 JPEG，截图冻结在动画落定的同一时刻；删除未引用的深色与移动端截图。临时截图贴在 issue / PR，不提交到仓库。
 - [x] 接入 bumpp：`pnpm release` 更新 5 个版本文件并推送 `v*` 标签，标签自动触发发布；发布前查询 registry，跳过已发布且一致的版本，不一致即停止。
 - [x] npm 准备：`augma` 组织早已存在且由 `yunyoujun` 拥有；`augma` 已配置 trusted publisher（GitHub `YunYouJun/augma`、`release.yml`、environment `npm`，权限 publish 与 stage publish）。GitHub 的 `npm` environment 只允许 `v*` 标签部署。
 - [ ] 按上文「首次发布 0.2.0」发布：推送 `v0.2.0` 标签触发工作流，用该次 artifact 手动首发 Core 并为它配置 trusted publisher，再对同一次运行 Re-run failed jobs 发布 `augma`。
 - [ ] `v0.2.0` 的 GitHub Release 附带 `Augma-macOS.zip` 后，从 `/guide/macos` 下载，在 Apple 芯片与 Intel Mac 上按页面步骤首次打开。
-- [ ] 两个域名完成公网验收，从官方 registry 安装 `augma@0.2.0` 并验证 Registry 安装；随后更新 README、快速开始和 CHANGELOG 中的待发布状态。
+- [ ] `augma.yyj.moe` 完成公网验收，从官方 registry 安装 `augma@0.2.0` 并验证 Registry 安装；随后更新 README、快速开始和 CHANGELOG 中的待发布状态。
 - [ ] 旧域 `augma.elpsy.cn`、`docs.augma.elpsy.cn` 按主机名逐路径设置 301 / 308。
 - [ ] 实机摄像头与 immersive-ar 验收；人工检查 macOS 原生界面（HUD 浮窗、沉浸控制条与开场动画）。
 - [ ] 可选：HudGauge 进入 Registry。

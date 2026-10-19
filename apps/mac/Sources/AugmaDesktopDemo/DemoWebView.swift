@@ -239,7 +239,7 @@ struct DemoWebView: NSViewRepresentable {
         return .allow
       }
       if url.scheme == DemoResourceSchemeHandler.scheme, url.path == "/components/",
-         let docsURL = URL(string: "https://augma.yunyoujun.cn/components/") {
+         let docsURL = URL(string: "https://augma.yyj.moe/components/") {
         NSWorkspace.shared.open(docsURL)
         return .cancel
       } else if url.scheme == "https" || url.scheme == "http" {

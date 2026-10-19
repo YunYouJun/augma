@@ -32,8 +32,8 @@ All entry points are generated from the same source, examples and metadata. `com
 In a Vue project set up with shadcn-vue, run:
 
 ```sh
-pnpm dlx shadcn-vue@2.8.2 add https://augma.yunyoujun.cn/r/button.json
-pnpm dlx shadcn-vue@2.8.2 add https://augma.yunyoujun.cn/r/dialog.json
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/button.json
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/dialog.json
 ```
 
 The first batch covers Button, Input, Panel, Dialog, HudStatus and HudProgress. The Registry copies the same source files as the npm components and declares their style and behavior dependencies.

@@ -31,5 +31,5 @@ import 'augma/style.css'
 編集可能なソースをコピー：
 
 ```sh
-pnpm dlx shadcn-vue@2.8.2 add https://augma.yunyoujun.cn/r/hud-progress.json
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/hud-progress.json
 ```

@@ -126,7 +126,7 @@ test('machine-readable endpoints and canonical origin', async ({
   await page.goto('/components/button')
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
-    'https://augma.yunyoujun.cn/components/button',
+    'https://augma.yyj.moe/components/button',
   )
 })
 

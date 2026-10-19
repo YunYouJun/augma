@@ -13,7 +13,7 @@ Build light, legible interfaces inspired by the Augma device in Sword Art Online
 - Custom or other-framework components: install `@augma/core` and use `tokens.css`; `style.css` adds the CSS primitives. Supply appropriate native/headless behavior separately.
 - Editable Vue source: use the Registry entries listed in the component contract. Import `@augma/core/style.css` once and keep the declared behavior dependencies.
 
-Read the relevant component API before writing code. Canonical documentation is https://augma.yunyoujun.cn/llms.txt; the versioned contract is https://augma.yunyoujun.cn/components.json. In this repository, use `scripts/catalog.mjs`, `examples/components/`, and `packages/augma/src/components/` as the source of truth. When working from a local preview, replace the public origin with the preview origin. Do not invent components or props when remote documentation is unavailable; use local sources or identify the missing contract.
+Read the relevant component API before writing code. Canonical documentation is https://augma.yyj.moe/llms.txt; the versioned contract is https://augma.yyj.moe/components.json. In this repository, use `scripts/catalog.mjs`, `examples/components/`, and `packages/augma/src/components/` as the source of truth. When working from a local preview, replace the public origin with the preview origin. Do not invent components or props when remote documentation is unavailable; use local sources or identify the missing contract.
 
 ## Design and implementation
 

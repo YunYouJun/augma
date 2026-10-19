@@ -369,5 +369,5 @@ export const components = [
       '只读计量使用 meter 语义，并以“当前 / 上界”提供数值文本。剩余 50% 及以下显示警示色、20% 及以下显示危险色；数值文字始终可见，不单靠颜色。',
   },
 ]
-export const origin = 'https://augma.yunyoujun.cn'
+export const origin = 'https://augma.yyj.moe'
 export const version = '0.2.0'
