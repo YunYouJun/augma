@@ -6,11 +6,13 @@
 
 ### 组件与设计
 
-- 提供 12 个 Vue 3.5+ 组件：Button、IconButton、Input、Select、Switch、Slider、Dialog、Tooltip、Toast、Panel、HudStatus、HudProgress。
+- 提供 13 个 Vue 3.5+ 组件：Button、IconButton、Input、Select、Switch、Slider、Dialog、Tooltip、Toast、Panel、HudStatus、HudProgress、HudGauge。
 - 使用具名 `Agm*` 导出与 `augma/style.css`；独立 `@augma/core` 提供无框架依赖的 CSS 与语义 tokens。
 - 提供浅色、深色及局部浅色主题；保留透明面板、细线边框、切角按钮与环形状态的 Augma 视觉语言。
 - Input / Select 支持辅助说明与错误关联；Select 提供必选校验；Panel 提供说明与底部操作插槽；Toast 提供四种语义状态。
 - 完善键盘与焦点管理、禁用和加载状态、触控命中区域，以及减少动态效果偏好。
+- 新增 HudGauge 分段计量条：按剩余比例切换青 / 橙 / 红，数值下降时留下短暂余影。
+- 统一 Augma 动效语言：Dialog 与 `.agm-materialize` 先现亮线再展开，按钮光扫，IconButton 环绕弧线与选中填充，HudStatus 声呐，Toast 倒计时线；新增动效与光线 tokens，全部遵循减少动态效果偏好。
 
 ### 文档与接入
 
@@ -22,7 +24,8 @@
 
 - AR 模拟器独立部署到 `/ar/`，摄像头与 WebXR 按需启用，不进入组件库依赖。
 - 提供 macOS 桌面与语音控制实验演示；实机摄像头 / immersive-ar 支持范围仍需单独验收。
-- CI 同时覆盖 `dev` 和 `main`。发布流程默认只准备产物，正式发布校验版本标签、提交与 tarball 摘要。
+- 主页加入 HUD 轨道环、雷达扫描、六边形场域扫描与滚动浮现；macOS 演示的 HUD、沉浸控制条与侧栏采用同一视觉语言，进入沉浸模式时播放一次性开场。
+- CI 覆盖 `main` 的推送与所有 PR。发布流程默认只准备产物，正式发布校验版本标签、提交与 tarball 摘要。
 
 ### 不兼容变更
 

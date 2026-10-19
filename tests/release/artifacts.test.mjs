@@ -63,9 +63,9 @@ test('public verification rejects missing versions, incorrect dist-tags and diff
 
 test('prepare mode permits branches but publishing requires the exact version tag', () => {
   const run = (ref, args = []) => spawnSync(process.execPath, ['scripts/check-release.mjs', ...args], { env: { ...process.env, GITHUB_REF: ref }, encoding: 'utf8' })
-  assert.equal(run('refs/heads/dev', ['--prepare']).status, 0)
+  assert.equal(run('refs/heads/main', ['--prepare']).status, 0)
   assert.equal(run(`refs/tags/v${version}`).status, 0)
-  assert.notEqual(run('refs/heads/dev').status, 0)
+  assert.notEqual(run('refs/heads/main').status, 0)
   assert.notEqual(run('refs/tags/v9.9.9').status, 0)
-  assert.notEqual(run('refs/heads/dev', ['--unknown']).status, 0)
+  assert.notEqual(run('refs/heads/main', ['--unknown']).status, 0)
 })

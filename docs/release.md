@@ -19,9 +19,10 @@ pnpm preview
 
 ## 分支与发布顺序
 
-- `dev` 是默认开发分支；功能与发布准备 PR 先合入 `dev`。CI 覆盖 `dev`、`main` 的 push，以及所有 PR。
+- `main` 是唯一的长期分支，也是默认分支和 Cloudflare Pages 的生产分支，推送即部署。功能分支通过 PR 合入 `main`；CI 覆盖 `main` 的 push 与所有 PR。2026-10-19 起不再使用 `dev`。
 - `main` 是 Cloudflare Pages 的生产分支。不要在 npm 包尚不可安装时把新的安装文档合入 `main`；普通 Git 推送会触发站点部署，不能用它代替 npm 发布。
-- 从通过检查的 `dev` 提交准备产物；正式发布使用该提交的 `v0.2.0` 标签。先发布 Core，再发布 Vue，验证公开安装后将同一提交通过发布 PR 合入 `main`。
+- 从通过检查的 `main` 提交准备产物；正式发布使用该提交的 `v0.2.0` 标签。先发布 Core，再发布 Vue，然后验证公开安装。
+- 0.2 站点已于 2026-10-19 先于 npm 发布上线：在 `0.2.0` 发布之前，站点上的 `pnpm add augma` 会安装 API 不兼容的 0.1.1，Registry 条目依赖的 `@augma/core@0.2.0` 也无法安装。应尽快完成 npm 发布。
 - 合并生产分支时保留发布提交历史，不使用 squash / rebase 改写已打标签的提交。EdgeOne 使用该发布工作流保存的站点 artifact，两个站点保持相同内容。
 
 ## 准备产物（不发布）
@@ -114,3 +115,18 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - 旧文档根入口仍返回原站，没有跳转到新站。旧站迁移与实机 AR 验收单独记录。
 
 正式宣布发布前，补充工作流 URL、包版本 / integrity、公网安装和两站点验收结果；发布成功后再更新 README、快速开始和 CHANGELOG 中的待发布状态。
+
+## 待办（2026-10-19）
+
+按顺序推进，前一项完成后再开始下一项。宣传视频放在最后，避免观众在 npm 发布和生产部署之前访问到旧站或装到 0.1.1。
+
+- [x] 2026-10-19 的动效与 HudGauge 改动合入 `main`；`dev` 与 `codex/*` 分支已清理，默认分支改为 `main`。
+- [ ] 确认 `main` 的 CI、Cloudflare Pages 部署结果，并按需用工作流产物同步 EdgeOne。
+- [ ] 用 `scripts/capture-media.mjs` 重新生成 README 截图、OG 图与 AR 录屏。首页改为动画入场，截图需等待动画结束，或使用减少动态效果模式。
+- [ ] npm 准备：确认 `augma` 维护权限，创建 `@augma` scope，为两个包配置 trusted publisher，并在 GitHub 创建 `npm` environment。
+- [ ] 在通过检查的 `main` 提交上创建 `v0.2.0` 标签，以 `publish=true` 运行发布工作流（先 Core 后 Vue）。
+- [ ] 两个域名完成公网验收，从官方 registry 安装 `augma@0.2.0` 并验证 Registry 安装；随后更新 README、快速开始和 CHANGELOG 中的待发布状态。
+- [ ] 旧域 `augma.elpsy.cn`、`docs.augma.elpsy.cn` 按主机名逐路径设置 301 / 308。
+- [ ] 实机摄像头与 immersive-ar 验收；人工检查 macOS 原生界面（HUD 浮窗、沉浸控制条与开场动画）。
+- [ ] 可选：HudGauge 进入 Registry。
+- [ ] 以上完成后制作宣传视频：从正式站点实录首页入场、组件动效、空间模式、AR 演示与 macOS 沉浸模式。不使用《刀剑神域》的片段、标志、角色或配乐；提及作品时只说明灵感来源，并附上与版权方无关联的声明。
