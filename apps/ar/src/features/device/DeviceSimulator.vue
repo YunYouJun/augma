@@ -296,6 +296,6 @@ onUnmounted(() => {
       <div v-if="!online && activeModule !== 'device'" class="standby-view"><p>{{ t(`connection.${connection}`) }}</p><AgmButton :loading="connection === 'connecting'" @click="device.connect">{{ t(connection === 'sleeping' ? 'device.wake' : 'device.connect') }}</AgmButton></div>
     </main>
     <DeviceDock :curved="settings.curvedHud" :active="settings.showHud ? activeModule : null" :show-hud="settings.showHud" :mirror="settings.mirror" @select="openApp" @mirror="settings.mirror = !settings.mirror" @hud="settings.showHud = !settings.showHud" />
-    <AgmToast v-model:open="notification" :title="message ? t(message) : ''" />
+    <AgmToast v-model:open="notification" :title="message ? t(message) : ''" :close-label="t('toast.close')" :region-label="t('toast.region')" />
   </div>
 </template>

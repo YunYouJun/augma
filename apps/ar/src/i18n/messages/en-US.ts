@@ -151,6 +151,7 @@ export const enUS: Messages = {
   'settings.resetDescription': 'Restore the default panel positions, theme, sound, spoken feedback, HUD and view effects. The current scene and language stay the same.',
   'settings.cancel': 'Cancel',
   'settings.confirmReset': 'Restore',
+  'settings.closeDialog': 'Close dialog',
 
   'weather.city': 'Sample weather city',
   'weather.city.beijing': 'Beijing',
@@ -251,6 +252,8 @@ export const enUS: Messages = {
   'toast.snapshotNotReady': 'The frame is not ready yet. Please try again shortly',
   'toast.fullscreenFailed': 'Could not switch full screen. Check your browser permissions',
   'toast.settingsReset': 'Defaults restored',
+  'toast.close': 'Close notification',
+  'toast.region': 'Notifications (F8)',
 
   'notice.action.detail': 'Activity from this device session.',
   'notice.welcome.title': 'Welcome to Augma',

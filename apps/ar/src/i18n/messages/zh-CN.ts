@@ -149,6 +149,7 @@ export const zhCN = {
   'settings.resetDescription': '恢复面板位置、主题、声音、语音播报、HUD 和视界效果的初始设置。当前模拟场景和语言不变。',
   'settings.cancel': '取消',
   'settings.confirmReset': '确认恢复',
+  'settings.closeDialog': '关闭对话框',
 
   'weather.city': '天气示例城市',
   'weather.city.beijing': '北京市',
@@ -249,6 +250,8 @@ export const zhCN = {
   'toast.snapshotNotReady': '画面尚未就绪，请稍后重试',
   'toast.fullscreenFailed': '未能切换全屏，请检查浏览器权限',
   'toast.settingsReset': '已恢复默认设置',
+  'toast.close': '关闭通知',
+  'toast.region': '通知（F8）',
 
   'notice.action.detail': '本次设备体验的操作记录。',
   'notice.welcome.title': '欢迎进入 Augma',

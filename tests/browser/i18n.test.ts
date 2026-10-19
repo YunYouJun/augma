@@ -43,6 +43,21 @@ test.describe('English browser', () => {
     await expect(page.getByRole('button', { name: 'Start simulated navigation' })).toBeVisible()
     await expect.poll(() => spoken(page)).toEqual([{ text: 'Simulated map opened', lang: 'en-US' }])
   })
+
+  test('names the dialog and toast controls in English', async ({ page }) => {
+    await page.goto('/ar/')
+    await page.getByRole('button', { name: 'System menu' }).click()
+    await page.getByRole('button', { name: 'Settings' }).click()
+    await page.getByRole('button', { name: 'Restore defaults', exact: true }).click()
+    await expect(page.getByRole('dialog', { name: 'Restore defaults' })).toBeVisible()
+    await page.getByRole('button', { name: 'Close dialog' }).click()
+    await expect(page.getByRole('dialog')).toBeHidden()
+
+    await page.getByRole('button', { name: 'Restore defaults', exact: true }).click()
+    await page.getByRole('button', { name: 'Restore', exact: true }).click()
+    await expect(page.getByRole('region', { name: 'Notifications (F8)' })).toBeAttached()
+    await expect(page.getByRole('button', { name: 'Close notification' })).toBeVisible()
+  })
 })
 
 test('switches language from settings, keeps it after reload and can mute spoken feedback', async ({ page }) => {

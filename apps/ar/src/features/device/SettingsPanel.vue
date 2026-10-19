@@ -55,7 +55,7 @@ function reset() {
     </fieldset>
     <p class="settings-hint">{{ t('settings.hint') }}</p>
     <p class="settings-storage" role="status">{{ t(storageAvailable ? 'settings.storageSaved' : 'settings.storageUnavailable') }}</p>
-    <AgmDialog v-model:open="resetOpen" :title="t('settings.reset')" :description="t('settings.resetDescription')">
+    <AgmDialog v-model:open="resetOpen" :title="t('settings.reset')" :description="t('settings.resetDescription')" :close-label="t('settings.closeDialog')">
       <template #trigger><AgmButton class="full-button" variant="outline" @click="focusResetTrigger">{{ t('settings.reset') }}</AgmButton></template>
       <template #footer><AgmButton variant="ghost" @click="resetOpen = false">{{ t('settings.cancel') }}</AgmButton><AgmButton @click="reset">{{ t('settings.confirmReset') }}</AgmButton></template>
     </AgmDialog>

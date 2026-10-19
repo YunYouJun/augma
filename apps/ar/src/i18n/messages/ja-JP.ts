@@ -151,6 +151,7 @@ export const jaJP: Messages = {
   'settings.resetDescription': 'パネルの位置、テーマ、サウンド、音声読み上げ、HUD、ビューの効果を初期設定に戻します。現在のシーンと言語は変わりません。',
   'settings.cancel': 'キャンセル',
   'settings.confirmReset': '初期設定に戻す',
+  'settings.closeDialog': 'ダイアログを閉じる',
 
   'weather.city': '天気サンプルの都市',
   'weather.city.beijing': '北京市',
@@ -251,6 +252,8 @@ export const jaJP: Messages = {
   'toast.snapshotNotReady': '画面の準備ができていません。しばらくしてから再試行してください',
   'toast.fullscreenFailed': 'フルスクリーンを切り替えられませんでした。ブラウザの許可を確認してください',
   'toast.settingsReset': '初期設定に戻しました',
+  'toast.close': '通知を閉じる',
+  'toast.region': '通知（F8）',
 
   'notice.action.detail': '今回のデバイス体験の操作記録です。',
   'notice.welcome.title': 'Augma へようこそ',
