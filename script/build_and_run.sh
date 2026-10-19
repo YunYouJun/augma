@@ -3,8 +3,8 @@ set -euo pipefail
 
 MODE="${1:-run}"
 case "$MODE" in
-  run|--debug|--logs|--telemetry|--verify) ;;
-  *) echo "usage: $0 [run|--debug|--logs|--telemetry|--verify]" >&2; exit 2 ;;
+  run|--debug|--logs|--telemetry|--verify|--package) ;;
+  *) echo "usage: $0 [run|--debug|--logs|--telemetry|--verify|--package]" >&2; exit 2 ;;
 esac
 
 APP_NAME="AugmaDesktopDemo"
@@ -12,9 +12,11 @@ BUNDLE_ID="cn.yunyoujun.augma.desktop-demo"
 MIN_SYSTEM_VERSION="15.0"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PACKAGE_DIR="$ROOT_DIR/apps/mac"
-APP_BUNDLE="$PACKAGE_DIR/dist/$APP_NAME.app"
+APP_BUNDLE="$PACKAGE_DIR/dist/Augma.app"
+ARCHIVE="$PACKAGE_DIR/dist/Augma-macOS.zip"
 APP_CONTENTS="$APP_BUNDLE/Contents"
 APP_BINARY="$APP_CONTENTS/MacOS/$APP_NAME"
+VERSION="$(node -p "require('$ROOT_DIR/package.json').version")"
 
 # An installed Xcode can require license acceptance; Command Line Tools can
 # build this SwiftPM demo without modifying the user's Xcode installation.
@@ -22,10 +24,16 @@ if [[ -z "${DEVELOPER_DIR:-}" ]] && ! /usr/bin/xcodebuild -version >/dev/null 2>
   export DEVELOPER_DIR=/Library/Developer/CommandLineTools
 fi
 
-pkill -x "$APP_NAME" >/dev/null 2>&1 || true
+# A download package is a universal release build; local runs stay fast debug builds.
+BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c debug)
+if [[ "$MODE" == "--package" ]]; then
+  BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c release --arch arm64 --arch x86_64)
+else
+  pkill -x "$APP_NAME" >/dev/null 2>&1 || true
+fi
 pnpm --filter @augma/ar exec vite build --base ./
-swift build --package-path "$PACKAGE_DIR" --product "$APP_NAME"
-BUILD_DIR="$(swift build --package-path "$PACKAGE_DIR" --show-bin-path)"
+swift build "${BUILD_FLAGS[@]}" --product "$APP_NAME"
+BUILD_DIR="$(swift build "${BUILD_FLAGS[@]}" --show-bin-path)"
 
 rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_CONTENTS/MacOS" "$APP_CONTENTS/Resources/ar"
@@ -42,8 +50,8 @@ cat >"$APP_CONTENTS/Info.plist" <<PLIST
   <key>CFBundleName</key><string>Augma</string>
   <key>CFBundleDisplayName</key><string>Augma</string>
   <key>CFBundlePackageType</key><string>APPL</string>
-  <key>CFBundleShortVersionString</key><string>0.1.0</string>
-  <key>CFBundleVersion</key><string>1</string>
+  <key>CFBundleShortVersionString</key><string>$VERSION</string>
+  <key>CFBundleVersion</key><string>$VERSION</string>
   <key>LSMinimumSystemVersion</key><string>$MIN_SYSTEM_VERSION</string>
   <key>NSPrincipalClass</key><string>NSApplication</string>
   <key>NSMicrophoneUsageDescription</key><string>用于识别你主动说出的 Augma 语音指令。</string>
@@ -72,5 +80,15 @@ case "$MODE" in
     pgrep -f "$APP_BINARY" >/dev/null
     swift "$ROOT_DIR/script/verify-mac-window.swift"
     echo "$APP_NAME launched: $APP_BUNDLE"
+    ;;
+  --package)
+    # Ad-hoc signature only: macOS asks for confirmation on first open until the
+    # app is signed with a Developer ID and notarized.
+    codesign --force --sign - "$APP_BUNDLE"
+    codesign --verify --strict "$APP_BUNDLE"
+    rm -f "$ARCHIVE" "$ARCHIVE.sha256"
+    ditto -c -k --keepParent "$APP_BUNDLE" "$ARCHIVE"
+    (cd "$(dirname "$ARCHIVE")" && shasum -a 256 "$(basename "$ARCHIVE")" >"$ARCHIVE.sha256")
+    echo "Packaged Augma $VERSION: $ARCHIVE"
     ;;
 esac

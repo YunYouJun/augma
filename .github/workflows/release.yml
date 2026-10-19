@@ -1,7 +1,8 @@
 name: Prepare or publish packages
 # A pushed v* tag (`pnpm release` runs bumpp: bump, commit, tag, push) prepares and
-# publishes over npm trusted publishing (OIDC). A manual run only prepares artifacts
-# unless `publish` is set on a matching tag.
+# publishes over npm trusted publishing (OIDC), and attaches the macOS app to the
+# tag's GitHub Release. A manual run only prepares artifacts unless `publish` is set
+# on a matching tag.
 on:
   push:
     tags:
@@ -53,6 +54,53 @@ jobs:
           path: apps/site/.vitepress/dist
           include-hidden-files: true
           if-no-files-found: error
+  mac:
+    runs-on: macos-26
+    timeout-minutes: 25
+    outputs:
+      artifact: augma-macos-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - uses: pnpm/action-setup@v6
+      - run: pnpm install --frozen-lockfile
+      - run: swift --version
+      - run: swift test --package-path apps/mac
+      - name: Build the universal app and zip it
+        run: pnpm mac:package
+      - uses: actions/upload-artifact@v7
+        with:
+          name: augma-macos-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            apps/mac/dist/Augma-macOS.zip
+            apps/mac/dist/Augma-macOS.zip.sha256
+          if-no-files-found: error
+  # The site links to releases/latest/download/Augma-macOS.zip, so the asset name stays fixed.
+  github-release:
+    needs: [prepare, mac]
+    if: github.event_name == 'push' || inputs.publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.mac.outputs.artifact }}
+          path: macos
+      - name: Attach the macOS app to the tag's release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" macos/* --clobber
+          else
+            gh release create "$TAG" macos/* --verify-tag --title "$TAG" --generate-notes
+          fi
   publish:
     needs: prepare
     if: github.event_name == 'push' || inputs.publish

@@ -311,3 +311,15 @@ test('hero HUD rings stay concentric while they spin', async ({ page }) => {
   for (const offset of offsets)
     expect(offset).toBeLessThan(1)
 })
+
+test('macOS client is downloadable from the home page and its guide', async ({ page }) => {
+  await page.goto('/')
+  const demo = page.getByRole('region', { name: 'AR 演示' })
+  await demo.getByRole('link', { name: 'macOS 客户端' }).click()
+  await expect(page).toHaveURL(/\/guide\/macos$/)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/macOS 客户端/)
+  await expect(page.getByRole('link', { name: '下载 Augma for macOS' })).toHaveAttribute(
+    'href',
+    'https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS.zip',
+  )
+})

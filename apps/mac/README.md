@@ -4,13 +4,13 @@
 
 点击主窗口工具栏的「沉浸模式」，界面会以透明悬浮层覆盖当前显示器的可用桌面区域。原窗口暂时隐藏，退出后恢复。空白区域默认允许点击穿透，应用面板和按钮仍可操作；右上角的原生控制条可切换应用、选择「操作桌面」让所有区域穿透，或退出沉浸模式。菜单栏中的 Augma 菜单也提供这些操作。应用面板和控制条使用失焦后仍保持模糊的原生材质。
 
-需要 macOS 15、Node.js 24 和 pnpm。在仓库根目录运行 `pnpm mac:run` 可打包并启动；运行 `pnpm mac:verify` 可额外检查进程和演示窗口。两条命令都调用 `script/build_and_run.sh`。脚本会将 AR 站点构建为相对路径资源，与 SwiftPM 可执行文件一同放入 `apps/mac/dist/AugmaDesktopDemo.app`，界面可离线展示。
+需要 macOS 15、Node.js 24 和 pnpm。在仓库根目录运行 `pnpm mac:run` 可打包并启动；运行 `pnpm mac:verify` 可额外检查进程和演示窗口。两条命令都调用 `script/build_and_run.sh`。脚本会将 AR 站点构建为相对路径资源，与 SwiftPM 可执行文件一同放入 `apps/mac/dist/Augma.app`，界面可离线展示。运行 `pnpm mac:package` 则构建 Apple 芯片与 Intel 通用的 Release 版本，进行 ad-hoc 签名并压缩为 `apps/mac/dist/Augma-macOS.zip`（附 `.sha256`），版本号取自根目录 `package.json`。
 
 菜单栏中的 Augma 菜单可重新打开演示窗口，也保留了原有的辅助 HUD 浮窗与鼠标穿透开关。辅助 HUD 的 RealityKit 场景只在用户主动进入演示空间时创建。
 
 主窗口工具栏和菜单栏都提供「始终置顶」开关；开启后演示窗口会显示在其他普通窗口上方，设置会在下次启动时保留。辅助 HUD 和沉浸模式的悬浮层保持各自原有的显示方式。
 
-摄像头和 WebXR 仍取决于 WebKit 对本地页面及设备权限的支持；应用选择和模拟界面不依赖这些权限。沉浸模式的 WebView 透明背景使用 WebKit 的非公开 `_setDrawsBackground:` 方法，系统升级后需要重新验证。本地 `.app` 尚未签名或打包发布。
+摄像头和 WebXR 仍取决于 WebKit 对本地页面及设备权限的支持；应用选择和模拟界面不依赖这些权限。沉浸模式的 WebView 透明背景使用 WebKit 的非公开 `_setDrawsBackground:` 方法，系统升级后需要重新验证。推送 `v*` 标签时，发布工作流会把同一个压缩包附加到该版本的 GitHub Release，站点的[下载页](https://augma.yunyoujun.cn/guide/macos)指向最新版本。安装包尚未使用 Developer ID 签名和公证，首次打开需在「系统设置 → 隐私与安全性」中点击「仍要打开」。
 
 ## 语音指令
 

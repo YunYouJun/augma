@@ -10,6 +10,7 @@ withDefaults(
       | 'arrow'
       | 'copy'
       | 'check'
+      | 'download'
   }>(),
   {},
 )
@@ -22,6 +23,7 @@ const paths = {
   arrow: 'M4 12h16m-6-6 6 6-6 6',
   copy: 'M8 8h12v13H8zM16 8V3H3v13h5',
   check: 'm5 12 4 4L19 6',
+  download: 'M12 3v12m-5-5 5 5 5-5M4 21h16',
 }
 </script>
 

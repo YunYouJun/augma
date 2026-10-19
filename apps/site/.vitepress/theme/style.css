@@ -566,6 +566,18 @@
   color: var(--agm-muted);
   margin: 0 0 24px;
 }
+/* Doc links recolor anchors; keep the download button's own label color. */
+.vp-doc .macos-download {
+  min-height: 50px;
+  margin: 4px 0 8px;
+  color: var(--agm-on-accent);
+  text-decoration: none;
+}
+.ar-demo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
 .ar-demo .agm-button {
   min-height: 50px;
 }

@@ -82,6 +82,12 @@ npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运
 2. 在本地登录后只发布尚未发布的 tarball，例如 `npm publish release-artifacts/augma-0.2.0.tgz --access public --registry=https://registry.npmjs.org`。本地发布不带 provenance。
 3. 运行 `pnpm release:check-published`，再继续公网验收。
 
+## macOS 客户端
+
+发布工作流的 `mac` 任务在 `macos-26` runner 上运行 `swift test` 和 `pnpm mac:package`，生成 Apple 芯片与 Intel 通用的 `Augma-macOS.zip` 及其 `.sha256`，保存为 `augma-macos-…` artifact。推送 `v*` 标签（或在匹配标签上手动 `publish=true`）时，`github-release` 任务在准备任务与 `mac` 任务都通过后，把两个文件附加到同名 GitHub Release：Release 不存在就创建并生成说明，已存在则覆盖同名文件。它不依赖 npm 发布任务，首次发布时 npm 失败也会照常上传。
+
+站点 `/guide/macos` 与首页 AR 演示区链接 `releases/latest/download/Augma-macOS.zip`，因此文件名固定、不带版本号；第一个带安装包的 Release 发布之前，该链接返回 404。安装包只有 ad-hoc 签名，首次打开需要在「系统设置 → 隐私与安全性」中确认。改用 Developer ID 签名与公证需要 Apple Developer Program 账号，并把证书和 App Store Connect API 密钥配置为仓库 secrets。
+
 ## 主域名与站点
 
 主站是 `https://augma.yunyoujun.cn`，文档、展示、AI 静态入口和 `/ar/` 一起部署。
@@ -145,8 +151,9 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - [ ] 确认 `main` 的 CI、Cloudflare Pages 部署结果，并按需用工作流产物同步 EdgeOne。
 - [x] 用 `scripts/capture-media.mjs` 重新生成 README 截图、OG 图与 AR 录屏：README 媒体改为 WebP，OG 图为 JPEG，截图冻结在动画落定的同一时刻；删除未引用的深色与移动端截图。临时截图贴在 issue / PR，不提交到仓库。
 - [x] 接入 bumpp：`pnpm release` 更新 5 个版本文件并推送 `v*` 标签，标签自动触发发布；发布前查询 registry，跳过已发布且一致的版本，不一致即停止。
-- [ ] npm 准备：在 npm 创建 `augma` 组织，确认 `augma` 维护权限并为它配置 trusted publisher。GitHub 的 `npm` environment 已存在，只允许 `v*` 标签部署。
+- [x] npm 准备：`augma` 组织早已存在且由 `yunyoujun` 拥有；`augma` 已配置 trusted publisher（GitHub `YunYouJun/augma`、`release.yml`、environment `npm`，权限 publish 与 stage publish）。GitHub 的 `npm` environment 只允许 `v*` 标签部署。
 - [ ] 按上文「首次发布 0.2.0」发布：推送 `v0.2.0` 标签触发工作流，用该次 artifact 手动首发 Core 并为它配置 trusted publisher，再对同一次运行 Re-run failed jobs 发布 `augma`。
+- [ ] `v0.2.0` 的 GitHub Release 附带 `Augma-macOS.zip` 后，从 `/guide/macos` 下载，在 Apple 芯片与 Intel Mac 上按页面步骤首次打开。
 - [ ] 两个域名完成公网验收，从官方 registry 安装 `augma@0.2.0` 并验证 Registry 安装；随后更新 README、快速开始和 CHANGELOG 中的待发布状态。
 - [ ] 旧域 `augma.elpsy.cn`、`docs.augma.elpsy.cn` 按主机名逐路径设置 301 / 308。
 - [ ] 实机摄像头与 immersive-ar 验收；人工检查 macOS 原生界面（HUD 浮窗、沉浸控制条与开场动画）。

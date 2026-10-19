@@ -49,6 +49,7 @@ export default defineConfig({
           { text: '快速开始', link: '/guide/' },
           { text: '升级说明', link: '/guide/migration' },
           { text: 'AR 演示', link: '/guide/ar' },
+          { text: 'macOS 客户端', link: '/guide/macos' },
           { text: '设计规范', link: '/design/' },
           { text: 'AI 接入', link: '/ai/' },
         ],

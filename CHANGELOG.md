@@ -24,6 +24,7 @@
 
 - AR 模拟器独立部署到 `/ar/`，摄像头与 WebXR 按需启用，不进入组件库依赖。
 - 提供 macOS 桌面与语音控制实验演示；实机摄像头 / immersive-ar 支持范围仍需单独验收。
+- macOS 客户端可从 GitHub Release 下载：通用（Apple 芯片 / Intel）安装包随 `v*` 标签发布，站点新增下载与首次打开说明。
 - 主页加入 HUD 轨道环、雷达扫描、六边形场域扫描与滚动浮现；macOS 演示的 HUD、沉浸控制条与侧栏采用同一视觉语言，进入沉浸模式时播放一次性开场。
 - CI 覆盖 `main` 的推送与所有 PR。`pnpm release`（bumpp）更新版本并推送 `v*` 标签，标签触发 npm Trusted Publishing（OIDC）发布；发布前校验标签、提交与 tarball 摘要，并跳过 registry 上已存在且一致的版本。手动运行工作流默认只准备产物。
 
