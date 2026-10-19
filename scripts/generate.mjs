@@ -86,20 +86,24 @@ await writeFile(
   resolve(publicDir, 'r/index.json'),
   `${JSON.stringify({ name: 'augma', homepage: origin, items: index.filter(c => c.registry).map(c => ({ name: c.slug, type: 'registry:ui', title: c.title, url: c.registry })) }, null, 2)}\n`,
 )
-await mkdir(resolve(publicDir, 'markdown/examples'), { recursive: true })
-for (const item of components) {
-  await writeFile(
-    resolve(publicDir, `markdown/examples/${item.slug}.vue`),
-    await readFile(`examples/components/${item.slug}.vue`),
-  )
-}
-await mkdir(resolve(publicDir, 'markdown/compositions'), { recursive: true })
-for (const file of await readdir('examples/compositions')) {
-  if (file.endsWith('.vue')) {
+// The Chinese examples stay at /markdown/examples/ and /markdown/compositions/; translations from
+// examples/<locale>/ mirror them under /markdown/en/ and /markdown/ja/.
+for (const [prefix, from] of [['', 'examples'], ['en/', 'examples/en-US'], ['ja/', 'examples/ja-JP']]) {
+  await mkdir(resolve(publicDir, `markdown/${prefix}examples`), { recursive: true })
+  for (const item of components) {
     await writeFile(
-      resolve(publicDir, 'markdown/compositions', file),
-      await readFile(`examples/compositions/${file}`),
+      resolve(publicDir, `markdown/${prefix}examples/${item.slug}.vue`),
+      await readFile(`${from}/components/${item.slug}.vue`),
     )
+  }
+  await mkdir(resolve(publicDir, `markdown/${prefix}compositions`), { recursive: true })
+  for (const file of await readdir(`${from}/compositions`)) {
+    if (file.endsWith('.vue')) {
+      await writeFile(
+        resolve(publicDir, `markdown/${prefix}compositions`, file),
+        await readFile(`${from}/compositions/${file}`),
+      )
+    }
   }
 }
 const documents = []
@@ -121,9 +125,10 @@ async function collect(dir) {
       let content = (await readFile(path, 'utf8'))
         .replace(/^---\n[\s\S]*?\n---\n/, '')
         .replace(/<!--.*?-->/gs, '')
+      const localePrefix = rel.match(/^(?:en|ja)\//)?.[0] ?? ''
       content = content.replace(
         /<DemoPreview name="([\w-]+)"\s*\/>/g,
-        (_, slug) => `[Vue example](${origin}/markdown/examples/${slug}.vue)`,
+        (_, slug) => `[Vue example](${origin}/markdown/${localePrefix}examples/${slug}.vue)`,
       )
       content = content.replace(
         /<(HomePage|ShowcasePage|ComponentCatalog|ThemeComparison)\s*\/>/g,

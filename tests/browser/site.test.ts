@@ -353,6 +353,32 @@ test('English and Japanese docs are translated and the language switcher keeps t
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Button 按钮/)
 })
 
+test('live examples and their source follow the docs language', async ({ page }) => {
+  await page.goto('/en/components/button')
+  await expect(page.locator('.demo-canvas')).toHaveAttribute('aria-busy', 'false')
+  await expect(page.getByRole('button', { name: 'Connect device', exact: true })).toBeVisible()
+  await page.getByText('View Vue source', { exact: true }).click()
+  const source = page.locator('.demo-source pre')
+  await expect(source).toContainText('<AgmButton @click="count++">Connect device</AgmButton>')
+  expect(await source.textContent()).not.toMatch(/\p{Script=Han}/u)
+  await page.getByRole('button', { name: 'Change language' }).click()
+  await page.getByRole('link', { name: '日本語', exact: true }).click()
+  await expect(page).toHaveURL(/\/ja\/components\/button$/)
+  await expect(page.getByRole('button', { name: 'デバイスを接続', exact: true })).toBeVisible()
+  await page.getByText('Vue のソースを表示', { exact: true }).click()
+  await expect(page.locator('.demo-source pre')).toContainText('デバイスを接続')
+
+  await page.goto('/en/showcase/')
+  await page.getByRole('combobox', { name: 'Scene mode' }).click()
+  await page.getByRole('option', { name: 'Explore', exact: true }).click()
+  await expect(page.locator('.control-example > output')).toContainText('Current: Explore · Navigation on')
+  await page.getByRole('button', { name: 'Advance progress' }).click()
+  await expect(page.getByRole('progressbar', { name: 'Sample progress' })).toHaveAttribute('aria-valuenow', '50')
+  await page.goto('/ja/showcase/')
+  await expect(page.getByRole('combobox', { name: 'シーンモード' })).toBeVisible()
+  await expect(page.getByRole('button', { name: '初期設定に戻す' })).toBeVisible()
+})
+
 test('links into the AR demo carry the docs language over', async ({ page }) => {
   await page.goto('/en/')
   await page.getByRole('link', { name: 'Try AR' }).click()

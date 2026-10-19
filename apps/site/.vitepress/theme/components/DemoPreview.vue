@@ -6,17 +6,21 @@ const props = defineProps<{
   name: string
   group?: 'components' | 'compositions'
 }>()
-const { t } = useI18n()
+const { locale, t } = useI18n()
 const examples = import.meta.glob('../../../../../examples/**/*.vue')
 const sources = import.meta.glob('../../../../../examples/**/*.vue', {
   query: '?raw',
   import: 'default',
   eager: true,
 })
-const key = computed(
-  () =>
-    `../../../../../examples/${props.group ?? 'components'}/${props.name}.vue`,
-)
+// The Chinese examples sit at examples/<group>/; translations mirror them under examples/<locale>/<group>/.
+const key = computed(() => {
+  const path = `${props.group ?? 'components'}/${props.name}.vue`
+  const translated = `../../../../../examples/${locale.value}/${path}`
+  return locale.value !== 'zh-CN' && examples[translated]
+    ? translated
+    : `../../../../../examples/${path}`
+})
 const demo = computed(() =>
   examples[key.value]
     ? defineAsyncComponent(

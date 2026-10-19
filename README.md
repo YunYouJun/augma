@@ -69,7 +69,7 @@ pnpm check       # lint、types、unit、build、包消费、Registry 与浏览�
 - `packages/augma`：13 个 Vue 组件及类型。
 - `apps/site`：VitePress 展示与文档。简体中文位于根路径，English 与日本語译文位于 `/en/`、`/ja/`；组件页由 `pnpm generate` 根据 `scripts/catalog.mjs` 及其译文 `scripts/catalog-i18n.mjs` 生成。
 - `apps/ar`：摄像头、HUD、按需加载的 WebXR 演示。
-- `examples/components`：展示、源码复制与测试的共同示例。
+- `examples/components`、`examples/compositions`：展示、源码复制与测试的共同示例。`examples/en-US`、`examples/ja-JP` 是 `/en/`、`/ja/` 使用的译文副本，除文案外须与中文示例保持一致（`tests/components/examples.test.ts` 会检查）。
 - `scripts/catalog.mjs`：组件描述与行为说明；API 类型与默认值从 Vue 源码提取。
 - `skills/augma`：可安装的 Agent Skill。
 
