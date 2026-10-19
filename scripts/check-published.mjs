@@ -24,16 +24,22 @@ export async function fetchRegistryMetadata(name) {
   return response.ok ? response.json() : {}
 }
 
+// npm can take several minutes before a fresh version (or a brand-new package) is
+// readable, so poll for up to ten minutes before treating it as missing.
+const POLL_ATTEMPTS = 40
+const POLL_INTERVAL = 15_000
+
 async function check() {
   const manifest = await verifyArtifacts(resolve('release-artifacts'), currentCommit())
   for (const pkg of manifest.packages) {
-    for (let attempt = 0; ; attempt++) {
+    for (let attempt = 1; ; attempt++) {
       const metadata = await fetchRegistryMetadata(pkg.name)
-      if (metadata.versions?.[pkg.version] || attempt === 5) {
+      const visible = metadata.versions?.[pkg.version] && metadata['dist-tags']?.latest === pkg.version
+      if (visible || attempt === POLL_ATTEMPTS) {
         verifyPublishedMetadata(metadata, pkg)
         break
       }
-      await setTimeout(3000)
+      await setTimeout(POLL_INTERVAL)
     }
     console.log(`Verified ${pkg.name}@${pkg.version}: public version, latest tag and artifact integrity.`)
   }

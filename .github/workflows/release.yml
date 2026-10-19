@@ -105,7 +105,8 @@ jobs:
     needs: prepare
     if: github.event_name == 'push' || inputs.publish
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Registry visibility polling can take up to ten minutes per package.
+    timeout-minutes: 30
     environment: npm
     permissions:
       contents: read
