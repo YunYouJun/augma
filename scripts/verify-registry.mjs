@@ -175,10 +175,11 @@ try {
     }
   }
   await scan(join(temp, 'src'))
+  const entries = components.filter(c => c.registry).length
   assert.equal(
     generated.length,
-    6,
-    'CLI must install all six complete components',
+    entries,
+    `CLI must install all ${entries} complete components`,
   )
   const imports = generated
     .map(
@@ -188,7 +189,7 @@ try {
     .join('\n')
   await writeFile(
     join(temp, 'src/main.ts'),
-    `${imports}\nimport {createApp,h} from 'vue'\nimport './style.css'\ncreateApp({render:()=>h('div',{},[${generated.map((_, i) => `h(C${i}, {label:'Consumer',title:'Panel',description:'Example'})`).join(',')}])}).mount('#app')`,
+    `${imports}\nimport {createApp,h} from 'vue'\nimport './style.css'\ncreateApp({render:()=>h('div',{},[${generated.map((_, i) => `h(C${i}, {label:'Consumer',title:'Panel',description:'Example',value:42})`).join(',')}])}).mount('#app')`,
   )
   await run(resolve('node_modules/.bin/vue-tsc'), [
     '--noEmit',
@@ -209,7 +210,7 @@ try {
   assert.equal(await page.getByRole('textbox', { name: 'Consumer' }).inputValue(), 'Editable source')
   assert.deepEqual(errors, [])
   console.log(
-    'Passed: actual shadcn-vue CLI installed all 6 Registry entries in a clean Vue project; consumer types, production build, rendered CSS and input interaction passed.',
+    `Passed: actual shadcn-vue CLI installed all ${entries} Registry entries in a clean Vue project; consumer types, production build, rendered CSS and input interaction passed.`,
   )
 }
 finally {

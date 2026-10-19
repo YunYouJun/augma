@@ -25,3 +25,9 @@ Read-only gauges use meter semantics, with "current / max" as the value text. At
 import { AgmHudGauge } from 'augma'
 import 'augma/style.css'
 ```
+
+Copy the editable source:
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/hud-gauge.json
+```

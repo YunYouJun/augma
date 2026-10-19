@@ -153,5 +153,5 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - [ ] `augma.yyj.moe` 完成公网验收，从官方 registry 安装 `augma@0.2.0` 并验证 Registry 安装；随后更新 README、快速开始和 CHANGELOG 中的待发布状态。
 - [ ] 旧域 `augma.elpsy.cn`、`docs.augma.elpsy.cn` 按主机名逐路径设置 301 / 308。
 - [ ] 实机摄像头与 immersive-ar 验收；人工检查 macOS 原生界面（HUD 浮窗、沉浸控制条与开场动画）。
-- [ ] 可选：HudGauge 进入 Registry。
+- [x] HudGauge 进入 Registry（第 7 个条目）；Registry 校验按目录自动计数。
 - [ ] 以上完成后制作宣传视频：从正式站点实录首页入场、组件动效、空间模式、AR 演示与 macOS 沉浸模式。不使用《刀剑神域》的片段、标志、角色或配乐；提及作品时只说明灵感来源，并附上与版权方无关联的声明。
