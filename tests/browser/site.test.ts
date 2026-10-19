@@ -287,7 +287,7 @@ test('home shows install command, release line and AR demo entry', async ({ page
   const demo = page.getByRole('region', { name: 'AR 演示' })
   await expect(demo).toContainText('还原自原版 Augma 网页的设备界面')
   await expect(demo.getByRole('link', { name: '打开 AR 演示' })).toHaveAttribute('href', '/ar/')
-  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\.png$/)
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\.jpg$/)
   await page.goto('/showcase/')
   await expect(page.locator('.device-stage')).toHaveCount(0)
   await expect(page.getByRole('heading', { name: '从一个按钮，到一整个视界' })).toHaveCount(0)

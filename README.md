@@ -1,6 +1,6 @@
 # Augma
 
-![Augma 首页：半透明设备面板浮于现实背景之上](./docs/media/home-light.png)
+![Augma 首页：半透明设备面板浮于现实背景之上](./docs/media/home-light.webp)
 
 为 Web 构建轻盈的 AR 风格界面。设计参考《刀剑神域：序列之争》中 Augma 设备的透明面板、环形状态和轻量交互。
 
@@ -8,7 +8,7 @@
 - 展示、组件文档、AI 接入统一维护；AR 演示独立构建到 `/ar/`。
 - AR 演示（还原自原版 Augma 网页的设备界面）：
 
-  ![AR 演示：打开天气、空间扫描、开始导航](./docs/media/ar-demo.gif)
+  ![AR 演示：打开天气、空间扫描、开始导航](./docs/media/ar-demo.webp)
 
 - `@augma/core` 提供无框架运行时依赖的 tokens / CSS；`augma` 提供 Vue 3.5+ 组件。
 

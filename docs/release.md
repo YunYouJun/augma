@@ -122,7 +122,7 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 
 - [x] 2026-10-19 的动效与 HudGauge 改动合入 `main`；`dev` 与 `codex/*` 分支已清理，默认分支改为 `main`。
 - [ ] 确认 `main` 的 CI、Cloudflare Pages 部署结果，并按需用工作流产物同步 EdgeOne。
-- [ ] 用 `scripts/capture-media.mjs` 重新生成 README 截图、OG 图与 AR 录屏。首页改为动画入场，截图需等待动画结束，或使用减少动态效果模式。
+- [x] 用 `scripts/capture-media.mjs` 重新生成 README 截图、OG 图与 AR 录屏：README 媒体改为 WebP，OG 图为 JPEG，截图冻结在动画落定的同一时刻；删除未引用的深色与移动端截图。临时截图贴在 issue / PR，不提交到仓库。
 - [ ] npm 准备：确认 `augma` 维护权限，创建 `@augma` scope，为两个包配置 trusted publisher，并在 GitHub 创建 `npm` environment。
 - [ ] 在通过检查的 `main` 提交上创建 `v0.2.0` 标签，以 `publish=true` 运行发布工作流（先 Core 后 Vue）。
 - [ ] 两个域名完成公网验收，从官方 registry 安装 `augma@0.2.0` 并验证 Registry 安装；随后更新 README、快速开始和 CHANGELOG 中的待发布状态。
