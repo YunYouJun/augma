@@ -36,6 +36,8 @@ export const zhCN = {
   'strip.hidden': 'HUD 已隐藏，可通过左侧开关恢复。',
   'strip.toastTitle': '操作已响应',
   'strip.toastDescription': '这是由 Augma Toast 组件呈现的反馈。',
+  'strip.toastClose': '关闭通知',
+  'strip.toastRegion': '通知（F8）',
 
   'device.title': '设备连接',
   'device.preview': '界面预览',
@@ -54,6 +56,7 @@ export const zhCN = {
   'device.adjustDescription': '即时预览组件状态，找到适合你的显示方式。',
   'device.brightPanel': '明亮面板',
   'device.done': '完成',
+  'device.closeDialog': '关闭对话框',
 
   'copy.copied': '已复制',
   'copy.command': '复制命令',

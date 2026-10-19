@@ -26,7 +26,14 @@ async function show(nextTone: keyof typeof messages) {
     <AgmButton variant="outline" @click="show('warning')">警告を表示</AgmButton>
     <AgmButton variant="outline" @click="show('danger')">失敗をシミュレート</AgmButton>
     <AgmButton variant="ghost" @click="show('neutral')">メッセージを表示</AgmButton>
-    <AgmToast v-model:open="open" :tone="tone" :title="message.title" :description="message.description" />
+    <AgmToast
+      v-model:open="open"
+      :tone="tone"
+      :title="message.title"
+      :description="message.description"
+      close-label="通知を閉じる"
+      region-label="通知（F8）"
+    />
   </div>
 </template>
 

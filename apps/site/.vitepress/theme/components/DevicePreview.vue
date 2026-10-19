@@ -113,6 +113,7 @@ onUnmounted(() => cancelAnimationFrame(frame))
         v-model:open="open"
         :title="t('device.adjust')"
         :description="t('device.adjustDescription')"
+        :close-label="t('device.closeDialog')"
       >
         <template #trigger>
           <AgmButton variant="outline" class="device-settings">

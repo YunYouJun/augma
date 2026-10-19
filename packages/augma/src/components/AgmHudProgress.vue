@@ -7,8 +7,9 @@ const props = withDefaults(
     value?: number
     max?: number
     variant?: 'bar' | 'ring'
+    indeterminateText?: string
   }>(),
-  { max: 100, variant: 'bar' },
+  { max: 100, variant: 'bar', indeterminateText: '进行中' },
 )
 const upper = computed(() =>
   Number.isFinite(props.max) && props.max > 0 ? props.max : 100,
@@ -57,7 +58,7 @@ const percent = computed(() =>
     <template v-else>
       <div class="agm-progress-label">
         <span>{{ label }}</span>
-        <span>{{ percent === undefined ? '进行中' : `${percent}%` }}</span>
+        <span>{{ percent === undefined ? indeterminateText : `${percent}%` }}</span>
       </div>
       <div class="agm-progress-track">
         <span

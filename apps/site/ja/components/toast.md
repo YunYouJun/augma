@@ -16,6 +16,8 @@
 | `title` | string | 必須 | 通知のタイトル |
 | `description` | string | undefined | 補足内容 |
 | `duration` | number | 5000 | 自動で閉じるまでの時間（ミリ秒） |
+| `closeLabel` | string | '关闭通知' | 閉じるボタンのアクセシブルネーム |
+| `regionLabel` | string | '通知（F8）' | 通知領域のアクセシブルネーム。F8 ショートカットにも触れてください |
 
 ### イベント
 

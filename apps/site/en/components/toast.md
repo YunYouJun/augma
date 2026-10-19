@@ -16,6 +16,8 @@ Light, dismissible feedback for results and reminders.
 | `title` | string | Required | Notification title |
 | `description` | string | undefined | Supporting text |
 | `duration` | number | 5000 | Time before it closes automatically (ms) |
+| `closeLabel` | string | '关闭通知' | Accessible name of the close button |
+| `regionLabel` | string | '通知（F8）' | Accessible name of the notification region; mention the F8 shortcut |
 
 ### Events
 

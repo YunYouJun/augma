@@ -12,6 +12,7 @@ const mode = shallowRef('focus')
     v-model:open="open"
     title="デバイス設定"
     description="デバイス名を変更して、閉じたら閲覧を続けられます。"
+    close-label="ダイアログを閉じる"
   >
     <template #trigger>
       <AgmButton variant="outline">設定を開く</AgmButton>

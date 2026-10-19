@@ -37,6 +37,8 @@ export const jaJP: Messages = {
   'strip.hidden': 'HUD は非表示です。左のスイッチで再表示できます。',
   'strip.toastTitle': '操作を受け付けました',
   'strip.toastDescription': 'このフィードバックは Augma の Toast コンポーネントで表示しています。',
+  'strip.toastClose': '通知を閉じる',
+  'strip.toastRegion': '通知（F8）',
 
   'device.title': 'デバイス接続',
   'device.preview': 'UI プレビュー',
@@ -55,6 +57,7 @@ export const jaJP: Messages = {
   'device.adjustDescription': 'コンポーネントの状態をその場で確かめて、自分に合う表示を見つけましょう。',
   'device.brightPanel': '明るいパネル',
   'device.done': '完了',
+  'device.closeDialog': 'ダイアログを閉じる',
 
   'copy.copied': 'コピーしました',
   'copy.command': 'コマンドをコピー',

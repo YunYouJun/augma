@@ -37,6 +37,8 @@ export const enUS: Messages = {
   'strip.hidden': 'HUD hidden. Turn it back on with the switch on the left.',
   'strip.toastTitle': 'Action received',
   'strip.toastDescription': 'This feedback is rendered by the Augma Toast component.',
+  'strip.toastClose': 'Close notification',
+  'strip.toastRegion': 'Notifications (F8)',
 
   'device.title': 'Device link',
   'device.preview': 'Interface preview',
@@ -55,6 +57,7 @@ export const enUS: Messages = {
   'device.adjustDescription': 'Preview component states live and find the display that suits you.',
   'device.brightPanel': 'Bright panel',
   'device.done': 'Done',
+  'device.closeDialog': 'Close dialog',
 
   'copy.copied': 'Copied',
   'copy.command': 'Copy command',

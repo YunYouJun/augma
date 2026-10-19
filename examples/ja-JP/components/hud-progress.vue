@@ -13,7 +13,7 @@ const value = shallowRef(72)
     </div>
     <AgmHudProgress label="データ同期" :value="value" />
     <AgmSlider v-model="value" label="サンプルの進捗を調整" />
-    <AgmHudProgress label="接続中" />
+    <AgmHudProgress label="接続中" indeterminate-text="処理中" />
   </div>
 </template>
 

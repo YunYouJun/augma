@@ -15,6 +15,7 @@
 | `value` | number | undefined | 未提供或非有限数值表示不确定进度 |
 | `max` | number | 100 | 有效上界，非法值回退到 100 |
 | `variant` | 'bar' \| 'ring' | 'bar' | 显示形式 |
+| `indeterminateText` | string | '进行中' | 条形不确定进度显示的文字 |
 
 ## 键盘操作与使用边界
 

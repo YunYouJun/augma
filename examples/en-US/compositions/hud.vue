@@ -10,7 +10,7 @@ import { AgmHudProgress, AgmHudStatus, AgmPanel } from 'augma'
       <AgmHudStatus tone="danger">Device offline</AgmHudStatus>
     </div>
     <AgmHudProgress label="Loading assets" :value="72" variant="ring" />
-    <AgmHudProgress label="Waiting for a device" />
+    <AgmHudProgress label="Waiting for a device" indeterminate-text="In progress" />
     <p>Sample states only. Nothing here accesses a device or asks for permission.</p>
   </AgmPanel>
 </template>

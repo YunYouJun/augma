@@ -11,8 +11,9 @@ const sources = Object.fromEntries(
 )
 const locales = ['en-US', 'ja-JP'] as const
 const originals = Object.keys(sources).filter(path => !locales.some(locale => path.startsWith(`${locale}/`)))
-// A translation may add these to replace a component's built-in Chinese default, such as AgmSelect's 请选择.
-const translationOnly = new Set(['placeholder'])
+// A translation may add these to replace a component's built-in Chinese default, such as AgmSelect's 请选择
+// or AgmDialog's 关闭对话框. The Chinese examples rely on the defaults, so they leave these out.
+const translationOnly = new Set(['placeholder', 'indeterminate-text', 'close-label', 'region-label'])
 const han = /\p{Script=Han}/u
 const languages = {
   'en-US': /^\P{Script=Han}*$/u,

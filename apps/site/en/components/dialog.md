@@ -14,6 +14,7 @@ Keeps attention on the task at hand, then returns you to where you were.
 | `open` | boolean | false | Updated through v-model:open |
 | `title` | string | Required | Accessible title |
 | `description` | string | Required | Explains the task |
+| `closeLabel` | string | '关闭对话框' | Accessible name of the close button |
 
 ### Events
 

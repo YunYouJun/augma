@@ -16,6 +16,8 @@
 | `title` | string | 必填 | 通知标题 |
 | `description` | string | undefined | 补充内容 |
 | `duration` | number | 5000 | 自动关闭时间（毫秒） |
+| `closeLabel` | string | '关闭通知' | 关闭按钮的可访问名称 |
+| `regionLabel` | string | '通知（F8）' | 通知区域的可访问名称，应说明 F8 快捷键 |
 
 ### 事件
 

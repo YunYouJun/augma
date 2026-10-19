@@ -77,6 +77,8 @@ const notification = shallowRef(false)
       v-model:open="notification"
       :title="t('strip.toastTitle')"
       :description="t('strip.toastDescription')"
+      :close-label="t('strip.toastClose')"
+      :region-label="t('strip.toastRegion')"
     />
   </section>
 </template>

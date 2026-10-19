@@ -15,8 +15,10 @@ withDefaults(
     description?: string
     duration?: number
     tone?: 'success' | 'warning' | 'danger' | 'neutral'
+    closeLabel?: string
+    regionLabel?: string
   }>(),
-  { duration: 5000, tone: 'success' },
+  { duration: 5000, tone: 'success', closeLabel: '关闭通知', regionLabel: '通知（F8）' },
 )
 const open = defineModel<boolean>('open', { default: false })
 </script>
@@ -37,7 +39,7 @@ const open = defineModel<boolean>('open', { default: false })
         </ToastDescription>
         <ToastClose
           class="agm-icon-button agm-dialog-close"
-          aria-label="关闭通知"
+          :aria-label="closeLabel"
         >
           <svg
             viewBox="0 0 24 24"
@@ -50,7 +52,7 @@ const open = defineModel<boolean>('open', { default: false })
           </svg>
         </ToastClose>
       </ToastRoot>
-      <ToastViewport class="agm-toast-viewport" label="通知（F8）" />
+      <ToastViewport class="agm-toast-viewport" :label="regionLabel" />
     </ToastPortal>
   </ToastProvider>
 </template>

@@ -10,7 +10,10 @@ import {
   DialogTrigger,
 } from 'reka-ui'
 
-defineProps<{ title: string, description: string }>()
+withDefaults(
+  defineProps<{ title: string, description: string, closeLabel?: string }>(),
+  { closeLabel: '关闭对话框' },
+)
 const open = defineModel<boolean>('open', { default: false })
 </script>
 
@@ -29,7 +32,7 @@ const open = defineModel<boolean>('open', { default: false })
         <slot />
         <DialogClose
           class="agm-icon-button agm-dialog-close"
-          aria-label="关闭对话框"
+          :aria-label="closeLabel"
         >
           <svg
             viewBox="0 0 24 24"

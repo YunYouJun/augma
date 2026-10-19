@@ -1,13 +1,15 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import {
   AgmButton,
+  AgmDialog,
   AgmHudGauge,
   AgmHudProgress,
   AgmInput,
   AgmPanel,
   AgmSelect,
   AgmSwitch,
+  AgmToast,
 } from '../../packages/augma/src'
 
 describe('component contracts', () => {
@@ -113,6 +115,43 @@ describe('component contracts', () => {
     expect(wrapper.attributes('aria-valuenow')).toBe('80')
     await wrapper.setProps({ value: Number.NaN })
     expect(wrapper.attributes('aria-valuenow')).toBeUndefined()
+  })
+  it('lets consumers replace the indeterminate progress text', async () => {
+    const progress = mount(AgmHudProgress, { props: { label: 'Connecting' } })
+    const readout = () => progress.findAll('.agm-progress-label span')[1]!.text()
+    expect(readout()).toBe('进行中')
+    await progress.setProps({ indeterminateText: 'In progress' })
+    expect(readout()).toBe('In progress')
+    await progress.setProps({ value: 40 })
+    expect(readout()).toBe('40%')
+  })
+  it('lets consumers replace the select placeholder', async () => {
+    const select = mount(AgmSelect, { props: { label: 'Mode', options: [{ label: 'Focus', value: 'focus' }] } })
+    expect(select.get('[role="combobox"]').text()).toBe('请选择')
+    await select.setProps({ placeholder: 'Select a mode' })
+    expect(select.get('[role="combobox"]').text()).toBe('Select a mode')
+  })
+  // Dialog and Toast render into portals on document.body.
+  it('lets consumers rename the dialog close button', async () => {
+    const dialog = mount(AgmDialog, { props: { open: true, title: 'Device settings', description: 'Rename the device.' }, attachTo: document.body })
+    await flushPromises()
+    const dialogClose = () => document.querySelector('.agm-dialog .agm-dialog-close')!
+    expect(dialogClose().getAttribute('aria-label')).toBe('关闭对话框')
+    await dialog.setProps({ closeLabel: 'Close dialog' })
+    expect(dialogClose().getAttribute('aria-label')).toBe('Close dialog')
+    dialog.unmount()
+  })
+  it('lets consumers rename the toast close button and notification region', async () => {
+    const toast = mount(AgmToast, { props: { open: true, title: 'Settings saved' }, attachTo: document.body })
+    await flushPromises()
+    const toastClose = () => document.querySelector('.agm-toast .agm-dialog-close')!
+    const region = () => document.querySelector('[role="region"]')!
+    expect(toastClose().getAttribute('aria-label')).toBe('关闭通知')
+    expect(region().getAttribute('aria-label')).toBe('通知（F8）')
+    await toast.setProps({ closeLabel: 'Close notification', regionLabel: 'Notifications (F8)' })
+    expect(toastClose().getAttribute('aria-label')).toBe('Close notification')
+    expect(region().getAttribute('aria-label')).toBe('Notifications (F8)')
+    toast.unmount()
   })
   it('clamps gauge values and derives tone from the remaining share', async () => {
     const wrapper = mount(AgmHudGauge, { props: { label: '电量', value: 86 } })

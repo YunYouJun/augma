@@ -12,6 +12,7 @@ const mode = shallowRef('focus')
     v-model:open="open"
     title="Device settings"
     description="Rename the device, then close the dialog to keep browsing."
+    close-label="Close dialog"
   >
     <template #trigger>
       <AgmButton variant="outline">Open settings</AgmButton>

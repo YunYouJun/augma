@@ -10,7 +10,7 @@ import { AgmHudProgress, AgmHudStatus, AgmPanel } from 'augma'
       <AgmHudStatus tone="danger">デバイスがオフライン</AgmHudStatus>
     </div>
     <AgmHudProgress label="リソースの読み込み" :value="72" variant="ring" />
-    <AgmHudProgress label="デバイスの接続待ち" />
+    <AgmHudProgress label="デバイスの接続待ち" indeterminate-text="処理中" />
     <p>サンプルの状態です。デバイスへのアクセスや権限の要求は行いません。</p>
   </AgmPanel>
 </template>

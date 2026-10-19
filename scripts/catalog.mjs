@@ -212,6 +212,10 @@ export const components = [
         name: 'description',
         description: '操作说明',
       },
+      {
+        name: 'closeLabel',
+        description: '关闭按钮的可访问名称',
+      },
     ],
     events: ['update:open(boolean)'],
     slots: ['trigger：单个可聚焦触发元素', 'default：内容', 'footer：操作区'],
@@ -262,6 +266,14 @@ export const components = [
       {
         name: 'duration',
         description: '自动关闭时间（毫秒）',
+      },
+      {
+        name: 'closeLabel',
+        description: '关闭按钮的可访问名称',
+      },
+      {
+        name: 'regionLabel',
+        description: '通知区域的可访问名称，应说明 F8 快捷键',
       },
     ],
     events: ['update:open(boolean)'],
@@ -323,6 +335,10 @@ export const components = [
       {
         name: 'variant',
         description: '显示形式',
+      },
+      {
+        name: 'indeterminateText',
+        description: '条形不确定进度显示的文字',
       },
     ],
     keyboard:

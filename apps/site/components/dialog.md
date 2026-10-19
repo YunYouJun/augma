@@ -14,6 +14,7 @@
 | `open` | boolean | false | 通过 v-model:open 更新 |
 | `title` | string | 必填 | 可访问标题 |
 | `description` | string | 必填 | 操作说明 |
+| `closeLabel` | string | '关闭对话框' | 关闭按钮的可访问名称 |
 
 ### 事件
 

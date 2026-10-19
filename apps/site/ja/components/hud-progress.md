@@ -15,6 +15,7 @@
 | `value` | number | undefined | 省略するか有限でない数値を渡すと、不確定の進捗になります |
 | `max` | number | 100 | 上限値。不正な値は 100 になります |
 | `variant` | 'bar' \| 'ring' | 'bar' | 表示形式 |
+| `indeterminateText` | string | '进行中' | 不確定の進捗のとき、バーに表示するテキスト |
 
 ## キーボード操作と利用上の注意
 

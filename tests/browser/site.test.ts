@@ -379,6 +379,47 @@ test('live examples and their source follow the docs language', async ({ page })
   await expect(page.getByRole('button', { name: '初期設定に戻す' })).toBeVisible()
 })
 
+test('copy built into the components follows the docs language', async ({ page }) => {
+  const han = /\p{Script=Han}/u
+  for (const name of ['hud-progress', 'select', 'toast', 'dialog']) {
+    await page.goto(`/en/components/${name}`)
+    await expect(page.locator('.demo-canvas')).toHaveAttribute('aria-busy', 'false')
+    await expect(page.locator('.demo-canvas')).not.toContainText(han)
+  }
+  await page.goto('/en/components/hud-progress')
+  await expect(page.getByRole('progressbar', { name: 'Connecting' })).toContainText('In progress')
+  await page.goto('/en/components/toast')
+  await expect(page.getByRole('region', { name: 'Notifications (F8)' })).toBeAttached()
+  await page.getByRole('button', { name: 'Save settings' }).click()
+  await page.getByRole('button', { name: 'Close notification' }).click()
+  await expect(page.getByText('Settings saved', { exact: true })).not.toBeVisible()
+  await page.goto('/en/components/dialog')
+  await page.getByRole('button', { name: 'Open settings' }).click()
+  await expect(page.getByRole('dialog')).not.toContainText(han)
+  await page.getByRole('button', { name: 'Close dialog' }).click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+
+  await page.goto('/ja/components/hud-progress')
+  await expect(page.getByRole('progressbar', { name: '接続中' })).toContainText('処理中')
+  await page.goto('/ja/components/toast')
+  await page.getByRole('button', { name: '設定を保存' }).click()
+  await page.getByRole('button', { name: '通知を閉じる' }).click()
+  await expect(page.getByText('設定を保存しました', { exact: true })).not.toBeVisible()
+  await page.goto('/ja/components/dialog')
+  await page.getByRole('button', { name: '設定を開く' }).click()
+  await page.getByRole('button', { name: 'ダイアログを閉じる' }).click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+
+  // The homepage previews pass the same labels from the theme's message catalog.
+  await page.goto('/en/')
+  await page.getByRole('button', { name: 'Adjust interface' }).click()
+  await page.getByRole('button', { name: 'Close dialog' }).click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Primary', exact: true }).click()
+  await page.getByRole('button', { name: 'Close notification' }).click()
+  await expect(page.getByText('Action received', { exact: true })).not.toBeVisible()
+})
+
 test('links into the AR demo carry the docs language over', async ({ page }) => {
   await page.goto('/en/')
   await page.getByRole('link', { name: 'Try AR' }).click()

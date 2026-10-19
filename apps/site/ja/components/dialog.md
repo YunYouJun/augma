@@ -14,6 +14,7 @@
 | `open` | boolean | false | v-model:open で更新 |
 | `title` | string | 必須 | アクセシブルなタイトル |
 | `description` | string | 必須 | 操作の説明 |
+| `closeLabel` | string | '关闭对话框' | 閉じるボタンのアクセシブルネーム |
 
 ### イベント
 

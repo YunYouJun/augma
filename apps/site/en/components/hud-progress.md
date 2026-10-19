@@ -15,6 +15,7 @@ Linear or ring progress that keeps a process visible.
 | `value` | number | undefined | Leave it out, or pass a non-finite number, for indeterminate progress |
 | `max` | number | 100 | Upper bound; invalid values fall back to 100 |
 | `variant` | 'bar' \| 'ring' | 'bar' | Display style |
+| `indeterminateText` | string | '进行中' | Text a bar shows while progress is indeterminate |
 
 ## Keyboard and usage notes
 

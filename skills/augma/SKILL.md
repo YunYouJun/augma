@@ -19,7 +19,7 @@ Read the relevant component API before writing code. Canonical documentation is 
 
 Read [the design reference](references/design.md) when composing or restyling a screen. Keep the host product's brand and information hierarchy. Augma's defining choices are translucent surfaces, fine borders, restrained orange emphasis, circular state displays and deliberate whitespace. Use namespaced `--agm-*` variables for theming.
 
-Keep behavior and presentation separate. Preserve accessible labels, native form semantics, focus restoration and controlled state. Use `v-model` for Input, Select, Switch and Slider; use `v-model:open` for Dialog and Toast. Dialog requires both title and description, and its trigger slot should contain one focusable element. Set dark mode on html/body so teleported content inherits it.
+Keep behavior and presentation separate. Preserve accessible labels, native form semantics, focus restoration and controlled state. Use `v-model` for Input, Select, Switch and Slider; use `v-model:open` for Dialog and Toast. Dialog requires both title and description, and its trigger slot should contain one focusable element. Built-in copy defaults to Simplified Chinese; for other languages pass Select `placeholder`, Dialog and Toast `closeLabel`, Toast `regionLabel` and HudProgress `indeterminateText`. Set dark mode on html/body so teleported content inherits it.
 
 Copy working examples instead of approximating APIs. Component consumers should not require UnoCSS or Tailwind setup. Babylon and camera code belong to the optional AR app, not to general UI components.
 
