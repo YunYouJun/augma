@@ -46,6 +46,7 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
     model.windowVisible = true
     NSApp.activate(ignoringOtherApps: true)
     panel.makeKeyAndOrderFront(nil)
+    refreshShadowAfterEntrance(of: panel)
     logger.notice("HUD shown")
   }
 

@@ -6,19 +6,23 @@ struct HudView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 14) {
-      HStack(alignment: .top) {
-        VStack(alignment: .leading, spacing: 4) {
+      HStack(alignment: .center, spacing: 12) {
+        AugmaRing(size: 34)
+        VStack(alignment: .leading, spacing: 2) {
           Text("AUGMA")
-            .font(.system(size: 12, weight: .semibold, design: .monospaced))
+            .font(.system(size: 11, weight: .semibold, design: .monospaced))
             .tracking(3)
+            .foregroundStyle(.secondary)
           Text("桌面辅助视界")
-            .font(.system(size: 22, weight: .light))
+            .font(.system(size: 20, weight: .light))
         }
         Spacer()
-        Text(model.rendersDemoScene ? "DEMO SPACE" : "STANDBY")
-          .font(.system(size: 10, weight: .medium, design: .monospaced))
-          .foregroundStyle(.secondary)
-          .padding(.top, 3)
+        HStack(spacing: 2) {
+          StatusPing(color: model.rendersDemoScene ? .augmaCyan : .secondary, active: model.rendersDemoScene)
+          Text(model.rendersDemoScene ? "DEMO SPACE" : "STANDBY")
+            .font(.system(size: 10, weight: .medium, design: .monospaced))
+            .foregroundStyle(.secondary)
+        }
       }
 
       Group {
@@ -27,19 +31,34 @@ struct HudView: View {
         } else {
           ZStack {
             Color.primary.opacity(0.04)
-            VStack(spacing: 8) {
-              Image(systemName: "viewfinder")
-                .font(.system(size: 28, weight: .ultraLight))
-              Text("默认状态不创建 3D 场景")
-                .font(.system(size: 13))
+            HStack(spacing: 18) {
+              ZStack {
+                AugmaRing(size: 96)
+                Image(systemName: "viewfinder")
+                  .font(.system(size: 22, weight: .ultraLight))
+              }
+              VStack(alignment: .leading, spacing: 6) {
+                Text("演示空间待命")
+                  .font(.system(size: 14, weight: .medium))
+                Text("默认状态不创建 3D 场景")
+                  .font(.system(size: 12))
+                  .foregroundStyle(.secondary)
+              }
             }
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.primary)
           }
         }
       }
       .frame(maxWidth: .infinity)
       .frame(height: 162)
-      .clipShape(RoundedRectangle(cornerRadius: 9))
+      .clipShape(RoundedRectangle(cornerRadius: 3))
+      .overlay {
+        HudBrackets()
+          .stroke(Color.augmaHighlight.opacity(0.85), lineWidth: 1.5)
+          .padding(-4)
+          .allowsHitTesting(false)
+      }
+      .animation(.augma(), value: model.rendersDemoScene)
 
       HStack(spacing: 10) {
         Button(model.wantsDemoScene ? "退出演示空间" : "进入演示空间") {
@@ -49,17 +68,17 @@ struct HudView: View {
             model.wantsDemoScene = true
           }
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(AugmaButtonStyle())
         Spacer()
         Button("隐藏窗口", action: hideWindow)
-          .buttonStyle(.bordered)
+          .buttonStyle(AugmaButtonStyle(variant: .outline))
       }
     }
     .padding(20)
     .frame(width: 430, height: 320)
     .foregroundStyle(.primary)
-    .tint(.accentColor)
-    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
-    .overlay(RoundedRectangle(cornerRadius: 18).strokeBorder(.primary.opacity(0.12)))
+    .tint(.augmaAccent)
+    .augmaGlass()
+    .augmaMaterialize(active: model.windowVisible)
   }
 }

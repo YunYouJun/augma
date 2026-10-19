@@ -23,6 +23,7 @@ struct DemoContentView: View {
         }
       }
       .listStyle(.sidebar)
+      .safeAreaInset(edge: .bottom) { SidebarBrand() }
       .navigationTitle("Augma")
       .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 240)
     } detail: {
@@ -36,6 +37,7 @@ struct DemoContentView: View {
       .navigationTitle("Augma Demo")
     }
     .navigationSplitViewStyle(.balanced)
+    .tint(.augmaAccent)
     .frame(minWidth: 840, minHeight: 580)
     .background {
       DemoWindowLevelView(alwaysOnTop: alwaysOnTop)
@@ -57,6 +59,32 @@ struct DemoContentView: View {
         }
         .help("将透明界面悬浮在桌面上")
       }
+    }
+  }
+}
+
+private struct SidebarBrand: View {
+  var body: some View {
+    HStack(spacing: 10) {
+      AugmaRing(size: 28)
+      VStack(alignment: .leading, spacing: 1) {
+        Text("Augma")
+          .font(.system(size: 13, weight: .semibold))
+        Text("界面，浮现于现实。")
+          .font(.system(size: 10))
+          .foregroundStyle(.secondary)
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(.horizontal, 14)
+    .padding(.vertical, 12)
+    .overlay(alignment: .top) {
+      Rectangle()
+        .fill(Color.augmaAccent)
+        .frame(width: 24, height: 2)
+        .shadow(color: Color.augmaHighlight.opacity(0.5), radius: 4)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.leading, 14)
     }
   }
 }

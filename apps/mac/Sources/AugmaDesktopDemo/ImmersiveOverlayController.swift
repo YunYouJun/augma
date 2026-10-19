@@ -81,6 +81,7 @@ final class ImmersiveOverlayController: NSObject {
     sourceWindow.orderOut(nil)
     canvas.orderFrontRegardless()
     controls.makeKeyAndOrderFront(nil)
+    refreshShadowAfterEntrance(of: controls, delay: .milliseconds(1100))
     updateMouseInterception()
   }
 

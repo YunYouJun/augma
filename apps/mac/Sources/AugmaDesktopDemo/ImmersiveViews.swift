@@ -31,9 +31,57 @@ struct ImmersiveCanvasView: View {
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
+        LinkStartOverlay()
+          .frame(width: geometry.size.width, height: geometry.size.height)
       }
     }
     .background(Color.clear)
+  }
+}
+
+/// One-shot entrance when the overlay takes over the desktop: a scan line crosses the
+/// screen and rings expand from its centre. Never intercepts input; skipped for reduced motion.
+private struct LinkStartOverlay: View {
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @State private var line: CGFloat = 0
+  @State private var ripple: CGFloat = 0
+  @State private var visible = true
+
+  var body: some View {
+    if visible && !reduceMotion {
+      GeometryReader { geometry in
+        let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
+        ZStack {
+          LinearGradient(colors: [.clear, .white.opacity(0.9), Color.augmaHighlight, .white.opacity(0.9), .clear], startPoint: .leading, endPoint: .trailing)
+            .frame(width: geometry.size.width * line, height: 2)
+            .shadow(color: Color.augmaHighlight.opacity(0.8), radius: 8)
+            .position(center)
+          ForEach(0..<3) { index in
+            let spread = max(0, ripple - CGFloat(index) * 0.18)
+            Circle()
+              .stroke(index == 0 ? Color.augmaHighlight : Color.white, lineWidth: index == 0 ? 2 : 1)
+              .frame(width: 80 + spread * 560, height: 80 + spread * 560)
+              .opacity(Double(max(0, 1 - spread)) * (ripple > 0 ? 0.9 : 0))
+              .position(center)
+          }
+          AugmaRing(size: 120)
+            .opacity(ripple > 0 && ripple < 1 ? 1 : 0)
+            .scaleEffect(0.85 + ripple * 0.3)
+            .position(center)
+        }
+        .shadow(color: .black.opacity(0.35), radius: 3)
+      }
+      .allowsHitTesting(false)
+      .accessibilityHidden(true)
+      .task {
+        withAnimation(.augma(duration: 0.4)) { line = 1 }
+        try? await Task.sleep(for: .seconds(0.25))
+        withAnimation(.easeOut(duration: 1.1)) { ripple = 1.4 }
+        withAnimation(.easeIn(duration: 0.5).delay(0.5)) { line = 0 }
+        try? await Task.sleep(for: .seconds(1.2))
+        visible = false
+      }
+    }
   }
 }
 
@@ -45,6 +93,7 @@ struct ImmersiveControlsView: View {
 
   var body: some View {
     HStack(spacing: 10) {
+      AugmaRing(size: 22, spinning: !model.immersiveClickThrough)
       Menu {
         ForEach(DemoModule.allCases) { module in
           Button(module.title, systemImage: module.symbol) {
@@ -66,14 +115,17 @@ struct ImmersiveControlsView: View {
         .help("退出沉浸模式")
     }
     .buttonStyle(.borderless)
+    .tint(.augmaAccent)
     .padding(.horizontal, 14)
     .padding(.vertical, 10)
     .background {
       ActiveBackdropView()
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: 3))
     }
-    .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(.primary.opacity(0.15)))
+    .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(.primary.opacity(0.15)))
+    .overlay { HudAccentMarks(length: 24) }
     .padding(4)
+    .augmaMaterialize(delay: 0.35)
   }
 }
 
