@@ -5,7 +5,8 @@ import Speech
 
 @MainActor
 final class SpeechCommandRecognizer {
-  var onEvent: (String, String?) -> Void
+  /// Event type, optional text (transcript or error detail) and, for errors, a code the page translates.
+  var onEvent: (_ type: String, _ text: String?, _ code: String?) -> Void
   var isRecording: Bool { engine != nil && !processing }
 
   private var engine: AVAudioEngine?
@@ -19,11 +20,27 @@ final class SpeechCommandRecognizer {
   private var tapInstalled = false
   private var lastText = ""
 
-  init(onEvent: @escaping (String, String?) -> Void) {
+  init(onEvent: @escaping (_ type: String, _ text: String?, _ code: String?) -> Void) {
     self.onEvent = onEvent
   }
 
-  func start() async {
+  /// Phrases that bias recognition toward the demo's commands in each supported language.
+  private static let contextualStrings: [String: [String]] = [
+    "zh": ["打开地图", "扫描空间", "播放声音", "隐藏 HUD"],
+    "en": ["open the map", "scan the space", "play sound", "hide the HUD"],
+    "ja": ["地図を開いて", "空間をスキャンして", "サウンドを再生して", "HUDを隠して"],
+  ]
+
+  /// Normalizes the page's locale to one this demo supports, falling back to Simplified Chinese.
+  static func recognitionLocale(for identifier: String?) -> Locale {
+    switch identifier?.lowercased().prefix(2) {
+    case "en": Locale(identifier: "en-US")
+    case "ja": Locale(identifier: "ja-JP")
+    default: Locale(identifier: "zh-CN")
+    }
+  }
+
+  func start(localeIdentifier: String? = nil) async {
     guard !starting, engine == nil, !processing else { return }
     generation += 1
     let session = generation
@@ -37,23 +54,24 @@ final class SpeechCommandRecognizer {
     }
     guard generation == session else { return }
     guard speechPermission == .authorized else {
-      fail("请在系统设置中允许 Augma 使用语音识别。")
+      fail("speechPermission")
       return
     }
 
     let microphonePermission = await AVCaptureDevice.requestAccess(for: .audio)
     guard generation == session else { return }
     guard microphonePermission else {
-      fail("请在系统设置中允许 Augma 使用麦克风。")
+      fail("microphonePermission")
       return
     }
     guard NSApp.isActive else {
-      fail("已离开 Augma，录音已取消。")
+      fail("appInactive")
       return
     }
 
-    guard let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "zh-CN")), recognizer.isAvailable else {
-      fail("当前设备的中文语音识别不可用，请稍后重试。")
+    let locale = Self.recognitionLocale(for: localeIdentifier)
+    guard let recognizer = SFSpeechRecognizer(locale: locale), recognizer.isAvailable else {
+      fail("recognizerUnavailable")
       return
     }
 
@@ -61,13 +79,13 @@ final class SpeechCommandRecognizer {
     let input = engine.inputNode
     let format = input.outputFormat(forBus: 0)
     guard format.sampleRate > 0 else {
-      fail("没有可用的麦克风输入。")
+      fail("noMicrophone")
       return
     }
 
     let request = SFSpeechAudioBufferRecognitionRequest()
     request.shouldReportPartialResults = true
-    request.contextualStrings = ["打开地图", "扫描空间", "播放声音", "隐藏 HUD"]
+    request.contextualStrings = Self.contextualStrings[locale.language.languageCode?.identifier ?? "zh"] ?? []
     request.requiresOnDeviceRecognition = recognizer.supportsOnDeviceRecognition
     self.engine = engine
     self.recognizer = recognizer
@@ -86,12 +104,12 @@ final class SpeechCommandRecognizer {
       engine.prepare()
       try engine.start()
     } catch {
-      fail("无法启动麦克风：\(error.localizedDescription)")
+      fail("microphoneStart", detail: error.localizedDescription)
       return
     }
 
     starting = false
-    onEvent("listening", nil)
+    onEvent("listening", nil, nil)
     timeout = Task { [weak self] in
       do { try await Task.sleep(for: .seconds(12)) } catch { return }
       guard self?.generation == session else { return }
@@ -110,7 +128,7 @@ final class SpeechCommandRecognizer {
       tapInstalled = false
     }
     request?.endAudio()
-    onEvent("processing", nil)
+    onEvent("processing", nil, nil)
     let session = generation
     timeout = Task { [weak self] in
       do { try await Task.sleep(for: .seconds(3)) } catch { return }
@@ -146,18 +164,18 @@ final class SpeechCommandRecognizer {
       if result.isFinal {
         let text = lastText
         cancel()
-        onEvent("final", text)
+        onEvent("final", text, nil)
         return
       }
-      onEvent("partial", lastText)
+      onEvent("partial", lastText, nil)
     }
     if let error {
       if processing, !lastText.isEmpty {
         let text = lastText
         cancel()
-        onEvent("final", text)
+        onEvent("final", text, nil)
       } else {
-        fail("语音识别失败：\(error.localizedDescription)")
+        fail("recognitionFailed", detail: error.localizedDescription)
       }
     }
   }
@@ -165,16 +183,16 @@ final class SpeechCommandRecognizer {
   private func finishFromTimeout(session: Int) {
     guard generation == session, processing else { return }
     if lastText.isEmpty {
-      fail("没有识别到语音，请重试。")
+      fail("noSpeech")
     } else {
       let text = lastText
       cancel()
-      onEvent("final", text)
+      onEvent("final", text, nil)
     }
   }
 
-  private func fail(_ message: String) {
+  private func fail(_ code: String, detail: String? = nil) {
     cancel()
-    onEvent("error", message)
+    onEvent("error", detail, code)
   }
 }

@@ -8,7 +8,8 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: 'list',
   outputDir: process.env.PLAYWRIGHT_OUTPUT_DIR || '/tmp/augma-playwright-results',
-  use: { baseURL: 'http://127.0.0.1:4317', trace: 'retain-on-failure' },
+  // Pin the language: the AR demo follows the browser language, and most assertions use its Chinese copy.
+  use: { baseURL: 'http://127.0.0.1:4317', trace: 'retain-on-failure', locale: 'zh-CN' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }, { name: 'firefox', use: { ...devices['Desktop Firefox'] } }, { name: 'webkit', use: { ...devices['Desktop Safari'] } }],
   webServer: { command: 'pnpm preview', url: 'http://127.0.0.1:4317', reuseExistingServer: false },
 })

@@ -1,0 +1,2 @@
+"NSMicrophoneUsageDescription" = "Augma uses the microphone to recognize the voice commands you choose to speak.";
+"NSSpeechRecognitionUsageDescription" = "Augma turns the commands you speak into text to control the demo.";

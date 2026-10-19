@@ -1,20 +1,26 @@
+import type { Page } from '@playwright/test'
 import { expect, test } from '@playwright/test'
+
+// Native bridge messages, with the locale-carrying start message reduced to its action name.
+function speechActions(page: Page) {
+  return page.evaluate(() => (window as Window & { __speechActions?: unknown[] }).__speechActions?.map(action => typeof action === 'string' ? action : (action as { action: string }).action).filter(action => action !== 'config'))
+}
 
 test('native speech bridge runs a recognized command and rejects unrelated speech', async ({ page }) => {
   await page.addInitScript(() => {
-    const actions: string[] = []
+    const actions: unknown[] = []
     Object.defineProperty(window, '__speechActions', { value: actions })
     Object.defineProperty(window, 'webkit', {
-      value: { messageHandlers: { speechCommand: { postMessage: (action: string) => actions.push(action) } } },
+      value: { messageHandlers: { speechCommand: { postMessage: (action: unknown) => actions.push(action) } } },
     })
   })
   await page.goto('/ar/')
   await page.getByRole('button', { name: '语音指令' }).click()
   await page.getByRole('button', { name: '开始语音识别' }).click()
-  await expect.poll(() => page.evaluate(() => (window as Window & { __speechActions?: string[] }).__speechActions?.filter(action => action !== 'config'))).toEqual(['start'])
+  await expect.poll(() => speechActions(page)).toEqual(['start'])
   await page.evaluate(() => window.dispatchEvent(new CustomEvent('augma:speech', { detail: { type: 'listening' } })))
   await page.getByRole('button', { name: '结束并执行' }).click()
-  await expect.poll(() => page.evaluate(() => (window as Window & { __speechActions?: string[] }).__speechActions?.filter(action => action !== 'config'))).toEqual(['start', 'stop'])
+  await expect.poll(() => speechActions(page)).toEqual(['start', 'stop'])
   await page.evaluate(() => window.dispatchEvent(new CustomEvent('augma:speech', { detail: { type: 'final', text: '今天天气怎么样' } })))
   await expect(page.getByText('未匹配到指令：今天天气怎么样')).toBeVisible()
   await expect(page.getByRole('heading', { name: '语音指令' })).toBeVisible()
@@ -22,7 +28,7 @@ test('native speech bridge runs a recognized command and rejects unrelated speec
   await page.getByRole('button', { name: '开始语音识别' }).click()
   await page.evaluate(() => window.dispatchEvent(new CustomEvent('augma:speech', { detail: { type: 'listening' } })))
   await page.getByRole('button', { name: '关闭语音指令' }).click()
-  await expect.poll(() => page.evaluate(() => (window as Window & { __speechActions?: string[] }).__speechActions?.filter(action => action !== 'config'))).toEqual(['start', 'stop', 'start', 'cancel'])
+  await expect.poll(() => speechActions(page)).toEqual(['start', 'stop', 'start', 'cancel'])
 
   await page.getByRole('button', { name: '语音指令' }).click()
   await page.getByRole('button', { name: '开始语音识别' }).click()
@@ -33,26 +39,26 @@ test('native speech bridge runs a recognized command and rejects unrelated speec
 
 test('shortcut controls recording and expanded commands operate the demo', async ({ page }) => {
   await page.addInitScript(() => {
-    const actions: string[] = []
+    const actions: unknown[] = []
     Object.defineProperty(window, '__speechActions', { value: actions })
     Object.defineProperty(window, 'webkit', {
-      value: { messageHandlers: { speechCommand: { postMessage: (action: string) => actions.push(action) } } },
+      value: { messageHandlers: { speechCommand: { postMessage: (action: unknown) => actions.push(action) } } },
     })
   })
   await page.goto('/ar/')
   await page.evaluate(() => window.dispatchEvent(new Event('augma:toggle-speech')))
   await expect(page.getByRole('heading', { name: '语音指令' })).toBeVisible()
-  await expect.poll(() => page.evaluate(() => (window as Window & { __speechActions?: string[] }).__speechActions?.filter(action => action !== 'config'))).toEqual(['start'])
+  await expect.poll(() => speechActions(page)).toEqual(['start'])
   await page.evaluate(() => window.dispatchEvent(new CustomEvent('augma:speech', { detail: { type: 'listening' } })))
   await page.evaluate(() => window.dispatchEvent(new Event('augma:toggle-speech')))
   await expect(page.getByRole('button', { name: '正在识别…' })).toBeDisabled()
   await page.evaluate(() => window.dispatchEvent(new Event('augma:toggle-speech')))
-  await expect.poll(() => page.evaluate(() => (window as Window & { __speechActions?: string[] }).__speechActions?.filter(action => action !== 'config'))).toEqual(['start', 'stop', 'cancel'])
+  await expect.poll(() => speechActions(page)).toEqual(['start', 'stop', 'cancel'])
   await expect(page.getByRole('button', { name: '开始语音识别' })).toBeVisible()
 
   await page.getByRole('button', { name: '开始语音识别' }).click()
   await page.getByRole('button', { name: '取消录音' }).click()
-  await expect.poll(() => page.evaluate(() => (window as Window & { __speechActions?: string[] }).__speechActions?.filter(action => action !== 'config'))).toEqual(['start', 'stop', 'cancel', 'start', 'cancel'])
+  await expect.poll(() => speechActions(page)).toEqual(['start', 'stop', 'cancel', 'start', 'cancel'])
 
   await page.evaluate(() => window.dispatchEvent(new CustomEvent('augma:speech', { detail: { type: 'final', text: '打开天气' } })))
   await expect(page.getByRole('heading', { name: '语音指令' })).toBeVisible()

@@ -1,10 +1,13 @@
 import type { Ref } from 'vue'
+import type { MessageKey } from '../i18n/locale'
 import { computed, onMounted, onUnmounted, readonly, shallowRef, watch } from 'vue'
 
-export const soundscapes = [
-  { name: '光的回声', subtitle: '柔和的正弦和弦', notes: [174.61, 220, 261.63] },
-  { name: '浮游时刻', subtitle: '缓慢漂浮的泛音', notes: [196, 246.94, 293.66] },
-  { name: '远方来信', subtitle: '留一点空间给自己', notes: [164.81, 207.65, 246.94] },
+export type SoundscapeId = 'echo' | 'drift' | 'letter'
+
+export const soundscapes: { id: SoundscapeId, notes: number[] }[] = [
+  { id: 'echo', notes: [174.61, 220, 261.63] },
+  { id: 'drift', notes: [196, 246.94, 293.66] },
+  { id: 'letter', notes: [164.81, 207.65, 246.94] },
 ]
 
 export function useSoundscape(volume: Ref<number>) {
@@ -12,7 +15,7 @@ export function useSoundscape(volume: Ref<number>) {
   const playing = shallowRef(false)
   const busy = shallowRef(false)
   const elapsed = shallowRef(0)
-  const error = shallowRef('')
+  const error = shallowRef<MessageKey | ''>('')
   const track = computed(() => soundscapes[trackIndex.value])
   let context: AudioContext | undefined
   let gain: GainNode | undefined
@@ -73,7 +76,7 @@ export function useSoundscape(volume: Ref<number>) {
     }
     catch {
       pause()
-      error.value = '声音未能开启，请检查浏览器的声音权限后重试。'
+      error.value = 'sound.error'
     }
     finally {
       if (request === generation)

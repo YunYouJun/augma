@@ -1,9 +1,10 @@
+import type { MessageKey } from '../i18n/locale'
 import { onMounted, onUnmounted, shallowRef } from 'vue'
 
 export function useCamera() {
   const stream = shallowRef<MediaStream | null>(null)
   const busy = shallowRef(false)
-  const error = shallowRef('')
+  const error = shallowRef<MessageKey | ''>('')
   const facing = shallowRef<'environment' | 'user'>('environment')
   let generation = 0
   function stop() {
@@ -17,7 +18,7 @@ export function useCamera() {
     const request = generation
     error.value = ''
     if (!navigator.mediaDevices?.getUserMedia) {
-      error.value = '当前环境不支持摄像头，请使用 HTTPS 和支持摄像头的浏览器。'
+      error.value = 'camera.error.unsupported'
       return
     }
     busy.value = true
@@ -37,8 +38,8 @@ export function useCamera() {
         return
       error.value
         = cause instanceof DOMException && cause.name === 'NotAllowedError'
-          ? '摄像头权限未开启。可在浏览器设置中允许后重试，或继续体验模拟界面。'
-          : '未能打开摄像头，请检查设备是否可用后重试。'
+          ? 'camera.error.permission'
+          : 'camera.error.failed'
     }
     finally {
       if (request === generation)

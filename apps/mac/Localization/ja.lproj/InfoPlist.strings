@@ -1,0 +1,2 @@
+"NSMicrophoneUsageDescription" = "話しかけた Augma の音声コマンドを認識するために使用します。";
+"NSSpeechRecognitionUsageDescription" = "話したコマンドを文字に変換してデモを操作するために使用します。";

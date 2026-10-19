@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Landmark, SceneId } from './types'
 import { AgmButton, AgmHudProgress, AgmHudStatus } from 'augma'
+import { t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 import { scenes } from './types'
 
@@ -10,27 +11,27 @@ const emit = defineEmits<{ scan: [], cancel: [], pin: [], navigate: [], scene: [
 
 <template>
   <div class="feature-body">
-    <div class="segmented-control" aria-label="模拟场景">
-      <button v-for="item in scenes" :key="item.id" type="button" :aria-pressed="scene === item.id" :disabled="!online" @click="emit('scene', item.id)">{{ item.name }}</button>
+    <div class="segmented-control" :aria-label="t('device.scene')">
+      <button v-for="item in scenes" :key="item.id" type="button" :aria-pressed="scene === item.id" :disabled="!online" @click="emit('scene', item.id)">{{ t(`scene.${item.id}.name`) }}</button>
     </div>
     <div class="space-calibration">
       <div class="calibration-orbit" aria-hidden="true" />
-      <AgmHudProgress label="空间扫描" :value="progress" variant="ring" />
+      <AgmHudProgress :label="t('space.scanProgress')" :value="progress" variant="ring" />
     </div>
     <div class="feature-status" aria-live="polite">
       <AgmHudStatus :tone="progress === 100 ? 'success' : 'neutral'">
-        {{ scanning ? '正在识别模拟空间' : progress === 100 ? '已识别 3 个空间锚点' : '空间感知，等待开启' }}
+        {{ t(scanning ? 'space.scanning' : progress === 100 ? 'space.scanned' : 'space.idle') }}
       </AgmHudStatus>
     </div>
-    <p class="feature-description">扫描当前场景，将地点化为视界中的锚点。</p>
-    <AgmButton v-if="scanning" variant="outline" class="full-button" @click="emit('cancel')">取消扫描</AgmButton>
-    <AgmButton v-else class="full-button" :disabled="!online" @click="emit('scan')"><DeviceIcon name="space" />{{ progress === 100 ? '重新扫描空间' : '扫描空间' }}</AgmButton>
-    <button class="pin-control" type="button" :disabled="!online || progress !== 100" :aria-pressed="pinned" @click="emit('pin')"><DeviceIcon name="pin" />{{ pinned ? '释放空间锚点' : '固定空间锚点' }}</button>
+    <p class="feature-description">{{ t('space.description') }}</p>
+    <AgmButton v-if="scanning" variant="outline" class="full-button" @click="emit('cancel')">{{ t('space.cancelScan') }}</AgmButton>
+    <AgmButton v-else class="full-button" :disabled="!online" @click="emit('scan')"><DeviceIcon name="space" />{{ t(progress === 100 ? 'space.rescan' : 'space.scan') }}</AgmButton>
+    <button class="pin-control" type="button" :disabled="!online || progress !== 100" :aria-pressed="pinned" @click="emit('pin')"><DeviceIcon name="pin" />{{ t(pinned ? 'space.unpin' : 'space.pin') }}</button>
     <div class="selected-place">
-      <span class="muted-label">当前锚点</span>
+      <span class="muted-label">{{ t('space.currentAnchor') }}</span>
       <h3>{{ selected.name }} <small>{{ selected.distance }} m</small></h3>
       <p>{{ selected.description }}</p>
-      <AgmButton variant="outline" class="full-button" :disabled="!online" @click="emit('navigate')">导航到这里<DeviceIcon name="arrow" /></AgmButton>
+      <AgmButton variant="outline" class="full-button" :disabled="!online" @click="emit('navigate')">{{ t('space.navigateHere') }}<DeviceIcon name="arrow" /></AgmButton>
     </div>
   </div>
 </template>

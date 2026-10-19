@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Landmark, SceneId } from './types'
 import { computed } from 'vue'
+import { t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 
 const { landmarks, selected, route, routeProgress } = defineProps<{
@@ -35,7 +36,7 @@ const position = computed(() => {
 </script>
 
 <template>
-  <div class="world-scene" :class="{ 'is-scanning': scanning, 'is-map': mapMode }" :aria-label="scene === 'garden' ? '庭园模拟空间' : '城市模拟空间'">
+  <div class="world-scene" :class="{ 'is-scanning': scanning, 'is-map': mapMode }" :aria-label="t(`scene.${scene}.label`)">
     <div class="spatial-field">
       <svg v-if="mapMode" class="spatial-map" viewBox="0 0 1000 1000" preserveAspectRatio="none" fill="none" aria-hidden="true">
         <g class="map-network">
@@ -58,16 +59,16 @@ const position = computed(() => {
           v-for="(landmark, index) in landmarks" :key="landmark.id" type="button"
           class="world-marker" :class="{ 'is-selected': landmark.id === selected }"
           :style="{ 'left': `${landmark.x}%`, 'top': `${landmark.y}%`, '--marker-color': mapMode ? routeColors[index] : '#8dd3d6' }"
-          :aria-label="`选择${landmark.name}`" :aria-pressed="landmark.id === selected"
+          :aria-label="t('world.select', { name: landmark.name })" :aria-pressed="landmark.id === selected"
           @click="emit('select', landmark.id)"
         >
           <DeviceIcon :name="pinned ? 'pin' : 'location'" />
-          <span class="marker-label">{{ landmark.name }}<small>{{ landmark.distance }} m · 模拟</small></span>
+          <span class="marker-label">{{ landmark.name }}<small>{{ t('world.simulatedDistance', { distance: landmark.distance }) }}</small></span>
         </button>
       </div>
     </div>
-    <div v-if="mapMode" class="map-legend" aria-label="模拟路线">
-      <button v-for="(item, index) in mapRoutes" :key="item.id" type="button" :style="{ '--route-color': item.color }" :aria-label="`显示到${item.name}的路线`" :aria-pressed="item.id === selected" @click="emit('select', item.id)">{{ index + 1 }}</button>
+    <div v-if="mapMode" class="map-legend" :aria-label="t('world.routes')">
+      <button v-for="(item, index) in mapRoutes" :key="item.id" type="button" :style="{ '--route-color': item.color }" :aria-label="t('world.showRoute', { name: item.name })" :aria-pressed="item.id === selected" @click="emit('select', item.id)">{{ index + 1 }}</button>
     </div>
   </div>
 </template>

@@ -1,8 +1,9 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import { settingsKey, useDisplaySettings } from '../../apps/ar/src/composables/useDisplaySettings'
 import { useSimulator } from '../../apps/ar/src/composables/useSimulator'
+import { setLocale, t } from '../../apps/ar/src/i18n/locale'
 
 const cleanups: (() => void)[] = []
 function setup<T>(composable: () => T) {
@@ -16,6 +17,9 @@ function setup<T>(composable: () => T) {
   cleanups.push(() => wrapper.unmount())
   return result
 }
+beforeEach(() => {
+  setLocale('zh-CN')
+})
 afterEach(() => {
   cleanups.splice(0).forEach(cleanup => cleanup())
   vi.useRealTimers()
@@ -35,7 +39,7 @@ describe('device simulation', () => {
     expect(device.scanning.value).toBe(false)
     expect(device.scanProgress.value).toBe(0)
     expect(device.routeStep.value).toBeNull()
-    expect(device.notices.value.some(item => item.title === '空间扫描完成')).toBe(false)
+    expect(device.notices.value.some(item => t(item.title) === '空间扫描完成')).toBe(false)
     device.scan()
     expect(device.scanning.value).toBe(false)
     device.connect()
@@ -65,7 +69,13 @@ describe('device simulation', () => {
     expect(device.routeProgress.value).toBe(100)
     expect(device.remaining.value).toBe(0)
     expect(device.routeInstruction.value).toBe('已到达街角广场')
-    expect(device.notices.value.filter(item => item.title === '已到达目的地')).toHaveLength(1)
+    expect(device.notices.value.filter(item => t(item.title) === '已到达目的地')).toHaveLength(1)
+    setLocale('ja-JP')
+    expect(device.routeInstruction.value).toBe('街角の広場に到着しました')
+    expect(t(device.notices.value[0].detail)).toBe('街角の広場までの模擬ルートが完了しました。')
+    setLocale('en-US')
+    expect(device.selected.value.name).toBe('Corner Plaza')
+    expect(t(device.notices.value[0].title)).toBe('Destination reached')
     device.openModule('notifications')
     expect(device.unread.value).toBe(0)
     device.clearNotices()

@@ -51,7 +51,7 @@ describe('camera ownership', () => {
     camera.stop()
     expect(stop).toHaveBeenCalledOnce()
     await camera.start()
-    expect(camera.error.value).toContain('权限')
+    expect(camera.error.value).toBe('camera.error.permission')
     expect(camera.busy.value).toBe(false)
     wrapper.unmount()
   })

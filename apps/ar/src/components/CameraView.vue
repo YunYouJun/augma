@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useTemplateRef, watch } from 'vue'
+import { t } from '../i18n/locale'
 
 const props = defineProps<{ stream: MediaStream | null, mirror: boolean }>()
 const video = useTemplateRef<HTMLVideoElement>('video')
@@ -54,6 +55,6 @@ defineExpose({ capture })
     playsinline
     muted
     :controls="!!stream"
-    aria-label="摄像头画面"
+    :aria-label="t('camera.feed')"
   />
 </template>

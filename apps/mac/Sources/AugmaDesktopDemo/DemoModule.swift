@@ -11,15 +11,15 @@ enum DemoModule: String, CaseIterable, Identifiable {
 
   var title: String {
     switch self {
-    case .weather: "天气"
-    case .audio: "声音"
-    case .space: "空间"
-    case .camera: "摄像头"
-    case .navigation: "导航"
-    case .notifications: "通知"
-    case .settings: "设置"
-    case .commands: "语音指令"
-    case .device: "设备"
+    case .weather: String(localized: "天气")
+    case .audio: String(localized: "声音")
+    case .space: String(localized: "空间")
+    case .camera: String(localized: "摄像头")
+    case .navigation: String(localized: "导航")
+    case .notifications: String(localized: "通知")
+    case .settings: String(localized: "设置")
+    case .commands: String(localized: "语音指令")
+    case .device: String(localized: "设备")
     }
   }
 

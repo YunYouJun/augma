@@ -2,30 +2,31 @@
 import type { Landmark } from './types'
 import { AgmButton, AgmHudProgress } from 'augma'
 import { computed } from 'vue'
+import { t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 
 const { selected, landmarks } = defineProps<{ landmarks: Landmark[], selected: Landmark, step: number | null, progress: number, remaining: number, instruction: string, online: boolean }>()
 const emit = defineEmits<{ select: [id: string], start: [], advance: [], cancel: [] }>()
-const stops = computed(() => ['当前位置', '前方步道', '转角路口', '目标锚点', selected.name])
+const stops = computed(() => [t('navigation.stop.origin'), t('navigation.stop.walkway'), t('navigation.stop.corner'), t('navigation.stop.anchor'), selected.name])
 const routeColor = computed(() => ['#f44761', '#42b5b1', '#a697c9'][landmarks.findIndex(place => place.id === selected.id)])
 </script>
 
 <template>
   <div class="feature-body" :style="{ '--route-color': routeColor }">
-    <ol class="route-stops" aria-label="路线步骤">
-      <li v-for="(stop, index) in stops" :key="index" :aria-current="step === index ? 'step' : undefined" :class="{ 'is-passed': step !== null && index < step }"><span>{{ stop }}</span><i aria-hidden="true" /><small>{{ index === step ? '当前位置' : step !== null && index < step ? '已通过' : '待抵达' }}</small></li>
+    <ol class="route-stops" :aria-label="t('navigation.stops')">
+      <li v-for="(stop, index) in stops" :key="index" :aria-current="step === index ? 'step' : undefined" :class="{ 'is-passed': step !== null && index < step }"><span>{{ stop }}</span><i aria-hidden="true" /><small>{{ t(index === step ? 'navigation.status.current' : step !== null && index < step ? 'navigation.status.passed' : 'navigation.status.pending') }}</small></li>
     </ol>
-    <div class="destination-list" aria-label="目的地">
+    <div class="destination-list" :aria-label="t('navigation.destinations')">
       <button v-for="place in landmarks" :key="place.id" type="button" :aria-pressed="selected.id === place.id" :disabled="!online" @click="emit('select', place.id)">
         <DeviceIcon name="location" /><span>{{ place.name }}</span><small>{{ place.distance }} m</small>
       </button>
     </div>
-    <div class="route-instruction" aria-live="polite"><DeviceIcon :name="step === 4 ? 'check' : 'navigation'" /><p>{{ instruction }}<small>{{ step === null ? '距离与路线均为模拟' : `剩余 ${remaining} m · 模拟行进` }}</small></p></div>
-    <AgmHudProgress v-if="step !== null" label="路线进度" :value="progress" />
+    <div class="route-instruction" aria-live="polite"><DeviceIcon :name="step === 4 ? 'check' : 'navigation'" /><p>{{ instruction }}<small>{{ step === null ? t('navigation.simulatedNote') : t('navigation.remaining', { distance: remaining }) }}</small></p></div>
+    <AgmHudProgress v-if="step !== null" :label="t('navigation.progress')" :value="progress" />
     <div class="route-actions">
-      <AgmButton v-if="step === null || step === 4" class="full-button" :disabled="!online" @click="emit('start')">{{ step === 4 ? '再次导航' : '开始模拟导航' }}</AgmButton>
-      <AgmButton v-else class="full-button" :disabled="!online" @click="emit('advance')">前进一步<DeviceIcon name="arrow" /></AgmButton>
-      <AgmButton v-if="step !== null" variant="ghost" class="full-button" @click="emit('cancel')">结束导航</AgmButton>
+      <AgmButton v-if="step === null || step === 4" class="full-button" :disabled="!online" @click="emit('start')">{{ t(step === 4 ? 'navigation.restart' : 'navigation.start') }}</AgmButton>
+      <AgmButton v-else class="full-button" :disabled="!online" @click="emit('advance')">{{ t('navigation.advance') }}<DeviceIcon name="arrow" /></AgmButton>
+      <AgmButton v-if="step !== null" variant="ghost" class="full-button" @click="emit('cancel')">{{ t('navigation.end') }}</AgmButton>
     </div>
   </div>
 </template>

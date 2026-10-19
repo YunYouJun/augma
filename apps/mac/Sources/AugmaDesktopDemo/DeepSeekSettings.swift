@@ -54,7 +54,7 @@ enum DeepSeekKeychain {
 
   private struct KeychainFailure: LocalizedError {
     let status: OSStatus
-    var errorDescription: String? { "无法访问钥匙串（错误 \(status)）。" }
+    var errorDescription: String? { String(format: String(localized: "无法访问钥匙串（错误 %@）。"), String(status)) }
   }
 }
 
@@ -103,7 +103,7 @@ struct DeepSeekSettingsView: View {
       try DeepSeekKeychain.save(key)
       newKey = ""
       hasKey = true
-      feedback = "密钥已保存。"
+      feedback = String(localized: "密钥已保存。")
       notifyChange()
     } catch {
       feedback = error.localizedDescription
@@ -115,7 +115,7 @@ struct DeepSeekSettingsView: View {
       try DeepSeekKeychain.remove()
       enabled = false
       hasKey = false
-      feedback = "密钥已删除。"
+      feedback = String(localized: "密钥已删除。")
       notifyChange()
     } catch {
       feedback = error.localizedDescription

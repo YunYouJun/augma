@@ -1,0 +1,2 @@
+"NSMicrophoneUsageDescription" = "用于识别你主动说出的 Augma 语音指令。";
+"NSSpeechRecognitionUsageDescription" = "用于将你主动说出的指令转换为文字并操作演示界面。";

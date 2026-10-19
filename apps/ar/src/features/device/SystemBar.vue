@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { shallowRef, useTemplateRef } from 'vue'
+import { t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 
 defineProps<{ curved: boolean, time: string, fullscreen: boolean, fullscreenSupported: boolean, dark: boolean, unread: number, cameraLive: boolean }>()
@@ -26,22 +27,22 @@ function open(app: 'settings' | 'notifications' | 'device') {
 </script>
 
 <template>
-  <header class="system-bar" aria-label="Augma 系统栏">
-    <button type="button" class="orb-button voice-button" aria-label="语音指令" data-tooltip="语音指令" @click="emit('commands', $event.currentTarget as HTMLElement)"><DeviceIcon name="microphone" /></button>
+  <header class="system-bar" :aria-label="t('systemBar.label')">
+    <button type="button" class="orb-button voice-button" :aria-label="t('module.commands')" :data-tooltip="t('module.commands')" @click="emit('commands', $event.currentTarget as HTMLElement)"><DeviceIcon name="microphone" /></button>
     <div class="system-clock">
       <time>{{ time }}</time>
       <svg v-if="curved" class="system-arc" viewBox="0 0 1000 32" preserveAspectRatio="none" aria-hidden="true"><path d="M0 2 Q500 58 1000 2" /></svg>
       <div v-else class="system-rule" />
     </div>
     <div class="system-menu" @keydown.esc="expanded = false">
-      <button ref="menuTrigger" type="button" class="orb-button" aria-label="系统菜单" data-tooltip="系统菜单" :aria-expanded="expanded" aria-controls="system-actions" @click="expanded = !expanded"><DeviceIcon :name="expanded ? 'menu-open' : 'menu'" /></button>
+      <button ref="menuTrigger" type="button" class="orb-button" :aria-label="t('systemBar.menu')" :data-tooltip="t('systemBar.menu')" :aria-expanded="expanded" aria-controls="system-actions" @click="expanded = !expanded"><DeviceIcon :name="expanded ? 'menu-open' : 'menu'" /></button>
       <div v-if="expanded" id="system-actions" class="system-actions">
-        <button v-if="fullscreenSupported" type="button" class="orb-button" :aria-label="fullscreen ? '退出全屏' : '进入全屏'" :data-tooltip="fullscreen ? '退出全屏' : '进入全屏'" @click="emit('fullscreen')"><DeviceIcon name="expand" /></button>
-        <button type="button" class="orb-button" aria-label="切换镜头" data-tooltip="切换镜头" :disabled="!cameraLive" @click="emit('flip')"><DeviceIcon name="flip" /></button>
-        <button type="button" class="orb-button" aria-label="切换深色视界" data-tooltip="切换深色视界" :aria-pressed="dark" @click="emit('theme')"><DeviceIcon :name="dark ? 'moon' : 'sun'" /></button>
-        <button type="button" class="orb-button" aria-label="设置" data-tooltip="设置" @click="open('settings')"><DeviceIcon name="settings" /></button>
-        <button type="button" class="orb-button" aria-label="通知" data-tooltip="通知" @click="open('notifications')"><DeviceIcon name="notifications" /><span v-if="unread" class="notification-count">{{ unread }}</span></button>
-        <button type="button" class="orb-button" aria-label="设备" data-tooltip="设备" @click="open('device')"><DeviceIcon name="device" /></button>
+        <button v-if="fullscreenSupported" type="button" class="orb-button" :aria-label="t(fullscreen ? 'systemBar.exitFullscreen' : 'systemBar.enterFullscreen')" :data-tooltip="t(fullscreen ? 'systemBar.exitFullscreen' : 'systemBar.enterFullscreen')" @click="emit('fullscreen')"><DeviceIcon name="expand" /></button>
+        <button type="button" class="orb-button" :aria-label="t('camera.flip')" :data-tooltip="t('camera.flip')" :disabled="!cameraLive" @click="emit('flip')"><DeviceIcon name="flip" /></button>
+        <button type="button" class="orb-button" :aria-label="t('systemBar.toggleDark')" :data-tooltip="t('systemBar.toggleDark')" :aria-pressed="dark" @click="emit('theme')"><DeviceIcon :name="dark ? 'moon' : 'sun'" /></button>
+        <button type="button" class="orb-button" :aria-label="t('module.settings')" :data-tooltip="t('module.settings')" @click="open('settings')"><DeviceIcon name="settings" /></button>
+        <button type="button" class="orb-button" :aria-label="t('module.notifications')" :data-tooltip="t('module.notifications')" @click="open('notifications')"><DeviceIcon name="notifications" /><span v-if="unread" class="notification-count">{{ unread }}</span></button>
+        <button type="button" class="orb-button" :aria-label="t('module.device')" :data-tooltip="t('module.device')" @click="open('device')"><DeviceIcon name="device" /></button>
       </div>
     </div>
   </header>

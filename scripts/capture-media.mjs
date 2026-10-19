@@ -73,7 +73,8 @@ try {
 
   const videoDir = await mkdtemp(join(tmpdir(), 'augma-ar-'))
   const size = { width: 1280, height: 800 }
-  const context = await browser.newContext({ viewport: size, recordVideo: { dir: videoDir, size } })
+  // The AR demo follows the browser language; the showcase is recorded in Chinese.
+  const context = await browser.newContext({ viewport: size, locale: 'zh-CN', recordVideo: { dir: videoDir, size } })
   const page = await context.newPage()
   const started = Date.now()
   await page.goto(`${base}/ar/`, { waitUntil: 'networkidle' })

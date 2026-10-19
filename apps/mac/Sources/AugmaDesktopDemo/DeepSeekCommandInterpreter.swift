@@ -8,7 +8,7 @@ enum DeepSeekCommandInterpreter {
   ]
 
   private static let systemPrompt = """
-    You classify Chinese voice commands for an Augma macOS DEMO. Output only a JSON object: {"command":"map"} or {"command":null}.
+    You classify Chinese, English, or Japanese voice commands for an Augma macOS DEMO. Output only a JSON object: {"command":"map"} or {"command":null}.
     Allowed command values: map (open simulated map), scan (scan simulated space), audio (play demo sound), audioPause, hide/show (HUD), weather (open demo weather panel), notifications, settings, camera (open camera panel only), dark/light (theme), routeStart, routeNext, routeStop (simulated route).
     Choose one command only when the user explicitly asks to perform that action. Do not answer questions, infer hidden intent, invent actions, or turn a request for real weather, travel, files, apps, messages, or other macOS tasks into a demo action. For ambiguous or unsupported requests return {"command":null}. Your response must be JSON.
     """
@@ -57,18 +57,24 @@ enum DeepSeekCommandInterpreter {
     return command
   }
 
-  enum Failure: LocalizedError {
+  enum Failure: Error {
     case invalidInput, invalidKey, insufficientBalance, rateLimited, invalidResponse, http(Int)
 
-    var errorDescription: String? {
+    /// Error code the web page translates into the active UI language.
+    var code: String {
       switch self {
-      case .invalidInput: "指令为空或过长。"
-      case .invalidKey: "DeepSeek 密钥无效，请在 Augma 设置中更新。"
-      case .insufficientBalance: "DeepSeek 账户余额不足。"
-      case .rateLimited: "DeepSeek 请求过于频繁，请稍后再试。"
-      case .invalidResponse: "DeepSeek 未返回可用的演示指令。"
-      case .http(let code): "DeepSeek 请求失败（HTTP \(code)）。"
+      case .invalidInput: "deepseekInvalidInput"
+      case .invalidKey: "deepseekInvalidKey"
+      case .insufficientBalance: "deepseekInsufficientBalance"
+      case .rateLimited: "deepseekRateLimited"
+      case .invalidResponse: "deepseekInvalidResponse"
+      case .http: "deepseekHttp"
       }
+    }
+
+    var detail: String? {
+      if case .http(let status) = self { return String(status) }
+      return nil
     }
   }
 }

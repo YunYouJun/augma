@@ -1,31 +1,32 @@
 <script setup lang="ts">
 import type { DeviceModule } from './types'
+import { t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 
 defineProps<{ curved: boolean, active: DeviceModule | null, showHud: boolean, mirror: boolean }>()
 const emit = defineEmits<{ select: [module: DeviceModule, trigger: HTMLElement], mirror: [], hud: [] }>()
 const apps = [
-  { id: 'weather', label: '天气', color: '#ed933d' },
-  { id: 'audio', label: '声音', color: '#004d86' },
-  { id: 'space', label: '空间', color: '#00959c' },
-  { id: 'camera', label: '摄像头', color: '#4dade0' },
-  { id: 'navigation', label: '导航', color: '#dd9d5e' },
+  { id: 'weather', color: '#ed933d' },
+  { id: 'audio', color: '#004d86' },
+  { id: 'space', color: '#00959c' },
+  { id: 'camera', color: '#4dade0' },
+  { id: 'navigation', color: '#dd9d5e' },
 ] as const
 </script>
 
 <template>
-  <nav class="device-dock" :class="{ 'is-curved': curved }" aria-label="设备应用">
+  <nav class="device-dock" :class="{ 'is-curved': curved }" :aria-label="t('dock.label')">
     <svg v-if="curved" class="dock-arc" viewBox="0 0 1000 28" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 Q500 -22 1000 26" /></svg>
     <div class="dock-pointer" aria-hidden="true" />
     <div class="dock-scroll">
       <div class="dock-buttons">
-        <button class="orb-button" type="button" aria-label="镜像画面" data-tooltip="镜像画面" :aria-pressed="mirror" style="--orb-color: #8dd3d6" @click="emit('mirror')"><DeviceIcon name="mirror" /></button>
+        <button class="orb-button" type="button" :aria-label="t('dock.mirror')" :data-tooltip="t('dock.mirror')" :aria-pressed="mirror" style="--orb-color: #8dd3d6" @click="emit('mirror')"><DeviceIcon name="mirror" /></button>
         <template v-for="app in apps" :key="app.id">
-          <button class="orb-button" type="button" :aria-label="app.label" :data-tooltip="app.label" :aria-pressed="active === app.id" :style="{ '--orb-color': app.color }" @click="emit('select', app.id, $event.currentTarget as HTMLElement)"><DeviceIcon :name="app.id" /></button>
-          <button v-if="app.id === 'weather'" class="orb-button" type="button" role="switch" aria-label="显示 HUD" :data-tooltip="showHud ? '隐藏 HUD' : '恢复 HUD'" :aria-checked="showHud" style="--orb-color: #4dade0" @click="emit('hud')"><DeviceIcon :name="showHud ? 'eye' : 'eye-off'" /></button>
+          <button class="orb-button" type="button" :aria-label="t(`module.${app.id}`)" :data-tooltip="t(`module.${app.id}`)" :aria-pressed="active === app.id" :style="{ '--orb-color': app.color }" @click="emit('select', app.id, $event.currentTarget as HTMLElement)"><DeviceIcon :name="app.id" /></button>
+          <button v-if="app.id === 'weather'" class="orb-button" type="button" role="switch" :aria-label="t('dock.showHud')" :data-tooltip="t(showHud ? 'dock.hideHud' : 'dock.restoreHud')" :aria-checked="showHud" style="--orb-color: #4dade0" @click="emit('hud')"><DeviceIcon :name="showHud ? 'eye' : 'eye-off'" /></button>
         </template>
         <a class="orb-button" href="https://github.com/YunYouJun/augma" target="_blank" rel="noreferrer" aria-label="GitHub" data-tooltip="GitHub" style="--orb-color: #343a40"><DeviceIcon name="github" /></a>
-        <a class="orb-button" href="/components/" aria-label="组件文档" data-tooltip="组件文档" style="--orb-color: #4dade0"><DeviceIcon name="globe" /></a>
+        <a class="orb-button" href="/components/" :aria-label="t('dock.docs')" :data-tooltip="t('dock.docs')" style="--orb-color: #4dade0"><DeviceIcon name="globe" /></a>
       </div>
     </div>
   </nav>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { VoiceCommand } from './voiceCommands'
 import { ref } from 'vue'
+import { t } from '../../i18n/locale'
 
 defineProps<{
   speechAvailable: boolean
@@ -16,34 +17,27 @@ function submit() {
   if (text)
     emit('submit', text)
 }
-const commands = [
-  { id: 'map', label: '打开地图' },
-  { id: 'scan', label: '扫描空间' },
-  { id: 'weather', label: '打开天气' },
-  { id: 'audio', label: '播放声音' },
-  { id: 'dark', label: '开启深色视界' },
-  { id: 'hide', label: '隐藏 HUD' },
-] as const
+const commands = ['map', 'scan', 'weather', 'audio', 'dark', 'hide'] as const
 </script>
 
 <template>
   <div class="command-panel">
-    <p v-if="speechAvailable">点击开始，说出一条指令，再点击结束。识别完成后会执行匹配的操作。</p>
-    <p v-else>点击一条指令，模拟语音操作。</p>
+    <p v-if="speechAvailable">{{ t('commands.speechIntro') }}</p>
+    <p v-else>{{ t('commands.intro') }}</p>
     <button v-if="speechAvailable" class="listen-button" type="button" :disabled="speechStatus === 'requesting' || speechStatus === 'processing' || speechStatus === 'interpreting'" @click="speechStatus === 'listening' ? $emit('stop') : $emit('start')">
-      {{ speechStatus === 'requesting' ? '正在请求权限…' : speechStatus === 'listening' ? '结束并执行' : speechStatus === 'processing' ? '正在识别…' : speechStatus === 'interpreting' ? '正在理解指令…' : '开始语音识别' }}
+      {{ t(`commands.status.${speechStatus}`) }}
     </button>
-    <button v-if="speechAvailable && speechStatus !== 'idle'" type="button" @click="$emit('cancel')">{{ speechStatus === 'interpreting' ? '取消理解' : '取消录音' }}</button>
-    <p v-if="speechAvailable && (transcript || speechError)" class="speech-result" role="status">{{ speechError || `识别结果：${transcript}` }}</p>
+    <button v-if="speechAvailable && speechStatus !== 'idle'" type="button" @click="$emit('cancel')">{{ t(speechStatus === 'interpreting' ? 'commands.cancelInterpret' : 'commands.cancelRecording') }}</button>
+    <p v-if="speechAvailable && (transcript || speechError)" class="speech-result" role="status">{{ speechError || t('commands.transcript', { text: transcript }) }}</p>
     <form class="command-entry" @submit.prevent="submit">
-      <input v-model="manualText" type="text" aria-label="输入指令" placeholder="也可以输入指令试用" maxlength="500" :disabled="speechStatus !== 'idle'">
-      <button type="submit" :disabled="speechStatus !== 'idle' || !manualText.trim()">执行</button>
+      <input v-model="manualText" type="text" :aria-label="t('commands.input')" :placeholder="t('commands.placeholder')" maxlength="500" :disabled="speechStatus !== 'idle'">
+      <button type="submit" :disabled="speechStatus !== 'idle' || !manualText.trim()">{{ t('commands.run') }}</button>
     </form>
-    <div class="command-examples" aria-label="示例指令">
-      <button v-for="command in commands" :key="command.id" type="button" @click="$emit('command', command.id)">{{ command.label }}</button>
+    <div class="command-examples" :aria-label="t('commands.examples')">
+      <button v-for="command in commands" :key="command" type="button" @click="$emit('command', command)">{{ t(`commands.example.${command}`) }}</button>
     </div>
-    <small v-if="speechAvailable">还支持查看通知、打开设置、浅色视界、开始或结束导航、前进一步、暂停声音。按 ⌘⇧V 可控制录音，单次最长 12 秒。{{ cloudEnabled ? '未匹配的文字会发送给 DeepSeek 理解。' : '可在 Augma 设置中启用 DeepSeek 理解。' }}</small>
-    <small v-else>网页演示不会请求麦克风权限。</small>
+    <small v-if="speechAvailable">{{ t('commands.more', { cloud: { key: cloudEnabled ? 'commands.cloudOn' : 'commands.cloudOff' } }) }}</small>
+    <small v-else>{{ t('commands.webNote') }}</small>
   </div>
 </template>
 

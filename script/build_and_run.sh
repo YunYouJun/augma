@@ -39,6 +39,8 @@ rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_CONTENTS/MacOS" "$APP_CONTENTS/Resources/ar"
 cp "$BUILD_DIR/$APP_NAME" "$APP_BINARY"
 cp -R "$ROOT_DIR/apps/ar/dist/." "$APP_CONTENTS/Resources/ar/"
+# String tables live outside the SwiftPM target so SwiftUI finds them in the main bundle.
+cp -R "$PACKAGE_DIR/Localization/." "$APP_CONTENTS/Resources/"
 chmod +x "$APP_BINARY"
 cat >"$APP_CONTENTS/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -49,6 +51,8 @@ cat >"$APP_CONTENTS/Info.plist" <<PLIST
   <key>CFBundleIdentifier</key><string>$BUNDLE_ID</string>
   <key>CFBundleName</key><string>Augma</string>
   <key>CFBundleDisplayName</key><string>Augma</string>
+  <key>CFBundleDevelopmentRegion</key><string>zh-Hans</string>
+  <key>CFBundleLocalizations</key><array><string>zh-Hans</string><string>en</string><string>ja</string></array>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>$VERSION</string>
   <key>CFBundleVersion</key><string>$VERSION</string>

@@ -2,29 +2,32 @@
 import type { useCamera } from '../../composables/useCamera'
 import type { useXr } from '../../composables/useXr'
 import { AgmButton } from 'augma'
+import { computed } from 'vue'
+import { t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 
-defineProps<{ camera: ReturnType<typeof useCamera>, xr: ReturnType<typeof useXr>, online: boolean }>()
+const { camera, xr } = defineProps<{ camera: ReturnType<typeof useCamera>, xr: ReturnType<typeof useXr>, online: boolean }>()
 const emit = defineEmits<{ capture: [], prepareXr: [] }>()
+const error = computed(() => camera.error.value || xr.error.value)
 </script>
 
 <template>
-  <section class="camera-controls" aria-label="摄像头与空间 AR">
-    <div class="camera-caption"><DeviceIcon name="camera" /><div><strong>接入你的现实</strong><span>仅在开启后请求摄像头权限</span></div></div>
+  <section class="camera-controls" :aria-label="t('camera.label')">
+    <div class="camera-caption"><DeviceIcon name="camera" /><div><strong>{{ t('camera.title') }}</strong><span>{{ t('camera.subtitle') }}</span></div></div>
     <div class="camera-actions">
-      <AgmButton v-if="camera.busy.value" variant="outline" @click="camera.stop">取消开启摄像头</AgmButton>
-      <AgmButton v-else-if="!camera.stream.value" variant="outline" :disabled="!online || xr.ready.value || xr.busy.value" @click="camera.start">开启摄像头</AgmButton>
-      <AgmButton v-else variant="outline" @click="camera.stop">关闭摄像头</AgmButton>
-      <AgmButton variant="ghost" :disabled="!camera.stream.value || camera.busy.value" @click="camera.flip">切换镜头</AgmButton>
-      <AgmButton variant="ghost" :disabled="!camera.stream.value" @click="emit('capture')">保存画面</AgmButton>
+      <AgmButton v-if="camera.busy.value" variant="outline" @click="camera.stop">{{ t('camera.cancel') }}</AgmButton>
+      <AgmButton v-else-if="!camera.stream.value" variant="outline" :disabled="!online || xr.ready.value || xr.busy.value" @click="camera.start">{{ t('camera.start') }}</AgmButton>
+      <AgmButton v-else variant="outline" @click="camera.stop">{{ t('camera.stop') }}</AgmButton>
+      <AgmButton variant="ghost" :disabled="!camera.stream.value || camera.busy.value" @click="camera.flip">{{ t('camera.flip') }}</AgmButton>
+      <AgmButton variant="ghost" :disabled="!camera.stream.value" @click="emit('capture')">{{ t('camera.capture') }}</AgmButton>
       <template v-if="xr.supported.value">
-        <AgmButton v-if="!xr.ready.value" variant="outline" :loading="xr.busy.value" :disabled="!online || camera.busy.value" @click="emit('prepareXr')">准备空间 AR</AgmButton>
-        <AgmButton v-else :disabled="xr.active.value || xr.busy.value" @click="xr.enter">进入空间 AR</AgmButton>
-        <AgmButton v-if="xr.ready.value" variant="ghost" @click="xr.stop">返回摄像头模式</AgmButton>
+        <AgmButton v-if="!xr.ready.value" variant="outline" :loading="xr.busy.value" :disabled="!online || camera.busy.value" @click="emit('prepareXr')">{{ t('camera.prepareXr') }}</AgmButton>
+        <AgmButton v-else :disabled="xr.active.value || xr.busy.value" @click="xr.enter">{{ t('camera.enterXr') }}</AgmButton>
+        <AgmButton v-if="xr.ready.value" variant="ghost" @click="xr.stop">{{ t('camera.exitXr') }}</AgmButton>
       </template>
     </div>
-    <p v-if="!xr.supported.value" class="xr-note">此浏览器未提供空间 AR，可使用摄像头模式。</p>
-    <p v-if="camera.error.value || xr.error.value" class="ar-error" role="alert">{{ camera.error.value || xr.error.value }}</p>
+    <p v-if="!xr.supported.value" class="xr-note">{{ t('camera.xrUnsupported') }}</p>
+    <p v-if="error" class="ar-error" role="alert">{{ t(error) }}</p>
   </section>
 </template>
 

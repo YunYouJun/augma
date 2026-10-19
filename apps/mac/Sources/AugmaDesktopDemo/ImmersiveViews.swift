@@ -101,7 +101,7 @@ struct ImmersiveControlsView: View {
           }
         }
       } label: {
-        Label(selection?.title ?? "选择应用", systemImage: "square.grid.2x2")
+        Label(selection?.title ?? String(localized: "选择应用"), systemImage: "square.grid.2x2")
       }
       .frame(minWidth: 105)
 

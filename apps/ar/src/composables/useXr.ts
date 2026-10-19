@@ -1,3 +1,4 @@
+import type { MessageKey } from '../i18n/locale'
 import { onUnmounted, shallowRef } from 'vue'
 
 export function useXr() {
@@ -5,7 +6,7 @@ export function useXr() {
   const ready = shallowRef(false)
   const active = shallowRef(false)
   const busy = shallowRef(false)
-  const error = shallowRef('')
+  const error = shallowRef<MessageKey | ''>('')
   let generation = 0
   let engine: import('@babylonjs/core').Engine | undefined
   let scene: import('@babylonjs/core').Scene | undefined
@@ -49,7 +50,7 @@ export function useXr() {
     }
     catch {
       if (request === generation) {
-        error.value = '空间 AR 初始化失败，可以继续使用摄像头演示。'
+        error.value = 'xr.error.prepare'
         cleanup()
       }
     }
@@ -79,7 +80,7 @@ export function useXr() {
     }
     catch {
       if (request === generation)
-        error.value = '未能进入空间 AR，请确认设备支持并允许会话。'
+        error.value = 'xr.error.enter'
     }
     finally {
       if (request === generation)

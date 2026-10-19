@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, toRef, useTemplateRef } from 'vue'
+import { t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 import { useWindowPlacement } from './useWindowPlacement'
 
@@ -12,10 +13,10 @@ onMounted(() => windowRef.value?.focus({ preventScroll: true }))
 
 <template>
   <section ref="window" class="device-window" :class="[`device-window--${app}`, { 'is-positioned': !!position }]" :style="style" :aria-label="title" tabindex="-1" @keydown.esc.stop="emit('close')">
-    <header class="window-heading" tabindex="0" :aria-label="`移动${title}面板，方向键微调，按住 Shift 加速`" @pointerdown="pointerDown" @pointermove="pointerMove" @pointerup="pointerUp" @pointercancel="pointerUp" @keydown="keyDown">
-      <h2>{{ title }}</h2><span class="window-drag-hint" aria-hidden="true">拖动</span>
-      <button v-if="position" class="window-reset" type="button" :aria-label="`复位${title}面板位置`" @click="reset">复位</button>
-      <button class="window-close" type="button" :aria-label="`关闭${title}`" @click="emit('close')"><DeviceIcon name="close" /></button>
+    <header class="window-heading" tabindex="0" :aria-label="t('window.move', { title })" @pointerdown="pointerDown" @pointermove="pointerMove" @pointerup="pointerUp" @pointercancel="pointerUp" @keydown="keyDown">
+      <h2>{{ title }}</h2><span class="window-drag-hint" aria-hidden="true">{{ t('window.drag') }}</span>
+      <button v-if="position" class="window-reset" type="button" :aria-label="t('window.resetLabel', { title })" @click="reset">{{ t('window.reset') }}</button>
+      <button class="window-close" type="button" :aria-label="t('window.close', { title })" @click="emit('close')"><DeviceIcon name="close" /></button>
     </header>
     <div class="window-content"><slot /></div>
   </section>

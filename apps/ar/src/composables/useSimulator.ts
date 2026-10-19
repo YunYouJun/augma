@@ -1,6 +1,8 @@
-import type { Connection, DeviceModule, DeviceNotice, SceneId } from '../features/device/types'
+import type { Connection, DeviceModule, DeviceNotice, Landmark, SceneId } from '../features/device/types'
+import type { Message } from '../i18n/locale'
 import { computed, onMounted, onUnmounted, readonly, shallowRef } from 'vue'
 import { scenes } from '../features/device/types'
+import { formatTime, locale, t } from '../i18n/locale'
 
 export function useSimulator() {
   const connection = shallowRef<Connection>('connected')
@@ -12,30 +14,41 @@ export function useSimulator() {
   const selectedId = shallowRef('terrace')
   const routeStep = shallowRef<number | null>(null)
   const notices = shallowRef<DeviceNotice[]>([])
-  const time = shallowRef('')
-  const date = shallowRef('')
+  const now = shallowRef(Date.now())
   let sequence = 0
   let scanTimer: ReturnType<typeof setInterval> | undefined
   let connectTimer: ReturnType<typeof setTimeout> | undefined
   let clockTimer: ReturnType<typeof setInterval> | undefined
-  const scene = computed(() => scenes.find(item => item.id === sceneId.value)!)
+  const scene = computed(() => {
+    const data = scenes.find(item => item.id === sceneId.value)!
+    return {
+      id: data.id,
+      name: t(`scene.${data.id}.name`),
+      description: t(`scene.${data.id}.description`),
+      landmarks: data.landmarks.map((item): Landmark => ({ ...item, name: t(`landmark.${item.id}.name`), description: t(`landmark.${item.id}.description`) })),
+    }
+  })
   const selected = computed(() => scene.value.landmarks.find(item => item.id === selectedId.value)!)
+  const sceneName = (): Message => ({ key: `scene.${sceneId.value}.name` })
+  const selectedName = (): Message => ({ key: `landmark.${selected.value.id}.name` })
+  const time = computed(() => formatTime(now.value))
+  const date = computed(() => new Date(now.value).toLocaleDateString(locale.value, { month: 'long', day: 'numeric', weekday: 'long' }))
   const online = computed(() => connection.value === 'connected')
   const unread = computed(() => notices.value.filter(item => !item.read).length)
   const routeProgress = computed(() => (routeStep.value ?? 0) / 4 * 100)
   const remaining = computed(() => Math.round(selected.value.distance * (1 - routeProgress.value / 100)))
   const routeInstruction = computed(() => {
     if (routeStep.value === null)
-      return '选择一个地点，预览步行路线。'
-    return ['沿前方步道直行', '在下一个路口右转', '继续前往目标锚点', '目的地就在前方', `已到达${selected.value.name}`][routeStep.value]
+      return t('navigation.instruction.idle')
+    return t(`navigation.instruction.${routeStep.value as 0 | 1 | 2 | 3 | 4}`, { name: selected.value.name })
   })
 
-  function notify(title: string, detail: string) {
+  function notify(title: Message, detail: Message) {
     notices.value = [{
       id: ++sequence,
       title,
       detail,
-      time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
+      at: Date.now(),
       read: activeModule.value === 'notifications',
     }, ...notices.value].slice(0, 30)
   }
@@ -64,7 +77,7 @@ export function useSimulator() {
       scanProgress.value = Math.min(100, scanProgress.value + 5)
       if (scanProgress.value === 100) {
         cancelScan()
-        notify('空间扫描完成', `${scene.value.name}已识别 3 个模拟锚点，可选中锚点并开始导航。`)
+        notify({ key: 'notice.scanComplete.title' }, { key: 'notice.scanComplete.detail', params: { scene: sceneName() } })
       }
     }, 100)
   }
@@ -84,27 +97,27 @@ export function useSimulator() {
     scanProgress.value = 0
     pinned.value = false
     routeStep.value = null
-    notify('已切换模拟场景', `当前场景：${scene.value.name}。`)
+    notify({ key: 'notice.sceneChanged.title' }, { key: 'notice.sceneChanged.detail', params: { scene: sceneName() } })
   }
   function togglePin() {
     if (!online.value || scanProgress.value !== 100)
       return
     pinned.value = !pinned.value
-    notify(pinned.value ? '空间锚点已固定' : '空间锚点已释放', '锚点仅作用于当前模拟场景。')
+    notify({ key: pinned.value ? 'notice.anchorPinned.title' : 'notice.anchorReleased.title' }, { key: 'notice.anchor.detail' })
   }
   function startRoute() {
     if (!online.value)
       return
     routeStep.value = 0
     openModule('navigation')
-    notify('模拟导航已开始', `目的地：${selected.value.name}。使用「前进一步」演示行进过程。`)
+    notify({ key: 'notice.routeStarted.title' }, { key: 'notice.routeStarted.detail', params: { name: selectedName() } })
   }
   function advanceRoute() {
     if (!online.value || routeStep.value === null || routeStep.value >= 4)
       return
     routeStep.value++
     if (routeStep.value === 4)
-      notify('已到达目的地', `${selected.value.name}的模拟路线已完成。`)
+      notify({ key: 'notice.arrived.title' }, { key: 'notice.arrived.detail', params: { name: selectedName() } })
   }
   function cancelRoute() {
     routeStep.value = null
@@ -116,7 +129,7 @@ export function useSimulator() {
     pinned.value = false
     routeStep.value = null
     connection.value = next
-    notify(next === 'sleeping' ? '模拟设备已待机' : '模拟设备已断开', '扫描与导航已停止，摄像头和声音将关闭。')
+    notify({ key: next === 'sleeping' ? 'notice.sleeping.title' : 'notice.disconnected.title' }, { key: 'notice.suspended.detail' })
   }
   function connect() {
     if (connection.value === 'connected' || connection.value === 'connecting')
@@ -124,18 +137,16 @@ export function useSimulator() {
     connection.value = 'connecting'
     connectTimer = setTimeout(() => {
       connection.value = 'connected'
-      notify('模拟设备已连接', '视界已就绪，可以扫描空间或选择一个应用。')
+      notify({ key: 'notice.connected.title' }, { key: 'notice.connected.detail' })
     }, 900)
   }
   function tick() {
-    const now = new Date()
-    time.value = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
-    date.value = now.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' })
+    now.value = Date.now()
   }
   onMounted(() => {
     tick()
     clockTimer = setInterval(tick, 1000)
-    notify('欢迎进入 Augma', '这是本地设备模拟。地点、距离与扫描结果均为演示数据。')
+    notify({ key: 'notice.welcome.title' }, { key: 'notice.welcome.detail' })
   })
   onUnmounted(() => {
     cancelScan()
@@ -157,8 +168,8 @@ export function useSimulator() {
     routeInstruction,
     notices: readonly(notices),
     unread,
-    time: readonly(time),
-    date: readonly(date),
+    time,
+    date,
     scan,
     cancelScan,
     selectLandmark,

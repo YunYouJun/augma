@@ -1,20 +1,29 @@
 <script setup lang="ts">
-import { AgmButton, AgmDialog, AgmSlider, AgmSwitch } from 'augma'
+import type { Locale } from '../../i18n/locale'
+import { AgmButton, AgmDialog, AgmSelect, AgmSlider, AgmSwitch } from 'augma'
 import { shallowRef } from 'vue'
+import { localeNames, locales, resolveLocale, t } from '../../i18n/locale'
 
-defineProps<{ storageAvailable: boolean, reducedMotion: boolean }>()
-const emit = defineEmits<{ reset: [] }>()
+defineProps<{ storageAvailable: boolean, reducedMotion: boolean, locale: Locale, speechFeedbackSupported: boolean }>()
+const emit = defineEmits<{ reset: [], locale: [value: Locale] }>()
+const languages = locales.map(value => ({ value, label: localeNames[value] }))
 const opacity = defineModel<number>('opacity', { required: true })
 const dark = defineModel<boolean>('dark', { required: true })
 const focus = defineModel<boolean>('focus', { required: true })
 const mirror = defineModel<boolean>('mirror', { required: true })
 const depthMotion = defineModel<boolean>('depthMotion', { required: true })
 const curvedHud = defineModel<boolean>('curvedHud', { required: true })
+const speechFeedback = defineModel<boolean>('speechFeedback', { required: true })
 const resetOpen = shallowRef(false)
 function focusResetTrigger(event: MouseEvent) {
   // Safari does not focus a button on pointer click; the dialog needs its trigger focused.
   if (event.currentTarget instanceof HTMLElement)
     event.currentTarget.focus({ preventScroll: true })
+}
+function selectLocale(value: string | undefined) {
+  const next = resolveLocale(value)
+  if (next)
+    emit('locale', next)
 }
 function reset() {
   emit('reset')
@@ -25,24 +34,30 @@ function reset() {
 <template>
   <div class="feature-body">
     <div class="display-fields">
-      <AgmSlider v-model="opacity" label="面板不透明度" :min="60" />
-      <AgmSwitch v-model="dark" label="深色视界" />
-      <AgmSwitch v-model="focus" label="专注模式" />
-      <AgmSwitch v-model="mirror" label="镜像画面" />
+      <AgmSelect :model-value="locale" :label="t('settings.language')" :options="languages" @update:model-value="selectLocale" />
+      <AgmSlider v-model="opacity" :label="t('settings.opacity')" :min="60" />
+      <AgmSwitch v-model="dark" :label="t('settings.dark')" />
+      <AgmSwitch v-model="focus" :label="t('settings.focus')" />
+      <AgmSwitch v-model="mirror" :label="t('settings.mirror')" />
     </div>
     <fieldset class="visual-effects">
-      <legend>视界效果</legend>
-      <AgmSwitch v-model="depthMotion" label="景深动画" />
-      <p>移动鼠标体验前后景视差，浮窗展开时轻柔浮现。</p>
-      <AgmSwitch v-model="curvedHud" label="弧线视界" />
-      <p>将上下白线和底部图标排列为浅弧形。</p>
-      <p v-if="reducedMotion" class="motion-note" role="status">系统已开启减少动态效果，景深动画暂停；弧线外观仍可使用。</p>
+      <legend>{{ t('module.commands') }}</legend>
+      <AgmSwitch v-model="speechFeedback" :label="t('settings.speechFeedback')" :disabled="!speechFeedbackSupported" />
+      <p>{{ t(speechFeedbackSupported ? 'settings.speechFeedbackHint' : 'settings.speechFeedbackUnsupported') }}</p>
     </fieldset>
-    <p class="settings-hint">拖动应用面板标题可调整位置；聚焦标题后也可用方向键移动。专注模式收起场景锚点，保留当前应用。镜像仅作用于摄像头画面。</p>
-    <p class="settings-storage" role="status">{{ storageAvailable ? '显示与音量设置已自动保存在此浏览器。' : '当前浏览器无法保存设置，本次体验仍可正常使用。' }}</p>
-    <AgmDialog v-model:open="resetOpen" title="恢复默认设置" description="恢复面板位置、主题、声音、HUD 和视界效果的初始设置。当前模拟场景不变。">
-      <template #trigger><AgmButton class="full-button" variant="outline" @click="focusResetTrigger">恢复默认设置</AgmButton></template>
-      <template #footer><AgmButton variant="ghost" @click="resetOpen = false">取消</AgmButton><AgmButton @click="reset">确认恢复</AgmButton></template>
+    <fieldset class="visual-effects">
+      <legend>{{ t('settings.effects') }}</legend>
+      <AgmSwitch v-model="depthMotion" :label="t('settings.depthMotion')" />
+      <p>{{ t('settings.depthMotionHint') }}</p>
+      <AgmSwitch v-model="curvedHud" :label="t('settings.curvedHud')" />
+      <p>{{ t('settings.curvedHudHint') }}</p>
+      <p v-if="reducedMotion" class="motion-note" role="status">{{ t('settings.reducedMotion') }}</p>
+    </fieldset>
+    <p class="settings-hint">{{ t('settings.hint') }}</p>
+    <p class="settings-storage" role="status">{{ t(storageAvailable ? 'settings.storageSaved' : 'settings.storageUnavailable') }}</p>
+    <AgmDialog v-model:open="resetOpen" :title="t('settings.reset')" :description="t('settings.resetDescription')">
+      <template #trigger><AgmButton class="full-button" variant="outline" @click="focusResetTrigger">{{ t('settings.reset') }}</AgmButton></template>
+      <template #footer><AgmButton variant="ghost" @click="resetOpen = false">{{ t('settings.cancel') }}</AgmButton><AgmButton @click="reset">{{ t('settings.confirmReset') }}</AgmButton></template>
     </AgmDialog>
   </div>
 </template>

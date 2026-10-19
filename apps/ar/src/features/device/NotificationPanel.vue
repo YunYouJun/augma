@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DeviceNotice } from './types'
 import { AgmButton } from 'augma'
+import { formatTime, t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 
 defineProps<{ notices: readonly DeviceNotice[] }>()
@@ -9,12 +10,12 @@ const emit = defineEmits<{ clear: [] }>()
 
 <template>
   <div class="feature-body">
-    <p class="notification-note">设备操作记录仅保留在本次体验中。</p>
+    <p class="notification-note">{{ t('notifications.note') }}</p>
     <ol v-if="notices.length" class="notice-list">
-      <li v-for="notice in notices" :key="notice.id"><div><h3>{{ notice.title }}</h3><time>{{ notice.time }}</time></div><p>{{ notice.detail }}</p></li>
+      <li v-for="notice in notices" :key="notice.id"><div><h3>{{ t(notice.title) }}</h3><time :datetime="new Date(notice.at).toISOString()">{{ formatTime(notice.at) }}</time></div><p>{{ t(notice.detail) }}</p></li>
     </ol>
-    <div v-else class="empty-notices"><DeviceIcon name="notifications" /><h3>通知已清空</h3><p>扫描空间或开始导航后，新的操作记录会出现在这里。</p></div>
-    <AgmButton v-if="notices.length" variant="outline" class="full-button" @click="emit('clear')">清空通知</AgmButton>
+    <div v-else class="empty-notices"><DeviceIcon name="notifications" /><h3>{{ t('notifications.empty') }}</h3><p>{{ t('notifications.emptyHint') }}</p></div>
+    <AgmButton v-if="notices.length" variant="outline" class="full-button" @click="emit('clear')">{{ t('notifications.clear') }}</AgmButton>
   </div>
 </template>
 

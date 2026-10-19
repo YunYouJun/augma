@@ -13,8 +13,10 @@ struct DemoWebView: NSViewRepresentable {
   func makeNSView(context: Context) -> WKWebView {
     let configuration = WKWebViewConfiguration()
     let initialModule = selection?.rawValue ?? ""
+    // Hand the page the app's UI language so the embedded demo matches the native menus.
+    let appLocale = Bundle.main.preferredLocalizations.first ?? "zh-Hans"
     configuration.userContentController.addUserScript(WKUserScript(
-      source: "window.__AUGMA_DESKTOP_MODULE__ = '\(initialModule)';",
+      source: "window.__AUGMA_DESKTOP_MODULE__ = '\(initialModule)'; window.__AUGMA_DESKTOP_LOCALE__ = '\(appLocale)';",
       injectionTime: .atDocumentStart,
       forMainFrameOnly: true
     ))
@@ -53,12 +55,12 @@ struct DemoWebView: NSViewRepresentable {
     }
 
     guard let demoURL else {
-      loadError = "App 缺少资源目录，请运行 ./script/build_and_run.sh 重新构建。"
+      loadError = String(localized: "App 缺少资源目录，请运行 ./script/build_and_run.sh 重新构建。")
       return webView
     }
     let indexURL = demoURL.appendingPathComponent("index.html")
     guard FileManager.default.fileExists(atPath: indexURL.path) else {
-      loadError = "找不到内置 demo 页面，请运行 ./script/build_and_run.sh 重新构建。"
+      loadError = String(localized: "找不到内置 demo 页面，请运行 ./script/build_and_run.sh 重新构建。")
       return webView
     }
     webView.load(URLRequest(url: DemoResourceSchemeHandler.startURL))
@@ -127,8 +129,8 @@ struct DemoWebView: NSViewRepresentable {
     private var lastSelection: DemoModule?
     private var interpretationTask: Task<Void, Never>?
     private var interpretationGeneration = 0
-    private lazy var speech = SpeechCommandRecognizer { [weak self] type, text in
-      self?.sendSpeechEvent(type: type, text: text)
+    private lazy var speech = SpeechCommandRecognizer { [weak self] type, text, code in
+      self?.sendSpeechEvent(type: type, text: text, code: code)
     }
 
     init(_ parent: DemoWebView) {
@@ -173,9 +175,10 @@ struct DemoWebView: NSViewRepresentable {
       sendSpeechEvent(type: "config", text: nil, enabled: DeepSeekSettings.isReady)
     }
 
-    private func sendSpeechEvent(type: String, text: String?, enabled: Bool? = nil) {
+    private func sendSpeechEvent(type: String, text: String?, code: String? = nil, enabled: Bool? = nil) {
       var detail: [String: Any] = ["type": type]
       if let text { detail["text"] = text }
+      if let code { detail["code"] = code }
       if let enabled { detail["enabled"] = enabled }
       guard let data = try? JSONSerialization.data(withJSONObject: detail),
             let json = String(data: data, encoding: .utf8) else { return }
@@ -184,7 +187,7 @@ struct DemoWebView: NSViewRepresentable {
 
     private func interpret(_ text: String) {
       guard DeepSeekSettings.isReady, let key = DeepSeekKeychain.load() else {
-        sendSpeechEvent(type: "error", text: "请先在 Augma 设置中配置并开启 DeepSeek。")
+        sendSpeechEvent(type: "error", text: nil, code: "deepseekNotConfigured")
         return
       }
       interpretationTask?.cancel()
@@ -199,7 +202,11 @@ struct DemoWebView: NSViewRepresentable {
         } catch {
           guard let self, self.interpretationGeneration == session, !Task.isCancelled else { return }
           self.interpretationTask = nil
-          self.sendSpeechEvent(type: "error", text: error.localizedDescription)
+          if let failure = error as? DeepSeekCommandInterpreter.Failure {
+            self.sendSpeechEvent(type: "error", text: failure.detail, code: failure.code)
+          } else {
+            self.sendSpeechEvent(type: "error", text: error.localizedDescription, code: "deepseekRequest")
+          }
         }
       }
     }
@@ -255,10 +262,12 @@ struct DemoWebView: NSViewRepresentable {
           case "config": sendSpeechConfig()
           default: break
           }
-        } else if let body = message.body as? [String: Any],
-                  body["action"] as? String == "interpret",
-                  let text = body["text"] as? String {
-          interpret(text)
+        } else if let body = message.body as? [String: Any] {
+          switch body["action"] as? String {
+          case "start": Task { await speech.start(localeIdentifier: body["locale"] as? String) }
+          case "interpret": if let text = body["text"] as? String { interpret(text) }
+          default: break
+          }
         }
         return
       }

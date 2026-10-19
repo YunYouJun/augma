@@ -2,6 +2,7 @@
 import { AgmButton, AgmIconButton, AgmSlider } from 'augma'
 import { computed } from 'vue'
 import { soundscapes } from '../../composables/useSoundscape'
+import { t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 
 const { elapsed, duration, trackIndex } = defineProps<{ playing: boolean, busy: boolean, elapsed: number, duration: number, trackIndex: number, error: string, online: boolean }>()
@@ -17,19 +18,19 @@ const progress = computed(() => Math.round(elapsed))
     <div class="sound-art" :class="{ 'is-playing': playing }" aria-hidden="true">
       <span v-for="i in 4" :key="i" :style="{ '--i': i }" /><DeviceIcon name="audio" />
     </div>
-    <div class="track-title"><h3>{{ track.name }}</h3><p>{{ track.subtitle }}</p></div>
-    <AgmSlider :model-value="progress" label="播放进度" :max="duration" :disabled="!online" @update:model-value="emit('seek', $event)" />
+    <div class="track-title"><h3>{{ t(`sound.track.${track.id}.name`) }}</h3><p>{{ t(`sound.track.${track.id}.subtitle`) }}</p></div>
+    <AgmSlider :model-value="progress" :label="t('sound.progress')" :max="duration" :disabled="!online" @update:model-value="emit('seek', $event)" />
     <div class="track-time"><span>{{ formatTime(elapsed) }}</span><span>{{ formatTime(duration) }}</span></div>
     <div class="playback-controls">
-      <AgmIconButton label="上一首" :disabled="!online" @click="emit('track', (trackIndex + soundscapes.length - 1) % soundscapes.length)"><DeviceIcon name="previous" /></AgmIconButton>
-      <AgmButton :disabled="!online" :loading="busy" @click="playing ? emit('pause') : emit('play')"><DeviceIcon :name="playing ? 'pause' : 'play'" />{{ playing ? '暂停声音' : '播放声音' }}</AgmButton>
-      <AgmIconButton label="下一首" :disabled="!online" @click="emit('track', (trackIndex + 1) % soundscapes.length)"><DeviceIcon name="next" /></AgmIconButton>
+      <AgmIconButton :label="t('sound.previous')" :disabled="!online" @click="emit('track', (trackIndex + soundscapes.length - 1) % soundscapes.length)"><DeviceIcon name="previous" /></AgmIconButton>
+      <AgmButton :disabled="!online" :loading="busy" @click="playing ? emit('pause') : emit('play')"><DeviceIcon :name="playing ? 'pause' : 'play'" />{{ t(playing ? 'sound.pause' : 'sound.play') }}</AgmButton>
+      <AgmIconButton :label="t('sound.next')" :disabled="!online" @click="emit('track', (trackIndex + 1) % soundscapes.length)"><DeviceIcon name="next" /></AgmIconButton>
     </div>
-    <AgmSlider v-model="volume" label="音量" />
+    <AgmSlider v-model="volume" :label="t('sound.volume')" />
     <p v-if="error" class="ar-error" role="alert">{{ error }}</p>
-    <p class="feature-description">本地合成的轻柔和弦。离开页面或设备待机时，声音会自动暂停。</p>
-    <div class="sound-library" aria-label="声音列表">
-      <button v-for="(item, index) in soundscapes" :key="item.name" type="button" :disabled="!online" :aria-pressed="index === trackIndex" @click="emit('track', index)"><DeviceIcon :name="index === trackIndex && playing ? 'audio' : 'play'" />{{ item.name }}<small>02:00</small></button>
+    <p class="feature-description">{{ t('sound.description') }}</p>
+    <div class="sound-library" :aria-label="t('sound.library')">
+      <button v-for="(item, index) in soundscapes" :key="item.id" type="button" :disabled="!online" :aria-pressed="index === trackIndex" @click="emit('track', index)"><DeviceIcon :name="index === trackIndex && playing ? 'audio' : 'play'" />{{ t(`sound.track.${item.id}.name`) }}<small>02:00</small></button>
     </div>
   </div>
 </template>

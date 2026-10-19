@@ -2,7 +2,7 @@ import type { DisplaySettings } from '../features/device/types'
 import { onMounted, onUnmounted, reactive, shallowRef, watch } from 'vue'
 
 export const settingsKey = 'augma-device-settings-v1'
-const defaults: DisplaySettings = { opacity: 88, volume: 35, dark: false, showHud: true, mirror: false, focus: false, depthMotion: false, curvedHud: false }
+const defaults: DisplaySettings = { opacity: 88, volume: 35, dark: false, showHud: true, mirror: false, focus: false, depthMotion: false, curvedHud: false, speechFeedback: true }
 
 export function useDisplaySettings() {
   const settings = reactive<DisplaySettings>({ ...defaults })
@@ -16,7 +16,7 @@ export function useDisplaySettings() {
       const saved: unknown = JSON.parse(localStorage.getItem(settingsKey) || 'null')
       if (saved && typeof saved === 'object') {
         const data = saved as Record<string, unknown>
-        for (const key of ['dark', 'showHud', 'mirror', 'focus', 'depthMotion', 'curvedHud'] as const) {
+        for (const key of ['dark', 'showHud', 'mirror', 'focus', 'depthMotion', 'curvedHud', 'speechFeedback'] as const) {
           if (typeof data[key] === 'boolean')
             settings[key] = data[key]
         }

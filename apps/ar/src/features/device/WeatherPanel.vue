@@ -1,20 +1,21 @@
 <script setup lang="ts">
 import { shallowRef } from 'vue'
+import { t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 
-const city = shallowRef('北京')
-const examples = [{ city: '北京', temperature: '-3°C' }, { city: '上海', temperature: '18°C' }, { city: '东京', temperature: '22°C' }]
+const examples = [{ city: 'beijing', temperature: '-3°C' }, { city: 'shanghai', temperature: '18°C' }, { city: 'tokyo', temperature: '22°C' }] as const
+const city = shallowRef<typeof examples[number]['city']>('beijing')
 </script>
 
 <template>
   <div class="weather-widget">
     <div class="weather-symbol"><DeviceIcon name="weather-detail" /></div>
     <div class="weather-info">
-      <label class="agm-sr-only" for="weather-city">天气示例城市</label>
-      <select id="weather-city" v-model="city" aria-label="天气示例城市"><option v-for="item in examples" :key="item.city" :value="item.city">{{ item.city }}市</option></select>
+      <label class="agm-sr-only" for="weather-city">{{ t('weather.city') }}</label>
+      <select id="weather-city" v-model="city" :aria-label="t('weather.city')"><option v-for="item in examples" :key="item.city" :value="item.city">{{ t(`weather.city.${item.city}`) }}</option></select>
       <span class="weather-temperature">{{ examples.find(item => item.city === city)?.temperature }}</span>
     </div>
-    <p class="weather-note">天气示例 · 非实时数据</p>
+    <p class="weather-note">{{ t('weather.note') }}</p>
   </div>
 </template>
 
