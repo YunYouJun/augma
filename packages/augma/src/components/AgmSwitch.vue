@@ -14,6 +14,7 @@ const id = useId()
       :id="id"
       v-model="model"
       class="agm-switch"
+      :aria-label="label"
       :disabled="disabled"
       :name="name"
     >

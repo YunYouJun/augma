@@ -45,6 +45,12 @@ describe('component contracts', () => {
       'true',
     )
   })
+  it('keeps the switch name in sync when its label changes', async () => {
+    const wrapper = mount(AgmSwitch, { props: { label: '语音播报' } })
+    expect(wrapper.get('[role="switch"]').attributes('aria-label')).toBe('语音播报')
+    await wrapper.setProps({ label: 'Spoken feedback' })
+    expect(wrapper.get('[role="switch"]').attributes('aria-label')).toBe('Spoken feedback')
+  })
   it('retains field hints and external descriptions when validation changes', async () => {
     const wrapper = mount(AgmInput, {
       props: { id: 'name', label: '名称', hint: '用于识别设备' },
