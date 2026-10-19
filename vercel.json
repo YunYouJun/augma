@@ -4,5 +4,128 @@
   "installCommand": "npx --yes pnpm@12.5.1 install --frozen-lockfile",
   "buildCommand": "npx --yes pnpm@12.5.1 run build",
   "outputDirectory": "apps/site/.vitepress/dist",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/guide/",
+      "permanent": true
+    },
+    {
+      "source": "/components/card{/}?",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/components/panel",
+      "permanent": true
+    },
+    {
+      "source": "/components/:name(clock|menu|bottom-menu){/}?",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/showcase/",
+      "permanent": true
+    },
+    {
+      "source": "/components/color{/}?",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/design/",
+      "permanent": true
+    },
+    {
+      "source": "/components/:name(html|icon|indicator){/}?",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/guide/migration",
+      "permanent": true
+    },
+    {
+      "source": "/components/:name(button|dialog|input|select|toast|tooltip)/",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/components/:name",
+      "permanent": true
+    },
+    {
+      "source": "/guide/design{.html}?",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/design/",
+      "permanent": true
+    },
+    {
+      "source": "/guide/:page(link-start|details){.html}?",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/guide/migration",
+      "permanent": true
+    },
+    {
+      "source": "/hooks/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/guide/ar",
+      "permanent": true
+    },
+    {
+      "source": "/:path*/",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.augma.elpsy.cn"
+        }
+      ],
+      "destination": "https://augma.yyj.moe/:path*",
+      "permanent": true
+    }
+  ]
 }

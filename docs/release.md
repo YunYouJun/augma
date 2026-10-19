@@ -119,7 +119,9 @@ npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运
 | 旧 hooks / WebXR 文档 | `/guide/ar` |
 | 其余失效页面 | `/guide/migration`，避免误导为相同 API |
 
-这些域名不会随新站发布自动迁移。保留旧站归档，核对旧路径后设置逐路径 301 / 308。2026-10-02 已确认 `augma.elpsy.cn` 与新别名同属 Cloudflare Pages 的 `augma` 项目，旧域迁移应使用按主机名匹配的重定向规则；不要直接添加全站 `/` 重定向，否则会影响新域名。[Pages 的 `_redirects` 不支持域名级匹配](https://developers.cloudflare.com/pages/configuration/redirects/)。
+`docs.augma.elpsy.cn` 由 Vercel 托管（CNAME 指向 `cname.vercel-dns.com`），Vercel 生产环境随 `main` 部署。根目录 `vercel.json` 的 `redirects` 只匹配该主机名，按上表 308 跳转：0.1 的 card、clock / menu / bottom-menu、color、hooks、link-start / details 等页面映射到新入口，保留的组件页去掉末尾斜杠，其余路径原样转到 `https://augma.yyj.moe`，查询字符串保留。规则用 path-to-regexp 6 语法编写，与 Vercel 一致。
+
+`augma.elpsy.cn` 是 Cloudflare Pages 项目 `augma` 的另一个自定义域名，[Pages 的 `_redirects` 不支持域名级匹配](https://developers.cloudflare.com/pages/configuration/redirects/)，需要在 `elpsy.cn` zone 添加 Single Redirect：主机名等于 `augma.elpsy.cn` 时，301 跳转到静态地址 `https://augma.yyj.moe/ar/`（旧 Client 只有根页面）。不要添加不带主机名条件的全站重定向，否则会影响新域名。
 
 Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run update` 构建命令，锁定 pnpm 版本并输出完整站点（含 `/ar/`）；Git 预览部署用于验证，不代表旧域迁移或生产发布已完成。[Vercel 仓库配置会覆盖控制台构建设置](https://vercel.com/docs/project-configuration/vercel-json)。
 
@@ -151,7 +153,7 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - [ ] 按上文「首次发布 0.2.0」发布：推送 `v0.2.0` 标签触发工作流，用该次 artifact 手动首发 Core 并为它配置 trusted publisher，再对同一次运行 Re-run failed jobs 发布 `augma`。
 - [ ] `v0.2.0` 的 GitHub Release 附带 `Augma-macOS.zip` 后，从 `/guide/macos` 下载，在 Apple 芯片与 Intel Mac 上按页面步骤首次打开。
 - [ ] `augma.yyj.moe` 完成公网验收，从官方 registry 安装 `augma@0.2.0` 并验证 Registry 安装；随后更新 README、快速开始和 CHANGELOG 中的待发布状态。
-- [ ] 旧域 `augma.elpsy.cn`、`docs.augma.elpsy.cn` 按主机名逐路径设置 301 / 308。
+- [ ] 旧域跳转：`docs.augma.elpsy.cn` 由 `vercel.json` 按路径 308 到新域（部署后用 curl 核对）；`augma.elpsy.cn` 需在 Cloudflare 添加 Single Redirect 到 `/ar/`。
 - [ ] 实机摄像头与 immersive-ar 验收；人工检查 macOS 原生界面（HUD 浮窗、沉浸控制条与开场动画）。
 - [x] HudGauge 进入 Registry（第 7 个条目）；Registry 校验按目录自动计数。
 - [ ] 以上完成后制作宣传视频：从正式站点实录首页入场、组件动效、空间模式、AR 演示与 macOS 沉浸模式。不使用《刀剑神域》的片段、标志、角色或配乐；提及作品时只说明灵感来源，并附上与版权方无关联的声明。
