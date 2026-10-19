@@ -20,8 +20,7 @@ pnpm preview
 ## 分支与发布顺序
 
 - `main` 是唯一的长期分支，也是默认分支和 Cloudflare Pages 的生产分支，推送即部署。功能分支通过 PR 合入 `main`；CI 覆盖 `main` 的 push 与所有 PR。2026-10-19 起不再使用 `dev`。
-- `main` 是 Cloudflare Pages 的生产分支。不要在 npm 包尚不可安装时把新的安装文档合入 `main`；普通 Git 推送会触发站点部署，不能用它代替 npm 发布。
-- 从通过检查的 `main` 提交准备产物；正式发布使用该提交的 `v0.2.0` 标签。先发布 Core，再发布 Vue，然后验证公开安装。
+- 正式发布由 `v*` 标签触发：在 `main` 上运行 `pnpm release`（bumpp）更新版本、提交 `chore: release vX.Y.Z`、打标签并推送。先发布 Core，再发布 Vue，然后验证公开安装。
 - 0.2 站点已于 2026-10-19 先于 npm 发布上线：在 `0.2.0` 发布之前，站点上的 `pnpm add augma` 会安装 API 不兼容的 0.1.1，Registry 条目依赖的 `@augma/core@0.2.0` 也无法安装。应尽快完成 npm 发布。
 - 合并生产分支时保留发布提交历史，不使用 squash / rebase 改写已打标签的提交。EdgeOne 使用该发布工作流保存的站点 artifact，两个站点保持相同内容。
 
@@ -37,29 +36,51 @@ pnpm release:verify
 
 `release-artifacts/` 包含两个 `.tgz` 和 `manifest.json`。清单记录版本、完整 Git 提交 SHA、固定包名与 SHA-512 integrity；目录被 Git 忽略。验证拒绝不同提交、修改过的 tarball、缺失包或额外文件。`release:pack` 只打包，必须先成功执行 `pnpm check`，不会发布或创建版本标签。
 
-GitHub Actions 的 **Prepare or publish packages**（`release.yml`）默认 `publish=false`，可在开发或发布准备分支手动运行。它完成检查后保存包与站点 artifact，名称包含提交 SHA、运行 ID 与尝试次数。准备任务不使用 npm environment 或写权限。
+GitHub Actions 的 **Prepare or publish packages**（`release.yml`）在推送 `v*` 标签时自动准备并发布；手动运行默认 `publish=false`，可在 `main` 或功能分支演练。它完成检查后保存包与站点 artifact，名称包含提交 SHA、运行 ID 与尝试次数。准备任务不使用 npm environment 或写权限。
 
 ## npm 正式发布
 
-目标版本为 `0.2.0`。根 package.json、Core、Vue 包和 `scripts/catalog.mjs` 必须保持一致；变更说明维护在 [CHANGELOG](../CHANGELOG.md)。
+目标版本为 `0.2.0`。版本号写在 5 个文件里：根目录、Core、Vue 的 package.json，`scripts/catalog.mjs` 和 `packages/augma/src/index.ts`。`bump.config.ts` 列出全部 5 个文件，`pnpm release` 会一起更新；不一致时 `pnpm generate` 与 `check-release` 报错。变更说明维护在 [CHANGELOG](../CHANGELOG.md)，bumpp 不会修改它。
 
-1. 核对 `augma` 维护权限及 `@augma` scope / `@augma/core` 创建与发布权限。用 `npm whoami --registry=https://registry.npmjs.org` 验证登录；不要把 Token 或验证码写入仓库。
-2. 两个包分别配置 npm trusted publisher：GitHub 仓库 `YunYouJun/augma`、工作流文件 `release.yml`、environment `npm`，并允许直接 `npm publish`。首次注册 `@augma/core` 若无法预配 trusted publisher，应由维护者使用已验证 tarball 完成注册，然后配置后续 OIDC 发布。
-3. 在 GitHub 配置匹配的 `npm` environment。当前工作流使用 GitHub 托管 runner 和 `id-token: write`；发布前会检查 npm CLI 至少为 11.5.1。
-4. 确认发布提交通过检查，再创建匹配的 `v0.2.0` 标签。在该标签上运行 **Prepare or publish packages**，明确设置 `publish=true`。非匹配标签会在构建前失败。
-5. 发布任务下载本次准备任务的原始 tarball，验证提交与摘要后按 Core → Vue 顺序发布，不重新构建。完成后自动核对公开版本、`latest` 和 tarball integrity。
-6. 在干净目录用官方 registry 安装 `augma@0.2.0`、构建最小 Vue 项目，再用正式域名执行 Registry 安装验证。只有此时才能宣布公开安装可用。
+发布使用 npm Trusted Publishing（OIDC），仓库不保存 npm token。发布任务申请 `id-token: write`，绑定 GitHub environment `npm`（只允许 `v*` 标签部署），要求 npm CLI 不低于 11.5.1，并附带 provenance。[npm 官方 trusted publishing 文档](https://docs.npmjs.com/trusted-publishers/) 要求在包设置中配置仓库、工作流与 environment；仓库工作流文件本身不能代替 npm 端授权。
 
-[npm 官方 trusted publishing 文档](https://docs.npmjs.com/trusted-publishers/) 要求在包设置中配置 workflow、可选 environment 及允许的操作；仓库工作流文件本身不能代替 npm 端授权。
+`scripts/publish-artifacts.mjs` 在发布任何包之前，逐个查询 registry 上的同版本：
 
-### 首次注册或部分发布失败
+- 不存在：按 Core → Vue 顺序发布本次验证过的 tarball。
+- 已存在且 integrity 与清单一致：跳过。用于重跑失败的任务，或某个包已手动首发。
+- 已存在但 integrity 不同：在发布任何包之前报错。不能覆盖 npm 上已存在的版本，核查来源后改用新版本号。
 
-npm 发布没有跨包事务。Core 成功而 Vue 失败时，不要直接重跑整个发布任务：
+### 首次发布 0.2.0
 
-1. 保留该次工作流的包 artifact，将清单和两个包下载到对应提交的 `release-artifacts/`。
-2. 运行 `pnpm release:verify`；对照 `npm view @augma/core@0.2.0 dist.integrity --registry=https://registry.npmjs.org` 与清单，确认已发布包完全一致。
-3. 维护者在本地登录后，仅发布尚未发布的 tarball。例如 Vue 未发布时运行 `npm publish release-artifacts/augma-0.2.0.tgz --access public --registry=https://registry.npmjs.org`。本地恢复发布不声明 GitHub OIDC provenance。
-4. 两包发布完成后运行 `pnpm release:check-published`，再继续公网安装验收。如果同版本的公开 integrity 与清单不同，停止并核查；不能覆盖 npm 上已存在的版本。
+`augma` 已在 npm 上（0.1.1），`@augma/core` 尚未注册。npm 通常只能为已存在的包配置 trusted publisher，所以 Core 的第一个版本由维护者手动发布，并且必须使用工作流打出的同一个 tarball：在本机重新打包可能改变压缩字节和 integrity，工作流就会拒绝跳过。若届时 npm 已支持为未注册的包预先配置 trusted publisher，直接给两个包配置后运行一次即可，跳过第 4–6 步。
+
+1. 在 npm 创建 `augma` 组织（提供 `@augma` scope），确认自己是 `augma` 包的维护者。用 `npm whoami --registry=https://registry.npmjs.org` 验证登录；不要把 token 或验证码写入仓库。
+2. 在 npmjs.com 的 `augma` 包设置中添加 Trusted Publisher：GitHub Actions，owner `YunYouJun`，仓库 `augma`，工作流 `release.yml`，environment `npm`。
+3. 版本号已是 0.2.0，不需要 bumpp：在通过检查的 `main` 提交上执行 `git tag v0.2.0 && git push origin v0.2.0`。标签推送会自动运行 **Prepare or publish packages**。准备任务通过后，发布任务会因 Core 尚无授权而失败；Core 排在第一位，此时不会发布任何包。
+4. 把这次运行的 `augma-packages-…` artifact 下载到该标签 checkout 的 `release-artifacts/`，运行 `pnpm release:verify`，再在本地登录后只发布 Core：`npm publish release-artifacts/augma-core-0.2.0.tgz --access public --registry=https://registry.npmjs.org`。这次手动发布不带 provenance。
+5. 等 `npm view @augma/core@0.2.0 dist.integrity --registry=https://registry.npmjs.org` 返回与 `manifest.json` 相同的值，再为 `@augma/core` 添加同样的 Trusted Publisher。
+6. 回到第 3 步那次运行，选择 **Re-run failed jobs**（不要选 Re-run all jobs，以免重新打包）。发布任务复用同一个 artifact，跳过 Core，通过 OIDC 发布 `augma` 并附带 provenance，然后自动核对公开版本、`latest` 和 integrity。
+7. 在干净目录用官方 registry 安装 `augma@0.2.0`、构建最小 Vue 项目，再用正式域名执行 Registry 安装验证。只有此时才能宣布公开安装可用。
+
+### 之后的版本
+
+两个包都配置好 trusted publisher 后：
+
+1. 把本次变更写进 CHANGELOG 并提交到 `main`，在本地运行 `pnpm check`。
+2. 在 `main` 上运行 `pnpm release` 并选择版本号。bumpp 更新 5 个版本文件，提交 `chore: release vX.Y.Z`，创建同名标签并推送。
+3. 标签推送自动触发发布工作流：完整检查、打包，再通过 OIDC 依次发布 Core 和 Vue，最后核对公开版本。失败时对同一次运行选择 **Re-run failed jobs**，已发布且一致的包会被跳过。
+
+手动运行工作流且保持 `publish=false` 时只检查和打包，可以随时演练。
+
+### 部分发布失败
+
+npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运行选择 **Re-run failed jobs**：发布任务跳过 integrity 一致的 Core，只发布 Vue。
+
+工作流不可用时的手动恢复：
+
+1. 把该次运行的 artifact 下载到对应提交的 `release-artifacts/`，运行 `pnpm release:verify`，并用 `npm view <包名>@0.2.0 dist.integrity --registry=https://registry.npmjs.org` 确认已发布的包与清单一致。
+2. 在本地登录后只发布尚未发布的 tarball，例如 `npm publish release-artifacts/augma-0.2.0.tgz --access public --registry=https://registry.npmjs.org`。本地发布不带 provenance。
+3. 运行 `pnpm release:check-published`，再继续公网验收。
 
 ## 主域名与站点
 
@@ -123,8 +144,9 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - [x] 2026-10-19 的动效与 HudGauge 改动合入 `main`；`dev` 与 `codex/*` 分支已清理，默认分支改为 `main`。
 - [ ] 确认 `main` 的 CI、Cloudflare Pages 部署结果，并按需用工作流产物同步 EdgeOne。
 - [x] 用 `scripts/capture-media.mjs` 重新生成 README 截图、OG 图与 AR 录屏：README 媒体改为 WebP，OG 图为 JPEG，截图冻结在动画落定的同一时刻；删除未引用的深色与移动端截图。临时截图贴在 issue / PR，不提交到仓库。
-- [ ] npm 准备：确认 `augma` 维护权限，创建 `@augma` scope，为两个包配置 trusted publisher，并在 GitHub 创建 `npm` environment。
-- [ ] 在通过检查的 `main` 提交上创建 `v0.2.0` 标签，以 `publish=true` 运行发布工作流（先 Core 后 Vue）。
+- [x] 接入 bumpp：`pnpm release` 更新 5 个版本文件并推送 `v*` 标签，标签自动触发发布；发布前查询 registry，跳过已发布且一致的版本，不一致即停止。
+- [ ] npm 准备：在 npm 创建 `augma` 组织，确认 `augma` 维护权限并为它配置 trusted publisher。GitHub 的 `npm` environment 已存在，只允许 `v*` 标签部署。
+- [ ] 按上文「首次发布 0.2.0」发布：推送 `v0.2.0` 标签触发工作流，用该次 artifact 手动首发 Core 并为它配置 trusted publisher，再对同一次运行 Re-run failed jobs 发布 `augma`。
 - [ ] 两个域名完成公网验收，从官方 registry 安装 `augma@0.2.0` 并验证 Registry 安装；随后更新 README、快速开始和 CHANGELOG 中的待发布状态。
 - [ ] 旧域 `augma.elpsy.cn`、`docs.augma.elpsy.cn` 按主机名逐路径设置 301 / 308。
 - [ ] 实机摄像头与 immersive-ar 验收；人工检查 macOS 原生界面（HUD 浮窗、沉浸控制条与开场动画）。

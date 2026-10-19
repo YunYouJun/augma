@@ -1,5 +1,11 @@
 name: Prepare or publish packages
+# A pushed v* tag (`pnpm release` runs bumpp: bump, commit, tag, push) prepares and
+# publishes over npm trusted publishing (OIDC). A manual run only prepares artifacts
+# unless `publish` is set on a matching tag.
 on:
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
       publish:
@@ -24,7 +30,7 @@ jobs:
         with:
           node-version-file: .node-version
       - name: Require the version tag before publishing
-        if: inputs.publish
+        if: github.event_name == 'push' || inputs.publish
         run: node scripts/check-release.mjs
       - name: Verify public versions without publishing
         run: node scripts/check-release.mjs --prepare
@@ -49,7 +55,7 @@ jobs:
           if-no-files-found: error
   publish:
     needs: prepare
-    if: inputs.publish
+    if: github.event_name == 'push' || inputs.publish
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment: npm
@@ -73,9 +79,9 @@ jobs:
       - name: Verify npm supports trusted publishing
         run: |
           node --input-type=module -e "import { execFileSync } from 'node:child_process'; const [major, minor, patch] = execFileSync('npm', ['--version'], { encoding: 'utf8' }).trim().split('.').map(Number); if (major < 11 || (major === 11 && (minor < 5 || (minor === 5 && patch < 1)))) throw new Error('npm 11.5.1 or newer is required for trusted publishing')"
+      # Skips a version that is already public with the same integrity (re-runs, a
+      # hand-published first version) and fails on any other existing tarball.
       - name: Publish Core then Vue via trusted publishing
-        run: |
-          npm publish release-artifacts/augma-core-*.tgz --access public --provenance
-          npm publish release-artifacts/augma-[0-9]*.tgz --access public --provenance
+        run: node scripts/publish-artifacts.mjs
       - name: Verify public package versions and integrity
         run: node scripts/check-published.mjs

@@ -10,6 +10,7 @@ import process from 'node:process'
 import { test } from 'node:test'
 import { version } from '../../scripts/catalog.mjs'
 import { verifyPublishedMetadata } from '../../scripts/check-published.mjs'
+import { publishAction, publishArtifacts } from '../../scripts/publish-artifacts.mjs'
 import { releasePackages, verifyArtifacts } from '../../scripts/release-artifacts.mjs'
 
 const commit = 'a'.repeat(40)
@@ -68,4 +69,57 @@ test('prepare mode permits branches but publishing requires the exact version ta
   assert.notEqual(run('refs/heads/main').status, 0)
   assert.notEqual(run('refs/tags/v9.9.9').status, 0)
   assert.notEqual(run('refs/heads/main', ['--unknown']).status, 0)
+})
+
+// `onNpm` maps a package name to the integrity already public; 'same' means the verified artifact.
+function registry(manifest, onNpm) {
+  return async (name) => {
+    if (!(name in onNpm))
+      return {}
+    const integrity = onNpm[name] === 'same' ? manifest.packages.find(pkg => pkg.name === name).integrity : onNpm[name]
+    return { versions: { [version]: { name, version, dist: { integrity } } } }
+  }
+}
+async function publishWith(t, onNpm) {
+  const { directory, manifest } = await fixture(t)
+  const published = []
+  const run = publishArtifacts(directory, commit, {
+    fetchMetadata: registry(manifest, onNpm),
+    publish: file => published.push(file.slice(directory.length + 1)),
+    log: () => {},
+  })
+  return { run, published, manifest }
+}
+
+test('publish decision: absent publishes, identical skips, a different tarball fails', async (t) => {
+  const { manifest } = await fixture(t)
+  const pkg = manifest.packages[0]
+  assert.equal(publishAction({}, pkg), 'publish')
+  assert.equal(publishAction({ versions: { '0.1.1': {} } }, pkg), 'publish')
+  assert.equal(publishAction({ versions: { [version]: { dist: { integrity: pkg.integrity } } } }, pkg), 'skip')
+  assert.throws(() => publishAction({ versions: { [version]: { dist: { integrity: 'sha512-different' } } } }, pkg), /different tarball/)
+})
+
+test('first release publishes Core before Vue', async (t) => {
+  const { run, published } = await publishWith(t, {})
+  assert.deepEqual((await run).map(step => step.action), ['publish', 'publish'])
+  assert.deepEqual(published, releasePackages.map(pkg => pkg.filename))
+})
+
+test('a hand-published Core with the same integrity is skipped and Vue still publishes', async (t) => {
+  const { run, published } = await publishWith(t, { '@augma/core': 'same' })
+  assert.deepEqual(await run, [{ name: '@augma/core', action: 'skip' }, { name: 'augma', action: 'publish' }])
+  assert.deepEqual(published, [releasePackages[1].filename])
+})
+
+test('a mismatched public tarball stops the release before anything is published', async (t) => {
+  const { run, published } = await publishWith(t, { augma: 'sha512-different' })
+  await assert.rejects(run, /augma@.* different tarball/)
+  assert.deepEqual(published, [])
+})
+
+test('re-running after a complete release publishes nothing', async (t) => {
+  const { run, published } = await publishWith(t, { '@augma/core': 'same', 'augma': 'same' })
+  assert.deepEqual((await run).map(step => step.action), ['skip', 'skip'])
+  assert.deepEqual(published, [])
 })

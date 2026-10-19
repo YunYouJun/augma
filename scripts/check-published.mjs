@@ -14,16 +14,21 @@ export function verifyPublishedMetadata(metadata, pkg) {
   assert.equal(metadata['dist-tags']?.latest, pkg.version, `${pkg.name}: latest does not point to the release`)
 }
 
+/** Public registry metadata for a package; an unpublished package reads as `{}`. */
+export async function fetchRegistryMetadata(name) {
+  const response = await fetch(`https://registry.npmjs.org/${encodeURIComponent(name)}`, {
+    signal: AbortSignal.timeout(15000),
+    headers: { 'Cache-Control': 'no-cache' },
+  })
+  assert(response.ok || response.status === 404, `${name}: registry returned HTTP ${response.status}`)
+  return response.ok ? response.json() : {}
+}
+
 async function check() {
   const manifest = await verifyArtifacts(resolve('release-artifacts'), currentCommit())
   for (const pkg of manifest.packages) {
     for (let attempt = 0; ; attempt++) {
-      const response = await fetch(`https://registry.npmjs.org/${encodeURIComponent(pkg.name)}`, {
-        signal: AbortSignal.timeout(15000),
-        headers: { 'Cache-Control': 'no-cache' },
-      })
-      assert(response.ok || response.status === 404, `${pkg.name}: registry returned HTTP ${response.status}`)
-      const metadata = response.ok ? await response.json() : {}
+      const metadata = await fetchRegistryMetadata(pkg.name)
       if (metadata.versions?.[pkg.version] || attempt === 5) {
         verifyPublishedMetadata(metadata, pkg)
         break
