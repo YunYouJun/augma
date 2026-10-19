@@ -31,6 +31,8 @@ if [[ "$MODE" == "--package" ]]; then
 else
   pkill -x "$APP_NAME" >/dev/null 2>&1 || true
 fi
+# The AR app imports the built augma package; build it from the current sources first.
+pnpm build:lib
 pnpm --filter @augma/ar exec vite build --base ./
 swift build "${BUILD_FLAGS[@]}" --product "$APP_NAME"
 BUILD_DIR="$(swift build "${BUILD_FLAGS[@]}" --show-bin-path)"
