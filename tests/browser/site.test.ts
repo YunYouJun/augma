@@ -292,3 +292,22 @@ test('home shows install command, release line and AR demo entry', async ({ page
   await expect(page.locator('.device-stage')).toHaveCount(0)
   await expect(page.getByRole('heading', { name: '从一个按钮，到一整个视界' })).toHaveCount(0)
 })
+
+test('hero HUD rings stay concentric while they spin', async ({ page }) => {
+  await page.goto('/')
+  const offsets = await page.evaluate(() => {
+    // Freeze every layer mid-spin; a wrong transform-origin swings the rings off center.
+    for (const animation of document.querySelector('.hud-orbit')!.getAnimations({ subtree: true })) {
+      animation.pause()
+      animation.currentTime = 9000
+    }
+    const svg = document.querySelector('.hud-orbit svg')!.getBoundingClientRect()
+    return [...document.querySelectorAll('.hud-orbit-layer circle')].map((circle) => {
+      const box = circle.getBoundingClientRect()
+      return Math.hypot(box.x + box.width / 2 - svg.x - svg.width / 2, box.y + box.height / 2 - svg.y - svg.height / 2)
+    })
+  })
+  expect(offsets).toHaveLength(5)
+  for (const offset of offsets)
+    expect(offset).toBeLessThan(1)
+})
