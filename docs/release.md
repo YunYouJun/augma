@@ -57,7 +57,7 @@ GitHub Actions 的 **Prepare or publish packages**（`release.yml`）在推送 `
 1. 在 npm 创建 `augma` 组织（提供 `@augma` scope），确认自己是 `augma` 包的维护者。用 `npm whoami --registry=https://registry.npmjs.org` 验证登录；不要把 token 或验证码写入仓库。
 2. 在 npmjs.com 的 `augma` 包设置中添加 Trusted Publisher：GitHub Actions，owner `YunYouJun`，仓库 `augma`，工作流 `release.yml`，environment `npm`。
 3. 版本号已是 0.2.0，不需要 bumpp：在通过检查的 `main` 提交上执行 `git tag v0.2.0 && git push origin v0.2.0`。标签推送会自动运行 **Prepare or publish packages**。准备任务通过后，发布任务会因 Core 尚无授权而失败；Core 排在第一位，此时不会发布任何包。
-4. 把这次运行的 `augma-packages-…` artifact 下载到该标签 checkout 的 `release-artifacts/`，运行 `pnpm release:verify`，再在本地登录后只发布 Core：`npm publish release-artifacts/augma-core-0.2.0.tgz --access public --registry=https://registry.npmjs.org`。这次手动发布不带 provenance。
+4. 把这次运行的 `augma-packages-…` artifact 下载到该标签 checkout 的 `release-artifacts/`，运行 `pnpm release:verify`，再在本地登录后只发布 Core：`npm publish ./release-artifacts/augma-core-0.2.0.tgz --access public --registry=https://registry.npmjs.org`。这次手动发布不带 provenance。tarball 路径必须以 `./` 开头，否则 npm 会把 `release-artifacts/…` 当成 GitHub 仓库简写。
 5. 等 `npm view @augma/core@0.2.0 dist.integrity --registry=https://registry.npmjs.org` 返回与 `manifest.json` 相同的值，再为 `@augma/core` 添加同样的 Trusted Publisher。
 6. 回到第 3 步那次运行，选择 **Re-run failed jobs**（不要选 Re-run all jobs，以免重新打包）。发布任务复用同一个 artifact，跳过 Core，通过 OIDC 发布 `augma` 并附带 provenance，然后自动核对公开版本、`latest` 和 integrity。
 7. 在干净目录用官方 registry 安装 `augma@0.2.0`、构建最小 Vue 项目，再用正式域名执行 Registry 安装验证。只有此时才能宣布公开安装可用。
@@ -79,7 +79,7 @@ npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运
 工作流不可用时的手动恢复：
 
 1. 把该次运行的 artifact 下载到对应提交的 `release-artifacts/`，运行 `pnpm release:verify`，并用 `npm view <包名>@0.2.0 dist.integrity --registry=https://registry.npmjs.org` 确认已发布的包与清单一致。
-2. 在本地登录后只发布尚未发布的 tarball，例如 `npm publish release-artifacts/augma-0.2.0.tgz --access public --registry=https://registry.npmjs.org`。本地发布不带 provenance。
+2. 在本地登录后只发布尚未发布的 tarball，例如 `npm publish ./release-artifacts/augma-0.2.0.tgz --access public --registry=https://registry.npmjs.org`。本地发布不带 provenance。
 3. 运行 `pnpm release:check-published`，再继续公网验收。
 
 ## macOS 客户端
