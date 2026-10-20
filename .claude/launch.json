@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@augma/site", "dev"],
+      "port": 3002
+    },
+    {
+      "name": "ar",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@augma/ar", "dev"],
+      "port": 3003
+    }
+  ]
+}
