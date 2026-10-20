@@ -19,7 +19,7 @@ Requires macOS 15 or later, on Macs with Apple silicon or Intel processors. Earl
 - **Voice commands**: click the microphone at the top left or press `⌘⇧V`, then say a command such as "open the map" or "start navigation", in English, Chinese or Japanese. The first time, macOS asks for microphone and speech recognition permission.
 - **Languages**: menus and settings follow the macOS language (简体中文, English, 日本語); you can pick a language for Augma alone in System Settings → General → Language & Region → Applications. The demo interface's language can also be switched in its Settings panel.
 
-The camera and WebXR depend on WebKit's support for local pages; the simulated interface does not need those permissions. The optional DeepSeek command understanding needs your own API key; see the [app README](https://github.com/YunYouJun/augma/tree/main/apps/mac).
+The camera and WebXR depend on WebKit's support for local pages; the simulated interface does not need those permissions. The optional DeepSeek assistant, which answers questions or runs demo actions, needs your own API key; see the [app README](https://github.com/YunYouJun/augma/tree/main/apps/mac).
 
 ## Build from source
 

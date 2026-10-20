@@ -44,9 +44,9 @@
 "设置" = "Settings";
 "语音指令" = "Voice Commands";
 "设备" = "Device";
-"指令理解" = "Command Understanding";
-"使用 DeepSeek 理解未匹配的指令" = "Use DeepSeek to understand unmatched commands";
-"开启后，只有本地规则无法识别的指令文字会发送给 DeepSeek。云端只能选择演示版已有操作；API 调用可能产生费用。" = "When on, only command text that local rules cannot recognize is sent to DeepSeek. The cloud can only choose actions that exist in this demo, and API calls may incur charges.";
+"DeepSeek 助手" = "DeepSeek Assistant";
+"使用 DeepSeek 助手回答未匹配的指令" = "Use the DeepSeek assistant for unmatched commands";
+"开启后，本地规则无法识别的指令和问题会连同最近几轮对话发送给 DeepSeek。助手用语音回答，或从演示版已有操作中选择一项执行；API 调用可能产生费用。" = "When on, commands and questions the local rules cannot recognize are sent to DeepSeek with the last few exchanges. The assistant answers aloud or runs one of the actions in this demo, and API calls may incur charges.";
 "输入新密钥以替换现有密钥" = "Enter a new key to replace the current one";
 "输入 API Key" = "Enter API Key";
 "保存密钥" = "Save Key";

@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { ShortcutHint, ShortcutId } from './shortcuts'
 import { shallowRef, useTemplateRef } from 'vue'
 import { t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 
-defineProps<{ curved: boolean, time: string, fullscreen: boolean, fullscreenSupported: boolean, dark: boolean, unread: number, cameraLive: boolean }>()
+const props = defineProps<{ curved: boolean, time: string, fullscreen: boolean, fullscreenSupported: boolean, dark: boolean, unread: number, cameraLive: boolean, shortcuts: Partial<Record<ShortcutId, ShortcutHint>> }>()
 const emit = defineEmits<{
   commands: [trigger: HTMLElement]
   fullscreen: []
@@ -15,6 +16,15 @@ const emit = defineEmits<{
 }>()
 const expanded = shallowRef(false)
 const menuTrigger = useTemplateRef<HTMLButtonElement>('menuTrigger')
+const tip = (label: string, id: ShortcutId) => props.shortcuts[id] ? `${label} · ${props.shortcuts[id].label}` : label
+function collapse(event: KeyboardEvent) {
+  if (!expanded.value)
+    return
+  // Escape closes the menu only, not the open app behind it.
+  event.stopPropagation()
+  expanded.value = false
+  menuTrigger.value?.focus()
+}
 function open(app: 'settings' | 'notifications' | 'device') {
   expanded.value = false
   if (app === 'settings')
@@ -28,21 +38,21 @@ function open(app: 'settings' | 'notifications' | 'device') {
 
 <template>
   <header class="system-bar" :aria-label="t('systemBar.label')">
-    <button type="button" class="orb-button voice-button" :aria-label="t('module.commands')" :data-tooltip="t('module.commands')" @click="emit('commands', $event.currentTarget as HTMLElement)"><DeviceIcon name="microphone" /></button>
+    <button type="button" class="orb-button voice-button" :aria-label="t('module.commands')" :data-tooltip="tip(t('module.commands'), 'voice')" :aria-keyshortcuts="shortcuts.voice?.aria" @click="emit('commands', $event.currentTarget as HTMLElement)"><DeviceIcon name="microphone" /></button>
     <div class="system-clock">
       <time>{{ time }}</time>
       <svg v-if="curved" class="system-arc" viewBox="0 0 1000 32" preserveAspectRatio="none" aria-hidden="true"><path d="M0 2 Q500 58 1000 2" /></svg>
       <div v-else class="system-rule" />
     </div>
-    <div class="system-menu" @keydown.esc="expanded = false">
+    <div class="system-menu" @keydown.esc="collapse">
       <button ref="menuTrigger" type="button" class="orb-button" :aria-label="t('systemBar.menu')" :data-tooltip="t('systemBar.menu')" :aria-expanded="expanded" aria-controls="system-actions" @click="expanded = !expanded"><DeviceIcon :name="expanded ? 'menu-open' : 'menu'" /></button>
       <div v-if="expanded" id="system-actions" class="system-actions">
-        <button v-if="fullscreenSupported" type="button" class="orb-button" :aria-label="t(fullscreen ? 'systemBar.exitFullscreen' : 'systemBar.enterFullscreen')" :data-tooltip="t(fullscreen ? 'systemBar.exitFullscreen' : 'systemBar.enterFullscreen')" @click="emit('fullscreen')"><DeviceIcon name="expand" /></button>
+        <button v-if="fullscreenSupported" type="button" class="orb-button" :aria-label="t(fullscreen ? 'systemBar.exitFullscreen' : 'systemBar.enterFullscreen')" :data-tooltip="tip(t(fullscreen ? 'systemBar.exitFullscreen' : 'systemBar.enterFullscreen'), 'fullscreen')" :aria-keyshortcuts="shortcuts.fullscreen?.aria" @click="emit('fullscreen')"><DeviceIcon name="expand" /></button>
         <button type="button" class="orb-button" :aria-label="t('camera.flip')" :data-tooltip="t('camera.flip')" :disabled="!cameraLive" @click="emit('flip')"><DeviceIcon name="flip" /></button>
-        <button type="button" class="orb-button" :aria-label="t('systemBar.toggleDark')" :data-tooltip="t('systemBar.toggleDark')" :aria-pressed="dark" @click="emit('theme')"><DeviceIcon :name="dark ? 'moon' : 'sun'" /></button>
-        <button type="button" class="orb-button" :aria-label="t('module.settings')" :data-tooltip="t('module.settings')" @click="open('settings')"><DeviceIcon name="settings" /></button>
-        <button type="button" class="orb-button" :aria-label="t('module.notifications')" :data-tooltip="t('module.notifications')" @click="open('notifications')"><DeviceIcon name="notifications" /><span v-if="unread" class="notification-count">{{ unread }}</span></button>
-        <button type="button" class="orb-button" :aria-label="t('module.device')" :data-tooltip="t('module.device')" @click="open('device')"><DeviceIcon name="device" /></button>
+        <button type="button" class="orb-button" :aria-label="t('systemBar.toggleDark')" :data-tooltip="tip(t('systemBar.toggleDark'), 'dark')" :aria-keyshortcuts="shortcuts.dark?.aria" :aria-pressed="dark" @click="emit('theme')"><DeviceIcon :name="dark ? 'moon' : 'sun'" /></button>
+        <button type="button" class="orb-button" :aria-label="t('module.settings')" :data-tooltip="tip(t('module.settings'), 'settings')" :aria-keyshortcuts="shortcuts.settings?.aria" @click="open('settings')"><DeviceIcon name="settings" /></button>
+        <button type="button" class="orb-button" :aria-label="t('module.notifications')" :data-tooltip="tip(t('module.notifications'), 'notifications')" :aria-keyshortcuts="shortcuts.notifications?.aria" @click="open('notifications')"><DeviceIcon name="notifications" /><span v-if="unread" class="notification-count">{{ unread }}</span></button>
+        <button type="button" class="orb-button" :aria-label="t('module.device')" :data-tooltip="tip(t('module.device'), 'device')" :aria-keyshortcuts="shortcuts.device?.aria" @click="open('device')"><DeviceIcon name="device" /></button>
       </div>
     </div>
   </header>

@@ -19,7 +19,7 @@ macOS 客户端把 [AR 演示](/guide/ar) 放进原生窗口：侧栏切换应�
 - **语音指令**：点击左上角麦克风或按 `⌘⇧V`，说出「打开地图」「开始导航」等指令，也可以说英语或日语。首次使用时 macOS 会请求麦克风和语音识别权限。
 - **多语言**：菜单与设置跟随 macOS 的语言（简体中文、English、日本語），可在「系统设置 → 通用 → 语言与地区 → 应用」中单独为 Augma 指定；演示界面的语言也可在其设置面板中切换。
 
-摄像头和 WebXR 取决于 WebKit 对本地页面的支持，模拟界面不依赖这些权限。可选的 DeepSeek 指令理解需要自备 API Key，详见[客户端说明](https://github.com/YunYouJun/augma/tree/main/apps/mac)。
+摄像头和 WebXR 取决于 WebKit 对本地页面的支持，模拟界面不依赖这些权限。可选的 DeepSeek 助手能回答问题或执行演示操作，需要自备 API Key，详见[客户端说明](https://github.com/YunYouJun/augma/tree/main/apps/mac)。
 
 ## 从源码构建
 

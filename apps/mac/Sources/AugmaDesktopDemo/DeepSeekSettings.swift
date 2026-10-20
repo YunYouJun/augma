@@ -66,11 +66,11 @@ struct DeepSeekSettingsView: View {
 
   var body: some View {
     Form {
-      Section("指令理解") {
-        Toggle("使用 DeepSeek 理解未匹配的指令", isOn: $enabled)
+      Section("DeepSeek 助手") {
+        Toggle("使用 DeepSeek 助手回答未匹配的指令", isOn: $enabled)
           .disabled(!hasKey)
           .onChange(of: enabled) { _, _ in notifyChange() }
-        Text("开启后，只有本地规则无法识别的指令文字会发送给 DeepSeek。云端只能选择演示版已有操作；API 调用可能产生费用。")
+        Text("开启后，本地规则无法识别的指令和问题会连同最近几轮对话发送给 DeepSeek。助手用语音回答，或从演示版已有操作中选择一项执行；API 调用可能产生费用。")
           .font(.caption)
           .foregroundStyle(.secondary)
       }

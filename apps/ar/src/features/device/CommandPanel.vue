@@ -5,9 +5,12 @@ import { t } from '../../i18n/locale'
 
 defineProps<{
   speechAvailable: boolean
-  cloudEnabled: boolean
+  /** Running inside the macOS app, which records natively and has the ⌘⇧V shortcut. */
+  native: boolean
+  assistantReady: boolean
   speechStatus: 'idle' | 'requesting' | 'listening' | 'processing' | 'interpreting'
   transcript: string
+  reply: string
   speechError: string
 }>()
 const emit = defineEmits<{ command: [command: VoiceCommand], start: [], stop: [], cancel: [], submit: [text: string] }>()
@@ -27,8 +30,11 @@ const commands = ['map', 'scan', 'weather', 'audio', 'dark', 'hide'] as const
     <button v-if="speechAvailable" class="listen-button" type="button" :disabled="speechStatus === 'requesting' || speechStatus === 'processing' || speechStatus === 'interpreting'" @click="speechStatus === 'listening' ? $emit('stop') : $emit('start')">
       {{ t(`commands.status.${speechStatus}`) }}
     </button>
-    <button v-if="speechAvailable && speechStatus !== 'idle'" type="button" @click="$emit('cancel')">{{ t(speechStatus === 'interpreting' ? 'commands.cancelInterpret' : 'commands.cancelRecording') }}</button>
-    <p v-if="speechAvailable && (transcript || speechError)" class="speech-result" role="status">{{ speechError || t('commands.transcript', { text: transcript }) }}</p>
+    <button v-if="speechStatus !== 'idle'" type="button" @click="$emit('cancel')">{{ t(speechStatus === 'interpreting' ? 'commands.cancelInterpret' : 'commands.cancelRecording') }}</button>
+    <div v-if="transcript || reply || speechError" class="speech-result" role="status">
+      <p v-if="speechError || transcript">{{ speechError || t('commands.transcript', { text: transcript }) }}</p>
+      <p v-if="reply && !speechError" class="assistant-reply">{{ t('commands.reply', { text: reply }) }}</p>
+    </div>
     <form class="command-entry" @submit.prevent="submit">
       <input v-model="manualText" type="text" :aria-label="t('commands.input')" :placeholder="t('commands.placeholder')" maxlength="500" :disabled="speechStatus !== 'idle'">
       <button type="submit" :disabled="speechStatus !== 'idle' || !manualText.trim()">{{ t('commands.run') }}</button>
@@ -36,8 +42,11 @@ const commands = ['map', 'scan', 'weather', 'audio', 'dark', 'hide'] as const
     <div class="command-examples" :aria-label="t('commands.examples')">
       <button v-for="command in commands" :key="command" type="button" @click="$emit('command', command)">{{ t(`commands.example.${command}`) }}</button>
     </div>
-    <small v-if="speechAvailable">{{ t('commands.more', { cloud: { key: cloudEnabled ? 'commands.cloudOn' : 'commands.cloudOff' } }) }}</small>
-    <small v-else>{{ t('commands.webNote') }}</small>
+    <small>
+      {{ t('commands.more') }}
+      {{ t(native ? 'commands.shortcut' : speechAvailable ? 'commands.browserSpeech' : 'commands.noSpeech') }}
+      {{ t(assistantReady ? 'commands.assistantOn' : native ? 'commands.assistantOffNative' : 'commands.assistantOffWeb') }}
+    </small>
   </div>
 </template>
 
@@ -54,7 +63,8 @@ const commands = ['map', 'scan', 'weather', 'audio', 'dark', 'hide'] as const
 .command-panel .listen-button { background: var(--agm-accent); color: #111; font-weight: 600; }
 .command-panel .listen-button:disabled { opacity: .65; cursor: wait; }
 .command-panel button:disabled { opacity: .55; cursor: not-allowed; }
-.command-panel .speech-result { margin: 0; overflow-wrap: anywhere; }
+.command-panel .speech-result { display: grid; gap: 6px; overflow-wrap: anywhere; }
+.command-panel .assistant-reply { padding-left: 10px; border-left: 2px solid var(--agm-accent); line-height: 1.7; }
 .command-panel button:hover { background: rgb(255 255 255 / 25%); }
 .command-panel small { font-size: 11px; color: var(--agm-muted); }
 </style>

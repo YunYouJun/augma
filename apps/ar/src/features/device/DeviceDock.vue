@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { ShortcutHint, ShortcutId } from './shortcuts'
 import type { DeviceModule } from './types'
 import { t } from '../../i18n/locale'
 import DeviceIcon from './DeviceIcon.vue'
 
-defineProps<{ curved: boolean, active: DeviceModule | null, showHud: boolean, mirror: boolean }>()
+const props = defineProps<{ curved: boolean, active: DeviceModule | null, showHud: boolean, mirror: boolean, shortcuts: Partial<Record<ShortcutId, ShortcutHint>> }>()
 const emit = defineEmits<{ select: [module: DeviceModule, trigger: HTMLElement], mirror: [], hud: [] }>()
 const apps = [
   { id: 'weather', color: '#ed933d' },
@@ -12,6 +13,7 @@ const apps = [
   { id: 'camera', color: '#4dade0' },
   { id: 'navigation', color: '#dd9d5e' },
 ] as const
+const tip = (label: string, id: ShortcutId) => props.shortcuts[id] ? `${label} · ${props.shortcuts[id].label}` : label
 </script>
 
 <template>
@@ -20,10 +22,10 @@ const apps = [
     <div class="dock-pointer" aria-hidden="true" />
     <div class="dock-scroll">
       <div class="dock-buttons">
-        <button class="orb-button" type="button" :aria-label="t('dock.mirror')" :data-tooltip="t('dock.mirror')" :aria-pressed="mirror" style="--orb-color: #8dd3d6" @click="emit('mirror')"><DeviceIcon name="mirror" /></button>
+        <button class="orb-button" type="button" :aria-label="t('dock.mirror')" :data-tooltip="tip(t('dock.mirror'), 'mirror')" :aria-keyshortcuts="shortcuts.mirror?.aria" :aria-pressed="mirror" style="--orb-color: #8dd3d6" @click="emit('mirror')"><DeviceIcon name="mirror" /></button>
         <template v-for="app in apps" :key="app.id">
-          <button class="orb-button" type="button" :aria-label="t(`module.${app.id}`)" :data-tooltip="t(`module.${app.id}`)" :aria-pressed="active === app.id" :style="{ '--orb-color': app.color }" @click="emit('select', app.id, $event.currentTarget as HTMLElement)"><DeviceIcon :name="app.id" /></button>
-          <button v-if="app.id === 'weather'" class="orb-button" type="button" role="switch" :aria-label="t('dock.showHud')" :data-tooltip="t(showHud ? 'dock.hideHud' : 'dock.restoreHud')" :aria-checked="showHud" style="--orb-color: #4dade0" @click="emit('hud')"><DeviceIcon :name="showHud ? 'eye' : 'eye-off'" /></button>
+          <button class="orb-button" type="button" :aria-label="t(`module.${app.id}`)" :data-tooltip="tip(t(`module.${app.id}`), app.id)" :aria-keyshortcuts="shortcuts[app.id]?.aria" :aria-pressed="active === app.id" :style="{ '--orb-color': app.color }" @click="emit('select', app.id, $event.currentTarget as HTMLElement)"><DeviceIcon :name="app.id" /></button>
+          <button v-if="app.id === 'weather'" class="orb-button" type="button" role="switch" :aria-label="t('dock.showHud')" :data-tooltip="tip(t(showHud ? 'dock.hideHud' : 'dock.restoreHud'), 'hud')" :aria-keyshortcuts="shortcuts.hud?.aria" :aria-checked="showHud" style="--orb-color: #4dade0" @click="emit('hud')"><DeviceIcon :name="showHud ? 'eye' : 'eye-off'" /></button>
         </template>
         <a class="orb-button" href="https://github.com/YunYouJun/augma" target="_blank" rel="noreferrer" aria-label="GitHub" data-tooltip="GitHub" style="--orb-color: #343a40"><DeviceIcon name="github" /></a>
         <a class="orb-button" href="/components/" :aria-label="t('dock.docs')" :data-tooltip="t('dock.docs')" style="--orb-color: #4dade0"><DeviceIcon name="globe" /></a>

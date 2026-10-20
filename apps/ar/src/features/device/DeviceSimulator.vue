@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Locale, Message } from '../../i18n/locale'
+import type { Locale, Message, MessageKey } from '../../i18n/locale'
+import type { ShortcutHint, ShortcutId } from './shortcuts'
 import type { DeviceModule } from './types'
 import type { VoiceCommand } from './voiceCommands'
 import { AgmButton, AgmToast } from 'augma'
@@ -20,10 +21,14 @@ import DeviceWindow from './DeviceWindow.vue'
 import NavigationPanel from './NavigationPanel.vue'
 import NotificationPanel from './NotificationPanel.vue'
 import SettingsPanel from './SettingsPanel.vue'
+import { ariaChord, chordLabel, shortcutIds } from './shortcuts'
+import ShortcutsDialog from './ShortcutsDialog.vue'
 import SoundPanel from './SoundPanel.vue'
 import SpacePanel from './SpacePanel.vue'
 import SystemBar from './SystemBar.vue'
 import { deviceModules } from './types'
+import { useAssistantKey } from './useAssistantKey'
+import { useShortcuts } from './useShortcuts'
 import { useSpeechCommands } from './useSpeechCommands'
 import { useSpeechFeedback } from './useSpeechFeedback'
 import { clearWindowPlacements } from './useWindowPlacement'
@@ -57,14 +62,41 @@ type DesktopWindow = Window & {
 }
 const desktopWindow = window as DesktopWindow
 const desktopImmersive = desktopWindow.__AUGMA_DESKTOP_IMMERSIVE__ === true
+const shortcutsOpen = shallowRef(false)
+const shortcuts = useShortcuts({
+  run: runShortcut,
+  available: id => id !== 'fullscreen' || fullscreenSupported.value,
+  escape: () => {
+    if (!activeModule.value || !settings.showHud)
+      return false
+    closeApp()
+    return true
+  },
+})
+const shortcutsEnabled = computed({ get: () => shortcuts.enabled.value, set: shortcuts.setEnabled })
+const customizedShortcuts = computed(() => shortcutIds.filter(shortcuts.customized))
+const shortcutHints = computed(() => {
+  const hints: Partial<Record<ShortcutId, ShortcutHint>> = {}
+  if (!shortcuts.enabled.value)
+    return hints
+  for (const id of shortcutIds) {
+    const chord = shortcuts.bindings.value[id]
+    if (chord)
+      hints[id] = { label: chordLabel(chord, shortcuts.mac), aria: ariaChord(chord) }
+  }
+  return hints
+})
 
 const feedback = useSpeechFeedback(() => settings.speechFeedback)
 const localeSaved = shallowRef(true)
+const assistantKey = useAssistantKey()
 const speech = useSpeechCommands({
   isPanelVisible: () => activeModule.value === 'commands' && settings.showHud,
   onCommand: (command) => {
     executeCommand(command)
   },
+  onReply: reply => feedback.speak(reply),
+  apiKey: () => assistantKey.key.value,
 })
 
 function executeCommand(command: VoiceCommand) {
@@ -84,6 +116,16 @@ function changeLocale(next: Locale) {
   feedback.cancel()
 }
 
+function saveAssistantKey(value: string) {
+  toast({ key: assistantKey.save(value) ? 'toast.assistantKeySaved' : 'toast.assistantKeyFailed' })
+}
+
+function removeAssistantKey() {
+  speech.cancel()
+  assistantKey.remove()
+  toast({ key: 'toast.assistantKeyRemoved' })
+}
+
 function toggleSpeechShortcut() {
   if (!speech.available)
     return
@@ -98,6 +140,50 @@ function toggleSpeechShortcut() {
   settings.showHud = true
   device.openModule('commands')
   startSpeech()
+}
+
+/** The focused control, to return focus to when an app opened from the keyboard closes. */
+function shortcutTrigger() {
+  const element = document.activeElement
+  // Focus inside the panel being replaced cannot be restored later.
+  return element instanceof HTMLElement && element !== document.body && !element.closest('.device-window') ? element : null
+}
+
+function announceToggle(name: MessageKey, on: boolean) {
+  // A short confirmation without adding to the device's notification list.
+  message.value = { key: 'shortcuts.toggled', params: { name: { key: name }, state: { key: on ? 'shortcuts.on' : 'shortcuts.off' } } }
+  notification.value = true
+}
+
+function runShortcut(id: ShortcutId) {
+  switch (id) {
+    case 'help':
+      shortcutsOpen.value = true
+      return
+    case 'voice':
+      if (speech.available)
+        toggleSpeechShortcut()
+      else
+        openApp('commands', shortcutTrigger())
+      return
+    case 'hud':
+      settings.showHud = !settings.showHud
+      return announceToggle('dock.showHud', settings.showHud)
+    case 'dark':
+      settings.dark = !settings.dark
+      return announceToggle('settings.dark', settings.dark)
+    case 'mirror':
+      settings.mirror = !settings.mirror
+      return announceToggle('settings.mirror', settings.mirror)
+    case 'focus':
+      settings.focus = !settings.focus
+      return announceToggle('settings.focus', settings.focus)
+    case 'fullscreen':
+      void toggleFullscreen()
+      return
+    default:
+      openApp(id, shortcutTrigger())
+  }
 }
 
 function selectDesktopModule(event: Event) {
@@ -157,6 +243,7 @@ function syncFullscreen() {
 }
 function resetSettings() {
   reset()
+  shortcuts.resetAll()
   clearWindowPlacements()
   layoutResetVersion.value++
   toast({ key: 'toast.settingsReset' })
@@ -279,7 +366,7 @@ onUnmounted(() => {
     <h1 class="agm-sr-only">{{ t('app.heading') }}</h1>
     <CameraView ref="cameraView" :stream="camera.stream.value" :mirror="settings.mirror" />
     <canvas v-show="xr.ready.value" ref="xrCanvas" class="xr-canvas" :aria-label="t('app.xrCanvas')" />
-    <SystemBar :curved="settings.curvedHud" :time="time" :fullscreen="fullscreen" :fullscreen-supported="fullscreenSupported" :dark="settings.dark" :unread="unread" :camera-live="!!camera.stream.value" @commands="openApp('commands', $event)" @fullscreen="toggleFullscreen" @flip="camera.flip" @theme="settings.dark = !settings.dark" @settings="openApp('settings', $event)" @notifications="openApp('notifications', $event)" @device="openApp('device', $event)" />
+    <SystemBar :curved="settings.curvedHud" :time="time" :fullscreen="fullscreen" :fullscreen-supported="fullscreenSupported" :dark="settings.dark" :unread="unread" :camera-live="!!camera.stream.value" :shortcuts="shortcutHints" @commands="openApp('commands', $event)" @fullscreen="toggleFullscreen" @flip="camera.flip" @theme="settings.dark = !settings.dark" @settings="openApp('settings', $event)" @notifications="openApp('notifications', $event)" @device="openApp('device', $event)" />
     <main class="device-workspace" :aria-label="t('app.workspace')">
       <WorldScene v-if="worldVisible" :map-mode="activeModule === 'navigation'" :scene="scene.id" :landmarks="scene.landmarks" :selected="selected.id" :scanning="scanning" :pinned="pinned" :route="routeStep !== null" :route-progress="routeProgress" @select="device.selectLandmark" />
       <DeviceWindow v-if="activeModule && settings.showHud" :key="activeModule" :title="title" :app="activeModule" :reset-version="layoutResetVersion" @close="closeApp">
@@ -287,15 +374,16 @@ onUnmounted(() => {
         <NavigationPanel v-else-if="activeModule === 'navigation'" :landmarks="scene.landmarks" :selected="selected" :step="routeStep" :progress="routeProgress" :remaining="remaining" :instruction="routeInstruction" :online="online" @select="device.selectLandmark" @start="device.startRoute" @advance="device.advanceRoute" @cancel="device.cancelRoute" />
         <SoundPanel v-else-if="activeModule === 'audio'" v-model:volume="settings.volume" :playing="sound.playing.value" :busy="sound.busy.value" :elapsed="sound.elapsed.value" :duration="sound.duration" :track-index="sound.trackIndex.value" :error="sound.error.value ? t(sound.error.value) : ''" :online="online" @play="sound.play" @pause="sound.pause" @track="sound.selectTrack" @seek="sound.seek" />
         <NotificationPanel v-else-if="activeModule === 'notifications'" :notices="notices" @clear="device.clearNotices" />
-        <SettingsPanel v-else-if="activeModule === 'settings'" v-model:opacity="settings.opacity" v-model:dark="settings.dark" v-model:focus="settings.focus" v-model:mirror="settings.mirror" v-model:depth-motion="settings.depthMotion" v-model:curved-hud="settings.curvedHud" v-model:speech-feedback="settings.speechFeedback" :locale="locale" :speech-feedback-supported="feedback.supported" :reduced-motion="reducedMotion" :storage-available="storageAvailable && localeSaved" @locale="changeLocale" @reset="resetSettings" />
+        <SettingsPanel v-else-if="activeModule === 'settings'" v-model:opacity="settings.opacity" v-model:dark="settings.dark" v-model:focus="settings.focus" v-model:mirror="settings.mirror" v-model:depth-motion="settings.depthMotion" v-model:curved-hud="settings.curvedHud" v-model:speech-feedback="settings.speechFeedback" v-model:shortcuts-enabled="shortcutsEnabled" :locale="locale" :speech-feedback-supported="feedback.supported" :assistant-native="speech.native" :assistant-ready="speech.assistantReady.value" :reduced-motion="reducedMotion" :storage-available="storageAvailable && localeSaved" @locale="changeLocale" @reset="resetSettings" @shortcuts="shortcutsOpen = true" @save-key="saveAssistantKey" @remove-key="removeAssistantKey" />
         <WeatherPanel v-else-if="activeModule === 'weather'" />
         <CameraControls v-else-if="activeModule === 'camera'" :camera="camera" :xr="xr" :online="online" @capture="snapshot" @prepare-xr="prepareXr" />
-        <CommandPanel v-else-if="activeModule === 'commands'" :speech-available="speech.available" :cloud-enabled="speech.cloudEnabled.value" :speech-status="speech.status.value" :transcript="speech.transcript.value" :speech-error="speech.error.value ? t(speech.error.value) : ''" @command="executeCommand" @start="startSpeech" @stop="speech.stop" @cancel="speech.cancel" @submit="speech.submitText" />
+        <CommandPanel v-else-if="activeModule === 'commands'" :speech-available="speech.available" :native="speech.native" :assistant-ready="speech.assistantReady.value" :speech-status="speech.status.value" :transcript="speech.transcript.value" :reply="speech.reply.value" :speech-error="speech.error.value ? t(speech.error.value) : ''" @command="executeCommand" @start="startSpeech" @stop="speech.stop" @cancel="speech.cancel" @submit="speech.submitText" />
         <ArHud v-else :connection="connection" :live="!!camera.stream.value" :scene="scene.name" @connect="device.connect" @sleep="device.suspend('sleeping')" @disconnect="device.suspend('disconnected')" />
       </DeviceWindow>
       <div v-if="!online && activeModule !== 'device'" class="standby-view"><p>{{ t(`connection.${connection}`) }}</p><AgmButton :loading="connection === 'connecting'" @click="device.connect">{{ t(connection === 'sleeping' ? 'device.wake' : 'device.connect') }}</AgmButton></div>
     </main>
-    <DeviceDock :curved="settings.curvedHud" :active="settings.showHud ? activeModule : null" :show-hud="settings.showHud" :mirror="settings.mirror" @select="openApp" @mirror="settings.mirror = !settings.mirror" @hud="settings.showHud = !settings.showHud" />
+    <DeviceDock :curved="settings.curvedHud" :active="settings.showHud ? activeModule : null" :show-hud="settings.showHud" :mirror="settings.mirror" :shortcuts="shortcutHints" @select="openApp" @mirror="settings.mirror = !settings.mirror" @hud="settings.showHud = !settings.showHud" />
     <AgmToast v-model:open="notification" :title="message ? t(message) : ''" :close-label="t('toast.close')" :region-label="t('toast.region')" />
+    <ShortcutsDialog v-model:open="shortcutsOpen" v-model:enabled="shortcutsEnabled" :bindings="shortcuts.bindings.value" :customized="customizedShortcuts" :hidden="fullscreenSupported ? [] : ['fullscreen']" :mac="shortcuts.mac" :native="speech.native" :storage-available="shortcuts.storageAvailable.value" @assign="shortcuts.assign" @reset="shortcuts.reset" @reset-all="shortcuts.resetAll" />
   </div>
 </template>

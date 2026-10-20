@@ -185,9 +185,16 @@ struct DemoWebView: NSViewRepresentable {
       webView?.evaluateJavaScript("window.dispatchEvent(new CustomEvent('augma:speech', { detail: \(json) }))")
     }
 
-    private func interpret(_ text: String) {
+    private func interpret(_ value: Any?) {
       guard DeepSeekSettings.isReady, let key = DeepSeekKeychain.load() else {
         sendSpeechEvent(type: "error", text: nil, code: "deepseekNotConfigured")
+        return
+      }
+      let messages: [[String: String]]
+      do {
+        messages = try DeepSeekClient.validate(value)
+      } catch {
+        sendSpeechEvent(type: "error", text: nil, code: DeepSeekClient.Failure.invalidInput.code)
         return
       }
       interpretationTask?.cancel()
@@ -195,14 +202,14 @@ struct DemoWebView: NSViewRepresentable {
       let session = interpretationGeneration
       interpretationTask = Task { [weak self] in
         do {
-          let command = try await DeepSeekCommandInterpreter.interpret(text, apiKey: key)
+          let content = try await DeepSeekClient.complete(messages, apiKey: key)
           guard let self, self.interpretationGeneration == session, !Task.isCancelled else { return }
           self.interpretationTask = nil
-          self.sendSpeechEvent(type: "interpreted", text: command)
+          self.sendSpeechEvent(type: "interpreted", text: content)
         } catch {
           guard let self, self.interpretationGeneration == session, !Task.isCancelled else { return }
           self.interpretationTask = nil
-          if let failure = error as? DeepSeekCommandInterpreter.Failure {
+          if let failure = error as? DeepSeekClient.Failure {
             self.sendSpeechEvent(type: "error", text: failure.detail, code: failure.code)
           } else {
             self.sendSpeechEvent(type: "error", text: error.localizedDescription, code: "deepseekRequest")
@@ -265,7 +272,7 @@ struct DemoWebView: NSViewRepresentable {
         } else if let body = message.body as? [String: Any] {
           switch body["action"] as? String {
           case "start": Task { await speech.start(localeIdentifier: body["locale"] as? String) }
-          case "interpret": if let text = body["text"] as? String { interpret(text) }
+          case "interpret": interpret(body["messages"])
           default: break
           }
         }
