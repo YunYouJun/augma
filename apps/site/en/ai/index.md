@@ -16,7 +16,14 @@ Use the public components and semantic tokens, and keep the existing brand and a
 Read the component API first, then implement state changes and an interactive example.
 ```
 
-New versions of the Skill and the Registry are available from public URLs only after this repository is released; for local development, load `skills/augma/SKILL.md` directly and use the resource URLs from your local preview.
+The Skill contains:
+
+- `SKILL.md`: how to choose an integration, plus the accessibility and motion conventions.
+- `references/components.md`: every component's import, props, defaults, events, slots and a complete example, generated from the component source for each release.
+- `references/recipes.md`: three complete screens: a control panel, a HUD status board and a theme customization.
+- `references/design.md`: the visual language and layout principles.
+
+The references are installed with the Skill, so the assistant reads the API of the current release even offline. When working inside this repository, load `skills/augma/` directly.
 
 ## Machine-readable entry points
 
@@ -36,7 +43,7 @@ pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/button.json
 pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/dialog.json
 ```
 
-The first batch covers Button, Input, Panel, Dialog, HudStatus and HudProgress. The Registry copies the same source files as the npm components and declares their style and behavior dependencies.
+It currently covers Button, Input, Panel, Dialog, HudStatus, HudProgress and HudGauge. The Registry copies the same source files as the npm components and declares their style and behavior dependencies.
 
 Import in your app entry:
 

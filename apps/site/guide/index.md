@@ -2,10 +2,6 @@
 
 Augma 将《刀剑神域：序列之争》中 AR 界面的轻盈感转化为可复用的 Web 组件。使用独立的设计基础，或直接开始构建 Vue 界面。
 
-::: warning 0.2 发布准备中
-本页描述 0.2 API。公开 npm 发布完成前，请在仓库内构建并使用本地 tarball 验证；`pnpm add augma` 目前仍可能安装旧版，不能直接使用下方新版 API。
-:::
-
 ## Vue 组件
 
 需要 Vue 3.5 或更新版本。
@@ -13,6 +9,17 @@ Augma 将《刀剑神域：序列之争》中 AR 界面的轻盈感转化为可�
 ```sh
 pnpm add augma
 ```
+
+::: tip pnpm 11 及以上
+依赖链中的 `vue-demi`（经由 Reka UI 和 Floating UI 引入）带有安装脚本，pnpm 默认拦截未批准的脚本并让安装失败。运行 `pnpm approve-builds` 批准它，或在 `pnpm-workspace.yaml` 中写入：
+
+```yaml
+allowBuilds:
+  vue-demi: true
+```
+
+pnpm 还默认跳过发布不足一天的版本，新版本发布当天会装到上一个版本。0.1.x 是不兼容的旧 API，请确认安装的是 0.2 或更新版本。
+:::
 
 在应用入口导入样式：
 

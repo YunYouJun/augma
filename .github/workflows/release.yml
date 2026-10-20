@@ -39,8 +39,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm check
-      - name: Ensure generated component docs are current
-        run: git diff --exit-code -- apps/site/components apps/site/en/components apps/site/ja/components
+      - name: Ensure generated component docs and Skill references are current
+        run: git diff --exit-code -- apps/site/components apps/site/en/components apps/site/ja/components skills/augma/references
       - name: Pack verified files
         run: pnpm release:pack
       - uses: actions/upload-artifact@v7

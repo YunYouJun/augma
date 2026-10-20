@@ -40,7 +40,7 @@ GitHub Actions 的 **Prepare or publish packages**（`release.yml`）在推送 `
 
 ## npm 正式发布
 
-目标版本为 `0.2.0`。版本号写在 5 个文件里：根目录、Core、Vue 的 package.json，`scripts/catalog.mjs` 和 `packages/augma/src/index.ts`。`bump.config.ts` 列出全部 5 个文件，`pnpm release` 会一起更新；不一致时 `pnpm generate` 与 `check-release` 报错。变更说明维护在 [CHANGELOG](../CHANGELOG.md)，bumpp 不会修改它。
+版本号写在 5 个源文件里：根目录、Core、Vue 的 package.json，`scripts/catalog.mjs` 和 `packages/augma/src/index.ts`。`pnpm generate` 生成的 Skill 速查 `skills/augma/references/components.md` 与 `recipes.md` 也写有版本，并纳入 Git 与 CI 的生成检查。`bump.config.ts` 列出这 7 个文件，`pnpm release` 会一起更新；不一致时 `pnpm generate` 与 `check-release` 报错，生成检查也会失败。变更说明维护在 [CHANGELOG](../CHANGELOG.md)，bumpp 不会修改它。
 
 发布使用 npm Trusted Publishing（OIDC），仓库不保存 npm token。发布任务申请 `id-token: write`，绑定 GitHub environment `npm`（只允许 `v*` 标签部署），要求 npm CLI 不低于 11.5.1，并附带 provenance。[npm 官方 trusted publishing 文档](https://docs.npmjs.com/trusted-publishers/) 要求在包设置中配置仓库、工作流与 environment；仓库工作流文件本身不能代替 npm 端授权。
 

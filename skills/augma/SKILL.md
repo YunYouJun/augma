@@ -1,6 +1,6 @@
 ---
 name: augma
-description: Build, integrate, theme, or review Augma AR-inspired interfaces using its design tokens, Vue components, and source Registry. Use when a task explicitly adopts Augma or extends an existing Augma interface.
+description: Build, integrate, theme, or review Augma AR-inspired interfaces using its design tokens, Vue components, and source Registry. Use when a task adopts Augma, mentions augma, @augma/core or Agm* components, or extends an existing Augma interface.
 ---
 
 # Augma
@@ -9,17 +9,24 @@ Build light, legible interfaces inspired by the Augma device in Sword Art Online
 
 ## Choose the integration
 
-- Vue 3.5+: install `augma`, import named `Agm*` components and `augma/style.css`.
-- Custom or other-framework components: install `@augma/core` and use `tokens.css`; `style.css` adds the CSS primitives. Supply appropriate native/headless behavior separately.
-- Editable Vue source: use the Registry entries listed in the component contract. Import `@augma/core/style.css` once and keep the declared behavior dependencies.
+- Vue 3.5+: `pnpm add augma`, import named `Agm*` components and `augma/style.css` once. `@augma/core` is installed with it.
+- Check that `augma` resolved to 0.2 or later; 0.1.x is an incompatible legacy API, and pnpm skips versions published less than a day ago. On pnpm 11+, the install fails until the `vue-demi` install script (pulled in by Reka UI) is allowed: `pnpm approve-builds`, or `allowBuilds: { vue-demi: true }` in `pnpm-workspace.yaml`.
+- Other frameworks or plain HTML: `pnpm add @augma/core` and import `tokens.css` (variables only) or `style.css` (every `.agm-*` class). Supply native or headless behavior separately.
+- Editable Vue source: the Registry entries marked in the component reference. Import `@augma/core/style.css` once and keep the declared behavior dependencies.
 
-Read the relevant component API before writing code. Canonical documentation is https://augma.yyj.moe/llms.txt; the versioned contract is https://augma.yyj.moe/components.json. In this repository, use `scripts/catalog.mjs`, `examples/components/`, and `packages/augma/src/components/` as the source of truth. When working from a local preview, replace the public origin with the preview origin. Do not invent components or props when remote documentation is unavailable; use local sources or identify the missing contract.
+## Get the API right
+
+Read [the component reference](references/components.md) before writing code. It is generated from the component source for each release and lists every import, prop, default, `v-model`, event and slot, with a working example per component. Start a screen from [the recipes](references/recipes.md) when one fits.
+
+Online, the same contract is at https://augma.yyj.moe/llms.txt and the versioned https://augma.yyj.moe/components.json. In the Augma repository itself, `scripts/catalog.mjs`, `examples/` and `packages/augma/src/components/` are the source of truth. When working from a local preview, replace the public origin with the preview origin. Never invent components or props; if the contract lacks something, say so.
 
 ## Design and implementation
 
-Read [the design reference](references/design.md) when composing or restyling a screen. Keep the host product's brand and information hierarchy. Augma's defining choices are translucent surfaces, fine borders, restrained orange emphasis, circular state displays and deliberate whitespace. Use namespaced `--agm-*` variables for theming.
+Read [the design reference](references/design.md) when composing or restyling a screen. Keep the host product's brand and information hierarchy. Augma's defining choices are translucent surfaces, fine borders, restrained orange emphasis, circular state displays and deliberate whitespace. Theme through namespaced `--agm-*` variables.
 
 Keep behavior and presentation separate. Preserve accessible labels, native form semantics, focus restoration and controlled state. Use `v-model` for Input, Select, Switch and Slider; use `v-model:open` for Dialog and Toast. Dialog requires both title and description, and its trigger slot should contain one focusable element. Built-in copy defaults to Simplified Chinese; for other languages pass Select `placeholder`, Dialog and Toast `closeLabel`, Toast `regionLabel` and HudProgress `indeterminateText`. Set dark mode on html/body so teleported content inherits it.
+
+Motion is part of the look: overlays materialize from a lit line, buttons sweep, icon buttons show orbit arcs, statuses ping and gauges leave a trail. Tune it with `--agm-duration`, `--agm-duration-slow`, `--agm-ease`, `--agm-ease-in` and `--agm-ease-spring`, and the light with `--agm-light`, `--agm-sheen` and `--agm-glow`. Add `.agm-materialize` to any element for the window entrance and stagger it with `--agm-delay`. Everything stops under `prefers-reduced-motion`; never add motion that ignores it.
 
 Copy working examples instead of approximating APIs. Component consumers should not require UnoCSS or Tailwind setup. Babylon and camera code belong to the optional AR app, not to general UI components.
 

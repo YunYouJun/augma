@@ -2,10 +2,6 @@
 
 Augma turns the lightness of the AR interfaces in *Sword Art Online the Movie: Ordinal Scale* into reusable web components. Use the standalone design foundation, or start building Vue interfaces right away.
 
-::: warning 0.2 release in preparation
-This page describes the 0.2 API. Until the public npm release is out, build inside the repository and verify with a local tarball; `pnpm add augma` may still install the old version, which cannot run the new API below.
-:::
-
 ## Vue components
 
 Requires Vue 3.5 or later.
@@ -13,6 +9,17 @@ Requires Vue 3.5 or later.
 ```sh
 pnpm add augma
 ```
+
+::: tip pnpm 11 or later
+`vue-demi`, which arrives through Reka UI and Floating UI, has an install script, and pnpm fails the install on scripts nobody approved. Run `pnpm approve-builds` to allow it, or add this to `pnpm-workspace.yaml`:
+
+```yaml
+allowBuilds:
+  vue-demi: true
+```
+
+pnpm also skips versions published less than a day ago, so on release day you get the previous version. 0.1.x is an incompatible legacy API; make sure you have 0.2 or later.
+:::
 
 Import the styles in your app entry:
 

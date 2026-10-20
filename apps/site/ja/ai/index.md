@@ -16,7 +16,14 @@ $augma を使って、この Vue プロジェクトにデバイスのコント�
 先にコンポーネント API を確認してから、状態の切り替えとインタラクティブなサンプルを実装してください。
 ```
 
-新しいバージョンの Skill と Registry は、このリポジトリのリリース後に公開 URL から取得できるようになります。ローカル開発では `skills/augma/SKILL.md` を直接読み込み、ローカルプレビューのリソース URL を使ってください。
+Skill には次が含まれます：
+
+- `SKILL.md`：統合方法の選び方と、アクセシビリティと動きの約束事。
+- `references/components.md`：各コンポーネントのインポート、Props、デフォルト値、イベント、スロット、完全なサンプル。リリースごとにコンポーネントのソースから生成されます。
+- `references/recipes.md`：コントロールパネル、HUD ステータス、テーマのカスタマイズの 3 つの完全な画面。
+- `references/design.md`：ビジュアル言語とレイアウトの原則。
+
+リファレンスは英語で書かれ、Skill と一緒にインストールされるため、オフラインでも現在のリリースと一致する API を参照できます。このリポジトリ内で開発する場合は、`skills/augma/` を直接読み込んでください。
 
 ## 機械可読なエントリー
 
@@ -36,7 +43,7 @@ pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/button.json
 pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/dialog.json
 ```
 
-最初のバッチは Button、Input、Panel、Dialog、HudStatus、HudProgress に対応しています。Registry は npm のコンポーネントと同じソースファイルをコピーし、スタイルと振る舞いの依存関係も宣言します。
+現在は Button、Input、Panel、Dialog、HudStatus、HudProgress、HudGauge に対応しています。Registry は npm のコンポーネントと同じソースファイルをコピーし、スタイルと振る舞いの依存関係も宣言します。
 
 アプリのエントリーで読み込みます：
 

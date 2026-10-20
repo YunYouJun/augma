@@ -1,8 +1,17 @@
 # 更新记录
 
-## 未发布
+## 0.2.1（2026-10-20）
+
+### 修复
 
 - HudProgress 环形进度的数值不再换行，修复 100% 时折成两行。
+
+### 文档与接入
+
+- Agent Skill 新增组件速查 `references/components.md` 与组合示例 `references/recipes.md`：由 `pnpm generate` 从组件源码与示例生成，覆盖全部组件的导入、Props、默认值、事件、插槽与完整示例，以及控制面板、HUD 状态和主题定制三个完整页面。速查随 Skill 安装，离线可用；CI 与发布流程检查它与源码一致。
+- 在全新 Vite + Vue + TypeScript 项目中验证接入：速查里的 16 段示例均通过 `vue-tsc` 与 `vite build`。
+- 快速开始、npm README 与 Skill 说明 pnpm 11 及以上需允许 `vue-demi` 的安装脚本，否则安装失败；移除过时的“0.2 发布准备中”提示。
+- 重写 `augma` 与 `@augma/core` 的 npm README；AI 接入页更新为 7 个 Registry 条目（含 HudGauge）并说明 Skill 内容。
 
 ## 0.2.0（2026-10-20）
 

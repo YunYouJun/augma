@@ -16,7 +16,14 @@ npx skills add YunYouJun/augma --skill augma
 先查阅组件 API，再实现状态切换和交互示例。
 ```
 
-新版本的 Skill 和 Registry 需要随本仓库发布后才能通过公开 URL 获取；本地开发可直接加载 `skills/augma/SKILL.md`，并使用本地预览的资源地址。
+Skill 包含：
+
+- `SKILL.md`：如何选择接入方式，以及可访问性与动效约定。
+- `references/components.md`：每个组件的导入、Props、默认值、事件、插槽和完整示例，每次发布由组件源码生成。
+- `references/recipes.md`：控制面板、HUD 状态和主题定制三个完整页面。
+- `references/design.md`：视觉语言与布局原则。
+
+这些参考随 Skill 一起安装，使用英文编写，编程助手离线也能读到与当前版本一致的 API。在本仓库内开发时，可直接加载 `skills/augma/`。
 
 ## 机器可读入口
 
@@ -36,7 +43,7 @@ pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/button.json
 pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/dialog.json
 ```
 
-首批支持 Button、Input、Panel、Dialog、HudStatus、HudProgress。Registry 复制与 npm 组件相同的源文件，同时声明样式与行为依赖。
+目前支持 Button、Input、Panel、Dialog、HudStatus、HudProgress、HudGauge。Registry 复制与 npm 组件相同的源文件，同时声明样式与行为依赖。
 
 在应用入口导入：
 
