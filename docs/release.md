@@ -22,6 +22,7 @@ pnpm preview
 - `main` 是唯一的长期分支，也是默认分支和 Cloudflare Pages 的生产分支，推送即部署。功能分支通过 PR 合入 `main`；CI 覆盖 `main` 的 push 与所有 PR。2026-10-19 起不再使用 `dev`。
 - 正式发布由 `v*` 标签触发：在 `main` 上运行 `pnpm release`（bumpp）更新版本、提交 `chore: release vX.Y.Z`、打标签并推送。先发布 Core，再发布 Vue，然后验证公开安装。
 - `v0.2.0` 已于 2026-10-20 发布：`augma` 与 `@augma/core` 的 0.2.0 都在 npm 上，GitHub Release 附带 macOS 安装包。详见下方「0.2.0 发布记录」。
+- `v0.2.1` 于同日用 `pnpm release` 发布，两个包都经 OIDC 发布并附带 provenance，详见「0.2.1 发布记录」。
 - 合并生产分支时保留发布提交历史，不使用 squash / rebase 改写已打标签的提交。
 
 ## 准备产物（不发布）
@@ -153,6 +154,15 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - 第一次标签运行的 mac 任务在全新 checkout 中缺少组件库产物，AR 构建找不到 `augma/style.css`，GitHub Release 被跳过。`77609c5` 让打包脚本先构建组件库；当时 npm 与 Release 都尚未发布，标签随之移到该提交。
 - 发布任务在 `augma` 发布约 15 秒后核对公开版本，npm 尚未可见而判定失败；`8a92be6` 改为每个包最多轮询 10 分钟，并把发布任务超时放宽到 30 分钟。手动发布的 tarball 路径需以 `./` 开头（`37c2a2f`）。
 
+
+## 0.2.1 发布记录（2026-10-20）
+
+- 首次完整走 bumpp 流程：`pnpm release --release patch --yes --no-push` 更新 7 个版本文件并创建 `8fb267d` 与标签 `v0.2.1`，再经 SSH 推送 `main --follow-tags`。之后重新运行 `pnpm generate` 没有差异，说明 bumpp 的文本替换与生成结果一致。
+- 发布工作流 [run 39416089123](https://github.com/YunYouJun/augma/actions/runs/39416089123) 的准备、mac、GitHub Release 与发布任务一次全部通过。
+- `@augma/core@0.2.1` 与 `augma@0.2.1` 均通过 OIDC 发布，附带 SLSA provenance（Core 首个带 provenance 的版本）；两个包的 `latest` 均为 0.2.1。integrity 分别为 `sha512-7UKkNOW6mMLfuKh4qYtgedrtOMavXu7lTLn9UH3Zn77J+pV+QGbVmcrJZXeWHtZABwaJprC/hwzLUqC7CYE52w==` 与 `sha512-WPFhI+aO59tiUoYddzwUwHHQXxuIvu15EK//8ONnJfVCLRjWeG7M0znTLMLxxuPm4SvFIJ4Qczje17AsYKsLwA==`。
+- [GitHub Release v0.2.1](https://github.com/YunYouJun/augma/releases/tag/v0.2.1) 附带 `Augma-macOS.zip` 与 `.sha256`；说明按 CHANGELOG 改写为中英双语。
+- 接入验收：在全新 Vite + Vue + TypeScript 项目（pnpm 12）中安装 `augma@0.2.1`，用 `npx skills add YunYouJun/augma --skill augma` 从 GitHub 安装 Skill，把速查与 recipes 中的 16 段示例原样放入项目，`vue-tsc -b` 与 `vite build` 通过；浏览器中 16 段全部渲染、无控制台错误，HudGauge 与 Dialog 的交互和焦点恢复正常。
+- 验收发现：pnpm 11+ 在 `vue-demi`（Reka UI → Floating UI）的安装脚本未获批准时让安装以非零状态退出；发布当天裸 `pnpm add augma` 因 `minimumReleaseAge` 回落到旧版。快速开始、npm README 与 Skill 已写明处理方式。
 ## 待办（2026-10-19）
 
 按顺序推进，前一项完成后再开始下一项。宣传视频放在最后，避免观众在 npm 发布和生产部署之前访问到旧站或装到 0.1.1。
