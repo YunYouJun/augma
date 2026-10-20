@@ -102,7 +102,7 @@ npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运
 
 1. 在 `yunyoujun.cn` zone 添加 Single Redirect：主机名等于 `augma.yunyoujun.cn` 时，以 301 跳转到动态表达式 `concat("https://augma.yyj.moe", http.request.uri.path)`，并保留查询字符串。路径不变，旧的 `/r/*.json` 与 `/llms.txt` 链接继续可用。
 2. 把 `augma` 记录从指向 EdgeOne 的 DNS-only CNAME 改为代理的占位记录（`AAAA 100::`），删除 `_dnsauth.augma` 记录。
-3. 确认跳转生效后，在 EdgeOne Pages 项目 `augma`（`makers-qvfxx56v4tcl`）中解绑该域名，再删除项目。
+3. 确认跳转生效后，可选地在 EdgeOne Pages 项目 `augma`（`makers-qvfxx56v4tcl`）中解绑该域名。项目保留作备用，不再部署；DNS 已不指向 EdgeOne，保留它不影响访问。
 
 ## 旧域名
 
@@ -160,7 +160,7 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - [x] 2026-10-19 的动效与 HudGauge 改动合入 `main`；`dev` 与 `codex/*` 分支已清理，默认分支改为 `main`。
 - [x] 确认 `main` 的 CI 与 Cloudflare Pages 部署结果：2026-10-20 的 `6ac71e0` CI（含 7 个 Registry 条目的真实安装）、Cloudflare Pages 与 Vercel 均通过。
 - [x] `augma.yunyoujun.cn` 改为 Cloudflare 301 跳转（2026-10-20）：`yunyoujun.cn` zone 的 Single Redirect「Redirect legacy Augma domain」保留路径与查询字符串；`augma` 记录改为代理的 `AAAA 100::`，删除 `_dnsauth.augma`（原值 CNAME `augma.yunyoujun.cn.eoacme0.com`）。已用公共 DNS 与 curl 核对。
-- [ ] 在 EdgeOne Pages 项目 `augma`（`makers-qvfxx56v4tcl`）中解绑 `augma.yunyoujun.cn`，再删除项目。
+- [ ] 可选：在 EdgeOne Pages 项目 `augma`（`makers-qvfxx56v4tcl`）中解绑 `augma.yunyoujun.cn`，避免证书续期失败的告警。项目保留作备用，不再部署，也不删除。
 - [x] 用 `scripts/capture-media.mjs` 重新生成 README 截图、OG 图与 AR 录屏：README 媒体改为 WebP，OG 图为 JPEG，截图冻结在动画落定的同一时刻；删除未引用的深色与移动端截图。临时截图贴在 issue / PR，不提交到仓库。
 - [x] 接入 bumpp：`pnpm release` 更新 5 个版本文件并推送 `v*` 标签，标签自动触发发布；发布前查询 registry，跳过已发布且一致的版本，不一致即停止。
 - [x] npm 准备：`augma` 组织早已存在且由 `yunyoujun` 拥有；`augma` 已配置 trusted publisher（GitHub `YunYouJun/augma`、`release.yml`、environment `npm`，权限 publish 与 stage publish）。GitHub 的 `npm` environment 只允许 `v*` 标签部署。
