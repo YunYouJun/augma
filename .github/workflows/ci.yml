@@ -22,6 +22,15 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm check
+      # Failed browser tests keep a trace (console, network, DOM snapshots); the log alone cannot explain a flaky failure.
+      - name: Upload Playwright traces
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results-${{ github.sha }}
+          path: /tmp/augma-playwright-results
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Ensure generated component docs and Skill references are current
         run: git diff --exit-code -- apps/site/components apps/site/en/components apps/site/ja/components skills/augma/references
       - uses: actions/upload-artifact@v7
