@@ -272,7 +272,7 @@ test('theme samples stay independent and unknown ring progress respects reduced 
 })
 
 // One test per page: loading every heavy page in one tab crashed WebKit on Linux CI.
-for (const path of ['/', '/showcase/', '/components/', '/en/', '/en/showcase/', '/ja/', '/ja/components/']) {
+for (const path of ['/', '/showcase/', '/components/', '/download', '/en/', '/en/showcase/', '/en/download', '/ja/', '/ja/components/', '/ja/download']) {
   test(`${path} has no horizontal scroll at 390px`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto(path)
@@ -313,17 +313,42 @@ test('hero HUD rings stay concentric while they spin', async ({ page }) => {
     expect(offset).toBeLessThan(1)
 })
 
+const macZip = 'https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS.zip'
+
 test('macOS client is downloadable from the home page and its guide', async ({ page }) => {
   await page.goto('/')
   const demo = page.getByRole('region', { name: 'AR 演示' })
   await demo.getByRole('link', { name: 'macOS 客户端' }).click()
-  await expect(page).toHaveURL(/\/guide\/macos$/)
+  await expect(page).toHaveURL(/\/download$/)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('下载 Augma')
+  await expect(page.getByRole('link', { name: '下载 Augma for macOS' }).first()).toHaveAttribute('href', macZip)
+  await page.goto('/guide/macos')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/macOS 客户端/)
-  await expect(page.getByRole('link', { name: '下载 Augma for macOS' })).toHaveAttribute(
-    'href',
-    'https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS.zip',
-  )
+  await expect(page.getByRole('link', { name: '下载 Augma for macOS' })).toHaveAttribute('href', macZip)
 })
+
+for (const [path, nav, heading, mac, ar] of [
+  ['/download', '下载', '下载 Augma', '下载 Augma for macOS', '打开 AR 演示'],
+  ['/en/download', 'Download', 'Get Augma', 'Download Augma for macOS', 'Open the AR demo'],
+  ['/ja/download', 'ダウンロード', 'Augma をダウンロード', 'Augma for macOS をダウンロード', 'AR デモを開く'],
+]) {
+  test(`${path} offers the components, the macOS app and the AR demo`, async ({ page }) => {
+    const errors: string[] = []
+    page.on('pageerror', error => errors.push(error.message))
+    await page.goto(path)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading)
+    await expect(page.getByRole('navigation').getByRole('link', { name: nav, exact: true }).first()).toHaveAttribute('href', path)
+    const macLinks = page.getByRole('link', { name: mac })
+    await expect(macLinks).toHaveCount(2)
+    for (const link of await macLinks.all())
+      await expect(link).toHaveAttribute('href', macZip)
+    await expect(page.getByRole('link', { name: ar })).toHaveAttribute('href', '/ar/')
+    await expect(page.locator('.download-card code').first()).toHaveText('pnpm add augma')
+    await expect(page.locator('.first-open-steps li')).toHaveCount(3)
+    await expect(page.locator('.download-features li')).toHaveCount(6)
+    expect(errors).toEqual([])
+  })
+}
 
 test('English and Japanese docs are translated and the language switcher keeps the page', async ({ page }) => {
   await page.goto('/en/')

@@ -2,6 +2,7 @@ import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import ComponentCatalog from './components/ComponentCatalog.vue'
 import DemoPreview from './components/DemoPreview.vue'
+import DownloadPage from './components/DownloadPage.vue'
 import HomePage from './components/HomePage.vue'
 import ShowcasePage from './components/ShowcasePage.vue'
 import ThemeComparison from './components/ThemeComparison.vue'
@@ -17,6 +18,7 @@ export default {
   enhanceApp({ app }) {
     app.component('HomePage', HomePage)
     app.component('DemoPreview', DemoPreview)
+    app.component('DownloadPage', DownloadPage)
     app.component('ComponentCatalog', ComponentCatalog)
     app.component('ShowcasePage', ShowcasePage)
     app.component('ThemeComparison', ThemeComparison)

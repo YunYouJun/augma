@@ -23,7 +23,7 @@ onMounted(() => {
           <UiIcon name="scan" />
           {{ t('arDemo.open') }}
         </a>
-        <a class="agm-button agm-button--outline" :href="link('/guide/macos')">
+        <a class="agm-button agm-button--outline" :href="link('/download')">
           <UiIcon name="download" />
           {{ t('arDemo.mac') }}
         </a>

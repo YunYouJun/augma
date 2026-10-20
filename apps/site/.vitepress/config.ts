@@ -19,7 +19,7 @@ const locales = [
     ogLocale: 'zh_CN',
     title: '界面，浮现于现实。',
     description: '为 Web 构建轻盈的 AR 风格界面。',
-    nav: ['组件', '展示', '设计', 'AI 接入'],
+    nav: ['组件', '展示', '设计', 'AI 接入', '下载'],
     start: ['开始使用', '快速开始', '升级说明', 'AR 演示', 'macOS 客户端', '设计规范', 'AI 接入'],
     theme: {
       outline: '本页内容',
@@ -54,7 +54,7 @@ const locales = [
     ogLocale: 'en_US',
     title: 'Interfaces that surface in reality.',
     description: 'Build light, AR-inspired interfaces for the web.',
-    nav: ['Components', 'Showcase', 'Design', 'AI'],
+    nav: ['Components', 'Showcase', 'Design', 'AI', 'Download'],
     start: ['Getting started', 'Quick start', 'Migrating from 0.1', 'AR demo', 'macOS app', 'Design system', 'AI integration'],
     theme: {
       outline: 'On this page',
@@ -89,7 +89,7 @@ const locales = [
     ogLocale: 'ja_JP',
     title: 'インターフェースが、現実に浮かび上がる。',
     description: 'Web のための、軽やかな AR スタイルのインターフェース。',
-    nav: ['コンポーネント', 'ショーケース', 'デザイン', 'AI 連携'],
+    nav: ['コンポーネント', 'ショーケース', 'デザイン', 'AI 連携', 'ダウンロード'],
     start: ['はじめに', 'クイックスタート', '0.1 からの移行', 'AR デモ', 'macOS アプリ', 'デザインシステム', 'AI 連携'],
     theme: {
       outline: 'このページの内容',
@@ -122,7 +122,7 @@ type Locale = typeof locales[number]
 
 function themeConfig(locale: Locale): DefaultTheme.Config {
   const link = (path: string) => `/${locale.prefix}${path}`
-  const [components, showcase, design, ai] = locale.nav
+  const [components, showcase, design, ai, download] = locale.nav
   const [start, quickStart, migration, ar, macos, designGuide, aiGuide] = locale.start
   const catalog = localizeComponents(locale.lang)
   return {
@@ -131,6 +131,7 @@ function themeConfig(locale: Locale): DefaultTheme.Config {
       { text: showcase, link: link('showcase/') },
       { text: design, link: link('design/') },
       { text: ai, link: link('ai/') },
+      { text: download, link: link('download') },
     ],
     sidebar: [
       {
