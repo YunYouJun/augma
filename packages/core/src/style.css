@@ -817,6 +817,7 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  container-type: inline-size;
 }
 .agm-progress-ring {
   width: 100%;
@@ -853,9 +854,12 @@
   overflow-wrap: anywhere;
   text-align: center;
 }
+/* Scale the value with the ring and never wrap it: "100%" is wider than two digits. */
 .agm-progress-ring-text strong {
   display: block;
   font-size: 28px;
+  font-size: min(28px, 21cqi);
+  white-space: nowrap;
   font-weight: 500;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
