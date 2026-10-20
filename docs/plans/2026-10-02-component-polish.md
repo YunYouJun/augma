@@ -28,4 +28,4 @@ ESLint、vue-tsc、完整构建、38 项单元测试、Chromium / Firefox / WebK
 
 ## 后续独立事项
 
-[包与站点组织建议](./package-organization.md) 仍为待评估的迁移方案；公网发布、域名和实机 AR 验收继续按 [发布说明](../release.md) 跟进。在线属性编辑器、更多 Registry 条目和框架适配仍属于后续候选范围。
+[包与站点组织建议](./package-organization.md) 已于 2026-10-20 决定不采纳；公网发布与域名已完成，实机 AR 验收继续按 [发布说明](../release.md) 跟进。在线属性编辑器、更多 Registry 条目和框架适配仍属于后续候选范围。
