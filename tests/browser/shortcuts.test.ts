@@ -106,6 +106,29 @@ test('shortcuts can be rebound with conflict checks, persisted, reset and turned
   await expect(page.getByRole('button', { name: '查看与自定义', exact: true })).toBeFocused()
 })
 
+test('shortcut sheet and command panel follow the macOS app voice menu key', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window, 'webkit', { value: { messageHandlers: { speechCommand: { postMessage: () => {} } } } })
+    Object.defineProperty(window, '__AUGMA_DESKTOP_VOICE_SHORTCUT__', { value: 'Alt+Meta+v', writable: true })
+  })
+  const setMenuKey = (shortcut: string | null) => page.evaluate(value => window.dispatchEvent(new CustomEvent('augma:voice-shortcut', { detail: { shortcut: value } })), shortcut)
+  await page.goto('/ar/')
+  await page.keyboard.press('?')
+  const dialog = page.getByRole('dialog', { name: '键盘快捷键' })
+  const row = dialog.locator('.shortcut-row', { hasText: '开始或结束语音指令（App 菜单）' })
+  await expect(row.locator('kbd')).toHaveText(['⌥', '⌘', 'V'])
+  await setMenuKey('Ctrl+Meta+F5')
+  await expect(row.locator('kbd')).toHaveText(['⌃', '⌘', 'F5'])
+  await setMenuKey(null)
+  await expect(row).toHaveCount(0)
+  await page.keyboard.press('Escape')
+
+  await page.getByRole('button', { name: '语音指令', exact: true }).click()
+  await expect(page.getByText('单次录音最长 12 秒。')).toBeVisible()
+  await setMenuKey('Alt+Meta+v')
+  await expect(page.getByText('按 ⌥⌘V 可控制录音，单次最长 12 秒。')).toBeVisible()
+})
+
 test('shortcut sheet fits a phone screen', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/ar/')

@@ -12,10 +12,10 @@ struct AugmaDesktopDemoApp: App {
     .defaultSize(width: 1100, height: 720)
     .commands {
       CommandMenu("语音") {
-        Button("开始或结束语音指令") {
+        Button(VoiceShortcut.title) {
           NotificationCenter.default.post(name: .augmaToggleSpeech, object: nil)
         }
-        .keyboardShortcut("v", modifiers: [.command, .shift])
+        .keyboardShortcut(VoiceShortcut.defaultKey, modifiers: VoiceShortcut.defaultModifiers)
       }
     }
 

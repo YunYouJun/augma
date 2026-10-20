@@ -22,7 +22,7 @@ import NavigationPanel from './NavigationPanel.vue'
 import NotificationPanel from './NotificationPanel.vue'
 import SceneBackdrop from './SceneBackdrop.vue'
 import SettingsPanel from './SettingsPanel.vue'
-import { ariaChord, chordLabel, shortcutIds } from './shortcuts'
+import { ariaChord, chordLabel, parseChord, shortcutIds } from './shortcuts'
 import ShortcutsDialog from './ShortcutsDialog.vue'
 import SoundPanel from './SoundPanel.vue'
 import SpacePanel from './SpacePanel.vue'
@@ -59,12 +59,18 @@ const worldVisible = computed(() => online.value && settings.showHud && !setting
 type DesktopWindow = Window & {
   __AUGMA_DESKTOP_MODULE__?: DeviceModule
   __AUGMA_DESKTOP_IMMERSIVE__?: boolean
+  /** The macOS app's voice menu key as a chord, `null` when the menu item has no key. */
+  __AUGMA_DESKTOP_VOICE_SHORTCUT__?: string | null
   webkit?: { messageHandlers?: { moduleSelection?: { postMessage: (module: DeviceModule | null) => void } } }
 }
 const desktopWindow = window as DesktopWindow
 const desktopImmersive = desktopWindow.__AUGMA_DESKTOP_IMMERSIVE__ === true
 // The simulated surroundings stand in for the real world until the camera or AR shows it.
 const backdropVisible = computed(() => settings.sceneBackdrop && !desktopImmersive && !camera.stream.value && !xr.ready.value)
+const nativeChord = (value: unknown) => typeof value === 'string' && parseChord(value) ? value : null
+/** Follows the menu item, which the user can rebind under App Shortcuts in System Settings. */
+const nativeVoiceShortcut = shallowRef(nativeChord(desktopWindow.__AUGMA_DESKTOP_VOICE_SHORTCUT__))
+const nativeVoiceLabel = computed(() => nativeVoiceShortcut.value ? chordLabel(nativeVoiceShortcut.value, true) : '')
 const shortcutsOpen = shallowRef(false)
 const shortcuts = useShortcuts({
   run: runShortcut,
@@ -199,6 +205,10 @@ function selectDesktopModule(event: Event) {
     return
   settings.showHud = true
   device.openModule(module as DeviceModule)
+}
+
+function syncNativeVoiceShortcut(event: Event) {
+  nativeVoiceShortcut.value = nativeChord((event as CustomEvent<{ shortcut?: unknown }>).detail?.shortcut)
 }
 
 function toast(text: Message) {
@@ -347,6 +357,7 @@ onMounted(() => {
     document.documentElement.classList.add('augma-desktop-immersive')
   window.addEventListener('augma:select-module', selectDesktopModule)
   window.addEventListener('augma:toggle-speech', toggleSpeechShortcut)
+  window.addEventListener('augma:voice-shortcut', syncNativeVoiceShortcut)
   if (desktopWindow.__AUGMA_DESKTOP_MODULE__)
     selectDesktopModule(new CustomEvent('augma:select-module', { detail: { module: desktopWindow.__AUGMA_DESKTOP_MODULE__ } }))
   void xr.detect()
@@ -359,6 +370,7 @@ onUnmounted(() => {
     document.documentElement.classList.remove('augma-desktop-immersive')
   window.removeEventListener('augma:select-module', selectDesktopModule)
   window.removeEventListener('augma:toggle-speech', toggleSpeechShortcut)
+  window.removeEventListener('augma:voice-shortcut', syncNativeVoiceShortcut)
   speech.cancel()
   document.removeEventListener('fullscreenchange', syncFullscreen)
 })
@@ -381,13 +393,13 @@ onUnmounted(() => {
         <SettingsPanel v-else-if="activeModule === 'settings'" v-model:opacity="settings.opacity" v-model:dark="settings.dark" v-model:focus="settings.focus" v-model:mirror="settings.mirror" v-model:depth-motion="settings.depthMotion" v-model:scene-backdrop="settings.sceneBackdrop" v-model:curved-hud="settings.curvedHud" v-model:speech-feedback="settings.speechFeedback" v-model:shortcuts-enabled="shortcutsEnabled" :locale="locale" :speech-feedback-supported="feedback.supported" :assistant-native="speech.native" :assistant-ready="speech.assistantReady.value" :reduced-motion="reducedMotion" :storage-available="storageAvailable && localeSaved" @locale="changeLocale" @reset="resetSettings" @shortcuts="shortcutsOpen = true" @save-key="saveAssistantKey" @remove-key="removeAssistantKey" />
         <WeatherPanel v-else-if="activeModule === 'weather'" />
         <CameraControls v-else-if="activeModule === 'camera'" :camera="camera" :xr="xr" :online="online" @capture="snapshot" @prepare-xr="prepareXr" />
-        <CommandPanel v-else-if="activeModule === 'commands'" :speech-available="speech.available" :native="speech.native" :assistant-ready="speech.assistantReady.value" :speech-status="speech.status.value" :transcript="speech.transcript.value" :reply="speech.reply.value" :speech-error="speech.error.value ? t(speech.error.value) : ''" @command="executeCommand" @start="startSpeech" @stop="speech.stop" @cancel="speech.cancel" @submit="speech.submitText" />
+        <CommandPanel v-else-if="activeModule === 'commands'" :speech-available="speech.available" :native="speech.native" :voice-shortcut="nativeVoiceLabel" :assistant-ready="speech.assistantReady.value" :speech-status="speech.status.value" :transcript="speech.transcript.value" :reply="speech.reply.value" :speech-error="speech.error.value ? t(speech.error.value) : ''" @command="executeCommand" @start="startSpeech" @stop="speech.stop" @cancel="speech.cancel" @submit="speech.submitText" />
         <ArHud v-else :connection="connection" :live="!!camera.stream.value" :scene="scene.name" @connect="device.connect" @sleep="device.suspend('sleeping')" @disconnect="device.suspend('disconnected')" />
       </DeviceWindow>
       <div v-if="!online && activeModule !== 'device'" class="standby-view"><p>{{ t(`connection.${connection}`) }}</p><AgmButton :loading="connection === 'connecting'" @click="device.connect">{{ t(connection === 'sleeping' ? 'device.wake' : 'device.connect') }}</AgmButton></div>
     </main>
     <DeviceDock :curved="settings.curvedHud" :active="settings.showHud ? activeModule : null" :show-hud="settings.showHud" :mirror="settings.mirror" :shortcuts="shortcutHints" @select="openApp" @mirror="settings.mirror = !settings.mirror" @hud="settings.showHud = !settings.showHud" />
     <AgmToast v-model:open="notification" :title="message ? t(message) : ''" :close-label="t('toast.close')" :region-label="t('toast.region')" />
-    <ShortcutsDialog v-model:open="shortcutsOpen" v-model:enabled="shortcutsEnabled" :bindings="shortcuts.bindings.value" :customized="customizedShortcuts" :hidden="fullscreenSupported ? [] : ['fullscreen']" :mac="shortcuts.mac" :native="speech.native" :storage-available="shortcuts.storageAvailable.value" @assign="shortcuts.assign" @reset="shortcuts.reset" @reset-all="shortcuts.resetAll" />
+    <ShortcutsDialog v-model:open="shortcutsOpen" v-model:enabled="shortcutsEnabled" :bindings="shortcuts.bindings.value" :customized="customizedShortcuts" :hidden="fullscreenSupported ? [] : ['fullscreen']" :mac="shortcuts.mac" :native-voice="speech.native ? nativeVoiceShortcut : null" :storage-available="shortcuts.storageAvailable.value" @assign="shortcuts.assign" @reset="shortcuts.reset" @reset-all="shortcuts.resetAll" />
   </div>
 </template>

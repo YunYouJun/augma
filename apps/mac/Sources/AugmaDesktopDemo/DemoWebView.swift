@@ -15,8 +15,9 @@ struct DemoWebView: NSViewRepresentable {
     let initialModule = selection?.rawValue ?? ""
     // Hand the page the app's UI language so the embedded demo matches the native menus.
     let appLocale = Bundle.main.preferredLocalizations.first ?? "zh-Hans"
+    let voiceShortcut = Coordinator.javaScriptLiteral(VoiceShortcut.currentChord())
     configuration.userContentController.addUserScript(WKUserScript(
-      source: "window.__AUGMA_DESKTOP_MODULE__ = '\(initialModule)'; window.__AUGMA_DESKTOP_LOCALE__ = '\(appLocale)';",
+      source: "window.__AUGMA_DESKTOP_MODULE__ = '\(initialModule)'; window.__AUGMA_DESKTOP_LOCALE__ = '\(appLocale)'; window.__AUGMA_DESKTOP_VOICE_SHORTCUT__ = \(voiceShortcut);",
       injectionTime: .atDocumentStart,
       forMainFrameOnly: true
     ))
@@ -140,6 +141,8 @@ struct DemoWebView: NSViewRepresentable {
       NotificationCenter.default.addObserver(self, selector: #selector(cancelSpeechForModeChange), name: .augmaCancelSpeech, object: nil)
       NotificationCenter.default.addObserver(self, selector: #selector(cancelSpeechOnDeactivation), name: NSApplication.didResignActiveNotification, object: nil)
       NotificationCenter.default.addObserver(self, selector: #selector(sendSpeechConfig), name: .augmaDeepSeekConfigChanged, object: nil)
+      // Picks up a key changed under App Shortcuts while the user was in System Settings.
+      NotificationCenter.default.addObserver(self, selector: #selector(sendVoiceShortcut), name: NSApplication.didBecomeActiveNotification, object: nil)
     }
 
     func unregisterObservers() {
@@ -147,6 +150,7 @@ struct DemoWebView: NSViewRepresentable {
       NotificationCenter.default.removeObserver(self, name: .augmaCancelSpeech, object: nil)
       NotificationCenter.default.removeObserver(self, name: NSApplication.didResignActiveNotification, object: nil)
       NotificationCenter.default.removeObserver(self, name: .augmaDeepSeekConfigChanged, object: nil)
+      NotificationCenter.default.removeObserver(self, name: NSApplication.didBecomeActiveNotification, object: nil)
     }
 
     @objc private func toggleSpeechFromShortcut(_ notification: Notification) {
@@ -173,6 +177,20 @@ struct DemoWebView: NSViewRepresentable {
 
     @objc private func sendSpeechConfig() {
       sendSpeechEvent(type: "config", text: nil, enabled: DeepSeekSettings.isReady)
+    }
+
+    /// Tell the page the voice menu item's current key, so its shortcut sheet and command panel show it.
+    @objc private func sendVoiceShortcut() {
+      guard ready, let webView else { return }
+      let value = Self.javaScriptLiteral(VoiceShortcut.currentChord())
+      webView.evaluateJavaScript("window.__AUGMA_DESKTOP_VOICE_SHORTCUT__ = \(value); window.dispatchEvent(new CustomEvent('augma:voice-shortcut', { detail: { shortcut: \(value) } }))")
+    }
+
+    /// - Returns: The string as a JSON literal, or `null`
+    nonisolated static func javaScriptLiteral(_ value: String?) -> String {
+      guard let value, let data = try? JSONSerialization.data(withJSONObject: value, options: .fragmentsAllowed),
+            let literal = String(data: data, encoding: .utf8) else { return "null" }
+      return literal
     }
 
     private func sendSpeechEvent(type: String, text: String?, code: String? = nil, enabled: Bool? = nil) {
@@ -230,6 +248,7 @@ struct DemoWebView: NSViewRepresentable {
       parent.loadError = nil
       select(parent.selection, in: webView)
       sendSpeechConfig()
+      sendVoiceShortcut()
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

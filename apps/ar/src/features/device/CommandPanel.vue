@@ -5,8 +5,10 @@ import { t } from '../../i18n/locale'
 
 defineProps<{
   speechAvailable: boolean
-  /** Running inside the macOS app, which records natively and has the ⌘⇧V shortcut. */
+  /** Running inside the macOS app, which records natively. */
   native: boolean
+  /** The macOS app's voice menu key, such as `⌥⌘V`, or empty when the menu item has no key. */
+  voiceShortcut: string
   assistantReady: boolean
   speechStatus: 'idle' | 'requesting' | 'listening' | 'processing' | 'interpreting'
   transcript: string
@@ -44,7 +46,7 @@ const commands = ['map', 'scan', 'weather', 'audio', 'dark', 'hide'] as const
     </div>
     <small>
       {{ t('commands.more') }}
-      {{ t(native ? 'commands.shortcut' : speechAvailable ? 'commands.browserSpeech' : 'commands.noSpeech') }}
+      {{ native ? voiceShortcut ? t('commands.shortcut', { keys: voiceShortcut }) : t('commands.nativeSpeech') : t(speechAvailable ? 'commands.browserSpeech' : 'commands.noSpeech') }}
       {{ t(assistantReady ? 'commands.assistantOn' : native ? 'commands.assistantOffNative' : 'commands.assistantOffWeb') }}
     </small>
   </div>

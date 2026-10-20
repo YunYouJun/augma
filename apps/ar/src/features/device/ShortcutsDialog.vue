@@ -13,8 +13,8 @@ const props = defineProps<{
   /** Actions this browser cannot perform. */
   hidden: readonly ShortcutId[]
   mac: boolean
-  /** Running inside the macOS app, whose menu adds ⇧⌘V for voice commands. */
-  native: boolean
+  /** The macOS app's voice menu chord, `null` outside the app or when the menu item has no key. */
+  nativeVoice: string | null
   storageAvailable: boolean
 }>()
 const emit = defineEmits<{ assign: [id: ShortcutId, chord: string | null], reset: [id: ShortcutId], resetAll: [] }>()
@@ -27,7 +27,7 @@ const fixed = computed<{ label: MessageKey, keys: string[] }[]>(() => [
   { label: 'shortcuts.fixed.close', keys: ['Esc'] },
   { label: 'shortcuts.fixed.move', keys: ['←', '↑', '→', '↓'] },
   { label: 'shortcuts.fixed.toast', keys: ['F8'] },
-  ...props.native ? [{ label: 'shortcuts.fixed.nativeVoice' as const, keys: formatChord('Shift+Meta+v', true) }] : [],
+  ...props.nativeVoice ? [{ label: 'shortcuts.fixed.nativeVoice' as const, keys: formatChord(props.nativeVoice, true) }] : [],
 ])
 const recording = shallowRef<ShortcutId | null>(null)
 /** A chord another action uses, waiting for a second press to take it over. */

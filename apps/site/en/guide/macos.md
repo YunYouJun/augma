@@ -16,7 +16,7 @@ Requires macOS 15 or later, on Macs with Apple silicon or Intel processors. Earl
 
 - **Demo window**: open weather, sound, space, camera, navigation and the other apps from the sidebar, just like the web AR demo; turn on Always on Top from the toolbar.
 - **Immersive mode**: the interface floats over the current display as a transparent overlay, and clicks on empty areas pass through; the control bar at the top right switches apps, hands control back to the desktop or exits.
-- **Voice commands**: click the microphone at the top left or press `⌘⇧V`, then say a command such as "open the map" or "start navigation", in English, Chinese or Japanese. The first time, macOS asks for microphone and speech recognition permission.
+- **Voice commands**: click the microphone at the top left or press `⌥⌘V`, then say a command such as "open the map" or "start navigation", in English, Chinese or Japanese. The first time, macOS asks for microphone and speech recognition permission. To use another key, add the menu title "Start or Finish Voice Command" for Augma in System Settings → Keyboard → Keyboard Shortcuts → App Shortcuts.
 - **Languages**: menus and settings follow the macOS language (简体中文, English, 日本語); you can pick a language for Augma alone in System Settings → General → Language & Region → Applications. The demo interface's language can also be switched in its Settings panel.
 
 The camera and WebXR depend on WebKit's support for local pages; the simulated interface does not need those permissions. The optional DeepSeek assistant, which answers questions or runs demo actions, needs your own API key; see the [app README](https://github.com/YunYouJun/augma/tree/main/apps/mac).
