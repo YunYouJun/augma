@@ -1,9 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "installCommand": "npx --yes pnpm@12.5.1 install --frozen-lockfile",
-  "buildCommand": "npx --yes pnpm@12.5.1 run build",
-  "outputDirectory": "apps/site/.vitepress/dist",
+  "installCommand": "",
+  "buildCommand": "echo 'Redirect-only deployment: docs.augma.elpsy.cn redirects to augma.yyj.moe'",
+  "outputDirectory": "deploy/vercel",
   "cleanUrls": true,
   "redirects": [
     {

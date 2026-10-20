@@ -124,7 +124,7 @@ npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运
 
 `augma.elpsy.cn` 是 Cloudflare Pages 项目 `augma` 的另一个自定义域名，[Pages 的 `_redirects` 不支持域名级匹配](https://developers.cloudflare.com/pages/configuration/redirects/)，需要在 `elpsy.cn` zone 添加 Single Redirect：主机名等于 `augma.elpsy.cn` 时，301 跳转到静态地址 `https://augma.yyj.moe/ar/`（旧 Client 只有根页面）。不要添加不带主机名条件的全站重定向，否则会影响新域名。
 
-Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run update` 构建命令，锁定 pnpm 版本并输出完整站点（含 `/ar/`）；Git 预览部署用于验证，不代表旧域迁移或生产发布已完成。[Vercel 仓库配置会覆盖控制台构建设置](https://vercel.com/docs/project-configuration/vercel-json)。
+Vercel 仍连接此仓库，但只负责上述跳转。2026-10-20 起 `vercel.json` 跳过安装（`installCommand` 为空字符串），构建命令只输出一行说明，发布 `deploy/vercel/` 里的单个跳转页；不再构建站点，PR 预览由 Cloudflare Pages 提供。`redirects` 不依赖产物内容，`*.vercel.app` 只显示该跳转页。[Vercel 仓库配置会覆盖控制台构建设置](https://vercel.com/docs/project-configuration/vercel-json)。
 
 ## 公网验收
 
