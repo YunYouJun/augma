@@ -10,6 +10,8 @@ for (const path of ['package.json', 'packages/core/package.json', 'packages/augm
   if (pkg.version !== version)
     throw new Error(`${path} must match component contract v${version}`)
 }
+// Registry items ask for the same Reka UI range that the published augma package declares.
+const rekaUi = JSON.parse(await readFile('packages/augma/package.json', 'utf8')).dependencies['reka-ui']
 const site = resolve('apps/site')
 const publicDir = resolve(site, 'public')
 for (const dir of ['r', 'markdown']) {
@@ -71,7 +73,7 @@ for (const item of components) {
   if (item.registry) {
     const deps = [`@augma/core@${version}`]
     if (source.includes('from \'reka-ui\''))
-      deps.push('reka-ui@2.10.5')
+      deps.push(`reka-ui@${rekaUi}`)
     await writeFile(
       resolve(publicDir, `r/${item.slug}.json`),
       `${JSON.stringify({ $schema: 'https://shadcn-vue.com/schema/registry-item.json', name: item.slug, type: 'registry:ui', title: item.title, description: item.description, dependencies: deps, files: [{ path: `ui/augma/${item.name}.vue`, type: 'registry:ui', content: source }], docs: 'Import \'@augma/core/style.css\' once in your application entry. Vue 3.5+ is required. This source is yours to edit.' }, null, 2)}\n`,

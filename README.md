@@ -31,7 +31,7 @@ import 'augma/style.css'
 </template>
 ```
 
-上面的 API 对应 0.2。从 0.1 升级前请先阅读[迁移指南](apps/site/guide/migration.md)。pnpm 11 及以上需要允许 `vue-demi` 的安装脚本，见[快速开始](apps/site/guide/index.md)。
+上面的 API 对应 0.2。从 0.1 升级前请先阅读[迁移指南](apps/site/guide/migration.md)。0.2.2 起在 pnpm 11 及以上安装无需批准任何脚本；0.2.1 及更早版本仍需允许 `vue-demi` 的安装脚本，见[快速开始](apps/site/guide/index.md)。
 
 只需样式时安装 `@augma/core`，导入 `@augma/core/tokens.css` 或 `@augma/core/style.css`。
 

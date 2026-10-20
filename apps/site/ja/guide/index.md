@@ -11,7 +11,7 @@ pnpm add augma
 ```
 
 ::: tip pnpm 11 以降
-依存関係に含まれる `vue-demi`（Reka UI と Floating UI 経由）にはインストールスクリプトがあり、pnpm は承認されていないスクリプトがあるとインストールを失敗させます。`pnpm approve-builds` で承認するか、`pnpm-workspace.yaml` に次を書いてください：
+pnpm は承認されていないインストールスクリプトがあるとインストールを失敗させます。augma 0.2.2 以降は `vue-demi` に依存しないため、承認するスクリプトはありません。0.2.1 以前は Reka UI と Floating UI 経由でインストールスクリプトを持つ `vue-demi` が入るため、`pnpm approve-builds` で承認するか、`pnpm-workspace.yaml` に次を書いてください：
 
 ```yaml
 allowBuilds:

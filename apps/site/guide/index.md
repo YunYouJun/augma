@@ -11,7 +11,7 @@ pnpm add augma
 ```
 
 ::: tip pnpm 11 及以上
-依赖链中的 `vue-demi`（经由 Reka UI 和 Floating UI 引入）带有安装脚本，pnpm 默认拦截未批准的脚本并让安装失败。运行 `pnpm approve-builds` 批准它，或在 `pnpm-workspace.yaml` 中写入：
+pnpm 默认拦截未批准的安装脚本并让安装失败。augma 0.2.2 起不再依赖 `vue-demi`，安装时无需批准任何脚本。0.2.1 及更早版本经由 Reka UI 和 Floating UI 引入带安装脚本的 `vue-demi`，仍需运行 `pnpm approve-builds` 批准它，或在 `pnpm-workspace.yaml` 中写入：
 
 ```yaml
 allowBuilds:

@@ -16,7 +16,7 @@ pnpm add augma
 
 Vue 3.5 or newer is a peer dependency. Styles come from [`@augma/core`](https://www.npmjs.com/package/@augma/core), installed with it.
 
-On pnpm 11 or later, allow the install script of `vue-demi`, which comes through Reka UI: run `pnpm approve-builds`, or set `allowBuilds: { vue-demi: true }` in `pnpm-workspace.yaml`. Otherwise pnpm fails the install.
+From 0.2.2, augma no longer depends on `vue-demi`, so pnpm 11 or later installs it without approving any install script. 0.2.1 and earlier pull in `vue-demi` through Reka UI, and pnpm fails the install until its install script is allowed: run `pnpm approve-builds`, or set `allowBuilds: { vue-demi: true }` in `pnpm-workspace.yaml`.
 
 ## Use
 

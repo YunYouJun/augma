@@ -10,7 +10,7 @@
     "@augma/core": "workspace:*",
     "@fontsource/exo-2": "5.3.0",
     "augma": "workspace:*",
-    "reka-ui": "2.10.5",
+    "reka-ui": "2.11.0",
     "vue": "3.5.43"
   },
   "devDependencies": {

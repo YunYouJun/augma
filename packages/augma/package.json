@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@augma/core": "workspace:^",
-    "reka-ui": "2.10.5"
+    "reka-ui": "^2.11.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "6.0.9",

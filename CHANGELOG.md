@@ -1,5 +1,16 @@
 # 更新记录
 
+## 0.2.2（未发布）
+
+### 修复
+
+- 升级 Reka UI 至 2.11.0。它使用的 Floating UI 2 不再依赖 `vue-demi`，pnpm 11 及以上安装 augma 时无需批准任何安装脚本；0.2.1 及更早版本仍需允许 `vue-demi` 的安装脚本。
+- augma 对 Reka UI 的依赖改为 `^2.11.0`，便于与项目自身的 Reka UI 或 shadcn-vue 去重；Registry 条目声明同一范围，由 `pnpm generate` 从 augma 的 `package.json` 读取。
+
+### 文档与接入
+
+- 快速开始、npm README 与 Skill 更新 pnpm 安装说明：0.2.2 起不再需要批准 `vue-demi`，0.2.1 及更早版本仍需批准。
+
 ## 0.2.1（2026-10-20）
 
 ### 修复

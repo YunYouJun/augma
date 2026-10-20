@@ -1,6 +1,4 @@
 minimumReleaseAgeExcludePrune: true
-minimumReleaseAgeExclude:
-  - reka-ui@2.10.5
 
 trustPolicy: no-downgrade
 # Legacy maintenance releases predate their siblings' provenance adoption.
@@ -25,4 +23,3 @@ packages:
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true
-  vue-demi: true

@@ -11,7 +11,7 @@ pnpm add augma
 ```
 
 ::: tip pnpm 11 or later
-`vue-demi`, which arrives through Reka UI and Floating UI, has an install script, and pnpm fails the install on scripts nobody approved. Run `pnpm approve-builds` to allow it, or add this to `pnpm-workspace.yaml`:
+pnpm fails the install on install scripts nobody approved. From 0.2.2, augma no longer depends on `vue-demi`, so there is nothing to approve. 0.2.1 and earlier pull in `vue-demi`, which has an install script, through Reka UI and Floating UI; for those, run `pnpm approve-builds` to allow it, or add this to `pnpm-workspace.yaml`:
 
 ```yaml
 allowBuilds:
