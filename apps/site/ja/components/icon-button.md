@@ -29,3 +29,9 @@ Tab でフォーカス、Enter または Space で実行。label には操作の
 import { AgmIconButton } from 'augma'
 import 'augma/style.css'
 ```
+
+編集可能なソースをコピー：
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/icon-button.json
+```

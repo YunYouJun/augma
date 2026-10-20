@@ -36,3 +36,9 @@ Enter / Space で開き、矢印キーで移動、Enter で選択、Escape で�
 import { AgmSelect } from 'augma'
 import 'augma/style.css'
 ```
+
+編集可能なソースをコピー：
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/select.json
+```

@@ -30,3 +30,9 @@ Tab でフォーカス、Space または Enter で切り替えます。
 import { AgmSwitch } from 'augma'
 import 'augma/style.css'
 ```
+
+編集可能なソースをコピー：
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/switch.json
+```

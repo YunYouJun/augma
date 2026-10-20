@@ -33,3 +33,9 @@ F8 focuses the notification region; Escape or the close button dismisses it. The
 import { AgmToast } from 'augma'
 import 'augma/style.css'
 ```
+
+Copy the editable source:
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/toast.json
+```

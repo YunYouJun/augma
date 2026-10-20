@@ -58,7 +58,7 @@ Every page has a live example, its Vue source and the full API.
 
 ## Copy the source instead
 
-Seven components are also available as editable source through a [shadcn-vue](https://www.shadcn-vue.com) Registry:
+Every component is also available as editable source through a [shadcn-vue](https://www.shadcn-vue.com) Registry; each component page lists its command:
 
 ```sh
 pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/button.json

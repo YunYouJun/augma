@@ -29,3 +29,9 @@ Tab 聚焦；Enter 或 Space 激活。label 必须描述动作。
 import { AgmIconButton } from 'augma'
 import 'augma/style.css'
 ```
+
+复制可编辑源码：
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/icon-button.json
+```

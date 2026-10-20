@@ -10,7 +10,7 @@ import {
 } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { tmpdir } from 'node:os'
-import { join, resolve } from 'node:path'
+import { basename, join, resolve } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
@@ -187,9 +187,31 @@ try {
         `import C${i} from './${p.slice(join(temp, 'src').length + 1)}'`,
     )
     .join('\n')
+  // The h() arguments each installed component renders with: its required props and slot content
+  // and nothing meant for another component (a stray `value` once reset AgmInput's text).
+  const consumer = {
+    AgmButton: `null, () => 'Launch'`,
+    AgmIconButton: `{label:'Add marker'}`,
+    AgmInput: `{label:'Consumer'}`,
+    AgmSelect: `{label:'Mode',options:[{label:'Scan',value:'scan'},{label:'Track',value:'track'}]}`,
+    AgmSwitch: `{label:'Night vision'}`,
+    AgmSlider: `{label:'Range'}`,
+    AgmDialog: `{title:'Panel',description:'Example'}`,
+    AgmTooltip: `{text:'Center the view'}, () => h('button', {type:'button'}, 'Recenter')`,
+    AgmToast: `{title:'Synced',open:true,duration:Infinity}`,
+    AgmPanel: `{title:'Panel',description:'Example'}`,
+    AgmHudStatus: `null, () => 'Online'`,
+    AgmHudProgress: `{label:'Upload',value:40}`,
+    AgmHudGauge: `{label:'Shield',value:42}`,
+  }
+  const nodes = generated.map((p, i) => {
+    const name = basename(p, '.vue')
+    assert(consumer[name], `${name}: give it consumer props in verify-registry`)
+    return `h(C${i}, ${consumer[name]})`
+  })
   await writeFile(
     join(temp, 'src/main.ts'),
-    `${imports}\nimport {createApp,h} from 'vue'\nimport './style.css'\ncreateApp({render:()=>h('div',{},[${generated.map((p, i) => `h(C${i}, {label:'Consumer',title:'Panel',description:'Example'${p.endsWith('AgmHudGauge.vue') ? ',value:42' : ''}})`).join(',')}])}).mount('#app')`,
+    `${imports}\nimport {createApp,h} from 'vue'\nimport './style.css'\ncreateApp({render:()=>h('div',{},[${nodes.join(',')}])}).mount('#app')`,
   )
   await run(resolve('node_modules/.bin/vue-tsc'), [
     '--noEmit',
@@ -208,9 +230,26 @@ try {
   assert(!['rgba(0, 0, 0, 0)', 'transparent'].includes(background), 'Installed Registry source must render with Core CSS')
   await page.getByRole('textbox', { name: 'Consumer' }).fill('Editable source')
   assert.equal(await page.getByRole('textbox', { name: 'Consumer' }).inputValue(), 'Editable source')
+  await page.getByRole('button', { name: 'Add marker' }).waitFor({ state: 'visible' })
+  // The Reka UI behavior the entries declare works in the consumer build.
+  const select = page.getByRole('combobox', { name: 'Mode' })
+  await select.click()
+  await page.getByRole('option', { name: 'Track' }).click()
+  assert.match(await select.textContent(), /Track/)
+  const toggle = page.getByRole('switch', { name: 'Night vision' })
+  await toggle.press('Space')
+  assert.equal(await toggle.getAttribute('aria-checked'), 'true')
+  const slider = page.getByRole('slider', { name: 'Range' })
+  await slider.press('ArrowRight')
+  assert.equal(await slider.getAttribute('aria-valuenow'), '1')
+  await page.getByRole('button', { name: 'Recenter' }).focus()
+  await page.locator('.agm-tooltip').waitFor({ state: 'visible' })
+  assert.match(await page.locator('.agm-tooltip').textContent(), /Center the view/)
+  await page.locator('.agm-toast').waitFor({ state: 'visible' })
+  assert.equal(await page.locator('.agm-toast-title').textContent(), 'Synced')
   assert.deepEqual(errors, [])
   console.log(
-    `Passed: actual shadcn-vue CLI installed all ${entries} Registry entries in a clean Vue project; consumer types, production build, rendered CSS and input interaction passed.`,
+    `Passed: actual shadcn-vue CLI installed all ${entries} Registry entries in a clean Vue project; consumer types, production build, rendered CSS and Select, Switch, Slider, Tooltip, Toast and input interaction passed.`,
   )
 }
 finally {

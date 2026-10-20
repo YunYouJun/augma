@@ -43,7 +43,7 @@ pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/button.json
 pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/dialog.json
 ```
 
-現在は Button、Input、Panel、Dialog、HudStatus、HudProgress、HudGauge に対応しています。Registry は npm のコンポーネントと同じソースファイルをコピーし、スタイルと振る舞いの依存関係も宣言します。
+13 個のコンポーネントすべてに Registry エントリーがあり、URL は `https://augma.yyj.moe/r/<コンポーネント>.json` です。ファイル名はコンポーネントページのパスと同じで（`icon-button`、`hud-gauge` など）、各コンポーネントページにも対応するコマンドがあります。Registry は npm のコンポーネントと同じソースファイルをコピーし、スタイルと振る舞いの依存関係も宣言します。
 
 アプリのエントリーで読み込みます：
 

@@ -10,6 +10,8 @@
 ### 文档与接入
 
 - 快速开始、npm README 与 Skill 更新 pnpm 安装说明：0.2.2 起不再需要批准 `vue-demi`，0.2.1 及更早版本仍需批准。
+- Registry 覆盖全部 13 个组件：新增 IconButton、Select、Switch、Slider、Tooltip、Toast 的 `/r/*.json` 条目，各语言组件页与 Skill 速查附上复制源码命令，AI 接入页、快速开始、npm README 与 Skill 同步说明。
+- Registry 校验为每个组件传入各自所需的 Props 与插槽，并在消费项目中检查 Select、Switch、Slider、Tooltip 与 Toast 的交互。
 
 ## 0.2.1（2026-10-20）
 

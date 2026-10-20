@@ -50,6 +50,7 @@ export const components = [
     ],
     slots: ['default：图标，默认加号'],
     keyboard: 'Tab 聚焦；Enter 或 Space 激活。label 必须描述动作。',
+    registry: true,
   },
   {
     slug: 'input',
@@ -125,6 +126,7 @@ export const components = [
     events: ['update:modelValue(string)'],
     keyboard:
       'Enter / Space 打开，方向键移动，Enter 选择，Escape 关闭；支持字符搜索并跳过禁用项。class / style 保留在字段容器，其余额外属性和监听器传递到触发按钮；hint / error 自动关联。',
+    registry: true,
   },
   {
     slug: 'switch',
@@ -152,6 +154,7 @@ export const components = [
     ],
     events: ['update:modelValue(boolean)'],
     keyboard: 'Tab 聚焦，Space 或 Enter 切换。',
+    registry: true,
   },
   {
     slug: 'slider',
@@ -192,6 +195,7 @@ export const components = [
     events: ['update:modelValue(number)'],
     keyboard:
       '方向键按步长调节，Home / End 到达边界，Page Up / Down 大步调节。',
+    registry: true,
   },
   {
     slug: 'dialog',
@@ -242,6 +246,7 @@ export const components = [
     slots: ['default：单个可聚焦触发元素'],
     keyboard:
       '悬停或聚焦触发元素显示，Escape 关闭。触屏必需信息应直接展示，不仅放在提示里。',
+    registry: true,
   },
   {
     slug: 'toast',
@@ -279,6 +284,7 @@ export const components = [
     events: ['update:open(boolean)'],
     keyboard:
       'F8 聚焦通知区域，Escape 或关闭按钮关闭。悬停或聚焦时暂停倒计时。每个应用建议放置一个 AgmToast。',
+    registry: true,
   },
   {
     slug: 'panel',

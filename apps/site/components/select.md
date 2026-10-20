@@ -36,3 +36,9 @@ Enter / Space 打开，方向键移动，Enter 选择，Escape 关闭；支持�
 import { AgmSelect } from 'augma'
 import 'augma/style.css'
 ```
+
+复制可编辑源码：
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/select.json
+```

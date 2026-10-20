@@ -28,3 +28,9 @@
 import { AgmTooltip } from 'augma'
 import 'augma/style.css'
 ```
+
+編集可能なソースをコピー：
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/tooltip.json
+```

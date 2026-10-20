@@ -12,7 +12,7 @@ Build light, legible interfaces inspired by the Augma device in Sword Art Online
 - Vue 3.5+: `pnpm add augma`, import named `Agm*` components and `augma/style.css` once. `@augma/core` is installed with it.
 - Check that `augma` resolved to 0.2 or later; 0.1.x is an incompatible legacy API, and pnpm skips versions published less than a day ago. From 0.2.2 there is no install script to approve. On pnpm 11+, 0.2.1 and earlier fail to install until the `vue-demi` install script (pulled in by Reka UI) is allowed: `pnpm approve-builds`, or `allowBuilds: { vue-demi: true }` in `pnpm-workspace.yaml`.
 - Other frameworks or plain HTML: `pnpm add @augma/core` and import `tokens.css` (variables only) or `style.css` (every `.agm-*` class). Supply native or headless behavior separately.
-- Editable Vue source: the Registry entries marked in the component reference. Import `@augma/core/style.css` once and keep the declared behavior dependencies.
+- Editable Vue source: every component has a Registry entry, `pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/<slug>.json`; the component reference gives each command. Import `@augma/core/style.css` once and keep the declared behavior dependencies.
 
 ## Get the API right
 

@@ -43,7 +43,7 @@ pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/button.json
 pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/dialog.json
 ```
 
-目前支持 Button、Input、Panel、Dialog、HudStatus、HudProgress、HudGauge。Registry 复制与 npm 组件相同的源文件，同时声明样式与行为依赖。
+全部 13 个组件都提供 Registry 条目，地址为 `https://augma.yyj.moe/r/<组件>.json`，文件名与组件页路径一致（如 `icon-button`、`hud-gauge`），每个组件页也列出了对应命令。Registry 复制与 npm 组件相同的源文件，同时声明样式与行为依赖。
 
 在应用入口导入：
 

@@ -64,7 +64,7 @@ CSS パッケージは Vue のランタイムに依存しません。複雑な�
 
 ## 編集できるソース
 
-shadcn-vue を初期化済みの Vue プロジェクトでは、[Registry](/ja/ai/#component-registry) からコアコンポーネントをコピーできます。コピーしたコードはプロジェクト側で管理し、スタイルは引き続き `@augma/core/style.css` を参照します。
+shadcn-vue を初期化済みの Vue プロジェクトでは、[Registry](/ja/ai/#component-registry) から任意のコンポーネントのソースをコピーできます。コピーしたコードはプロジェクト側で管理し、スタイルは引き続き `@augma/core/style.css` を参照します。
 
 ## テーマ
 

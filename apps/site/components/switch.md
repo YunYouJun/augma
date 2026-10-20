@@ -30,3 +30,9 @@ Tab 聚焦，Space 或 Enter 切换。
 import { AgmSwitch } from 'augma'
 import 'augma/style.css'
 ```
+
+复制可编辑源码：
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/switch.json
+```

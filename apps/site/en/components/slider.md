@@ -33,3 +33,9 @@ Arrow keys move by one step, Home / End jump to the limits, Page Up / Down take 
 import { AgmSlider } from 'augma'
 import 'augma/style.css'
 ```
+
+Copy the editable source:
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/slider.json
+```

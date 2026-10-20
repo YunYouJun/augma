@@ -94,6 +94,8 @@ Slots:
 
 Usage notes: Tab to focus; Enter or Space to activate. The label must describe the action.
 
+Editable source: `pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/icon-button.json`
+
 Docs: https://augma.yyj.moe/en/components/icon-button
 
 ```vue
@@ -213,6 +215,8 @@ Events: `update:modelValue(string)`
 
 Usage notes: Enter / Space opens, arrow keys move, Enter selects and Escape closes; type-ahead search skips disabled options. class / style stay on the field wrapper, other attributes and listeners go to the trigger button; hint / error are linked automatically.
 
+Editable source: `pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/select.json`
+
 Docs: https://augma.yyj.moe/en/components/select
 
 ```vue
@@ -274,6 +278,8 @@ Events: `update:modelValue(boolean)`
 
 Usage notes: Tab to focus; Space or Enter to toggle.
 
+Editable source: `pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/switch.json`
+
 Docs: https://augma.yyj.moe/en/components/switch
 
 ```vue
@@ -325,6 +331,8 @@ Slider: Adjusts a value with continuous feedback, by touch or keyboard.
 Events: `update:modelValue(number)`
 
 Usage notes: Arrow keys move by one step, Home / End jump to the limits, Page Up / Down take larger steps.
+
+Editable source: `pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/slider.json`
 
 Docs: https://augma.yyj.moe/en/components/slider
 
@@ -445,6 +453,8 @@ Slots:
 
 Usage notes: Shows when the trigger is hovered or focused; Escape dismisses it. On touch screens, show essential information directly instead of only in a tooltip.
 
+Editable source: `pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/tooltip.json`
+
 Docs: https://augma.yyj.moe/en/components/tooltip
 
 ```vue
@@ -491,6 +501,8 @@ Toast: Light, dismissible feedback for results and reminders.
 Events: `update:open(boolean)`
 
 Usage notes: F8 focuses the notification region; Escape or the close button dismisses it. The countdown pauses on hover or focus. Use one AgmToast per app.
+
+Editable source: `pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/toast.json`
 
 Docs: https://augma.yyj.moe/en/components/toast
 

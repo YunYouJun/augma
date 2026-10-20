@@ -64,7 +64,7 @@ The CSS package has no Vue runtime dependency. Interaction, semantics, keyboard 
 
 ## Editable source
 
-Vue projects set up with shadcn-vue can copy the core components from the [Registry](/en/ai/#component-registry). The copied code is maintained by your project, and its styles keep using `@augma/core/style.css`.
+Vue projects set up with shadcn-vue can copy the source of any component from the [Registry](/en/ai/#component-registry). The copied code is maintained by your project, and its styles keep using `@augma/core/style.css`.
 
 ## Themes
 

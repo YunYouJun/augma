@@ -36,3 +36,9 @@ Enter / Space opens, arrow keys move, Enter selects and Escape closes; type-ahea
 import { AgmSelect } from 'augma'
 import 'augma/style.css'
 ```
+
+Copy the editable source:
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/select.json
+```

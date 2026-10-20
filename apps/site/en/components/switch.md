@@ -30,3 +30,9 @@ Tab to focus; Space or Enter to toggle.
 import { AgmSwitch } from 'augma'
 import 'augma/style.css'
 ```
+
+Copy the editable source:
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/switch.json
+```

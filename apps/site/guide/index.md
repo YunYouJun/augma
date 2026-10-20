@@ -64,7 +64,7 @@ CSS 包没有 Vue 运行时依赖。复杂组件的交互、语义、键盘和�
 
 ## 可编辑源码
 
-已初始化 shadcn-vue 的 Vue 项目可以从 [Registry](/ai/#组件-registry) 复制核心组件。复制后的代码由你的项目维护，样式继续引用 `@augma/core/style.css`。
+已初始化 shadcn-vue 的 Vue 项目可以从 [Registry](/ai/#组件-registry) 复制任意组件的源码。复制后的代码由你的项目维护，样式继续引用 `@augma/core/style.css`。
 
 ## 主题
 

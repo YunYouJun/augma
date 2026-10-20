@@ -33,3 +33,9 @@ F8 で通知領域にフォーカスし、Escape または閉じるボタンで�
 import { AgmToast } from 'augma'
 import 'augma/style.css'
 ```
+
+編集可能なソースをコピー：
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/toast.json
+```

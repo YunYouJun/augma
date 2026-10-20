@@ -33,3 +33,9 @@ F8 聚焦通知区域，Escape 或关闭按钮关闭。悬停或聚焦时暂停�
 import { AgmToast } from 'augma'
 import 'augma/style.css'
 ```
+
+复制可编辑源码：
+
+```sh
+pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/toast.json
+```

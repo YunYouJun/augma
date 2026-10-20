@@ -43,7 +43,7 @@ pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/button.json
 pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/dialog.json
 ```
 
-It currently covers Button, Input, Panel, Dialog, HudStatus, HudProgress and HudGauge. The Registry copies the same source files as the npm components and declares their style and behavior dependencies.
+All 13 components have a Registry entry at `https://augma.yyj.moe/r/<component>.json`, named after the component page path (such as `icon-button` or `hud-gauge`); each component page lists its command. The Registry copies the same source files as the npm components and declares their style and behavior dependencies.
 
 Import in your app entry:
 
