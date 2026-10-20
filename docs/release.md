@@ -154,7 +154,6 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - 第一次标签运行的 mac 任务在全新 checkout 中缺少组件库产物，AR 构建找不到 `augma/style.css`，GitHub Release 被跳过。`77609c5` 让打包脚本先构建组件库；当时 npm 与 Release 都尚未发布，标签随之移到该提交。
 - 发布任务在 `augma` 发布约 15 秒后核对公开版本，npm 尚未可见而判定失败；`8a92be6` 改为每个包最多轮询 10 分钟，并把发布任务超时放宽到 30 分钟。手动发布的 tarball 路径需以 `./` 开头（`37c2a2f`）。
 
-
 ## 0.2.1 发布记录（2026-10-20）
 
 - 首次完整走 bumpp 流程：`pnpm release --release patch --yes --no-push` 更新 7 个版本文件并创建 `8fb267d` 与标签 `v0.2.1`，再经 SSH 推送 `main --follow-tags`。之后重新运行 `pnpm generate` 没有差异，说明 bumpp 的文本替换与生成结果一致。
@@ -163,6 +162,7 @@ Vercel 仍连接此仓库。根目录 `vercel.json` 覆盖旧的 `pnpm run updat
 - [GitHub Release v0.2.1](https://github.com/YunYouJun/augma/releases/tag/v0.2.1) 附带 `Augma-macOS.zip` 与 `.sha256`；说明按 CHANGELOG 改写为中英双语。
 - 接入验收：在全新 Vite + Vue + TypeScript 项目（pnpm 12）中安装 `augma@0.2.1`，用 `npx skills add YunYouJun/augma --skill augma` 从 GitHub 安装 Skill，把速查与 recipes 中的 16 段示例原样放入项目，`vue-tsc -b` 与 `vite build` 通过；浏览器中 16 段全部渲染、无控制台错误，HudGauge 与 Dialog 的交互和焦点恢复正常。
 - 验收发现：pnpm 11+ 在 `vue-demi`（Reka UI → Floating UI）的安装脚本未获批准时让安装以非零状态退出；发布当天裸 `pnpm add augma` 因 `minimumReleaseAge` 回落到旧版。快速开始、npm README 与 Skill 已写明处理方式。
+
 ## 待办（2026-10-19）
 
 按顺序推进，前一项完成后再开始下一项。宣传视频放在最后，避免观众在 npm 发布和生产部署之前访问到旧站或装到 0.1.1。
