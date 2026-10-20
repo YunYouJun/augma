@@ -148,6 +148,8 @@ export const enUS: Messages = {
   'settings.assistantNativeOff': 'The DeepSeek assistant is off.',
   'settings.assistantNativeHint': 'Add an API key and turn it on in Settings from the Augma menu. The key stays in the macOS Keychain and is never given to this page.',
   'settings.effects': 'View effects',
+  'settings.sceneBackdrop': 'Scene backdrop',
+  'settings.sceneBackdropHint': 'Without the camera, the current space scene fills the background in an anime style with an AR layer. Switch between garden and city in Space. Turn off for the plain gray background.',
   'settings.depthMotion': 'Depth motion',
   'settings.depthMotionHint': 'Move the pointer for foreground and background parallax; panels drift in gently when opened.',
   'settings.curvedHud': 'Curved view',

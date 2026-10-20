@@ -149,6 +149,39 @@ test('display settings persist and reset with keyboard focus restored', async ({
   await expect(page.locator('.world-marker')).toHaveCount(3)
 })
 
+test('scene backdrop follows the space scene, yields to the camera and can return to plain gray', async ({ page }) => {
+  await page.addInitScript(() => {
+    // A blank canvas stream stands in for the camera in every browser engine.
+    Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: { getUserMedia: async () => document.createElement('canvas').captureStream() } })
+  })
+  await page.goto('/ar/')
+  const backdrop = page.locator('.scene-backdrop')
+  await expect(backdrop.locator('.backdrop-scene.is-garden')).toBeVisible()
+  await expect(page.locator('.ar-app')).toHaveCSS('background-color', 'rgb(117, 117, 117)')
+  await page.getByRole('button', { name: '空间', exact: true }).click()
+  await page.getByRole('button', { name: '城市漫游', exact: true }).click()
+  await expect(backdrop.locator('.backdrop-scene.is-city')).toBeVisible()
+  await expect(backdrop.locator('.backdrop-scene.is-garden')).toHaveCount(0)
+  await page.getByRole('button', { name: '摄像头', exact: true }).click()
+  await page.getByRole('button', { name: '开启摄像头' }).click()
+  await expect(backdrop).toHaveCount(0)
+  await page.locator('.camera-actions').getByRole('button', { name: '关闭摄像头' }).click()
+  await expect(backdrop.locator('.backdrop-scene.is-city')).toBeVisible()
+  await openSystemApp(page, '设置')
+  const toggle = page.getByRole('switch', { name: '场景背景' })
+  await expect(toggle).toBeChecked()
+  await toggle.click()
+  await expect(backdrop).toHaveCount(0)
+  await page.reload()
+  await expect(page.locator('.device-window')).toHaveCount(0)
+  await expect(backdrop).toHaveCount(0)
+  await openSystemApp(page, '设置')
+  await page.getByRole('button', { name: '恢复默认设置', exact: true }).click()
+  await page.getByRole('button', { name: '确认恢复' }).click()
+  await expect(page.getByRole('switch', { name: '场景背景' })).toBeChecked()
+  await expect(backdrop).toHaveCount(1)
+})
+
 test('sound playback survives panel changes and stops on standby', async ({ page }) => {
   await page.addInitScript(() => {
     class TestAudioContext {
@@ -213,6 +246,9 @@ test('depth and curves are independent, persist and stop for reduced motion', as
   await expect(page.locator('.system-rule')).toBeVisible()
   await page.getByRole('switch', { name: '景深动画' }).click()
   await expect(view).toHaveClass(/has-depth/)
+  // An open panel pulls focus to the HUD and softens the scenery behind it.
+  const scenery = page.locator('.scene-backdrop .art-mid').first()
+  await expect(scenery).toHaveCSS('filter', 'blur(2.4px)')
   await expect(page.locator('.system-arc')).toHaveCount(0)
   await page.mouse.move(80, 280)
   await expect.poll(() => view.evaluate(element => element.style.getPropertyValue('--depth-x'))).not.toBe('')
@@ -231,6 +267,7 @@ test('depth and curves are independent, persist and stop for reduced motion', as
   await expect(page.getByText('系统已开启减少动态效果，景深动画暂停；弧线外观仍可使用。')).toBeVisible()
   await expect(page.locator('.system-arc')).toBeVisible()
   await expect(page.locator('.device-window')).toHaveCSS('animation-name', 'none')
+  await expect(scenery).toHaveCSS('filter', 'none')
   await page.mouse.move(90, 300)
   await expect.poll(() => view.evaluate(element => element.style.getPropertyValue('--depth-x'))).toBe('')
   await page.emulateMedia({ reducedMotion: 'no-preference' })

@@ -95,19 +95,20 @@ describe('device simulation', () => {
 
 describe('display preferences', () => {
   it('validates persisted values and persists the reset defaults', async () => {
-    localStorage.setItem(settingsKey, JSON.stringify({ opacity: -100, volume: 900, dark: true, mirror: 'yes', showHud: 'false', focus: true, depthMotion: 'true', curvedHud: true }))
+    localStorage.setItem(settingsKey, JSON.stringify({ opacity: -100, volume: 900, dark: true, mirror: 'yes', showHud: 'false', focus: true, depthMotion: 'true', sceneBackdrop: false, curvedHud: true }))
     const display = setup(useDisplaySettings)
     expect(display.settings.opacity).toBe(60)
     expect(display.settings.volume).toBe(100)
     expect(display.settings.mirror).toBe(false)
     expect(display.settings.showHud).toBe(true)
     expect(display.settings.depthMotion).toBe(false)
+    expect(display.settings.sceneBackdrop).toBe(false)
     expect(display.settings.curvedHud).toBe(true)
     expect(document.documentElement.dataset.agmTheme).toBe('dark')
     display.reset()
     await nextTick()
     expect(document.documentElement.dataset.agmTheme).toBe('light')
-    expect(JSON.parse(localStorage.getItem(settingsKey)!)).toMatchObject({ opacity: 88, volume: 35, focus: false, depthMotion: false, curvedHud: false })
+    expect(JSON.parse(localStorage.getItem(settingsKey)!)).toMatchObject({ opacity: 88, volume: 35, focus: false, depthMotion: false, sceneBackdrop: true, curvedHud: false })
   })
 
   it('remains usable with corrupt browser storage', async () => {

@@ -35,6 +35,7 @@ export interface DisplaySettings {
   mirror: boolean
   focus: boolean
   depthMotion: boolean
+  sceneBackdrop: boolean
   curvedHud: boolean
   speechFeedback: boolean
 }

@@ -146,6 +146,8 @@ export const zhCN = {
   'settings.assistantNativeOff': 'DeepSeek 助手未开启。',
   'settings.assistantNativeHint': '在 Augma 菜单的「设置」中填写 API Key 并开启。密钥保存在 macOS 钥匙串，不会交给网页。',
   'settings.effects': '视界效果',
+  'settings.sceneBackdrop': '场景背景',
+  'settings.sceneBackdropHint': '未开启摄像头时，以动画风格的当前空间场景和 AR 图层作为背景，在「空间」中切换庭院或城市。关闭后恢复纯灰背景。',
   'settings.depthMotion': '景深动画',
   'settings.depthMotionHint': '移动鼠标体验前后景视差，浮窗展开时轻柔浮现。',
   'settings.curvedHud': '弧线视界',

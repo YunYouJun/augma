@@ -20,6 +20,7 @@ import DeviceDock from './DeviceDock.vue'
 import DeviceWindow from './DeviceWindow.vue'
 import NavigationPanel from './NavigationPanel.vue'
 import NotificationPanel from './NotificationPanel.vue'
+import SceneBackdrop from './SceneBackdrop.vue'
 import SettingsPanel from './SettingsPanel.vue'
 import { ariaChord, chordLabel, shortcutIds } from './shortcuts'
 import ShortcutsDialog from './ShortcutsDialog.vue'
@@ -62,6 +63,8 @@ type DesktopWindow = Window & {
 }
 const desktopWindow = window as DesktopWindow
 const desktopImmersive = desktopWindow.__AUGMA_DESKTOP_IMMERSIVE__ === true
+// The simulated surroundings stand in for the real world until the camera or AR shows it.
+const backdropVisible = computed(() => settings.sceneBackdrop && !desktopImmersive && !camera.stream.value && !xr.ready.value)
 const shortcutsOpen = shallowRef(false)
 const shortcuts = useShortcuts({
   run: runShortcut,
@@ -364,6 +367,7 @@ onUnmounted(() => {
 <template>
   <div ref="deviceRoot" class="ar-app" :class="{ 'is-live': !!camera.stream.value || xr.ready.value, 'is-dark': settings.dark, 'is-desktop-immersive': desktopImmersive, 'has-depth': depthActive, 'has-curves': settings.curvedHud, 'has-window': activeModule && settings.showHud }" :style="panelStyle">
     <h1 class="agm-sr-only">{{ t('app.heading') }}</h1>
+    <SceneBackdrop v-if="backdropVisible" :scene="scene.id" />
     <CameraView ref="cameraView" :stream="camera.stream.value" :mirror="settings.mirror" />
     <canvas v-show="xr.ready.value" ref="xrCanvas" class="xr-canvas" :aria-label="t('app.xrCanvas')" />
     <SystemBar :curved="settings.curvedHud" :time="time" :fullscreen="fullscreen" :fullscreen-supported="fullscreenSupported" :dark="settings.dark" :unread="unread" :camera-live="!!camera.stream.value" :shortcuts="shortcutHints" @commands="openApp('commands', $event)" @fullscreen="toggleFullscreen" @flip="camera.flip" @theme="settings.dark = !settings.dark" @settings="openApp('settings', $event)" @notifications="openApp('notifications', $event)" @device="openApp('device', $event)" />
@@ -374,7 +378,7 @@ onUnmounted(() => {
         <NavigationPanel v-else-if="activeModule === 'navigation'" :landmarks="scene.landmarks" :selected="selected" :step="routeStep" :progress="routeProgress" :remaining="remaining" :instruction="routeInstruction" :online="online" @select="device.selectLandmark" @start="device.startRoute" @advance="device.advanceRoute" @cancel="device.cancelRoute" />
         <SoundPanel v-else-if="activeModule === 'audio'" v-model:volume="settings.volume" :playing="sound.playing.value" :busy="sound.busy.value" :elapsed="sound.elapsed.value" :duration="sound.duration" :track-index="sound.trackIndex.value" :error="sound.error.value ? t(sound.error.value) : ''" :online="online" @play="sound.play" @pause="sound.pause" @track="sound.selectTrack" @seek="sound.seek" />
         <NotificationPanel v-else-if="activeModule === 'notifications'" :notices="notices" @clear="device.clearNotices" />
-        <SettingsPanel v-else-if="activeModule === 'settings'" v-model:opacity="settings.opacity" v-model:dark="settings.dark" v-model:focus="settings.focus" v-model:mirror="settings.mirror" v-model:depth-motion="settings.depthMotion" v-model:curved-hud="settings.curvedHud" v-model:speech-feedback="settings.speechFeedback" v-model:shortcuts-enabled="shortcutsEnabled" :locale="locale" :speech-feedback-supported="feedback.supported" :assistant-native="speech.native" :assistant-ready="speech.assistantReady.value" :reduced-motion="reducedMotion" :storage-available="storageAvailable && localeSaved" @locale="changeLocale" @reset="resetSettings" @shortcuts="shortcutsOpen = true" @save-key="saveAssistantKey" @remove-key="removeAssistantKey" />
+        <SettingsPanel v-else-if="activeModule === 'settings'" v-model:opacity="settings.opacity" v-model:dark="settings.dark" v-model:focus="settings.focus" v-model:mirror="settings.mirror" v-model:depth-motion="settings.depthMotion" v-model:scene-backdrop="settings.sceneBackdrop" v-model:curved-hud="settings.curvedHud" v-model:speech-feedback="settings.speechFeedback" v-model:shortcuts-enabled="shortcutsEnabled" :locale="locale" :speech-feedback-supported="feedback.supported" :assistant-native="speech.native" :assistant-ready="speech.assistantReady.value" :reduced-motion="reducedMotion" :storage-available="storageAvailable && localeSaved" @locale="changeLocale" @reset="resetSettings" @shortcuts="shortcutsOpen = true" @save-key="saveAssistantKey" @remove-key="removeAssistantKey" />
         <WeatherPanel v-else-if="activeModule === 'weather'" />
         <CameraControls v-else-if="activeModule === 'camera'" :camera="camera" :xr="xr" :online="online" @capture="snapshot" @prepare-xr="prepareXr" />
         <CommandPanel v-else-if="activeModule === 'commands'" :speech-available="speech.available" :native="speech.native" :assistant-ready="speech.assistantReady.value" :speech-status="speech.status.value" :transcript="speech.transcript.value" :reply="speech.reply.value" :speech-error="speech.error.value ? t(speech.error.value) : ''" @command="executeCommand" @start="startSpeech" @stop="speech.stop" @cancel="speech.cancel" @submit="speech.submitText" />

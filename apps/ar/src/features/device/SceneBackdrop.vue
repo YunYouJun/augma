@@ -1,0 +1,52 @@
+<script setup lang="ts">
+import type { SceneId } from './types'
+import CityScene from './backdrop/CityScene.vue'
+import GardenScene from './backdrop/GardenScene.vue'
+
+defineProps<{ scene: SceneId }>()
+</script>
+
+<template>
+  <div class="scene-backdrop" aria-hidden="true">
+    <Transition name="backdrop-fade">
+      <GardenScene v-if="scene === 'garden'" key="garden" />
+      <CityScene v-else key="city" />
+    </Transition>
+  </div>
+</template>
+
+<style>
+/* Shared by the scenes: depth planes, parallax and focus. Not scoped, so the scene components can use it. */
+.scene-backdrop { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+/* Darken the top and bottom bands so the white clock, rules and dock keep their contrast. */
+.scene-backdrop::after { content: ''; position: absolute; inset: 0; background: linear-gradient(rgb(0 0 0 / 30%), transparent 20%, transparent 74%, rgb(0 0 0 / 34%)), radial-gradient(ellipse at 50% 45%, transparent 60%, rgb(0 0 0 / 18%)); }
+.scene-backdrop .backdrop-scene { position: absolute; inset: 0; overflow: hidden; }
+
+/* Each depth plane shifts against the pointer by its own amount; the mid plane matches the anchors. */
+.scene-backdrop .layer { position: absolute; inset: -56px; translate: calc(var(--depth-x, 0) * var(--shift) * -1px) calc(var(--depth-y, 0) * var(--shift) * -.7px); transition: translate 240ms ease-out; }
+.scene-backdrop .layer-far { --shift: 2; --orbit: 6; }
+.scene-backdrop .layer-clouds { --shift: 4; }
+.scene-backdrop .layer-mid { --shift: 7; }
+.scene-backdrop .layer-glow { --shift: 20; --orbit: -12; }
+.scene-backdrop .layer-near { --shift: 36; --orbit: -26; }
+/* A slow drift around the in-focus mid plane: far layers move one way, near layers the other. */
+.scene-backdrop .orbit { position: absolute; inset: 0; animation: backdrop-orbit 34s ease-in-out infinite alternate; will-change: transform; }
+.scene-backdrop .art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; transition: filter 480ms ease-out; }
+.scene-backdrop .art-far { filter: blur(1.2px); }
+.scene-backdrop .art-near { filter: blur(7px); }
+.has-depth.has-window .scene-backdrop .art-far { filter: blur(4px); }
+.has-depth.has-window .scene-backdrop .art-mid { filter: blur(2.4px); }
+
+/* Switching scenes: the new world materializes in a brief flash of AR light. */
+.backdrop-fade-enter-active { transition: opacity 900ms ease, filter 1100ms ease-out, scale 1100ms ease-out; }
+.backdrop-fade-leave-active { transition: opacity 900ms ease; }
+.backdrop-fade-enter-from { opacity: 0; filter: brightness(1.8) saturate(.3); scale: 1.04; }
+.backdrop-fade-leave-to { opacity: 0; }
+
+@keyframes backdrop-orbit { from { transform: translateX(calc(var(--orbit, 0) * -1px)); } to { transform: translateX(calc(var(--orbit, 0) * 1px)); } }
+@keyframes backdrop-bob { from { transform: translateY(-8px); } to { transform: translateY(8px); } }
+@keyframes backdrop-drift { from { transform: translateX(-60px); } to { transform: translateX(60px); } }
+@keyframes backdrop-rise { 0% { opacity: 0; transform: none; } 25% { opacity: .9; } 75% { opacity: .75; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)); } }
+/* Portrait screens would crop the wide scenery to its middle; keep it low and wider instead. */
+@media (max-aspect-ratio: 4 / 5) { .scene-backdrop .scene-art { top: auto; height: 62%; } }
+</style>

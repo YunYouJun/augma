@@ -20,6 +20,7 @@ const dark = defineModel<boolean>('dark', { required: true })
 const focus = defineModel<boolean>('focus', { required: true })
 const mirror = defineModel<boolean>('mirror', { required: true })
 const depthMotion = defineModel<boolean>('depthMotion', { required: true })
+const sceneBackdrop = defineModel<boolean>('sceneBackdrop', { required: true })
 const curvedHud = defineModel<boolean>('curvedHud', { required: true })
 const speechFeedback = defineModel<boolean>('speechFeedback', { required: true })
 const shortcutsEnabled = defineModel<boolean>('shortcutsEnabled', { required: true })
@@ -80,6 +81,8 @@ function reset() {
     </fieldset>
     <fieldset class="visual-effects">
       <legend>{{ t('settings.effects') }}</legend>
+      <AgmSwitch v-model="sceneBackdrop" :label="t('settings.sceneBackdrop')" />
+      <p>{{ t('settings.sceneBackdropHint') }}</p>
       <AgmSwitch v-model="depthMotion" :label="t('settings.depthMotion')" />
       <p>{{ t('settings.depthMotionHint') }}</p>
       <AgmSwitch v-model="curvedHud" :label="t('settings.curvedHud')" />

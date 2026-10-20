@@ -4,7 +4,7 @@
 
 ## Exploring the simulated view
 
-The view follows the [original Augma site](https://augma.elpsy.cn/): by default it shows only a gray background, a clock and a white line at the top, and nine round icons at the bottom. Click an app to open its floating window; click it again or press Escape to close it. Once the camera is on, the real world becomes the background.
+The view follows the [original Augma site](https://augma.elpsy.cn/): a clock and a white line at the top, and nine round icons at the bottom. Without the camera, the background is the current space scene in moving layers, or the original plain gray if you prefer. Click an app to open its floating window; click it again or press Escape to close it. Once the camera is on, the real world becomes the background.
 
 Along the bottom, in order: mirror, weather, HUD display, sound, space, camera, navigation, GitHub and component docs. The system menu at the top right offers full screen, camera switching, theme, settings, notifications and device controls; the microphone at the top left opens [voice commands](#voice-commands-and-the-deepseek-assistant).
 
@@ -17,7 +17,7 @@ The interface is available in 简体中文, English and 日本語. Opened from t
 | Navigation | Pick a destination, switch colored routes, start simulated navigation, step forward until you arrive, or end navigation |
 | Sound | Play locally synthesized chords, pause, switch tracks, adjust progress and volume |
 | Notifications | Review the actions from this session; opening marks them as read, and you can clear them |
-| Settings | Language, panel opacity, dark view, focus mode, mirror view, spoken feedback, DeepSeek assistant, depth motion, curved view, keyboard shortcuts, and restoring defaults |
+| Settings | Language, panel opacity, dark view, focus mode, mirror view, spoken feedback, DeepSeek assistant, scene backdrop, depth motion, curved view, keyboard shortcuts, and restoring defaults |
 
 Under Device in the system menu, you can put the device on standby, wake it, disconnect and reconnect. Standby or disconnecting stops scanning, navigation, sound, the camera and spatial AR. The eye icon at the bottom hides apps and spatial layers for a moment; click it again to bring them back.
 
@@ -51,12 +51,13 @@ Turn single-key shortcuts off in Settings if they get in the way of a screen rea
 
 ## Optional view effects
 
-System menu → Settings → View effects at the top right has two independent switches, off by default and saved automatically:
+System menu → Settings → View effects at the top right has three independent switches, saved automatically:
 
-- **Depth motion**: moving the mouse gives spatial layers and floating windows a subtle parallax and perspective; an opening window fades in and comes into focus while the map and camera backgrounds blur slightly. Touch screens keep the entrance animation but nothing follows your finger, so scrolling and tapping stay easy.
-- **Curved view**: the top and bottom white lines become shallow arcs, and the nine round icons at the bottom line up along the arc. It works on its own, without depth motion.
+- **Scene backdrop** (on by default): without the camera, the current space scene is drawn in an anime style with an AR layer on top. Sky Garden is a clear sky with cumulus clouds and a floating island crowned by a spire; City Stroll is a skyline at dusk with a lattice tower and a sky train; dark view turns them into a starry night and a neon night. A hexagon AR grid spreads over the ground with rings rippling out, data shards drift upward, and a scan line sweeps the city. Far, middle and near layers are blurred by depth, and the sun throws a lens flare. Switching scenes in Space fades the background across; turn it off for the plain gray background.
+- **Depth motion** (off by default): moving the mouse shifts the scene backdrop layer by layer, and gives spatial layers and floating windows a subtle parallax and perspective; an opening window fades in and comes into focus while the scene, map and camera backgrounds blur slightly. Touch screens keep the entrance animation but nothing follows your finger, so scrolling and tapping stay easy.
+- **Curved view** (off by default): the top and bottom white lines become shallow arcs, and the nine round icons at the bottom line up along the arc. It works on its own, without depth motion.
 
-When the system's reduced motion setting is on, depth motion pauses but the curved look stays. Hiding the HUD, putting the device on standby, entering spatial AR or switching to the background also pause depth motion. Restoring defaults turns both effects off.
+When the system's reduced motion setting is on, depth motion and the backdrop's animation pause, while the still scene and the curved look stay. Hiding the HUD, putting the device on standby, entering spatial AR or switching to the background also pause depth motion. Restoring defaults turns the scene backdrop on and the other two effects off.
 
 ## Connecting a camera
 

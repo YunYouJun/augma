@@ -148,6 +148,8 @@ export const jaJP: Messages = {
   'settings.assistantNativeOff': 'DeepSeek アシスタントはオフです。',
   'settings.assistantNativeHint': 'Augma メニューの「設定」で API キーを入力してオンにします。キーは macOS のキーチェーンに保存され、このページには渡されません。',
   'settings.effects': 'ビューの効果',
+  'settings.sceneBackdrop': 'シーン背景',
+  'settings.sceneBackdropHint': 'カメラを使わないとき、現在の空間シーンをアニメ調で描き、AR レイヤーを重ねて背景に表示します。庭園と都市は「空間」で切り替えます。オフにすると無地のグレーに戻ります。',
   'settings.depthMotion': '奥行きアニメーション',
   'settings.depthMotionHint': 'ポインタを動かすと前景と背景に視差が生まれ、パネルはふわりと現れます。',
   'settings.curvedHud': 'カーブビュー',
