@@ -163,6 +163,19 @@ Vercel 仍连接此仓库，但只负责上述跳转。2026-10-20 起 `vercel.js
 - 接入验收：在全新 Vite + Vue + TypeScript 项目（pnpm 12）中安装 `augma@0.2.1`，用 `npx skills add YunYouJun/augma --skill augma` 从 GitHub 安装 Skill，把速查与 recipes 中的 16 段示例原样放入项目，`vue-tsc -b` 与 `vite build` 通过；浏览器中 16 段全部渲染、无控制台错误，HudGauge 与 Dialog 的交互和焦点恢复正常。
 - 验收发现：pnpm 11+ 在 `vue-demi`（Reka UI → Floating UI）的安装脚本未获批准时让安装以非零状态退出；发布当天裸 `pnpm add augma` 因 `minimumReleaseAge` 回落到旧版。快速开始、npm README 与 Skill 已写明处理方式。
 
+## 0.2.2 发布记录（2026-10-21）
+
+- 0.2.2 在 CHANGELOG 中已注明日期但没有发布；0.2.3 的演示与 macOS 改动并入同一版本（`f4df945`），两者的组件库代码相同。
+- 发布前 `main` 的 CI 在 WebKit 下失败：场景背景（`dc71aa0`）的 `mix-blend-mode`、逐帧重新应用的滤镜和 `backdrop-filter` 让没有 GPU 的 Linux WebKit 每帧耗时 0.2–3 秒，Playwright 等不到元素稳定。`621dc4f` 去掉混合模式，把发光画进图层内部，面板打开时暂停背景动画，渲染低于约 20 fps 时让背景静止；Linux 容器中 WebKit 项目 55/55 通过。`112d85e` 让 CI 失败时上传 Playwright trace。
+- `pnpm release --release patch --yes --no-push` 创建 `ef83b95` 与标签 `v0.2.2`，之后 `pnpm generate` 没有差异，再经 HTTPS 推送 `main --follow-tags`。
+- 发布工作流 [run 39588468639](https://github.com/YunYouJun/augma/actions/runs/39588468639) 的准备、mac、GitHub Release 与发布任务一次全部通过；准备任务的 `pnpm check` 中有 3 个 WebKit 文档用例接近 30 秒上限，重试后通过。
+- `@augma/core@0.2.2` 与 `augma@0.2.2` 均通过 OIDC 发布并附带 SLSA provenance，两个包的 `latest` 均为 0.2.2。integrity 分别为 `sha512-AG0MMODuZxpd3lLzfiPKv0OQmQ/kZRsna1VOR6D59pP2oXQqd9yNUbTvfqXHJwxVb7Lp2DSYihcEUStU8tECTQ==` 与 `sha512-4uH/t1btBRUp+gkH/4sqXC0pbmdHJkl7tafi64JItFLIDWLeDxsnKzdeMC5Duda60CMjEt+hYt8DPXqCllh4CA==`。
+- [GitHub Release v0.2.2](https://github.com/YunYouJun/augma/releases/tag/v0.2.2) 附带 `Augma-macOS.zip`（1,208,810 字节）与 `.sha256`，说明按 CHANGELOG 改写为中英双语。下载后校验一致，签名有效，包含 x86_64 与 arm64，版本号 0.2.2；在本机启动后主窗口正常显示。
+- 公网验收：pnpm 12.14 在空目录安装 `augma@0.2.2`，依赖为 `@augma/core@0.2.2` 与 `reka-ui@2.11.0`，不再有 `vue-demi`，无需批准安装脚本，13 个 `Agm*` 导出齐全。`augma.yyj.moe` 的 `/components.json` 与 `/llms.txt` 显示 0.2.2，首页、`/ar/`、`/guide/macos`、`/download`、英文与日文入口及 `/r/select.json` 均返回 200。
+- 用 `scripts/capture-media.mjs` 重新录制，AR 录屏（8.5 秒）带上默认开启的场景背景。OG 图与首页 AR 视频由站点加载，随 `891e7a3` 提交；README 的首页截图与 AR 视频改用 [Discussion #6](https://github.com/YunYouJun/augma/discussions/6) 的附件链接，`docs/media` 不再提交，由 `.gitignore` 忽略。
+- 发布后合入三个后续修复，记在 CHANGELOG 的 0.2.3（未发布）：`e84d7e0` 拆分接近时限的 WebKit 文档测试，`2f0eab8` 缩小场景背景的合成图层，`bfbeecb` 让 Safari 画出铁塔、穹顶与窗户的发光。
+- 本机 `pnpm check` 的 `site.test.ts:407` 曾因机器负载过高（load average 约 724）超时，每一步都通过；同一提交的 CI 通过。
+
 ## 待办（2026-10-19）
 
 按顺序推进，前一项完成后再开始下一项。宣传视频放在最后，避免观众在 npm 发布和生产部署之前访问到旧站或装到 0.1.1。
@@ -179,7 +192,7 @@ Vercel 仍连接此仓库，但只负责上述跳转。2026-10-20 起 `vercel.js
 - [x] `augma.yyj.moe` 公网验收、官方 registry 安装与 README / CHANGELOG 的待发布状态更新已完成，见「0.2.0 发布记录」。
 - [x] `docs.augma.elpsy.cn` 由 `vercel.json` 按路径 308 到新域，已用 curl 核对根路径、组件页、0.1 旧页面与 `/r/*.json`。
 - [x] `augma.elpsy.cn`：`elpsy.cn` zone 的 Single Redirect「Redirect legacy Augma client」301 到 `https://augma.yyj.moe/ar/`，已用 curl 核对。
-- [ ] 实机摄像头与 immersive-ar 验收；人工检查 macOS 原生界面（HUD 浮窗、沉浸控制条与开场动画）。
+- [ ] 实机摄像头与 immersive-ar 验收；人工检查 macOS 原生界面（HUD 浮窗、沉浸控制条与开场动画）。2026-10-21：0.2.2 的发布包已在本机启动并显示主窗口，界面细节仍待人工检查。
 - [x] HudGauge 进入 Registry（第 7 个条目）；Registry 校验按目录自动计数。
 - [x] 其余 6 个组件（IconButton、Select、Switch、Slider、Tooltip、Toast）进入 Registry，13 个组件全部提供可编辑源码；Registry 校验为每个条目传入各自的 Props，并检查新条目的交互。
 - [ ] 以上完成后制作宣传视频：从正式站点实录首页入场、组件动效、空间模式、AR 演示与 macOS 沉浸模式。不使用《刀剑神域》的片段、标志或角色。配乐用《刀剑神域 序列之争》原声：简介注明曲名与版权方，不开启收益；音频由制作者自备正版来源，不提交到仓库；另备一版替代配乐，平台静音或下架时替换。提及作品时只说明灵感来源，并附上与版权方无关联的声明。
