@@ -1,7 +1,7 @@
 {
   "name": "@augma/workspace",
   "type": "module",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "packageManager": "pnpm@12.5.1",
   "engines": {
