@@ -20,3 +20,5 @@ release-artifacts/
 .claude/worktrees/
 # README media are uploaded to a GitHub Discussion, not committed.
 docs/media/
+# Promo video: rendered audio stays local; the composer script is the source.
+video/music/out/
