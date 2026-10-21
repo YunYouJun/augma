@@ -379,7 +379,7 @@ onUnmounted(() => {
 <template>
   <div ref="deviceRoot" class="ar-app" :class="{ 'is-live': !!camera.stream.value || xr.ready.value, 'is-dark': settings.dark, 'is-desktop-immersive': desktopImmersive, 'has-depth': depthActive, 'has-curves': settings.curvedHud, 'has-window': activeModule && settings.showHud }" :style="panelStyle">
     <h1 class="agm-sr-only">{{ t('app.heading') }}</h1>
-    <SceneBackdrop v-if="backdropVisible" :scene="scene.id" />
+    <SceneBackdrop v-if="backdropVisible" :scene="scene.id" :paused="!!activeModule && settings.showHud || shortcutsOpen" />
     <CameraView ref="cameraView" :stream="camera.stream.value" :mirror="settings.mirror" />
     <canvas v-show="xr.ready.value" ref="xrCanvas" class="xr-canvas" :aria-label="t('app.xrCanvas')" />
     <SystemBar :curved="settings.curvedHud" :time="time" :fullscreen="fullscreen" :fullscreen-supported="fullscreenSupported" :dark="settings.dark" :unread="unread" :camera-live="!!camera.stream.value" :shortcuts="shortcutHints" @commands="openApp('commands', $event)" @fullscreen="toggleFullscreen" @flip="camera.flip" @theme="settings.dark = !settings.dark" @settings="openApp('settings', $event)" @notifications="openApp('notifications', $event)" @device="openApp('device', $event)" />

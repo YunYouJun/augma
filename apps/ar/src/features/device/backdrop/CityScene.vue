@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { Circle } from './scenery'
+import { useId } from 'vue'
 import ArField from './ArField.vue'
 import DataShards from './DataShards.vue'
 import Glints from './Glints.vue'
 import LensFlare from './LensFlare.vue'
 import { boxes, circles, cumulus, drifts, driftStyle, lit, round, sequence, towers } from './scenery'
+
+const glow = useId()
 
 /** Clouds catch the low sun from below on the left. */
 const light: [number, number] = [-0.45, 0.89]
@@ -85,7 +88,7 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
           <path class="stroke-tower" :d="`M1236 640L1262 300M1300 640L1274 300M1268 300V200${braces}`" />
           <path class="fill-tower" d="M1248 452h52v14h-52zM1256 362h36v10h-36z" />
         </svg>
-        <svg class="art scene-art beacon" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><circle cx="1268" cy="198" r="5" /></svg>
+        <svg class="art scene-art beacon" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs><filter :id="`${glow}-beacon`" x="-200%" y="-200%" width="500%" height="500%"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="currentColor" /></filter></defs><circle cx="1268" cy="198" r="5" :filter="`url(#${glow}-beacon)`" /></svg>
       </div>
     </div>
     <div class="layer layer-clouds">
@@ -98,7 +101,7 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
         <path class="stroke-rim" :d="rims(midTowers)" />
       </svg>
       <svg v-for="(path, index) in lit3" :key="index" class="art art-mid scene-art windows" :class="`is-${index + 1}`" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><path class="fill-lit" :d="path" /></svg>
-      <svg v-for="(path, index) in neon" :key="`n${index}`" class="art art-mid scene-art neon" :class="`is-${index + 1}`" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><path :d="path" /></svg>
+      <svg v-for="(path, index) in neon" :key="`n${index}`" class="art art-mid scene-art neon" :class="`is-${index + 1}`" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs><filter :id="`${glow}-n${index}`"><feDropShadow class="neon-glow" dx="0" dy="0" stdDeviation="5" flood-color="currentColor" /></filter></defs><path :d="path" :filter="`url(#${glow}-n${index})`" /></svg>
       <div class="scan" />
       <svg class="art art-mid scene-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
         <path class="fill-ground" d="M0 790H1600V900H0Z" />
@@ -168,7 +171,9 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
 .stroke-tower { fill: none; stroke: var(--tower); stroke-width: 3; }
 .fill-tower { fill: var(--tower); }
 .is-dark .stroke-tower, .is-dark .fill-tower { filter: drop-shadow(0 0 4px var(--tower)); }
-.beacon { fill: var(--beacon); filter: drop-shadow(0 0 6px var(--beacon)); animation: beacon 2.4s steps(1) infinite; }
+/* Glow and blink the light itself, not its full-scene svg, so the svg does not become a full-screen layer. */
+.beacon { fill: var(--beacon); color: var(--beacon); }
+.beacon circle { animation: beacon 2.4s steps(1) infinite; }
 .fill-cloud { fill: var(--cloud); }
 .fill-cloud-shade { fill: var(--cloud-shade); }
 .fill-tower-mid { fill: var(--tower-mid); }
@@ -186,17 +191,19 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
 .stroke-pole { fill: none; stroke: var(--near); stroke-width: 14; }
 .fill-near { fill: var(--near); }
 
-.windows { will-change: opacity; }
-.is-dark .windows { animation: twinkle 11s ease-in-out infinite; }
+.is-dark .windows { animation: twinkle 11s ease-in-out infinite; will-change: opacity; }
 .is-dark .windows.is-2 { animation-duration: 15s; animation-delay: -5s; }
 .is-dark .windows.is-3 { animation-duration: 19s; animation-delay: -9s; }
 .neon { opacity: .55; }
 .neon.is-1 { fill: var(--neon-a); }
 .neon.is-2 { fill: var(--neon-b); }
-.is-dark .neon { opacity: 1; filter: drop-shadow(0 0 6px currentcolor); }
+.is-dark .neon { opacity: 1; }
+/* Neon glows only at night; the svg filter on the path is drawn once into the flickering layer. */
+.neon-glow { flood-opacity: 0; }
+.is-dark .neon-glow { flood-opacity: 1; }
 .is-dark .neon.is-1 { color: var(--neon-a); }
 .is-dark .neon.is-2 { color: var(--neon-b); animation: neon-flicker 7s steps(1) infinite; }
-.scan { position: absolute; top: 34%; bottom: 14%; left: 0; width: 9vw; opacity: 0; mix-blend-mode: screen; background: linear-gradient(90deg, transparent, rgb(var(--ar) / 10%) 80%, rgb(var(--ar) / 95%) 98%, transparent); animation: scan 12s ease-in-out infinite 1s; will-change: transform, opacity; }
+.scan { position: absolute; top: 34%; bottom: 14%; left: 0; width: 9vw; opacity: 0; background: linear-gradient(90deg, transparent, rgb(var(--ar) / 10%) 80%, rgb(var(--ar) / 95%) 98%, transparent); animation: scan 12s ease-in-out infinite 1s; will-change: transform, opacity; }
 .train { position: absolute; inset: 0; animation: train 32s linear infinite; will-change: transform; }
 .cloud { position: absolute; height: auto; overflow: hidden; animation: backdrop-drift linear infinite alternate; }
 .traffic { position: absolute; border-radius: 50%; translate: -50% -50%; opacity: .7; background: radial-gradient(circle, rgb(var(--light) / 55%) 0 30%, rgb(var(--light) / 18%) 52%, transparent 70%); animation: backdrop-rise ease-in-out infinite; will-change: transform, opacity; }

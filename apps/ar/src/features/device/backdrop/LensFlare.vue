@@ -31,11 +31,11 @@ const rays = `conic-gradient(${stops.join(', ')})`
 </template>
 
 <style scoped>
-.lens-flare { position: absolute; inset: 0; overflow: hidden; mix-blend-mode: screen; }
-.flare-rays { position: absolute; left: var(--sun-x); top: var(--sun-y); width: 200vmax; aspect-ratio: 1; translate: -50% -50%; opacity: var(--rays, .5); mask-image: radial-gradient(circle closest-side, black, rgb(0 0 0 / 45%) 30%, transparent 70%); animation: flare-rays 46s ease-in-out infinite alternate; will-change: transform; }
+.lens-flare { position: absolute; inset: 0; overflow: hidden; }
+/* Still rays paint once with the flare; a turning masked layer this size held hundreds of megabytes. */
+.flare-rays { position: absolute; left: var(--sun-x); top: var(--sun-y); width: 140vmax; aspect-ratio: 1; translate: -50% -50%; opacity: var(--rays, .5); mask-image: radial-gradient(circle closest-side, black, rgb(0 0 0 / 45%) 43%, transparent); }
 .flare-streak { position: absolute; left: var(--sun-x); top: var(--sun-y); width: 80vw; height: 40px; translate: -50% -50%; opacity: var(--streak, .9); background: radial-gradient(ellipse closest-side, rgb(var(--flare) / 40%), transparent); animation: flare-shimmer 5s ease-in-out infinite alternate; }
 .flare-streak::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2px; translate: 0 -50%; background: linear-gradient(90deg, transparent, rgb(var(--flare) / 85%) 50%, transparent); }
 .flare-ghost { position: absolute; aspect-ratio: 1; translate: -50% -50%; opacity: var(--ghosts, .9); clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0 50%); background: radial-gradient(circle closest-side, rgb(var(--tone) / 8%), rgb(var(--tone) / 18%) 70%, rgb(var(--tone) / 40%) 94%, transparent); }
-@keyframes flare-rays { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
 @keyframes flare-shimmer { from { opacity: calc(var(--streak, .9) * .7); } to { opacity: var(--streak, .9); } }
 </style>

@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import type { SceneId } from './types'
+import { toRef } from 'vue'
 import CityScene from './backdrop/CityScene.vue'
 import GardenScene from './backdrop/GardenScene.vue'
+import { useMotionBudget } from './backdrop/useMotionBudget'
 
-defineProps<{ scene: SceneId }>()
+const props = defineProps<{
+  scene: SceneId
+  /** Hold the motion where it is, for example while a panel or dialog covers the view. */
+  paused?: boolean
+}>()
+const still = useMotionBudget(toRef(() => props.paused))
 </script>
 
 <template>
-  <div class="scene-backdrop" aria-hidden="true">
+  <div class="scene-backdrop" :class="{ 'is-still': still, 'is-paused': paused }" aria-hidden="true">
     <Transition name="backdrop-fade">
       <GardenScene v-if="scene === 'garden'" key="garden" />
       <CityScene v-else key="city" />
@@ -17,6 +24,10 @@ defineProps<{ scene: SceneId }>()
 
 <style>
 /* Shared by the scenes: depth planes, parallax and focus. Not scoped, so the scene components can use it. */
+/* Keep the scenes cheap to composite: no mix-blend-mode, and no filter on an element that animates or sits above
+   one. Without a GPU, WebKit re-applies a layer's filter or blend mode on every frame, which held the simulator to
+   one or two frames per second. A glow goes on the shapes inside and is drawn once into the layer: an svg filter on
+   small shapes (WebKit ignores CSS filter functions on svg shapes), a soft stroke on large ones. */
 .scene-backdrop { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 /* Darken the top and bottom bands so the white clock, rules and dock keep their contrast. */
 .scene-backdrop::after { content: ''; position: absolute; inset: 0; background: linear-gradient(rgb(0 0 0 / 30%), transparent 20%, transparent 74%, rgb(0 0 0 / 34%)), radial-gradient(ellipse at 50% 45%, transparent 60%, rgb(0 0 0 / 18%)); }
@@ -42,6 +53,12 @@ defineProps<{ scene: SceneId }>()
 .backdrop-fade-leave-active { transition: opacity 900ms ease; }
 .backdrop-fade-enter-from { opacity: 0; filter: brightness(1.8) saturate(.3); scale: 1.04; }
 .backdrop-fade-leave-to { opacity: 0; }
+
+/* Behind an open panel or dialog the motion waits where it is: their frosted glass would re-blur it on every frame. */
+.scene-backdrop.is-paused * { animation-play-state: paused !important; }
+/* Too slow to animate smoothly: the scenery holds still and changes focus or scene at once, as under reduced motion. */
+.scene-backdrop.is-still, .scene-backdrop.is-still * { animation: none !important; transition: none !important; will-change: auto !important; }
+.scene-backdrop.is-still .backdrop-fade-enter-from { filter: none; scale: none; }
 
 @keyframes backdrop-orbit { from { transform: translateX(calc(var(--orbit, 0) * -1px)); } to { transform: translateX(calc(var(--orbit, 0) * 1px)); } }
 @keyframes backdrop-bob { from { transform: translateY(-8px); } to { transform: translateY(8px); } }
