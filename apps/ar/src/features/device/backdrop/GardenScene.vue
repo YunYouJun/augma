@@ -4,7 +4,7 @@ import ArField from './ArField.vue'
 import DataShards from './DataShards.vue'
 import Glints from './Glints.vue'
 import LensFlare from './LensFlare.vue'
-import { circles, crown, cumulus, drifts, driftStyle, leaves, lit, round, sequence } from './scenery'
+import { band, circles, crown, cumulus, drifts, driftStyle, leaves, lit, round, sequence } from './scenery'
 
 /** Toward the sun, high on the right. */
 const light: [number, number] = [0.55, -0.83]
@@ -14,6 +14,10 @@ const ridges = [
   'M0 600C150 540 280 520 400 552S640 492 790 528S1060 462 1200 514S1460 490 1600 532',
   'M0 646C180 606 320 626 470 600S770 562 910 600S1210 588 1350 566S1520 596 1600 590',
 ]
+// The far hills and cloud bank, and the lawn, each sit in a layer covering only the band they draw in. The islands
+// drift in a box that paints nothing itself, since each bobbing island is its own small layer.
+const farBand = band(180)
+const midBand = band(420)
 const bank = shaded([...cumulus(7, -60, 610, 520, 5), ...cumulus(19, 1020, 604, 660, 5), ...cumulus(31, 560, 596, 380, 3)])
 
 function cloud(seed: number, rows: number) {
@@ -63,12 +67,14 @@ const glints = [[17, 73, 22, 0], [29, 71, 16, -2.5], [63.5, 11, 26, -4.6], [70, 
     <i class="milky-way" />
     <i class="shooting-star" />
     <div class="layer layer-far">
-      <div class="orbit">
-        <svg class="art art-far scene-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
+      <div class="orbit scene-band" :style="farBand.style">
+        <svg class="art art-far" :viewBox="farBand.viewBox" preserveAspectRatio="xMidYMax slice">
           <path class="fill-cloud-shade" :d="bank.base" /><path class="fill-cloud" :d="bank.lit" />
           <path class="fill-mtn-far" :d="`${ridges[0]}V900H0Z`" /><path class="stroke-mtn-far" :d="ridges[0]" />
           <path class="fill-mtn" :d="`${ridges[1]}V900H0Z`" /><path class="stroke-mtn" :d="ridges[1]" />
         </svg>
+      </div>
+      <div class="orbit">
         <div v-for="(island, index) in islands" :key="index" class="island" :style="island.style">
           <svg class="art" viewBox="0 -60 200 230">
             <path class="fill-rock-shade" d="M6 52Q100 44 194 52Q186 66 170 72Q152 100 124 120Q108 136 100 160Q90 132 72 116Q40 92 30 72Q12 64 6 52Z" />
@@ -89,23 +95,25 @@ const glints = [[17, 73, 22, 0], [29, 71, 16, -2.5], [63.5, 11, 26, -4.6], [70, 
       <svg v-for="(item, index) in clouds" :key="index" class="cloud" :viewBox="item.viewBox" :style="item.style"><path class="fill-cloud-shade" :d="item.base" /><path class="fill-cloud" :d="item.lit" /><path class="fill-cloud-top" :d="item.top" /></svg>
     </div>
     <div class="layer layer-mid">
-      <svg class="art art-mid scene-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
-        <path class="fill-lawn" d="M0 706C300 694 520 688 800 694S1300 704 1600 694V900H0Z" />
-        <path class="fill-lawn-light" d="M0 706C300 694 520 688 800 694S1300 704 1600 694V706C1300 716 1000 708 800 706S300 708 0 720Z" />
-        <path class="fill-lawn-shade" d="M730 712a150 12 0 1 0 300 0a150 12 0 1 0-300 0ZM236 706h490v10h-490zM1104 704h394v8h-394z" />
-        <path class="fill-flower" :d="flowers" />
-        <path class="fill-glass" :d="archPath" />
-        <path class="stroke-stone-shade" :d="archPath" transform="translate(4 3)" />
-        <path class="stroke-stone" :d="`${archPath}M232 632H720`" />
-        <path class="stroke-glint" :d="glassGlints" />
-        <path class="fill-stone" d="M1104 604H1496V612H1104ZM1160 628h18v76h-18zM1420 628h18v76h-18z" />
-        <path class="fill-stone-shade" d="M1104 612H1496V628H1104ZM1171 628h7v76h-7zM1431 628h7v76h-7z" />
-        <path class="stroke-rail" :d="railing" />
-        <path class="fill-bark" d="M868 704C872 640 864 600 876 560H896C904 600 896 650 900 704ZM1197 588h6v16h-6zM1401 584h6v20h-6z" />
-        <path class="fill-leaf-shade" :d="`${tree.base}${potted.base}${shrubs.base}`" />
-        <path class="fill-leaf" :d="`${tree.lit}${potted.lit}${shrubs.lit}`" />
-        <path class="fill-leaf-light" :d="`${tree.top}${potted.top}`" />
-      </svg>
+      <div class="mid-art scene-band" :style="midBand.style">
+        <svg class="art art-mid" :viewBox="midBand.viewBox" preserveAspectRatio="xMidYMax slice">
+          <path class="fill-lawn" d="M0 706C300 694 520 688 800 694S1300 704 1600 694V900H0Z" />
+          <path class="fill-lawn-light" d="M0 706C300 694 520 688 800 694S1300 704 1600 694V706C1300 716 1000 708 800 706S300 708 0 720Z" />
+          <path class="fill-lawn-shade" d="M730 712a150 12 0 1 0 300 0a150 12 0 1 0-300 0ZM236 706h490v10h-490zM1104 704h394v8h-394z" />
+          <path class="fill-flower" :d="flowers" />
+          <path class="fill-glass" :d="archPath" />
+          <path class="stroke-stone-shade" :d="archPath" transform="translate(4 3)" />
+          <path class="stroke-stone" :d="`${archPath}M232 632H720`" />
+          <path class="stroke-glint" :d="glassGlints" />
+          <path class="fill-stone" d="M1104 604H1496V612H1104ZM1160 628h18v76h-18zM1420 628h18v76h-18z" />
+          <path class="fill-stone-shade" d="M1104 612H1496V628H1104ZM1171 628h7v76h-7zM1431 628h7v76h-7z" />
+          <path class="stroke-rail" :d="railing" />
+          <path class="fill-bark" d="M868 704C872 640 864 600 876 560H896C904 600 896 650 900 704ZM1197 588h6v16h-6zM1401 584h6v20h-6z" />
+          <path class="fill-leaf-shade" :d="`${tree.base}${potted.base}${shrubs.base}`" />
+          <path class="fill-leaf" :d="`${tree.lit}${potted.lit}${shrubs.lit}`" />
+          <path class="fill-leaf-light" :d="`${tree.top}${potted.top}`" />
+        </svg>
+      </div>
       <ArField />
     </div>
     <div class="layer layer-glow">
@@ -117,10 +125,8 @@ const glints = [[17, 73, 22, 0], [29, 71, 16, -2.5], [63.5, 11, 26, -4.6], [70, 
       </div>
     </div>
     <div class="layer layer-near">
-      <div class="orbit">
-        <svg class="art art-near near-left" viewBox="0 0 400 500" preserveAspectRatio="xMinYMax meet"><path class="fill-near" :d="foliageLeft" /></svg>
-        <svg class="art art-near near-right" viewBox="0 0 400 500" preserveAspectRatio="xMaxYMax meet"><path class="fill-near" :d="foliageRight" /></svg>
-      </div>
+      <div class="orbit near-left"><svg class="art art-near" viewBox="0 0 400 500" preserveAspectRatio="xMinYMax meet"><path class="fill-near" :d="foliageLeft" /></svg></div>
+      <div class="orbit near-right"><svg class="art art-near" viewBox="0 0 400 500" preserveAspectRatio="xMaxYMax meet"><path class="fill-near" :d="foliageRight" /></svg></div>
     </div>
     <LensFlare :x="74" :y="17" />
   </div>
@@ -159,6 +165,8 @@ const glints = [[17, 73, 22, 0], [29, 71, 16, -2.5], [63.5, 11, 26, -4.6], [70, 
 .stars, .milky-way, .shooting-star, .firefly { display: none; }
 .is-dark .stars, .is-dark .milky-way, .is-dark .shooting-star, .is-dark .firefly { display: block; }
 .is-dark .petal { display: none; }
+/* The rays are fully transparent at night; leaving them out lets the flare skip its full-screen layer. */
+.is-dark .is-garden :deep(.flare-rays) { display: none; }
 .stars { position: absolute; inset: 0; width: 100%; height: 100%; fill: rgb(240 240 255 / 85%); }
 .milky-way { position: absolute; left: -10%; top: 4%; width: 120%; height: 26%; rotate: -14deg; filter: blur(24px); background: linear-gradient(90deg, transparent, rgb(170 160 255 / 22%) 30%, rgb(255 210 240 / 18%) 55%, rgb(150 190 255 / 20%) 75%, transparent); }
 .shooting-star { position: absolute; left: 18%; top: 6%; width: 180px; height: 2px; opacity: 0; rotate: 18deg; background: linear-gradient(90deg, transparent, rgb(255 255 255 / 95%)); animation: shooting-star 13s ease-in infinite 2s; }
@@ -203,6 +211,7 @@ const glints = [[17, 73, 22, 0], [29, 71, 16, -2.5], [63.5, 11, 26, -4.6], [70, 
 .cloud { position: absolute; height: auto; overflow: hidden; animation: backdrop-drift linear infinite alternate; }
 .petal { position: absolute; border-radius: 80% 0; opacity: .8; background: linear-gradient(135deg, rgb(255 255 255 / 95%), rgb(var(--petal))); animation: petal linear infinite; will-change: transform, opacity; }
 .firefly { position: absolute; border-radius: 50%; translate: -50% -50%; opacity: .7; background: radial-gradient(circle, rgb(var(--firefly) / 90%) 0 14%, rgb(var(--firefly) / 26%) 42%, transparent 70%); animation: backdrop-rise ease-in-out infinite; will-change: transform, opacity; }
+/* Each foliage spray drifts on its own; the blur is drawn inside the moving box, not on it. */
 .backdrop-scene .near-left, .backdrop-scene .near-right { inset: auto; bottom: 0; width: clamp(220px, 30vw, 520px); height: auto; aspect-ratio: 4 / 5; }
 .backdrop-scene .near-left { left: 0; }
 .backdrop-scene .near-right { right: 0; width: clamp(180px, 24vw, 420px); }

@@ -40,9 +40,16 @@ const still = useMotionBudget(toRef(() => props.paused))
 .scene-backdrop .layer-mid { --shift: 7; }
 .scene-backdrop .layer-glow { --shift: 20; --orbit: -12; }
 .scene-backdrop .layer-near { --shift: 36; --orbit: -26; }
-/* A slow drift around the in-focus mid plane: far layers move one way, near layers the other. */
-.scene-backdrop .orbit { position: absolute; inset: 0; animation: backdrop-orbit 34s ease-in-out infinite alternate; will-change: transform; }
+/* A slow drift around the in-focus mid plane: far layers move one way, near layers the other. It moves `translate`, so
+   it adds to a part's own transform or scale, and each part drifts in its own small layer: a full-plane box that
+   paints would hold a buffer the size of the view. */
+.scene-backdrop .orbit { position: absolute; inset: 0; animation: backdrop-orbit 34s ease-in-out infinite alternate; }
 .scene-backdrop .art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; transition: filter 480ms ease-out; }
+/* See `band()`: the box keeps the band's share of the scene's height. */
+.scene-backdrop .scene-band { top: auto; height: calc((1 - var(--band-top) / 900) * 100%); }
+/* The mid plane is a layer of its own, above the drifting far plane. Its scenery holds a layer that covers only its band
+   (see the will-change below), so the plane itself paints nothing and needs no full-screen buffer. */
+.scene-backdrop .mid-art { position: absolute; left: 0; right: 0; bottom: 0; }
 .scene-backdrop .art-far { filter: blur(1.2px); }
 .scene-backdrop .art-near { filter: blur(7px); }
 .has-depth.has-window .scene-backdrop .art-far { filter: blur(4px); }
@@ -59,11 +66,18 @@ const still = useMotionBudget(toRef(() => props.paused))
 /* Too slow to animate smoothly: the scenery holds still and changes focus or scene at once, as under reduced motion. */
 .scene-backdrop.is-still, .scene-backdrop.is-still * { animation: none !important; transition: none !important; will-change: auto !important; }
 .scene-backdrop.is-still .backdrop-fade-enter-from { filter: none; scale: none; }
+/* Reduced motion stops every animation (see style.css); will-change would then only pin a layer per moving part. */
+@media (prefers-reduced-motion: reduce) { .scene-backdrop * { will-change: auto !important; } }
+/* The mid scenery keeps its small layer even when still: the 3D floor keeps the plane a layer anyway. */
+.scene-backdrop .mid-art { will-change: transform !important; }
 
-@keyframes backdrop-orbit { from { transform: translateX(calc(var(--orbit, 0) * -1px)); } to { transform: translateX(calc(var(--orbit, 0) * 1px)); } }
+@keyframes backdrop-orbit { from { translate: calc(var(--orbit, 0) * -1px); } to { translate: calc(var(--orbit, 0) * 1px); } }
 @keyframes backdrop-bob { from { transform: translateY(-8px); } to { transform: translateY(8px); } }
 @keyframes backdrop-drift { from { transform: translateX(-60px); } to { transform: translateX(60px); } }
 @keyframes backdrop-rise { 0% { opacity: 0; transform: none; } 25% { opacity: .9; } 75% { opacity: .75; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)); } }
 /* Portrait screens would crop the wide scenery to its middle; keep it low and wider instead. */
-@media (max-aspect-ratio: 4 / 5) { .scene-backdrop .scene-art { top: auto; height: 62%; } }
+@media (max-aspect-ratio: 4 / 5) {
+  .scene-backdrop .scene-art { top: auto; height: 62%; }
+  .scene-backdrop .scene-band { height: calc((1 - var(--band-top) / 900) * 62%); }
+}
 </style>

@@ -5,7 +5,7 @@ import ArField from './ArField.vue'
 import DataShards from './DataShards.vue'
 import Glints from './Glints.vue'
 import LensFlare from './LensFlare.vue'
-import { boxes, circles, cumulus, drifts, driftStyle, lit, round, sequence, towers } from './scenery'
+import { band, boxes, circles, cumulus, drifts, driftStyle, lit, round, sequence, towers } from './scenery'
 
 const glow = useId()
 
@@ -20,6 +20,12 @@ const clouds = [
   { ...cloud(37, 2), style: { left: '46%', top: '13%', width: '30vw', animationDuration: '140s' } },
   { ...cloud(59, 2), style: { left: '2%', top: '24%', width: '20vw', animationDuration: '110s' } },
 ]
+
+// Each moving or layered piece of art covers only the band of the scene it draws in.
+const farBand = band(170)
+const facadeBand = band(370)
+const groundBand = band(560)
+const railBand = band(580)
 
 const farTowers = towers(11, 640, [70, 250], [36, 96])
 const legX = (y: number, side: number) => round(side < 0 ? 1236 + (640 - y) / 340 * 26 : 1300 - (640 - y) / 340 * 26)
@@ -81,29 +87,31 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
   <div class="backdrop-scene is-city">
     <svg class="stars" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><path :d="stars" /></svg>
     <div class="layer layer-far">
-      <div class="orbit">
-        <svg class="art art-far scene-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
+      <div class="orbit scene-band" :style="farBand.style">
+        <svg class="art art-far" :viewBox="farBand.viewBox" preserveAspectRatio="xMidYMax slice">
           <path class="fill-far" :d="boxes(farTowers)" />
           <path class="stroke-far-rim" :d="rims(farTowers)" />
           <path class="stroke-tower" :d="`M1236 640L1262 300M1300 640L1274 300M1268 300V200${braces}`" />
           <path class="fill-tower" d="M1248 452h52v14h-52zM1256 362h36v10h-36z" />
         </svg>
-        <svg class="art scene-art beacon" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs><filter :id="`${glow}-beacon`" x="-200%" y="-200%" width="500%" height="500%"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="currentColor" /></filter></defs><circle cx="1268" cy="198" r="5" :filter="`url(#${glow}-beacon)`" /></svg>
+        <svg class="art beacon" :viewBox="farBand.viewBox" preserveAspectRatio="xMidYMax slice"><defs><filter :id="`${glow}-beacon`" x="-200%" y="-200%" width="500%" height="500%"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="currentColor" /></filter></defs><circle cx="1268" cy="198" r="5" :filter="`url(#${glow}-beacon)`" /></svg>
       </div>
     </div>
     <div class="layer layer-clouds">
       <svg v-for="(item, index) in clouds" :key="index" class="cloud" :viewBox="item.viewBox" :style="item.style"><path class="fill-cloud-shade" :d="item.base" /><path class="fill-cloud" :d="item.lit" /></svg>
     </div>
     <div class="layer layer-mid">
-      <svg class="art art-mid scene-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
-        <path class="fill-tower-mid" :d="boxes(midTowers) + roofs" />
-        <path class="fill-window" :d="dim" />
-        <path class="stroke-rim" :d="rims(midTowers)" />
-      </svg>
-      <svg v-for="(path, index) in lit3" :key="index" class="art art-mid scene-art windows" :class="`is-${index + 1}`" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><path class="fill-lit" :d="path" /></svg>
-      <svg v-for="(path, index) in neon" :key="`n${index}`" class="art art-mid scene-art neon" :class="`is-${index + 1}`" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs><filter :id="`${glow}-n${index}`"><feDropShadow class="neon-glow" dx="0" dy="0" stdDeviation="5" flood-color="currentColor" /></filter></defs><path :d="path" :filter="`url(#${glow}-n${index})`" /></svg>
+      <div class="mid-art scene-band" :style="facadeBand.style">
+        <svg class="art art-mid" :viewBox="facadeBand.viewBox" preserveAspectRatio="xMidYMax slice">
+          <path class="fill-tower-mid" :d="boxes(midTowers) + roofs" />
+          <path class="fill-window" :d="dim" />
+          <path class="stroke-rim" :d="rims(midTowers)" />
+        </svg>
+        <svg v-for="(path, index) in lit3" :key="index" class="art art-mid windows" :class="`is-${index + 1}`" :viewBox="facadeBand.viewBox" preserveAspectRatio="xMidYMax slice"><path class="fill-lit" :d="path" /></svg>
+        <svg v-for="(path, index) in neon" :key="`n${index}`" class="art art-mid neon" :class="`is-${index + 1}`" :viewBox="facadeBand.viewBox" preserveAspectRatio="xMidYMax slice"><defs><filter :id="`${glow}-n${index}`"><feDropShadow class="neon-glow" dx="0" dy="0" stdDeviation="5" flood-color="currentColor" /></filter></defs><path :d="path" :filter="`url(#${glow}-n${index})`" /></svg>
+      </div>
       <div class="scan" />
-      <svg class="art art-mid scene-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
+      <svg class="art art-mid scene-band" :viewBox="groundBand.viewBox" :style="groundBand.style" preserveAspectRatio="xMidYMax slice">
         <path class="fill-ground" d="M0 790H1600V900H0Z" />
         <path class="fill-front" d="M1090 790V664Q1240 572 1390 664V790Z" />
         <path class="fill-front-lit" d="M1090 790V664Q1138 634 1188 619V790Z" />
@@ -114,8 +122,8 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
         <path class="stroke-rim" d="M0 608H1600M196 606L222 578H538" />
         <path class="fill-front" d="M196 606L222 578H538L564 606Z" />
       </svg>
-      <div class="train">
-        <svg class="art art-mid scene-art" viewBox="0 0 1600 900" preserveAspectRatio="xMinYMax slice"><path class="fill-front" d="M-250 611V598Q-250 589-240 589H-34Q-14 591-8 602L-4 611Z" /><path class="stroke-lit" d="M-238 595H-30" /></svg>
+      <div class="train scene-band" :style="railBand.style">
+        <svg class="art art-mid" :viewBox="railBand.viewBox" preserveAspectRatio="xMinYMax slice"><path class="fill-front" d="M-250 611V598Q-250 589-240 589H-34Q-14 591-8 602L-4 611Z" /><path class="stroke-lit" d="M-238 595H-30" /></svg>
       </div>
       <ArField />
     </div>
@@ -127,12 +135,10 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
       </div>
     </div>
     <div class="layer layer-near">
-      <div class="orbit">
-        <div class="railing" />
-        <div v-for="side in ['is-left', 'is-right']" :key="side" class="lamp" :class="side">
-          <svg class="art art-near" viewBox="0 0 200 900" preserveAspectRatio="xMinYMax meet"><path class="stroke-pole" d="M60 900V170Q60 130 100 130H150" /><ellipse class="fill-near" cx="160" cy="138" rx="34" ry="12" /></svg>
-          <i class="lamp-glow" />
-        </div>
+      <div class="orbit railing"><i /></div>
+      <div v-for="side in ['is-left', 'is-right']" :key="side" class="orbit lamp" :class="side">
+        <svg class="art art-near" viewBox="0 0 200 900" preserveAspectRatio="xMinYMax meet"><path class="stroke-pole" d="M60 900V170Q60 130 100 130H150" /><ellipse class="fill-near" cx="160" cy="138" rx="34" ry="12" /></svg>
+        <i class="lamp-glow" />
       </div>
     </div>
     <LensFlare :x="24" :y="46" />
@@ -165,6 +171,8 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
 .backdrop-scene.is-city { background: radial-gradient(circle at 24% 46%, var(--sun-core) 0 2.6%, var(--sun-glow) 3.6%, var(--sun-halo) 12%, transparent 34%), linear-gradient(var(--sky)); }
 .stars { display: none; position: absolute; inset: 0; width: 100%; height: 100%; fill: rgb(240 240 255 / 70%); }
 .is-dark .stars { display: block; }
+/* The flare is fully transparent at night; leaving it out frees its full-screen layer. */
+.is-dark .lens-flare { display: none; }
 
 .fill-far { fill: var(--far); }
 .stroke-far-rim { fill: none; stroke: var(--far-rim); stroke-width: 2; }
@@ -204,12 +212,14 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
 .is-dark .neon.is-1 { color: var(--neon-a); }
 .is-dark .neon.is-2 { color: var(--neon-b); animation: neon-flicker 7s steps(1) infinite; }
 .scan { position: absolute; top: 34%; bottom: 14%; left: 0; width: 9vw; opacity: 0; background: linear-gradient(90deg, transparent, rgb(var(--ar) / 10%) 80%, rgb(var(--ar) / 95%) 98%, transparent); animation: scan 12s ease-in-out infinite 1s; will-change: transform, opacity; }
-.train { position: absolute; inset: 0; animation: train 32s linear infinite; will-change: transform; }
+.train { position: absolute; left: 0; right: 0; bottom: 0; animation: train 32s linear infinite; will-change: transform; }
 .cloud { position: absolute; height: auto; overflow: hidden; animation: backdrop-drift linear infinite alternate; }
 .traffic { position: absolute; border-radius: 50%; translate: -50% -50%; opacity: .7; background: radial-gradient(circle, rgb(var(--light) / 55%) 0 30%, rgb(var(--light) / 18%) 52%, transparent 70%); animation: backdrop-rise ease-in-out infinite; will-change: transform, opacity; }
 .traffic.is-red { --light: var(--red); }
-.railing { position: absolute; left: 0; right: 0; bottom: 0; height: 16%; opacity: .9; filter: blur(5px); background: linear-gradient(var(--near), var(--near)) top / 100% 7px no-repeat, repeating-linear-gradient(90deg, var(--near) 0 7px, transparent 7px 72px); }
-.lamp { position: absolute; bottom: 0; height: 88%; aspect-ratio: 2 / 9; }
+/* The railing and each lamp drift on their own; the blur is drawn inside the moving box, not on it. */
+.backdrop-scene .railing { inset: auto 0 0; height: 16%; }
+.railing > i { position: absolute; inset: 0; opacity: .9; filter: blur(5px); background: linear-gradient(var(--near), var(--near)) top / 100% 7px no-repeat, repeating-linear-gradient(90deg, var(--near) 0 7px, transparent 7px 72px); }
+.backdrop-scene .lamp { inset: auto auto 0; height: 88%; aspect-ratio: 2 / 9; }
 .lamp.is-left { left: 3%; }
 .lamp.is-right { right: 3%; scale: -1 1; }
 .lamp-glow { position: absolute; left: 80%; top: 15.3%; width: 180px; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(circle, rgb(var(--light) / 70%) 0 12%, rgb(var(--light) / 20%) 42%, transparent 70%); }
@@ -219,5 +229,5 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
 @keyframes beacon { 0%, 100% { opacity: 1; } 50% { opacity: .15; } }
 @keyframes scan { 0% { opacity: 0; transform: translateX(-20vw); } 6% { opacity: 1; } 32% { opacity: 1; } 38% { opacity: 0; transform: translateX(110vw); } 100% { opacity: 0; transform: translateX(110vw); } }
 @keyframes train { from { transform: translateX(0); } 62%, to { transform: translateX(calc(100% + 480px)); } }
-@media (max-width: 600px) { .lamp { height: 70%; } .lamp-glow { width: 120px; } }
+@media (max-width: 600px) { .backdrop-scene .lamp { height: 70%; } .lamp-glow { width: 120px; } }
 </style>

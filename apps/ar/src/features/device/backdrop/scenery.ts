@@ -27,6 +27,15 @@ export function sequence(seed: number) {
 
 export const round = (value: number) => Math.round(value * 10) / 10
 
+/**
+ * The lower part of the 1600 × 900 scene, from `top` down, for art that draws nothing above it.
+ * Its box (`.scene-band`) keeps the same share of the scene's height and sits at the bottom, so the art slices to the
+ * same scale and place as on the full scene, while a moving or layered box covers only what it draws.
+ */
+export function band(top: number) {
+  return { viewBox: `0 ${top} 1600 ${900 - top}`, style: { '--band-top': top } }
+}
+
 /** Union of circles as one path. */
 export function circles(items: Circle[]) {
   return items.map(([x, y, r]) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${r * 2} 0a${r} ${r} 0 1 0 ${-r * 2} 0`).join('')
