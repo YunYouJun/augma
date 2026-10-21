@@ -22,13 +22,13 @@ import NavigationPanel from './NavigationPanel.vue'
 import NotificationPanel from './NotificationPanel.vue'
 import SceneBackdrop from './SceneBackdrop.vue'
 import SettingsPanel from './SettingsPanel.vue'
-import { ariaChord, chordLabel, parseChord, shortcutIds } from './shortcuts'
+import { ariaChord, chordLabel, shortcutIds } from './shortcuts'
 import ShortcutsDialog from './ShortcutsDialog.vue'
 import SoundPanel from './SoundPanel.vue'
 import SpacePanel from './SpacePanel.vue'
 import SystemBar from './SystemBar.vue'
-import { deviceModules } from './types'
 import { useAssistantKey } from './useAssistantKey'
+import { useDesktopBridge } from './useDesktopBridge'
 import { useShortcuts } from './useShortcuts'
 import { useSpeechCommands } from './useSpeechCommands'
 import { useSpeechFeedback } from './useSpeechFeedback'
@@ -56,20 +56,9 @@ let lastTrigger: HTMLElement | null = null
 const title = computed(() => activeModule.value ? t(`module.${activeModule.value}`) : '')
 const panelStyle = computed(() => ({ '--window-alpha': `${settings.opacity / 100 * 0.7}` }))
 const worldVisible = computed(() => online.value && settings.showHud && !settings.focus && !xr.ready.value && (activeModule.value === 'space' || activeModule.value === 'navigation'))
-type DesktopWindow = Window & {
-  __AUGMA_DESKTOP_MODULE__?: DeviceModule
-  __AUGMA_DESKTOP_IMMERSIVE__?: boolean
-  /** The macOS app's voice menu key as a chord, `null` when the menu item has no key. */
-  __AUGMA_DESKTOP_VOICE_SHORTCUT__?: string | null
-  webkit?: { messageHandlers?: { moduleSelection?: { postMessage: (module: DeviceModule | null) => void } } }
-}
-const desktopWindow = window as DesktopWindow
-const desktopImmersive = desktopWindow.__AUGMA_DESKTOP_IMMERSIVE__ === true
+const { immersive: desktopImmersive, voiceShortcut: nativeVoiceShortcut } = useDesktopBridge({ activeModule, select: selectDesktopModule, toggleSpeech: toggleSpeechShortcut })
 // The simulated surroundings stand in for the real world until the camera or AR shows it.
 const backdropVisible = computed(() => settings.sceneBackdrop && !desktopImmersive && !camera.stream.value && !xr.ready.value)
-const nativeChord = (value: unknown) => typeof value === 'string' && parseChord(value) ? value : null
-/** Follows the menu item, which the user can rebind under App Shortcuts in System Settings. */
-const nativeVoiceShortcut = shallowRef(nativeChord(desktopWindow.__AUGMA_DESKTOP_VOICE_SHORTCUT__))
 const nativeVoiceLabel = computed(() => nativeVoiceShortcut.value ? chordLabel(nativeVoiceShortcut.value, true) : '')
 const shortcutsOpen = shallowRef(false)
 const shortcuts = useShortcuts({
@@ -195,20 +184,13 @@ function runShortcut(id: ShortcutId) {
   }
 }
 
-function selectDesktopModule(event: Event) {
-  const module = (event as CustomEvent<{ module?: unknown }>).detail?.module
-  if (module === null) {
+function selectDesktopModule(module: DeviceModule | null) {
+  if (!module) {
     device.closeModule()
     return
   }
-  if (typeof module !== 'string' || !deviceModules.includes(module as DeviceModule))
-    return
   settings.showHud = true
-  device.openModule(module as DeviceModule)
-}
-
-function syncNativeVoiceShortcut(event: Event) {
-  nativeVoiceShortcut.value = nativeChord((event as CustomEvent<{ shortcut?: unknown }>).detail?.shortcut)
+  device.openModule(module)
 }
 
 function toast(text: Message) {
@@ -336,7 +318,6 @@ watch(online, (value) => {
   }
 })
 watch(activeModule, (module) => {
-  desktopWindow.webkit?.messageHandlers?.moduleSelection?.postMessage(module)
   if (module !== 'commands')
     speech.cancel()
 })
@@ -353,24 +334,12 @@ watch(locale, (value) => {
   document.title = t('app.documentTitle')
 }, { immediate: true })
 onMounted(() => {
-  if (desktopImmersive)
-    document.documentElement.classList.add('augma-desktop-immersive')
-  window.addEventListener('augma:select-module', selectDesktopModule)
-  window.addEventListener('augma:toggle-speech', toggleSpeechShortcut)
-  window.addEventListener('augma:voice-shortcut', syncNativeVoiceShortcut)
-  if (desktopWindow.__AUGMA_DESKTOP_MODULE__)
-    selectDesktopModule(new CustomEvent('augma:select-module', { detail: { module: desktopWindow.__AUGMA_DESKTOP_MODULE__ } }))
   void xr.detect()
   fullscreenSupported.value = !!document.fullscreenEnabled
   syncFullscreen()
   document.addEventListener('fullscreenchange', syncFullscreen)
 })
 onUnmounted(() => {
-  if (desktopImmersive)
-    document.documentElement.classList.remove('augma-desktop-immersive')
-  window.removeEventListener('augma:select-module', selectDesktopModule)
-  window.removeEventListener('augma:toggle-speech', toggleSpeechShortcut)
-  window.removeEventListener('augma:voice-shortcut', syncNativeVoiceShortcut)
   speech.cancel()
   document.removeEventListener('fullscreenchange', syncFullscreen)
 })
