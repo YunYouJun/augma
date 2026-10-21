@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test'
 import { expect, test } from '@playwright/test'
 
 const components = [
@@ -272,8 +273,11 @@ test('theme samples stay independent and unknown ring progress respects reduced 
 })
 
 // One test per page: loading every heavy page in one tab crashed WebKit on Linux CI.
+// Reduced motion keeps the hero still: without a GPU, WebKit re-blurs the glass panel over the
+// spinning HUD rings on every frame, up to seconds each, and its compositor sometimes crashed.
 for (const path of ['/', '/showcase/', '/components/', '/download', '/en/', '/en/showcase/', '/en/download', '/ja/', '/ja/components/', '/ja/download']) {
   test(`${path} has no horizontal scroll at 390px`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto(path)
     await page.waitForLoadState('networkidle')
@@ -404,45 +408,66 @@ test('live examples and their source follow the docs language', async ({ page })
   await expect(page.getByRole('button', { name: '初期設定に戻す' })).toBeVisible()
 })
 
-test('copy built into the components follows the docs language', async ({ page }) => {
+// One test per page so slow pages can't add up past the test timeout: without a GPU, WebKit
+// re-blurs a dialog's overlay on every frame while anything under it moves.
+test.describe('copy built into the components follows the docs language', () => {
   const han = /\p{Script=Han}/u
-  for (const name of ['hud-progress', 'select', 'toast', 'dialog']) {
+  async function openEnglish(page: Page, name: string) {
     await page.goto(`/en/components/${name}`)
     await expect(page.locator('.demo-canvas')).toHaveAttribute('aria-busy', 'false')
     await expect(page.locator('.demo-canvas')).not.toContainText(han)
   }
-  await page.goto('/en/components/hud-progress')
-  await expect(page.getByRole('progressbar', { name: 'Connecting' })).toContainText('In progress')
-  await page.goto('/en/components/toast')
-  await expect(page.getByRole('region', { name: 'Notifications (F8)' })).toBeAttached()
-  await page.getByRole('button', { name: 'Save settings' }).click()
-  await page.getByRole('button', { name: 'Close notification' }).click()
-  await expect(page.getByText('Settings saved', { exact: true })).not.toBeVisible()
-  await page.goto('/en/components/dialog')
-  await page.getByRole('button', { name: 'Open settings' }).click()
-  await expect(page.getByRole('dialog')).not.toContainText(han)
-  await page.getByRole('button', { name: 'Close dialog' }).click()
-  await expect(page.getByRole('dialog')).toHaveCount(0)
 
-  await page.goto('/ja/components/hud-progress')
-  await expect(page.getByRole('progressbar', { name: '接続中' })).toContainText('処理中')
-  await page.goto('/ja/components/toast')
-  await page.getByRole('button', { name: '設定を保存' }).click()
-  await page.getByRole('button', { name: '通知を閉じる' }).click()
-  await expect(page.getByText('設定を保存しました', { exact: true })).not.toBeVisible()
-  await page.goto('/ja/components/dialog')
-  await page.getByRole('button', { name: '設定を開く' }).click()
-  await page.getByRole('button', { name: 'ダイアログを閉じる' }).click()
-  await expect(page.getByRole('dialog')).toHaveCount(0)
+  test('English progress and select', async ({ page }) => {
+    await openEnglish(page, 'hud-progress')
+    await expect(page.getByRole('progressbar', { name: 'Connecting' })).toContainText('In progress')
+    await openEnglish(page, 'select')
+  })
+
+  test('English toast', async ({ page }) => {
+    await openEnglish(page, 'toast')
+    await expect(page.getByRole('region', { name: 'Notifications (F8)' })).toBeAttached()
+    await page.getByRole('button', { name: 'Save settings' }).click()
+    await page.getByRole('button', { name: 'Close notification' }).click()
+    await expect(page.getByText('Settings saved', { exact: true })).not.toBeVisible()
+  })
+
+  test('English dialog', async ({ page }) => {
+    await openEnglish(page, 'dialog')
+    await page.getByRole('button', { name: 'Open settings' }).click()
+    await expect(page.getByRole('dialog')).not.toContainText(han)
+    await page.getByRole('button', { name: 'Close dialog' }).click()
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+  })
+
+  test('Japanese progress and toast', async ({ page }) => {
+    await page.goto('/ja/components/hud-progress')
+    await expect(page.getByRole('progressbar', { name: '接続中' })).toContainText('処理中')
+    await page.goto('/ja/components/toast')
+    await page.getByRole('button', { name: '設定を保存' }).click()
+    await page.getByRole('button', { name: '通知を閉じる' }).click()
+    await expect(page.getByText('設定を保存しました', { exact: true })).not.toBeVisible()
+  })
+
+  test('Japanese dialog', async ({ page }) => {
+    await page.goto('/ja/components/dialog')
+    await page.getByRole('button', { name: '設定を開く' }).click()
+    await page.getByRole('button', { name: 'ダイアログを閉じる' }).click()
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+  })
 
   // The homepage previews pass the same labels from the theme's message catalog.
-  await page.goto('/en/')
-  await page.getByRole('button', { name: 'Adjust interface' }).click()
-  await page.getByRole('button', { name: 'Close dialog' }).click()
-  await expect(page.getByRole('dialog')).toHaveCount(0)
-  await page.getByRole('button', { name: 'Primary', exact: true }).click()
-  await page.getByRole('button', { name: 'Close notification' }).click()
-  await expect(page.getByText('Action received', { exact: true })).not.toBeVisible()
+  // Reduced motion keeps the hero still under the dialog, as in the overflow tests.
+  test('homepage previews', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/en/')
+    await page.getByRole('button', { name: 'Adjust interface' }).click()
+    await page.getByRole('button', { name: 'Close dialog' }).click()
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await page.getByRole('button', { name: 'Primary', exact: true }).click()
+    await page.getByRole('button', { name: 'Close notification' }).click()
+    await expect(page.getByText('Action received', { exact: true })).not.toBeVisible()
+  })
 })
 
 test('links into the AR demo carry the docs language over', async ({ page }) => {
