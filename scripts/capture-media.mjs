@@ -1,6 +1,8 @@
 // Captures README / Open Graph media from the built site (run `pnpm build` first).
 // Requires ffmpeg (AR clip) and the libwebp tools cwebp / gif2webp (`brew install webp`).
-// README media are WebP; the Open Graph image stays JPEG for link-preview crawlers.
+// README media are WebP and land in docs/media, which git ignores: upload them, or the AR clip's MP4, to a
+// GitHub Discussion and link the attachment URLs from README.md. The Open Graph image and the AR clip are
+// served by the site, so they stay in apps/site/public; the Open Graph image stays JPEG for link-preview crawlers.
 import { execFileSync, spawn } from 'node:child_process'
 import { mkdir, mkdtemp, readdir, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'

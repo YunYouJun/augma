@@ -18,3 +18,5 @@ apps/site/public/markdown
 *.tgz
 release-artifacts/
 .claude/worktrees/
+# README media are uploaded to a GitHub Discussion, not committed.
+docs/media/
