@@ -88,11 +88,12 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
     <svg class="stars" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><path :d="stars" /></svg>
     <div class="layer layer-far">
       <div class="orbit scene-band" :style="farBand.style">
-        <svg class="art art-far" :viewBox="farBand.viewBox" preserveAspectRatio="xMidYMax slice">
+        <svg class="art art-far tower" :viewBox="farBand.viewBox" preserveAspectRatio="xMidYMax slice">
+          <defs><filter :id="`${glow}-tower`" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow class="tower-glow" dx="0" dy="0" stdDeviation="4" flood-color="currentColor" /></filter></defs>
           <path class="fill-far" :d="boxes(farTowers)" />
           <path class="stroke-far-rim" :d="rims(farTowers)" />
-          <path class="stroke-tower" :d="`M1236 640L1262 300M1300 640L1274 300M1268 300V200${braces}`" />
-          <path class="fill-tower" d="M1248 452h52v14h-52zM1256 362h36v10h-36z" />
+          <path class="stroke-tower" :d="`M1236 640L1262 300M1300 640L1274 300M1268 300V200${braces}`" :filter="`url(#${glow}-tower)`" />
+          <path class="fill-tower" d="M1248 452h52v14h-52zM1256 362h36v10h-36z" :filter="`url(#${glow}-tower)`" />
         </svg>
         <svg class="art beacon" :viewBox="farBand.viewBox" preserveAspectRatio="xMidYMax slice"><defs><filter :id="`${glow}-beacon`" x="-200%" y="-200%" width="500%" height="500%"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="currentColor" /></filter></defs><circle cx="1268" cy="198" r="5" :filter="`url(#${glow}-beacon)`" /></svg>
       </div>
@@ -111,12 +112,13 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
         <svg v-for="(path, index) in neon" :key="`n${index}`" class="art art-mid neon" :class="`is-${index + 1}`" :viewBox="facadeBand.viewBox" preserveAspectRatio="xMidYMax slice"><defs><filter :id="`${glow}-n${index}`"><feDropShadow class="neon-glow" dx="0" dy="0" stdDeviation="5" flood-color="currentColor" /></filter></defs><path :d="path" :filter="`url(#${glow}-n${index})`" /></svg>
       </div>
       <div class="scan" />
-      <svg class="art art-mid scene-band" :viewBox="groundBand.viewBox" :style="groundBand.style" preserveAspectRatio="xMidYMax slice">
+      <svg class="art art-mid scene-band accent" :viewBox="groundBand.viewBox" :style="groundBand.style" preserveAspectRatio="xMidYMax slice">
+        <defs><filter :id="`${glow}-accent`" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="currentColor" /></filter></defs>
         <path class="fill-ground" d="M0 790H1600V900H0Z" />
         <path class="fill-front" d="M1090 790V664Q1240 572 1390 664V790Z" />
         <path class="fill-front-lit" d="M1090 790V664Q1138 634 1188 619V790Z" />
         <path class="stroke-window" d="M1100 704H1380M1100 744H1380" />
-        <path class="stroke-accent" d="M1090 664Q1240 572 1390 664" />
+        <path class="stroke-accent" d="M1090 664Q1240 572 1390 664" :filter="`url(#${glow}-accent)`" />
         <path class="stroke-front" :d="Array.from({ length: 7 }, (_, i) => `M${130 + i * 240} 620V790`).join('')" />
         <path class="stroke-track" d="M0 614H1600" />
         <path class="stroke-rim" d="M0 608H1600M196 606L222 578H538" />
@@ -178,7 +180,10 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
 .stroke-far-rim { fill: none; stroke: var(--far-rim); stroke-width: 2; }
 .stroke-tower { fill: none; stroke: var(--tower); stroke-width: 3; }
 .fill-tower { fill: var(--tower); }
-.is-dark .stroke-tower, .is-dark .fill-tower { filter: drop-shadow(0 0 4px var(--tower)); }
+/* The tower glows only at night. Like the neon, its svg filter takes the glow colour from the svg that holds it. */
+.tower { color: var(--tower); }
+.tower-glow { flood-opacity: 0; }
+.is-dark .tower-glow { flood-opacity: 1; }
 /* Glow and blink the light itself, not its full-scene svg, so the svg does not become a full-screen layer. */
 .beacon { fill: var(--beacon); color: var(--beacon); }
 .beacon circle { animation: beacon 2.4s steps(1) infinite; }
@@ -192,7 +197,8 @@ const glints = [[34, 52, 18, -1], [58, 46, 14, -3.4], [80, 60, 22, -5.2], [10, 5
 .fill-front { fill: var(--front); }
 .fill-front-lit { fill: var(--front-lit); }
 .stroke-window { fill: none; stroke: var(--window); stroke-width: 3; }
-.stroke-accent { fill: none; stroke: var(--accent); stroke-width: 3; filter: drop-shadow(0 0 5px var(--accent)); }
+.accent { color: var(--accent); }
+.stroke-accent { fill: none; stroke: var(--accent); stroke-width: 3; }
 .stroke-front { fill: none; stroke: var(--front); stroke-width: 16; }
 .stroke-track { fill: none; stroke: var(--front); stroke-width: 12; }
 .stroke-lit { fill: none; stroke: var(--lit); stroke-width: 5; stroke-linecap: round; }

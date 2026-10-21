@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { Circle } from './scenery'
+import { useId } from 'vue'
 import ArField from './ArField.vue'
 import DataShards from './DataShards.vue'
 import Glints from './Glints.vue'
 import LensFlare from './LensFlare.vue'
 import { band, circles, crown, cumulus, drifts, driftStyle, leaves, lit, round, sequence } from './scenery'
+
+const glow = useId()
 
 /** Toward the sun, high on the right. */
 const light: [number, number] = [0.55, -0.83]
@@ -82,7 +85,8 @@ const glints = [[17, 73, 22, 0], [29, 71, 16, -2.5], [63.5, 11, 26, -4.6], [70, 
             <template v-if="island.spire">
               <path class="fill-wall" d="M86 50V18H100V50ZM104 50V-6H128V50Z" /><path class="fill-wall-shade" d="M95 50V18H100V50ZM119 50V-6H128V50Z" />
               <path class="fill-roof" d="M83 18L93-4L103 18ZM100-6L116-52L132-6Z" /><path class="fill-roof-shade" d="M93-4L103 18H95ZM116-52L132-6H119Z" />
-              <path class="fill-window" d="M110 6h6v10h-6zM110 26h6v10h-6zM89 28h4v8h-4z" />
+              <defs><filter :id="`${glow}-window`" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow class="window-glow" dx="0" dy="0" stdDeviation="3" flood-color="currentColor" /></filter></defs>
+              <path class="fill-window" d="M110 6h6v10h-6zM110 26h6v10h-6zM89 28h4v8h-4z" :filter="`url(#${glow}-window)`" />
             </template>
             <path class="fill-grass" d="M2 52Q100 34 198 52Q190 62 174 62Q100 56 24 62Q8 60 2 52Z" /><path class="fill-grass-light" d="M14 47Q100 34 186 47Q100 41 14 47Z" />
             <path class="fill-leaf-shade" :d="islandTrees.base" /><path class="fill-leaf" :d="islandTrees.lit" />
@@ -187,7 +191,9 @@ const glints = [[17, 73, 22, 0], [29, 71, 16, -2.5], [63.5, 11, 26, -4.6], [70, 
 .fill-roof { fill: var(--roof); }
 .fill-roof-shade { fill: var(--roof-shade); }
 .fill-window { fill: var(--window); }
-.is-dark .fill-window { filter: drop-shadow(0 0 3px var(--window)); }
+/* The spire windows glow only at night. Their svg filter takes the glow colour from the island svg. */
+.window-glow { flood-opacity: 0; }
+.is-dark .window-glow { flood-opacity: 1; }
 .fill-lawn { fill: var(--lawn); }
 .fill-lawn-light { fill: var(--lawn-light); }
 .fill-lawn-shade { fill: var(--lawn-shade); }
@@ -206,7 +212,7 @@ const glints = [[17, 73, 22, 0], [29, 71, 16, -2.5], [63.5, 11, 26, -4.6], [70, 
 .fill-near { fill: var(--near); }
 
 .island { position: absolute; aspect-ratio: 200 / 230; animation: backdrop-bob ease-in-out infinite alternate; }
-.island > .art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.island > .art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; color: var(--window); }
 .waterfall { position: absolute; left: 82%; top: 55%; width: 4%; height: 72%; border-radius: 0 0 50% 50%; background: linear-gradient(rgb(var(--water) / 85%), rgb(var(--water) / 30%) 55%, transparent); filter: blur(.6px); }
 .cloud { position: absolute; height: auto; overflow: hidden; animation: backdrop-drift linear infinite alternate; }
 .petal { position: absolute; border-radius: 80% 0; opacity: .8; background: linear-gradient(135deg, rgb(255 255 255 / 95%), rgb(var(--petal))); animation: petal linear infinite; will-change: transform, opacity; }
