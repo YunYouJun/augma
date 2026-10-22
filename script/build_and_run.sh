@@ -23,11 +23,15 @@ VERSION="$(node -p "require('$ROOT_DIR/package.json').version")"
 if [[ -z "${DEVELOPER_DIR:-}" ]] && ! /usr/bin/xcodebuild -version >/dev/null 2>&1; then
   export DEVELOPER_DIR=/Library/Developer/CommandLineTools
 fi
+# SwiftPM hands the SDK to the clang linker as --sysroot, from which clang can't read
+# the SDK version, so the binary records its deployment target as the SDK and macOS 26
+# runs it with the pre-26 look instead of Liquid Glass. -isysroot records the real SDK.
+SDK_FLAGS=(-Xswiftc -Xclang-linker -Xswiftc -isysroot -Xswiftc -Xclang-linker -Xswiftc "$(xcrun --sdk macosx --show-sdk-path)")
 
 # A download package is a universal release build; local runs stay fast debug builds.
-BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c debug)
+BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c debug "${SDK_FLAGS[@]}")
 if [[ "$MODE" == "--package" ]]; then
-  BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c release --arch arm64 --arch x86_64)
+  BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c release --arch arm64 --arch x86_64 "${SDK_FLAGS[@]}")
 else
   pkill -x "$APP_NAME" >/dev/null 2>&1 || true
 fi
