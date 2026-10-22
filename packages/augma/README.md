@@ -53,6 +53,7 @@ Add the `dark` class (or `data-agm-theme="dark"`) to the document root for the d
 | Controls | [Select](https://augma.yyj.moe/en/components/select), [Switch](https://augma.yyj.moe/en/components/switch), [Slider](https://augma.yyj.moe/en/components/slider) |
 | Feedback | [Dialog](https://augma.yyj.moe/en/components/dialog), [Tooltip](https://augma.yyj.moe/en/components/tooltip), [Toast](https://augma.yyj.moe/en/components/toast) |
 | HUD | [Panel](https://augma.yyj.moe/en/components/panel), [HudStatus](https://augma.yyj.moe/en/components/hud-status), [HudProgress](https://augma.yyj.moe/en/components/hud-progress), [HudGauge](https://augma.yyj.moe/en/components/hud-gauge) |
+| Motion | [Link Start](https://augma.yyj.moe/en/components/link-start): `linkStart()` plays a light tunnel before a navigation |
 
 Every page has a live example, its Vue source and the full API.
 

@@ -2,6 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "rootDir": "src",
+    // Resolve @augma/core through its built package rather than the workspace source alias,
+    // so the declarations re-export it instead of pulling its source under rootDir.
+    "paths": {},
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,

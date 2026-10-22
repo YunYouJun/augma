@@ -2,6 +2,16 @@
 
 ## 0.2.3（未发布）
 
+### 组件与设计
+
+- 新增 Link Start 光之隧道过场：`linkStart(navigate, options)` 播放约一秒的光线隧道，屏幕被盖住后执行跳转，再在到达的页面上淡出；`playLinkStart` 与 `waitUntilGone` 用于分步控制。颜色与字体取自深色主题的 `--agm-*` tokens，停留色默认取页面的 `--agm-bg`，也可通过 `colors`、`arrival`、`text` 等选项调整。开启减少动态效果时直接跳转；画布带 `aria-hidden`，在淡出、绘制失败或跳转出错后都会移除。
+- `@augma/core` 新增无依赖的 ES 模块入口 `@augma/core/link-start`，`augma` 同名导出 `linkStart`、`playLinkStart`、`waitUntilGone`。
+
+### 文档与接入
+
+- 新增 Link Start 文档与示例（中、英、日），侧边栏新增「动效」分组；`components.json` 新增 `effects` 字段，`llms.txt` 列出 Effects。
+- 官网下载页的「Link Start」按钮与首页页脚的「Link Start」链接改为先播放隧道再跳转。
+
 ### 演示与工具
 
 - 场景背景在 Safari 中补上城市铁塔、穹顶与庭院尖塔窗户的发光。WebKit 忽略 SVG 图形上的 CSS 滤镜，这些发光此前只在 Chromium 中显示；现在改用 SVG 滤镜，两种浏览器效果一致。

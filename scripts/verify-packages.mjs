@@ -4,7 +4,7 @@ import { mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import process from 'node:process'
-import { components } from './catalog.mjs'
+import { components, effects } from './catalog.mjs'
 
 const temp = await mkdtemp(join(tmpdir(), 'augma-packages-'))
 function run(command, args, cwd = process.cwd()) {
@@ -43,12 +43,12 @@ try {
   )
   await writeFile(
     join(temp, 'verify.mjs'),
-    `import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {createSSRApp,h} from 'vue';import {renderToString} from '@vue/server-renderer';import * as augma from 'augma';const html=await renderToString(createSSRApp({render:()=>h(augma.AgmPanel,{title:'Consumer'},()=>h(augma.AgmButton,null,()=> 'Ready'))}));assert(html.includes('Ready'));assert(html.includes('agm-button'));assert.equal(Object.keys(augma).filter(k=>k.startsWith('Agm')).length,${components.length});for(const entry of ['@augma/core/tokens.css','@augma/core/style.css','augma/style.css'])assert((await readFile(new URL(import.meta.resolve(entry)),'utf8')).length>0);`,
+    `import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {createSSRApp,h} from 'vue';import {renderToString} from '@vue/server-renderer';import * as augma from 'augma';const html=await renderToString(createSSRApp({render:()=>h(augma.AgmPanel,{title:'Consumer'},()=>h(augma.AgmButton,null,()=> 'Ready'))}));assert(html.includes('Ready'));assert(html.includes('agm-button'));assert.equal(Object.keys(augma).filter(k=>k.startsWith('Agm')).length,${components.length});const core=await import('@augma/core/link-start');for(const name of ${JSON.stringify(effects.flatMap(e => e.exports))})assert.equal(typeof augma[name],'function',name),assert.equal(augma[name],core[name],name);for(const entry of ['@augma/core/tokens.css','@augma/core/style.css','augma/style.css'])assert((await readFile(new URL(import.meta.resolve(entry)),'utf8')).length>0);`,
   )
   run('node', ['verify.mjs'], temp)
   await writeFile(
     join(temp, 'consumer.ts'),
-    'import { AgmButton, AgmDialog, AgmSlider, AgmInput, AgmSelect, AgmToast } from \'augma\'\nimport { h } from \'vue\'\nh(AgmButton, { variant: \'outline\' })\nh(AgmDialog, { title: \'Settings\', description: \'Configure\' })\nh(AgmSlider, { label: \'Opacity\', modelValue: 72 })\nh(AgmInput, { label: \'Name\', hint: \'Device name\', error: \'Required\' })\nh(AgmSelect, { label: \'Mode\', id: \'mode\', hint: \'Choose a mode\', required: true, error: \'Required\', options: [] })\nh(AgmToast, { title: \'Retry\', tone: \'warning\' })\n',
+    'import { AgmButton, AgmDialog, AgmSlider, AgmInput, AgmSelect, AgmToast } from \'augma\'\nimport { h } from \'vue\'\nh(AgmButton, { variant: \'outline\' })\nh(AgmDialog, { title: \'Settings\', description: \'Configure\' })\nh(AgmSlider, { label: \'Opacity\', modelValue: 72 })\nh(AgmInput, { label: \'Name\', hint: \'Device name\', error: \'Required\' })\nh(AgmSelect, { label: \'Mode\', id: \'mode\', hint: \'Choose a mode\', required: true, error: \'Required\', options: [] })\nh(AgmToast, { title: \'Retry\', tone: \'warning\' })\nimport { linkStart, playLinkStart } from \'augma\'\nimport type { LinkStartFinish } from \'@augma/core/link-start\'\nvoid linkStart(() => {}, { text: \'GO\', waitFor: \'.home\' })\nconst finish: Promise<LinkStartFinish> = playLinkStart({ arrival: \'#fff\' })\nvoid finish\n',
   )
   run(
     resolve('node_modules/.bin/tsc'),
@@ -67,7 +67,7 @@ try {
     temp,
   )
   console.log(
-    `Passed: npm tarballs, CSS-only dependency boundary, ${components.length} public exports, SSR rendering and consumer TypeScript.`,
+    `Passed: npm tarballs, framework-free core, ${components.length} public components, ${effects.length} effect, SSR rendering and consumer TypeScript.`,
   )
 }
 finally {

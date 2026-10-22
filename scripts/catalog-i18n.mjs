@@ -1,6 +1,6 @@
 // English and Japanese editorial copy for catalog.mjs, which stays the Chinese source.
 // localizeComponents() throws on a missing component, prop or slot, so generate.mjs fails before translations drift.
-import { components } from './catalog.mjs'
+import { components, effects } from './catalog.mjs'
 
 /** Category names; catalog.mjs groups by the Chinese name. */
 export const groupNames = {
@@ -8,6 +8,7 @@ export const groupNames = {
   控制: { 'zh-CN': '控制', 'en-US': 'Controls', 'ja-JP': 'コントロール' },
   反馈: { 'zh-CN': '反馈', 'en-US': 'Feedback', 'ja-JP': 'フィードバック' },
   HUD: { 'zh-CN': 'HUD', 'en-US': 'HUD', 'ja-JP': 'HUD' },
+  动效: { 'zh-CN': '动效', 'en-US': 'Motion', 'ja-JP': 'モーション' },
 }
 
 const translations = {
@@ -359,5 +360,31 @@ export function localizeComponents(locale) {
       slots: copy.slots,
       keyboard: copy.keyboard,
     }
+  })
+}
+
+const effectTranslations = {
+  'en-US': {
+    'link-start': { title: 'Link Start', description: 'A light-tunnel transition that covers the screen before a navigation and fades out over the page it arrives on.' },
+  },
+  'ja-JP': {
+    'link-start': { title: 'Link Start リンクスタート', description: '遷移の前に画面を覆い、到着したページの上でフェードアウトする光のトンネル。' },
+  },
+}
+
+/**
+ * The effects catalog in one docs language.
+ *
+ * @param {'zh-CN' | 'en-US' | 'ja-JP'} locale - Docs language; `zh-CN` returns the source catalog
+ * @returns The effect entries with translated title and description
+ */
+export function localizeEffects(locale) {
+  if (locale === 'zh-CN')
+    return effects
+  return effects.map((item) => {
+    const copy = effectTranslations[locale]?.[item.slug]
+    if (!copy)
+      throw new Error(`${locale}: translate effect ${item.slug} in scripts/catalog-i18n.mjs`)
+    return { ...item, ...copy }
   })
 }

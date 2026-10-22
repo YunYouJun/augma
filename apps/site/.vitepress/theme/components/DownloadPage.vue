@@ -5,12 +5,14 @@ import { computed } from 'vue'
 import { version } from '../../../../../packages/augma/package.json'
 import { components, origin } from '../../../../../scripts/catalog.mjs'
 import { useI18n } from '../i18n'
+import { useLinkStart } from '../linkStart'
 import CopyCommand from './CopyCommand.vue'
 import HeroBackdrop from './HeroBackdrop.vue'
 import HudOrbit from './HudOrbit.vue'
 import UiIcon from './UiIcon.vue'
 
 const { t, link } = useI18n()
+const onLinkStart = useLinkStart()
 const repo = 'https://github.com/YunYouJun/augma'
 // The release workflow attaches the app under a fixed name, so "latest" always resolves.
 const macZip = `${repo}/releases/latest/download/Augma-macOS.zip`
@@ -54,7 +56,7 @@ const features: { icon: 'layers' | 'motion' | 'scan' | 'monitor' | 'globe' | 'sp
               <UiIcon name="download" />
               {{ t('download.mac') }}
             </a>
-            <a class="agm-button agm-button--outline" href="#get">
+            <a class="agm-button agm-button--outline" href="#get" target="_self" @click="onLinkStart">
               {{ t('download.start') }}
               <UiIcon name="arrow" />
             </a>

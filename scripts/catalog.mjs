@@ -376,5 +376,18 @@ export const components = [
     registry: true,
   },
 ]
+// Framework-free effects. They are functions, not components: their pages are written by hand at
+// apps/site/components/<slug>.md (and the en/ja mirrors), and generate.mjs lists them in components.json and llms.txt.
+export const effects = [
+  {
+    slug: 'link-start',
+    name: 'linkStart',
+    title: 'Link Start 链接启动',
+    group: '动效',
+    description: '光之隧道过场：跳转前铺满屏幕，再在到达的页面上淡出。',
+    exports: ['linkStart', 'playLinkStart', 'waitUntilGone'],
+    module: '@augma/core/link-start',
+  },
+]
 export const origin = 'https://augma.yyj.moe'
 export const version = '0.2.2'

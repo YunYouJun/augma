@@ -2,6 +2,7 @@
 import { version } from '../../../../../packages/augma/package.json'
 import { components } from '../../../../../scripts/catalog.mjs'
 import { useI18n } from '../i18n'
+import { useLinkStart } from '../linkStart'
 import AiBand from './AiBand.vue'
 import ArDemo from './ArDemo.vue'
 import ComponentStrip from './ComponentStrip.vue'
@@ -11,6 +12,7 @@ import HeroBackdrop from './HeroBackdrop.vue'
 import UiIcon from './UiIcon.vue'
 
 const { t, link } = useI18n()
+const onLinkStart = useLinkStart('.augma-home')
 const release = `v${version.split('.').slice(0, 2).join('.')}`
 </script>
 
@@ -55,7 +57,7 @@ const release = `v${version.split('.').slice(0, 2).join('.')}`
       <AiBand />
       <footer class="home-footer">
         <span>Augma · MIT</span>
-        <a :href="link('/guide/')">{{ t('home.footer') }}</a>
+        <a :href="link('/guide/')" target="_self" @click="onLinkStart">{{ t('home.footer') }}</a>
       </footer>
     </div>
   </div>

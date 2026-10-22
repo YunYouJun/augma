@@ -1,7 +1,7 @@
 import type { DefaultTheme, HeadConfig, LocaleSpecificConfig } from 'vitepress'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
-import { groupNames, localizeComponents } from '../../../scripts/catalog-i18n.mjs'
+import { groupNames, localizeComponents, localizeEffects } from '../../../scripts/catalog-i18n.mjs'
 import { origin } from '../../../scripts/catalog.mjs'
 
 const root = (path: string) =>
@@ -124,7 +124,8 @@ function themeConfig(locale: Locale): DefaultTheme.Config {
   const link = (path: string) => `/${locale.prefix}${path}`
   const [components, showcase, design, ai, download] = locale.nav
   const [start, quickStart, migration, ar, macos, designGuide, aiGuide] = locale.start
-  const catalog = localizeComponents(locale.lang)
+  // Effects such as Link Start share the sidebar with components under their own group.
+  const catalog = [...localizeComponents(locale.lang), ...localizeEffects(locale.lang)]
   return {
     nav: [
       { text: components, link: link('components/') },
@@ -274,6 +275,10 @@ export default defineConfig({
         {
           find: '@augma/core/style.css',
           replacement: root('packages/core/src/style.css'),
+        },
+        {
+          find: '@augma/core/link-start',
+          replacement: root('packages/core/src/link-start.ts'),
         },
       ],
     },
