@@ -275,22 +275,31 @@ extension View {
     modifier(MaterializeModifier(active: active, delay: delay))
   }
 
-  /// Augma glass: material, hairline, lit top edge and accent marks.
-  func augmaGlass(cornerRadius: CGFloat = 3, marks: Bool = true) -> some View {
-    background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius))
-      .overlay {
-        RoundedRectangle(cornerRadius: cornerRadius)
-          .strokeBorder(Color.primary.opacity(0.14))
-      }
-      .overlay(alignment: .top) {
-        LinearGradient(colors: [.clear, .white.opacity(0.55), .clear], startPoint: .leading, endPoint: .trailing)
-          .frame(height: 1)
-          .padding(.horizontal, cornerRadius)
-          .allowsHitTesting(false)
-      }
-      .overlay {
-        if marks { HudAccentMarks() }
-      }
+  /// Augma glass: material, hairline, lit top edge and accent marks. On macOS 26 the
+  /// surface is Liquid Glass, which lights its own rim, so only the accent marks remain.
+  @ViewBuilder
+  func augmaGlass(cornerRadius: CGFloat = 3, marks: Bool = true, markLength: CGFloat = 30) -> some View {
+    if #available(macOS 26, *) {
+      glassEffect(.regular, in: .rect(cornerRadius: cornerRadius))
+        .overlay {
+          if marks { HudAccentMarks(length: markLength) }
+        }
+    } else {
+      background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius))
+        .overlay {
+          RoundedRectangle(cornerRadius: cornerRadius)
+            .strokeBorder(Color.primary.opacity(0.14))
+        }
+        .overlay(alignment: .top) {
+          LinearGradient(colors: [.clear, .white.opacity(0.55), .clear], startPoint: .leading, endPoint: .trailing)
+            .frame(height: 1)
+            .padding(.horizontal, cornerRadius)
+            .allowsHitTesting(false)
+        }
+        .overlay {
+          if marks { HudAccentMarks(length: markLength) }
+        }
+    }
   }
 }
 

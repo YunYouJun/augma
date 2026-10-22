@@ -118,14 +118,27 @@ struct ImmersiveControlsView: View {
     .tint(.augmaAccent)
     .padding(.horizontal, 14)
     .padding(.vertical, 10)
-    .background {
-      ActiveBackdropView()
-        .clipShape(RoundedRectangle(cornerRadius: 3))
-    }
-    .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(.primary.opacity(0.15)))
-    .overlay { HudAccentMarks(length: 24) }
+    .controlBarGlass()
     .padding(4)
     .augmaMaterialize(delay: 0.35)
+  }
+}
+
+private extension View {
+  /// Liquid Glass on macOS 26. Earlier systems keep a backdrop forced active, so the bar
+  /// stays blurred while the control panel is not key.
+  @ViewBuilder
+  func controlBarGlass() -> some View {
+    if #available(macOS 26, *) {
+      augmaGlass(markLength: 24)
+    } else {
+      background {
+        ActiveBackdropView()
+          .clipShape(RoundedRectangle(cornerRadius: 3))
+      }
+      .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(.primary.opacity(0.15)))
+      .overlay { HudAccentMarks(length: 24) }
+    }
   }
 }
 
