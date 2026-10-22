@@ -79,12 +79,12 @@
   background-color: var(--agm-panel);
   background-image: linear-gradient(
     105deg,
-    transparent 38%,
+    transparent 40%,
     var(--agm-sheen) 50%,
-    transparent 62%
+    transparent 60%
   );
   background-repeat: no-repeat;
-  background-size: 250% 100%;
+  background-size: 300% 100%;
   background-position: 100% 0;
 }
 /* The sweep only plays on the way in; leaving snaps it back off-plate. */
