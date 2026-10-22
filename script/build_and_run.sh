@@ -44,6 +44,30 @@ cp -R "$ROOT_DIR/apps/ar/dist/." "$APP_CONTENTS/Resources/ar/"
 # String tables live outside the SwiftPM target so SwiftUI finds them in the main bundle.
 cp -R "$PACKAGE_DIR/Localization/." "$APP_CONTENTS/Resources/"
 chmod +x "$APP_BINARY"
+# assets/brand is a pinned copy of YunLeFun/icons assets/apps/augma/v1.
+node "$ROOT_DIR/scripts/sync-app-icon.mjs" --check
+ICONSET="$PACKAGE_DIR/dist/AppIcon.iconset"
+rm -rf "$ICONSET"
+swift "$ROOT_DIR/script/create_app_icon.swift" "$ROOT_DIR/assets/brand/augma-app-icon.svg" "$ICONSET"
+iconutil -c icns "$ICONSET" -o "$APP_CONTENTS/Resources/AppIcon.icns"
+# macOS 26 reads the layered Icon Composer icon (default, dark, clear, tinted)
+# from Assets.car via CFBundleIconName; AppIcon.icns above stays the fallback.
+# Compiling .icon files needs Xcode 26+, so older toolchains keep only the icns.
+ACTOOL_MAJOR="$(xcrun actool --version 2>/dev/null | sed -n '/short-bundle-version/{n;s/.*<string>\([0-9]*\).*/\1/p;}')"
+if [[ "${ACTOOL_MAJOR:-0}" -ge 26 ]]; then
+  ICON_BUILD_DIR="$PACKAGE_DIR/dist/Augma.icon-build"
+  rm -rf "$ICON_BUILD_DIR"
+  mkdir -p "$ICON_BUILD_DIR"
+  xcrun actool "$ROOT_DIR/assets/brand/Augma.icon" --compile "$ICON_BUILD_DIR" \
+    --platform macosx --target-device mac --minimum-deployment-target "$MIN_SYSTEM_VERSION" \
+    --app-icon Augma --output-partial-info-plist "$ICON_BUILD_DIR/partial.plist" \
+    --errors --warnings --output-format human-readable-text >/dev/null
+  cp "$ICON_BUILD_DIR/Assets.car" "$APP_CONTENTS/Resources/Assets.car"
+  ICON_NAME_KEY='<key>CFBundleIconName</key><string>Augma</string>'
+else
+  echo "warning: actool ${ACTOOL_MAJOR:-unknown} cannot compile Augma.icon (needs Xcode 26+); using AppIcon.icns only" >&2
+  ICON_NAME_KEY=''
+fi
 cat >"$APP_CONTENTS/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -58,6 +82,8 @@ cat >"$APP_CONTENTS/Info.plist" <<PLIST
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>$VERSION</string>
   <key>CFBundleVersion</key><string>$VERSION</string>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
+  $ICON_NAME_KEY
   <key>LSMinimumSystemVersion</key><string>$MIN_SYSTEM_VERSION</string>
   <key>NSPrincipalClass</key><string>NSApplication</string>
   <key>NSMicrophoneUsageDescription</key><string>用于识别你主动说出的 Augma 语音指令。</string>

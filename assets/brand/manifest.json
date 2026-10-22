@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "product": "augma",
+  "displayName": "Augma",
+  "version": "v1",
+  "canonical": {
+    "repository": "YunLeFun/icons",
+    "path": "assets/apps/augma/v1"
+  },
+  "provenance": {
+    "kind": "vector-artwork",
+    "originalRepository": "YunYouJun/augma",
+    "originalPath": "assets/brand/augma-app-icon.svg",
+    "created": "2026-10-22"
+  },
+  "files": {
+    "augma-app-icon.svg": "c16b390351cd1778f0828b3cae931448ead8ce181d40c94e96c736de9eb13482",
+    "augma-mark.svg": "cd6e8db3595f0ff0ee8c68fcceddba6a2fbff3c841b50c49c9fedd37b79897ff",
+    "Augma.icon/icon.json": "8755d453c91108f0dbea348946ade75c65cefbb3905f06aaf4cef282b60e9b9a",
+    "Augma.icon/Assets/arcs.svg": "96e5647cb7b0537bd9f862671402545cd9b420e3fa107ae254a8a1ddff4e9154",
+    "Augma.icon/Assets/letter.svg": "1e0d94c7e770471e92fe659b5dea480bb552913ef14d0112a8ff6286cec5631b",
+    "Augma.icon/Assets/ring.svg": "e4de9160764f37e23884417291354502c8cba4b9472d57a6bdf8834f34f533e9"
+  }
+}

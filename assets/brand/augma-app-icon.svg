@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="augma-app-bg" x1="32" x2="32" y1="0" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34485b"/>
+      <stop offset="1" stop-color="#131e29"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#augma-app-bg)" d="M0 0h64v64H0z"/>
+  <path fill="#67c8da" fill-rule="evenodd" d="M56.7 32A24.7 24.7 0 1 1 7.3 32A24.7 24.7 0 1 1 56.7 32ZM55.3 32A23.3 23.3 0 1 1 8.7 32A23.3 23.3 0 1 1 55.3 32Z"/>
+  <path fill="#ffffff" fill-rule="evenodd" d="M17.81 45.53 29.89 18.47 34.11 18.47 46.19 45.53 40.41 45.53 37.27 38.49 26.73 38.49 23.59 45.53Z M32 26.69 35.48 34.48 28.52 34.48Z"/>
+  <path fill="#f28c12" d="M44.02 9.4A25.6 25.6 0 0 1 57.04 26.68A1.6 1.6 0 0 1 53.91 27.34A22.4 22.4 0 0 0 42.52 12.22A1.6 1.6 0 0 1 44.02 9.4ZM19.98 54.6A25.6 25.6 0 0 1 6.96 37.32A1.6 1.6 0 0 1 10.09 36.66A22.4 22.4 0 0 0 21.48 51.78A1.6 1.6 0 0 1 19.98 54.6Z"/>
+</svg>

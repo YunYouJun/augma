@@ -13,6 +13,8 @@
     "mac:run": "./script/build_and_run.sh",
     "mac:verify": "./script/build_and_run.sh --verify",
     "mac:package": "./script/build_and_run.sh --package",
+    "icons:sync": "node scripts/sync-app-icon.mjs",
+    "icons:check": "node scripts/sync-app-icon.mjs --check",
     "generate": "node scripts/generate.mjs",
     "build:lib": "pnpm --filter @augma/core build && pnpm --filter augma build",
     "build:ar": "pnpm --filter @augma/ar build",

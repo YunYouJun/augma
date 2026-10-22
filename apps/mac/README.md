@@ -6,6 +6,8 @@
 
 需要 macOS 15、Node.js 24 和 pnpm。在仓库根目录运行 `pnpm mac:run` 可打包并启动；运行 `pnpm mac:verify` 可额外检查进程和演示窗口。两条命令都调用 `script/build_and_run.sh`。脚本会将 AR 站点构建为相对路径资源，与 SwiftPM 可执行文件一同放入 `apps/mac/dist/Augma.app`，界面可离线展示。运行 `pnpm mac:package` 则构建 Apple 芯片与 Intel 通用的 Release 版本，进行 ad-hoc 签名并压缩为 `apps/mac/dist/Augma-macOS.zip`（附 `.sha256`），版本号取自根目录 `package.json`。
 
+App 图标是深蓝底板上的白色字母 A，外围是与原生 `AugmaRing` 同款的环形 HUD：青色细环和两段相对的圆头橙色弧。原稿归档在 [YunLeFun/icons](https://github.com/YunLeFun/icons/tree/main/assets/apps/augma/v1)（`ylf:augma-app-icon` / `ylf:augma-mark`），`assets/brand` 保存固定版本的副本与同一份 SHA-256 清单：`pnpm icons:check` 校验本地副本，`pnpm icons:sync --source /path/to/YunLeFun/icons` 从中心原稿更新。打包脚本先校验清单，再用 Xcode 26 及以上的 `actool` 把分层的 `Augma.icon` 编译为 `Assets.car`，供 macOS 26 的默认、深色、Clear 与着色外观使用；`AppIcon.icns` 由 `augma-app-icon.svg` 按 Apple 1024 px 模板渲染，作为 macOS 15 和旧工具链的兜底。
+
 菜单栏中的 Augma 菜单可重新打开演示窗口，也保留了原有的辅助 HUD 浮窗与鼠标穿透开关。辅助 HUD 的 RealityKit 场景只在用户主动进入演示空间时创建。
 
 主窗口工具栏和菜单栏都提供「始终置顶」开关；开启后演示窗口会显示在其他普通窗口上方，设置会在下次启动时保留。辅助 HUD 和沉浸模式的悬浮层保持各自原有的显示方式。
