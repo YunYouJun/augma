@@ -184,6 +184,42 @@ test('scene backdrop follows the space scene, yields to the camera and can retur
 
 type SceneKey = 'city' | 'garden'
 
+async function browserSupportsWebGL(page: Page) {
+  // Probe the browser before loading application code, so a scene initialization bug cannot cause a skip.
+  const supported = await page.evaluate(() => {
+    const canvas = document.createElement('canvas')
+    const options: WebGLContextAttributes = {
+      alpha: false,
+      stencil: false,
+      depth: true,
+      antialias: true,
+      premultipliedAlpha: true,
+      preserveDrawingBuffer: false,
+      powerPreference: 'low-power',
+    }
+    const context = canvas.getContext('webgl2', options) ?? canvas.getContext('webgl', options)
+    context?.getExtension('WEBGL_lose_context')?.loseContext()
+    return context !== null
+  })
+  // Keep a required software-WebGL lane: CI must not silently skip every GPU assertion.
+  if (page.context().browser()?.browserType().name() === 'chromium')
+    expect(supported, 'Chromium must provide WebGL for the GPU regression suite').toBe(true)
+  return supported
+}
+
+async function expectWebGLScene(page: Page, scene: SceneKey, supported: boolean) {
+  const scenery = page.locator(`.backdrop-scene.is-${scene}`)
+  if (!supported) {
+    // Headless browsers without a graphics backend must still render the supported fallback.
+    await expect(scenery).toHaveAttribute('data-renderer', 'fallback')
+    await expect(scenery).toBeVisible()
+    await expect(scenery).toHaveCSS('background-image', /linear-gradient/)
+    await expect(scenery.locator(`canvas.${scene}-landscape`)).toHaveCSS('opacity', '0')
+    test.skip(true, 'Browser cannot create a WebGL context; visible fallback verified before skipping GPU-only assertions')
+  }
+  await expect(scenery).toHaveAttribute('data-renderer', 'webgl')
+}
+
 async function observeSceneFrames(page: Page) {
   await page.addInitScript(() => {
     const state = { city: 0, garden: 0 }
@@ -259,6 +295,7 @@ for (const scene of ['city', 'garden'] as const) {
   const sceneName = scene === 'city' ? '城市漫游' : '空中庭院'
 
   test(`native 3D ${scene} renders motion without a web panel and stops for reduced motion`, async ({ page }) => {
+    const webgl = await browserSupportsWebGL(page)
     await page.emulateMedia({ reducedMotion: 'no-preference' })
     await observeSceneFrames(page)
     await openNativeScene(page, scene)
@@ -270,7 +307,7 @@ for (const scene of ['city', 'garden'] as const) {
     await page.evaluate(() => {
       window.dispatchEvent(new CustomEvent('augma:native-action', { detail: { action: 'setting', value: { key: 'depthMotion', value: true } } }))
     })
-    await expect(scenery).toHaveAttribute('data-renderer', 'webgl')
+    await expectWebGLScene(page, scene, webgl)
     await expect(canvas).toBeVisible()
     await expect(view).toHaveClass(/has-depth/)
     await expect(view).not.toHaveClass(/has-window/)
@@ -296,6 +333,7 @@ for (const scene of ['city', 'garden'] as const) {
   })
 
   test(`3D ${scene} stops rendering behind a web space panel and resumes when it closes`, async ({ page }) => {
+    const webgl = await browserSupportsWebGL(page)
     await page.setViewportSize({ width: 900, height: 700 })
     await page.emulateMedia({ reducedMotion: 'no-preference' })
     await observeSceneFrames(page)
@@ -303,7 +341,7 @@ for (const scene of ['city', 'garden'] as const) {
     await page.getByRole('button', { name: '空间', exact: true }).click()
     await page.getByRole('button', { name: sceneName, exact: true }).click()
     const backdrop = page.locator('.scene-backdrop')
-    await expect(backdrop.locator(`.is-${scene}`)).toHaveAttribute('data-renderer', 'webgl')
+    await expectWebGLScene(page, scene, webgl)
     await expect(backdrop.locator(`canvas.${scene}-landscape`)).toBeVisible()
     await expect(page.locator('.ar-app')).toHaveClass(/has-window/)
     await expect(backdrop).toHaveClass(/is-paused/)
@@ -341,11 +379,12 @@ for (const scene of ['city', 'garden'] as const) {
   })
 
   test(`${scene} recovers its 3D scene after a lost WebGL context`, async ({ page }) => {
+    const webgl = await browserSupportsWebGL(page)
     await page.emulateMedia({ reducedMotion: 'no-preference' })
     await observeSceneFrames(page)
     await openNativeScene(page, scene)
     const scenery = page.locator(`.backdrop-scene.is-${scene}`)
-    await expect(scenery).toHaveAttribute('data-renderer', 'webgl')
+    await expectWebGLScene(page, scene, webgl)
     const canLoseContext = await scenery.locator('canvas').evaluate((element) => {
       const canvas = element as HTMLCanvasElement
       const context = canvas.getContext('webgl2') || canvas.getContext('webgl')
@@ -371,11 +410,12 @@ for (const scene of ['city', 'garden'] as const) {
   })
 
   test(`switching away from the 3D ${scene} stops GPU work and returning creates a working scene`, async ({ page }) => {
+    const webgl = await browserSupportsWebGL(page)
     await page.emulateMedia({ reducedMotion: 'no-preference' })
     await observeSceneFrames(page)
     await openNativeScene(page, scene)
     const scenery = page.locator(`.backdrop-scene.is-${scene}`)
-    await expect(scenery).toHaveAttribute('data-renderer', 'webgl')
+    await expectWebGLScene(page, scene, webgl)
     const otherScene = scene === 'city' ? 'garden' : 'city'
     await selectNativeScene(page, otherScene)
     await expect(scenery).toHaveCount(0)
