@@ -6,6 +6,7 @@ struct ProjectRegionSections: View {
   @ObservedObject var space: NativeSpaceStore
   @ObservedObject private var projects: ProjectWorkspaceStore
   @State private var confirmsRebuild = false
+  @State private var choosingCraftHub = false
   init(space: NativeSpaceStore) { self.space = space; projects = space.projects }
   private var selected: ProjectRegion? { projects.regions.first { $0.id == space.selectedProjectID } ?? projects.regions.first }
 
@@ -19,6 +20,9 @@ struct ProjectRegionSections: View {
         }
         .disabled(!projects.editable || projects.regions.count >= ProjectRegion.capacity)
         .accessibilityIdentifier("project-add-folder")
+        Button("从 Craft Hub 添加…", systemImage: "link") { choosingCraftHub = true }
+          .disabled(!projects.editable || projects.regions.count >= ProjectRegion.capacity)
+          .accessibilityIdentifier("project-add-craft-hub")
         if projects.regions.isEmpty {
           Text("把项目文件夹、VS Code 和工作网址放在同一个区域。")
             .font(.callout).foregroundStyle(.secondary)
@@ -29,7 +33,7 @@ struct ProjectRegionSections: View {
           } label: {
             Label {
               VStack(alignment: .leading, spacing: 3) {
-                Text(region.name).fontWeight(selected?.id == region.id ? .semibold : .regular)
+                Text(projects.displayName(region)).fontWeight(selected?.id == region.id ? .semibold : .regular)
                 Text(String(format: String(localized: "%lld 个工作网址"), region.websites.count)).font(.caption).foregroundStyle(.secondary)
               }.frame(maxWidth: .infinity, alignment: .leading)
             } icon: { Image(systemName: selected?.id == region.id ? "folder.fill" : "folder") }
@@ -65,6 +69,15 @@ struct ProjectRegionSections: View {
           .font(.caption).foregroundStyle(.secondary)
       }
     }
+    .sheet(isPresented: $choosingCraftHub) {
+      CraftHubProjectPicker(projects: projects) { space.selectedProjectID = $0 }
+    }
+    .task {
+      if projects.craftHub.connection != nil && !projects.craftHub.connected {
+        await projects.craftHub.refresh()
+      }
+      for region in projects.regions { await projects.refreshBinding(region.id) }
+    }
     .confirmationDialog("重新建立项目区域？", isPresented: $confirmsRebuild) {
       Button("备份原文件并重建", role: .destructive, action: projects.rebuildUnreadableConfiguration)
     } message: { Text("无法读取的配置会先备份，再建立空白项目区域。") }
@@ -78,14 +91,20 @@ private struct ProjectRegionEditor: View {
 
   var body: some View {
     if let region {
+      CraftHubBindingSection(projects: projects, region: region)
       Section("工作区入口") {
-        Text(region.folder.displayPath).font(.callout).textSelection(.enabled)
-          .accessibilityIdentifier("project-folder-path")
-        HStack {
-          Button("在访达中查看") { projects.revealFolder(regionID) }
-          Button("重新选择文件夹…") {
-            ProjectWorkspacePanels.chooseFolder { projects.rebindFolder(regionID, url: $0) }
-          }.disabled(!projects.editable)
+        if region.craftHub == nil {
+          Text(region.folder.displayPath).font(.callout).textSelection(.enabled)
+            .accessibilityIdentifier("project-folder-path")
+          HStack {
+            Button("在访达中查看") { projects.revealFolder(regionID) }
+            Button("重新选择文件夹…") {
+              ProjectWorkspacePanels.chooseFolder { projects.rebindFolder(regionID, url: $0) }
+            }.disabled(!projects.editable)
+          }
+        } else {
+          Text("打开工作区前会重新读取 Craft Hub 项目目录；工作网址和应用仍使用下方配置。")
+            .font(.caption).foregroundStyle(.secondary)
         }
         applicationBinding(region.editor, title: "VS Code", editor: true)
         applicationBinding(region.browser, title: "Chrome", editor: false)
@@ -117,6 +136,7 @@ private struct ProjectRegionEditor: View {
       }
       Section("编辑项目区域") {
         TextField("区域名称", text: draftBinding(\.name, region: region))
+          .disabled(region.craftHub != nil)
           .accessibilityIdentifier("project-region-name")
         Text("工作网址（每行一个）")
         TextEditor(text: draftBinding(\.websites, region: region))

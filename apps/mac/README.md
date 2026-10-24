@@ -142,3 +142,17 @@ Apple Weather 可通过 [WeatherKit](https://developer.apple.com/weatherkit/) �
 VS Code 使用绑定安装包中的 CLI 和独立路径参数，不要求安装终端 `code` 命令；Chrome 使用 NSWorkspace。原生测试使用注入客户端验证批量打开、部分失败、重复点击、取消、迟到结果和共享草稿，真实临时目录验证书签与持久化，不启动外部应用。
 
 [空间工作区方案](docs/workspace-world.md)记录了应用大楼、项目区域，以及后续 AI 场景生成设计。当前只打开已绑定的项目和网址，尚未接入 AI 三维生成，也未同步 VS Code 当前项目或 Chrome 当前标签。
+
+### 可选连接 Craft Hub
+
+在 Craft Hub 的「设置 → Agent 连接」选择共享项目并启用只读访问，复制 **MCP · JSON**。在 Augma 的「空间 → 项目区域」选择「从 Craft Hub 添加…」，或在已有区域选择「绑定 Craft Hub 项目…」，粘贴配置、选择项目并确认。无需启用插件读取，也不需要在 Augma 中安装 Node 或运行 MCP 命令。
+
+连接后，区域名称、项目目录、信任状态及命令／技能摘要来自 Craft Hub；应用选择、工作网址和三维布局由 Augma 保留。摘要最多展示前八项能力，并显示完整命令／技能数量。「在 Craft Hub 中查看」使用项目的 Git 引用导航；没有 Git 引用时打开 Craft Hub 首页。打开工作区前会重新读取项目资料，随后仅打开编辑器与已保存网址，不执行项目命令或授予信任。
+
+连接失败、授权撤销或项目移除时保留区域，显示需要重新连接或更换绑定的原因，不自动使用过期目录。「解除绑定，使用本地配置」恢复原来的区域名称和文件夹，应用、网址和布局保持不变。独立添加的区域不依赖 Craft Hub。不同配置源中的同名或同 ID 项目不会自动替换绑定。
+
+连接保存于 `~/Library/Application Support/Augma/craft-hub-connection.json`，只包含本机地址和授权文件路径，不保存令牌。令牌由 Craft Hub 管理，每次读取时使用当前凭据；项目资料只缓存在本次会话中。Craft Hub 关闭后连接不可用；端口变化时重新粘贴当前配置，同一凭据来源的区域绑定会保留。Augma 断开连接不影响其他客户端；要撤销所有使用该授权的客户端，请在 Craft Hub 撤销连接。
+
+项目区域文件升级为 v2，兼容读取 v1 的独立项目；旧版 Augma 会拒绝覆写 v2。自动化验证：`swift test --package-path apps/mac`。跨仓库真实宿主验证：`node script/verify-craft-hub.mjs /absolute/path/to/craft-hub`，需该仓库已安装依赖；脚本使用独立临时数据、原生宿主门禁和真实 Swift HTTP 客户端，结束时撤销测试授权、关闭宿主并验证进程退出。
+
+[绑定验收记录](docs/craft-hub-binding-acceptance.md)列出已验证行为与最低系统、长期使用和发布签名的剩余验收项。

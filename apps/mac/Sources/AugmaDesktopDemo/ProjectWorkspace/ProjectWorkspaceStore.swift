@@ -4,6 +4,7 @@ import Foundation
 /// App-owned configurations, edits and results; scene stores own only selection and camera pose.
 @MainActor
 final class ProjectWorkspaceStore: ObservableObject {
+  let craftHub: CraftHubConnectionStore
   @Published private(set) var regions: [ProjectRegion] = []
   @Published private(set) var drafts: [UUID: ProjectRegionDraft] = [:]
   @Published private(set) var reports: [UUID: ProjectOpenReport] = [:]
@@ -22,11 +23,49 @@ final class ProjectWorkspaceStore: ObservableObject {
   private var task: Task<Void, Never>?
   private var generation = UUID()
   private var closed = false
+  private var connectionChanges: AnyCancellable?
 
-  init(client: ProjectWorkspaceClient? = nil, persistence: ProjectWorkspacePersisting? = nil) {
+  init(client: ProjectWorkspaceClient? = nil, persistence: ProjectWorkspacePersisting? = nil,
+       craftHub: CraftHubConnectionStore? = nil) {
     self.client = client ?? SystemProjectWorkspaceClient()
     self.persistence = persistence
+    self.craftHub = craftHub ?? CraftHubConnectionStore()
+    connectionChanges = self.craftHub.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
     reload()
+  }
+
+  func displayName(_ region: ProjectRegion) -> String { craftHub.context(for: region.craftHub)?.project.name ?? region.name }
+  var presentedRegions: [ProjectRegion] {
+    regions.map { region in var value = region; value.name = displayName(region); return value }
+  }
+
+  /// Binding changes only the source reference. The independent configuration remains available after unlinking.
+  func bind(_ id: UUID, to binding: CraftHubProjectBinding) {
+    guard craftHub.context(for: binding) != nil else { error = CraftHubError.changed.localizedDescription; return }
+    edit(id) { $0.craftHub = binding }
+    if error == nil { reports[id] = nil }
+  }
+  func unlink(_ id: UUID) {
+    edit(id) { $0.craftHub = nil }
+    if error == nil { reports[id] = nil }
+  }
+  @discardableResult func add(binding: CraftHubProjectBinding) -> UUID? {
+    guard editable, let context = craftHub.context(for: binding) else { return nil }
+    do {
+      guard regions.count < ProjectRegion.capacity else { throw ProjectWorkspaceError.full }
+      let folder = try client.captureFolder(URL(fileURLWithPath: context.project.path))
+      let used = Set(regions.map(\.slot))
+      let region = ProjectRegion(name: String(context.project.name.prefix(60)), folder: folder,
+        editor: client.defaultApplication("com.microsoft.VSCode"), browser: client.defaultApplication("com.google.Chrome"),
+        slot: (0..<ProjectRegion.capacity).first { !used.contains($0) }!, craftHub: binding)
+      try commit(regions + [region]); error = nil
+      return region.id
+    } catch { self.error = error.localizedDescription; return nil }
+  }
+  func refreshBinding(_ id: UUID) async {
+    guard let binding = regions.first(where: { $0.id == id })?.craftHub else { return }
+    do { try await craftHub.read(binding) }
+    catch { /* The connection panel and binding card display the failure without changing local configuration. */ }
   }
 
   func reload() {
@@ -86,6 +125,7 @@ final class ProjectWorkspaceStore: ObservableObject {
   }
 
   func rebindFolder(_ id: UUID, url: URL) {
+    guard regions.first(where: { $0.id == id })?.craftHub == nil else { return }
     edit(id) { $0.folder = try client.captureFolder(url) }
     if error == nil { setResult(id, "editor", .failed(String(localized: "项目文件夹已变更，请重新打开。"))) }
   }
@@ -147,11 +187,29 @@ final class ProjectWorkspaceStore: ObservableObject {
     openingID = id
     let generation = UUID(); self.generation = generation
     task = Task { [weak self, client] in
+      var folder = region.folder
+      if let binding = region.craftHub {
+        do {
+          guard let self else { return }
+          let context = try await self.craftHub.read(binding)
+          guard self.generation == generation, !Task.isCancelled else { return }
+          folder = try client.captureFolder(URL(fileURLWithPath: context.project.path))
+        } catch {
+          guard let self, self.generation == generation, !Task.isCancelled else { return }
+          for itemID in pending { self.setResult(id, itemID, .failed(error.localizedDescription)) }
+          self.openingID = nil; self.task = nil
+          return
+        }
+      }
       for itemID in pending {
         guard let self, self.generation == generation, !Task.isCancelled else { return }
+        if let binding = region.craftHub, self.craftHub.context(for: binding) == nil {
+          self.cancelOpening()
+          return
+        }
         self.setResult(id, itemID, .opening)
         do {
-          if itemID == "editor" { try await client.openEditor(folder: region.folder, application: region.editor) }
+          if itemID == "editor" { try await client.openEditor(folder: folder, application: region.editor) }
           else if let url = URL(string: itemID) { try await client.openWebsite(url, application: region.browser) }
           else { throw ProjectWorkspaceError.invalidWebsite }
           guard self.generation == generation, !Task.isCancelled else { return }
@@ -190,7 +248,7 @@ final class ProjectWorkspaceStore: ObservableObject {
     return saveError == nil
   }
   func dismissError() { error = nil }
-  func shutdown() { cancelOpening(); closed = true; onOpenCompleted = nil }
+  func shutdown() { cancelOpening(); closed = true; onOpenCompleted = nil; craftHub.shutdown(); connectionChanges = nil }
 
   private func edit(_ id: UUID, change: (inout ProjectRegion) throws -> Void) {
     guard editable, let index = regions.firstIndex(where: { $0.id == id }) else { return }

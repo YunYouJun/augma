@@ -25,6 +25,7 @@ struct ProjectRegion: Identifiable, Codable, Equatable, Sendable {
   var browser: ProjectApplication?
   var websites: [String] = []
   var slot: Int
+  var craftHub: CraftHubProjectBinding?
   static let capacity = 6
   var position: SIMD3<Float> { [Float(slot % 3) * 4.6 - 4.6, 0, Float(slot / 3) * 4 - 2] }
 }
@@ -57,14 +58,17 @@ enum ProjectWebsite {
 }
 
 struct ProjectWorkspaceDocument: Codable, Equatable {
-  var version = 1
+  var version = 2
   var regions: [ProjectRegion] = []
 
   func validated() throws -> Self {
-    guard version == 1 else { throw ProjectWorkspaceError.newerVersion }
+    guard version == 1 || version == 2 else { throw ProjectWorkspaceError.newerVersion }
     guard regions.count <= ProjectRegion.capacity, Set(regions.map(\.id)).count == regions.count,
           Set(regions.map(\.slot)).count == regions.count else { throw ProjectWorkspaceError.invalidConfiguration }
     for region in regions {
+      if let binding = region.craftHub {
+        guard version == 2, binding.valid else { throw ProjectWorkspaceError.invalidConfiguration }
+      }
       guard (0..<ProjectRegion.capacity).contains(region.slot), Self.validName(region.name),
             !region.folder.bookmark.isEmpty, region.folder.bookmark.count <= 64 * 1024,
             region.folder.displayPath.hasPrefix("/"), region.folder.displayPath.count <= 4096,
@@ -79,7 +83,8 @@ struct ProjectWorkspaceDocument: Codable, Equatable {
         }
       }
     }
-    return self
+    var current = self; current.version = 2
+    return current
   }
 
   static func validName(_ name: String) -> Bool {

@@ -187,7 +187,7 @@ final class ProjectWorkspaceTests: XCTestCase {
   func testConfigurationRejectsDuplicatesUnknownVersionAndInvalidBindings() throws {
     let f = ProjectFixture(); defer { f.close() }; _ = f.add()
     let region = try XCTUnwrap(f.store.regions.first)
-    XCTAssertThrowsError(try ProjectWorkspaceDocument(version: 2, regions: [region]).validated())
+    XCTAssertThrowsError(try ProjectWorkspaceDocument(version: 3, regions: [region]).validated())
     XCTAssertThrowsError(try ProjectWorkspaceDocument(regions: [region, region]).validated())
     var invalid = region; invalid.editor?.id = "com.apple.Terminal"
     XCTAssertThrowsError(try ProjectWorkspaceDocument(regions: [invalid]).validated())

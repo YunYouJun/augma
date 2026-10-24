@@ -23,7 +23,8 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
   let applicationDistrict = ApplicationDistrictStore(persistence: ApplicationDistrictFile(url: ApplicationDistrictFile.defaultURL),
                                                    observeLifecycle: true)
   let immersiveShortcut = ImmersiveShortcutStore()
-  let projectWorkspaces = ProjectWorkspaceStore(persistence: ProjectWorkspaceFile(url: ProjectWorkspaceFile.defaultURL))
+  let projectWorkspaces = ProjectWorkspaceStore(persistence: ProjectWorkspaceFile(url: ProjectWorkspaceFile.defaultURL),
+    craftHub: CraftHubConnectionStore(persistence: CraftHubConnectionFile(url: CraftHubConnectionFile.defaultURL)))
   lazy var commands = WorkspaceCommands(store: workspace, audio: audio, captures: captures)
   var openScene: ((String) -> Void)?
   private var panel: HudPanel?

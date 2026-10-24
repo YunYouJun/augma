@@ -20,7 +20,7 @@ struct ProjectRegionRealityView: NSViewRepresentable {
     view.environment.background = .color(preferences.value.sceneBackdrop
       ? (preferences.value.dark ? NSColor(srgbRed: 0.07, green: 0.12, blue: 0.19, alpha: 1) : NSColor(srgbRed: 0.77, green: 0.86, blue: 0.91, alpha: 1)) : .clear)
     let selected = projects.regions.first { $0.id == space.selectedProjectID } ?? projects.regions.first
-    context.coordinator.builder?.update(projects.regions, selectedID: selected?.id,
+    context.coordinator.builder?.update(projects.presentedRegions, selectedID: selected?.id,
       preferences: preferences.value, yaw: space.viewYaw, pitch: space.viewPitch, scale: space.viewScale)
     view.onSelectProject = { [weak space] in space?.selectedProjectID = $0 }
     view.onOrbit = { [weak space, weak coordinator = context.coordinator] dx, dy in
