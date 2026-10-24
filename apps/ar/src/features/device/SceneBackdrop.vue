@@ -1,23 +1,21 @@
 <script setup lang="ts">
 import type { SceneId } from './types'
-import { toRef } from 'vue'
 import CityScene from './backdrop/CityScene.vue'
 import GardenScene from './backdrop/GardenScene.vue'
-import { useMotionBudget } from './backdrop/useMotionBudget'
 
-const props = defineProps<{
+defineProps<{
   scene: SceneId
   /** Hold the motion where it is, for example while a panel or dialog covers the view. */
   paused?: boolean
+  depthEnabled?: boolean
 }>()
-const still = useMotionBudget(toRef(() => props.paused))
 </script>
 
 <template>
-  <div class="scene-backdrop" :class="{ 'is-still': still, 'is-paused': paused }" aria-hidden="true">
+  <div class="scene-backdrop" :class="{ 'is-paused': paused }" aria-hidden="true">
     <Transition name="backdrop-fade">
-      <GardenScene v-if="scene === 'garden'" key="garden" />
-      <CityScene v-else key="city" />
+      <GardenScene v-if="scene === 'garden'" key="garden" :paused="paused" :depth-enabled="depthEnabled" />
+      <CityScene v-else key="city" :paused="paused" :depth-enabled="depthEnabled" />
     </Transition>
   </div>
 </template>
@@ -31,6 +29,8 @@ const still = useMotionBudget(toRef(() => props.paused))
 .scene-backdrop { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 /* Darken the top and bottom bands so the white clock, rules and dock keep their contrast. */
 .scene-backdrop::after { content: ''; position: absolute; inset: 0; background: linear-gradient(rgb(0 0 0 / 30%), transparent 20%, transparent 74%, rgb(0 0 0 / 34%)), radial-gradient(ellipse at 50% 45%, transparent 60%, rgb(0 0 0 / 18%)); }
+/* Native controls sit outside the view, leaving the worlds free of the web clock/dock's stronger vignette. */
+.has-native-controls .scene-backdrop::after { background: linear-gradient(rgb(16 34 52 / 10%), transparent 22%, transparent 76%, rgb(16 34 52 / 12%)); }
 .scene-backdrop .backdrop-scene { position: absolute; inset: 0; overflow: hidden; }
 
 /* Each depth plane shifts against the pointer by its own amount; the mid plane matches the anchors. */

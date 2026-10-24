@@ -294,6 +294,7 @@ export const jaJP: Messages = {
   'result.show': 'HUD を表示しました',
   'result.map': '模擬マップを開きました',
   'result.scan': 'シミュレーション空間のスキャンを開始しました',
+  'result.nativeSpace': 'シミュレーション操作をネイティブ空間へ送りました。空間パネルで確認してください。',
   'result.scanOffline': 'デバイスが未接続のため、空間をスキャンできません',
   'result.audio': 'サウンドの再生を開始しました',
   'result.audioOffline': 'デバイスが未接続のため、サウンドを再生できません',

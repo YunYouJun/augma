@@ -1,6 +1,7 @@
 import type { Ref } from 'vue'
 import type { DeviceModule } from './types'
-import { onMounted, onUnmounted, shallowRef, watch } from 'vue'
+import { onMounted, onUnmounted, readonly, shallowRef, watch } from 'vue'
+import { desktopHostServices } from './hostServices'
 import { parseChord } from './shortcuts'
 import { deviceModules } from './types'
 
@@ -30,7 +31,8 @@ const nativeChord = (value: unknown) => typeof value === 'string' && parseChord(
  */
 export function useDesktopBridge({ activeModule, select, toggleSpeech }: DesktopBridgeOptions) {
   const desktopWindow = window as DesktopWindow
-  const immersive = desktopWindow.__AUGMA_DESKTOP_IMMERSIVE__ === true
+  const immersive = shallowRef(desktopWindow.__AUGMA_DESKTOP_IMMERSIVE__ === true)
+  const nativePresentation = !!desktopHostServices() || typeof desktopWindow.__AUGMA_DESKTOP_IMMERSIVE__ === 'boolean'
   /** Follows the menu item, which the user can rebind under App Shortcuts in System Settings. */
   const voiceShortcut = shallowRef(nativeChord(desktopWindow.__AUGMA_DESKTOP_VOICE_SHORTCUT__))
 
@@ -49,25 +51,35 @@ export function useDesktopBridge({ activeModule, select, toggleSpeech }: Desktop
     voiceShortcut.value = nativeChord((event as CustomEvent<{ shortcut?: unknown }>).detail?.shortcut)
   }
 
+  function onPresentation(event: Event) {
+    const detail: unknown = (event as CustomEvent).detail
+    if (!nativePresentation || !detail || typeof detail !== 'object' || !('immersive' in detail) || typeof detail.immersive !== 'boolean')
+      return
+    immersive.value = detail.immersive
+    document.documentElement.classList.toggle('augma-desktop-immersive', detail.immersive)
+  }
+
   watch(activeModule, (module) => {
     desktopWindow.webkit?.messageHandlers?.moduleSelection?.postMessage(module)
   })
   onMounted(() => {
-    if (immersive)
+    if (immersive.value)
       document.documentElement.classList.add('augma-desktop-immersive')
     window.addEventListener('augma:select-module', onSelectModule)
     window.addEventListener('augma:toggle-speech', toggleSpeech)
     window.addEventListener('augma:voice-shortcut', onVoiceShortcut)
+    window.addEventListener('augma:presentation', onPresentation)
     if (desktopWindow.__AUGMA_DESKTOP_MODULE__)
       selectModule(desktopWindow.__AUGMA_DESKTOP_MODULE__)
   })
   onUnmounted(() => {
-    if (immersive)
+    if (immersive.value)
       document.documentElement.classList.remove('augma-desktop-immersive')
     window.removeEventListener('augma:select-module', onSelectModule)
     window.removeEventListener('augma:toggle-speech', toggleSpeech)
     window.removeEventListener('augma:voice-shortcut', onVoiceShortcut)
+    window.removeEventListener('augma:presentation', onPresentation)
   })
 
-  return { immersive, voiceShortcut }
+  return { immersive: readonly(immersive), voiceShortcut }
 }

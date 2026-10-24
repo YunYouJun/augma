@@ -292,6 +292,7 @@ export const zhCN = {
   'result.show': '已显示 HUD',
   'result.map': '已打开模拟地图',
   'result.scan': '已开始扫描模拟空间',
+  'result.nativeSpace': '已将模拟操作交给原生空间，请在空间面板查看',
   'result.scanOffline': '设备未连接，无法扫描空间',
   'result.audio': '已开始播放声音',
   'result.audioOffline': '设备未连接，无法播放声音',

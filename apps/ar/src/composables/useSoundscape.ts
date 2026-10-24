@@ -1,6 +1,7 @@
 import type { Ref } from 'vue'
 import type { MessageKey } from '../i18n/locale'
 import { computed, onMounted, onUnmounted, readonly, shallowRef, watch } from 'vue'
+import { desktopHostServices, desktopHostState, hostRecord } from '../features/device/hostServices'
 
 export type SoundscapeId = 'echo' | 'drift' | 'letter'
 
@@ -11,6 +12,7 @@ export const soundscapes: { id: SoundscapeId, notes: number[] }[] = [
 ]
 
 export function useSoundscape(volume: Ref<number>) {
+  const host = desktopHostServices()
   const trackIndex = shallowRef(0)
   const playing = shallowRef(false)
   const busy = shallowRef(false)
@@ -24,6 +26,26 @@ export function useSoundscape(volume: Ref<number>) {
   let startedAt = 0
   let generation = 0
   const duration = 120
+  function applyHostState(value: unknown) {
+    if (!hostRecord(value) || !hostRecord(value.audio))
+      return
+    const audio = value.audio
+    if (typeof audio.trackIndex === 'number' && Number.isInteger(audio.trackIndex) && soundscapes[audio.trackIndex])
+      trackIndex.value = audio.trackIndex
+    if (typeof audio.playing === 'boolean')
+      playing.value = audio.playing
+    if (typeof audio.busy === 'boolean')
+      busy.value = audio.busy
+    if (typeof audio.elapsed === 'number' && Number.isFinite(audio.elapsed))
+      elapsed.value = Math.max(0, Math.min(duration, audio.elapsed))
+    if (typeof audio.error === 'string')
+      error.value = audio.error ? 'sound.error' : ''
+  }
+  function onHostState(event: Event) {
+    applyHostState((event as CustomEvent).detail)
+  }
+  if (host)
+    applyHostState(desktopHostState())
   function stopNodes() {
     oscillators.forEach((node) => {
       node.stop()
@@ -32,6 +54,10 @@ export function useSoundscape(volume: Ref<number>) {
     oscillators = []
   }
   function pause() {
+    if (host) {
+      host.postMessage({ action: 'pause' })
+      return
+    }
     generation++
     busy.value = false
     if (playing.value)
@@ -44,6 +70,10 @@ export function useSoundscape(volume: Ref<number>) {
   async function play() {
     if (playing.value || busy.value)
       return
+    if (host) {
+      host.postMessage({ action: 'play' })
+      return
+    }
     busy.value = true
     const request = ++generation
     error.value = ''
@@ -84,8 +114,12 @@ export function useSoundscape(volume: Ref<number>) {
     }
   }
   function selectTrack(index: number) {
-    if (!soundscapes[index])
+    if (!Number.isInteger(index) || !soundscapes[index])
       return
+    if (host) {
+      host.postMessage({ action: 'track', value: index })
+      return
+    }
     const resume = playing.value
     pause()
     elapsed.value = 0
@@ -94,7 +128,14 @@ export function useSoundscape(volume: Ref<number>) {
       void play()
   }
   function seek(value: number) {
-    elapsed.value = Math.max(0, Math.min(duration, value))
+    if (!Number.isFinite(value))
+      return
+    const next = Math.max(0, Math.min(duration, value))
+    if (host) {
+      host.postMessage({ action: 'seek', value: next })
+      return
+    }
+    elapsed.value = next
     startedAt = performance.now() - elapsed.value * 1000
   }
   watch(volume, (value) => {
@@ -105,8 +146,16 @@ export function useSoundscape(volume: Ref<number>) {
     if (document.hidden)
       pause()
   }
-  onMounted(() => document.addEventListener('visibilitychange', onVisibility))
+  onMounted(() => {
+    if (host)
+      window.addEventListener('augma:host-state', onHostState)
+    else
+      document.addEventListener('visibilitychange', onVisibility)
+  })
   onUnmounted(() => {
+    window.removeEventListener('augma:host-state', onHostState)
+    if (host)
+      return
     pause()
     document.removeEventListener('visibilitychange', onVisibility)
     void context?.close().catch(() => {})

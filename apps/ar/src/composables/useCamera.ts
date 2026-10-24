@@ -1,6 +1,10 @@
 import type { MessageKey } from '../i18n/locale'
 import { onMounted, onUnmounted, shallowRef } from 'vue'
 
+function nativeCamera() {
+  return (window as Window & { __AUGMA_DESKTOP_NATIVE_MAP_CAMERA__?: boolean }).__AUGMA_DESKTOP_NATIVE_MAP_CAMERA__ === true
+}
+
 export function useCamera() {
   const stream = shallowRef<MediaStream | null>(null)
   const busy = shallowRef(false)
@@ -17,6 +21,9 @@ export function useCamera() {
     stop()
     const request = generation
     error.value = ''
+    // Desktop capture belongs to AVFoundation, including permission requests.
+    if (nativeCamera())
+      return
     if (!navigator.mediaDevices?.getUserMedia) {
       error.value = 'camera.error.unsupported'
       return
@@ -27,7 +34,7 @@ export function useCamera() {
         video: { facingMode: { ideal: facing.value } },
         audio: false,
       })
-      if (request !== generation) {
+      if (request !== generation || nativeCamera()) {
         next.getTracks().forEach(track => track.stop())
         return
       }
@@ -51,7 +58,11 @@ export function useCamera() {
     if (stream.value)
       await start()
   }
-  onMounted(() => window.addEventListener('pagehide', stop))
+  onMounted(() => {
+    if (nativeCamera())
+      stop()
+    window.addEventListener('pagehide', stop)
+  })
   onUnmounted(() => {
     window.removeEventListener('pagehide', stop)
     stop()

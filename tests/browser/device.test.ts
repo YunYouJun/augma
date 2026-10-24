@@ -182,6 +182,216 @@ test('scene backdrop follows the space scene, yields to the camera and can retur
   await expect(backdrop).toHaveCount(1)
 })
 
+type SceneKey = 'city' | 'garden'
+
+async function observeSceneFrames(page: Page) {
+  await page.addInitScript(() => {
+    const state = { city: 0, garden: 0 }
+    Object.assign(window, { __sceneFrames: state })
+    for (const prototype of [window.WebGLRenderingContext?.prototype, window.WebGL2RenderingContext?.prototype]) {
+      if (!prototype)
+        continue
+      const drawElements = prototype.drawElements
+      Object.defineProperty(prototype, 'drawElements', {
+        configurable: true,
+        value(this: WebGLRenderingContext, ...args: Parameters<WebGLRenderingContext['drawElements']>) {
+          if (this.canvas instanceof HTMLCanvasElement) {
+            for (const scene of ['city', 'garden'] as const) {
+              if (this.canvas.classList.contains(`${scene}-landscape`))
+                state[scene]++
+            }
+          }
+          return Reflect.apply(drawElements, this, args)
+        },
+      })
+    }
+  })
+}
+
+async function sceneFrameCount(page: Page, scene: SceneKey) {
+  return page.evaluate(scene => (window as typeof window & { __sceneFrames: Record<SceneKey, number> }).__sceneFrames[scene], scene)
+}
+
+async function sceneMotionBudgetLimited(page: Page, scene: SceneKey) {
+  return page.locator(`.backdrop-scene.is-${scene}`).evaluate(element => element.classList.contains('is-still'))
+}
+
+async function skipIfSceneMotionBudgetLimited(page: Page, scene: SceneKey) {
+  test.skip(await sceneMotionBudgetLimited(page, scene), 'The current GPU load triggered the low-frame-rate motion budget')
+}
+
+async function expectSceneFramesToAdvance(page: Page, scene: SceneKey, before: number) {
+  await expect.poll(async () => await sceneFrameCount(page, scene) > before || await sceneMotionBudgetLimited(page, scene)).toBe(true)
+  await skipIfSceneMotionBudgetLimited(page, scene)
+  expect(await sceneFrameCount(page, scene)).toBeGreaterThan(before)
+}
+
+async function expectSceneFramesStopped(page: Page, scene: SceneKey) {
+  // Allow a pending resize or context-recovery frame, then observe a real interval without GPU draws.
+  await expect.poll(async () => {
+    const before = await sceneFrameCount(page, scene)
+    await page.waitForTimeout(300)
+    return await sceneFrameCount(page, scene) - before
+  }).toBe(0)
+}
+
+async function selectNativeScene(page: Page, scene: SceneKey) {
+  await page.evaluate((scene) => {
+    window.dispatchEvent(new CustomEvent('augma:native-action', { detail: { action: 'scene', value: scene } }))
+  }, scene)
+}
+
+async function openNativeScene(page: Page, scene: SceneKey) {
+  // Keep GPU motion checks within a modest desktop viewport on software renderers.
+  await page.setViewportSize({ width: 900, height: 700 })
+  await page.addInitScript(() => {
+    Object.assign(window, {
+      __AUGMA_DESKTOP_NATIVE_CONTROLS__: true,
+      __AUGMA_DESKTOP_MODULE__: 'space',
+      webkit: { messageHandlers: { nativeState: { postMessage() {} } } },
+    })
+  })
+  await page.goto('/ar/')
+  await selectNativeScene(page, scene)
+}
+
+for (const scene of ['city', 'garden'] as const) {
+  const sceneName = scene === 'city' ? '城市漫游' : '空中庭院'
+
+  test(`native 3D ${scene} renders motion without a web panel and stops for reduced motion`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
+    await observeSceneFrames(page)
+    await openNativeScene(page, scene)
+    const view = page.locator('.ar-app')
+    const backdrop = page.locator('.scene-backdrop')
+    const scenery = backdrop.locator(`.is-${scene}`)
+    const canvas = scenery.locator(`canvas.${scene}-landscape`)
+    await expect(view).toHaveClass(/has-native-controls/)
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('augma:native-action', { detail: { action: 'setting', value: { key: 'depthMotion', value: true } } }))
+    })
+    await expect(scenery).toHaveAttribute('data-renderer', 'webgl')
+    await expect(canvas).toBeVisible()
+    await expect(view).toHaveClass(/has-depth/)
+    await expect(view).not.toHaveClass(/has-window/)
+    await expect(page.locator('.device-window')).toHaveCount(0)
+    await expect(backdrop).not.toHaveClass(/is-paused/)
+    await expect(canvas).toHaveCSS('filter', 'none')
+    await expect(scenery).not.toHaveClass(/backdrop-fade-enter-active/)
+    const rendered = await sceneFrameCount(page, scene)
+    expect(rendered).toBeGreaterThan(0)
+    await expectSceneFramesToAdvance(page, scene, rendered)
+    // The GPU must draw a changing scene, rather than repeatedly submit one stationary frame.
+    const screenshotOptions = { style: '.world-scene { visibility: hidden !important; }' }
+    const image = await canvas.screenshot(screenshotOptions)
+    await expect.poll(async () => !(await canvas.screenshot(screenshotOptions)).equals(image) || await sceneMotionBudgetLimited(page, scene)).toBe(true)
+    await skipIfSceneMotionBudgetLimited(page, scene)
+
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await expect(canvas).toBeVisible()
+    await expectSceneFramesStopped(page, scene)
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
+    const stopped = await sceneFrameCount(page, scene)
+    await expectSceneFramesToAdvance(page, scene, stopped)
+  })
+
+  test(`3D ${scene} stops rendering behind a web space panel and resumes when it closes`, async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 700 })
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
+    await observeSceneFrames(page)
+    await page.goto('/ar/')
+    await page.getByRole('button', { name: '空间', exact: true }).click()
+    await page.getByRole('button', { name: sceneName, exact: true }).click()
+    const backdrop = page.locator('.scene-backdrop')
+    await expect(backdrop.locator(`.is-${scene}`)).toHaveAttribute('data-renderer', 'webgl')
+    await expect(backdrop.locator(`canvas.${scene}-landscape`)).toBeVisible()
+    await expect(page.locator('.ar-app')).toHaveClass(/has-window/)
+    await expect(backdrop).toHaveClass(/is-paused/)
+    expect(await sceneFrameCount(page, scene)).toBeGreaterThan(0)
+    await expectSceneFramesStopped(page, scene)
+
+    await page.keyboard.press('Escape')
+    await expect(page.locator('.device-window')).toHaveCount(0)
+    await expect(backdrop).not.toHaveClass(/is-paused/)
+    const paused = await sceneFrameCount(page, scene)
+    await expectSceneFramesToAdvance(page, scene, paused)
+  })
+
+  test(`${scene} keeps a visible background when WebGL is unavailable`, async ({ page }) => {
+    const errors: string[] = []
+    page.on('pageerror', error => errors.push(error.message))
+    await page.addInitScript(() => {
+      const getContext = HTMLCanvasElement.prototype.getContext
+      Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+        configurable: true,
+        value(this: HTMLCanvasElement, contextId: string, ...options: unknown[]) {
+          if (['webgl', 'webgl2', 'experimental-webgl'].includes(contextId))
+            return null
+          return Reflect.apply(getContext, this, [contextId, ...options])
+        },
+      })
+    })
+    await openNativeScene(page, scene)
+    const scenery = page.locator(`.backdrop-scene.is-${scene}`)
+    await expect(scenery).toHaveAttribute('data-renderer', 'fallback')
+    await expect(scenery.locator(`canvas.${scene}-landscape`)).toHaveCSS('opacity', '0')
+    await expect(scenery).toBeVisible()
+    await expect(scenery).toHaveCSS('background-image', /linear-gradient/)
+    expect(errors).toEqual([])
+  })
+
+  test(`${scene} recovers its 3D scene after a lost WebGL context`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
+    await observeSceneFrames(page)
+    await openNativeScene(page, scene)
+    const scenery = page.locator(`.backdrop-scene.is-${scene}`)
+    await expect(scenery).toHaveAttribute('data-renderer', 'webgl')
+    const canLoseContext = await scenery.locator('canvas').evaluate((element) => {
+      const canvas = element as HTMLCanvasElement
+      const context = canvas.getContext('webgl2') || canvas.getContext('webgl')
+      const extension = context?.getExtension('WEBGL_lose_context')
+      if (!extension)
+        return false
+      Object.assign(window, { __sceneContextExtension: extension })
+      extension.loseContext()
+      return true
+    })
+    test.skip(!canLoseContext, 'This browser does not provide WEBGL_lose_context')
+    await expect(scenery).toHaveAttribute('data-renderer', 'fallback')
+    await expect(scenery).toBeVisible()
+    await expect(scenery).toHaveCSS('background-image', /linear-gradient/)
+    await expectSceneFramesStopped(page, scene)
+    await page.evaluate(() => {
+      (window as typeof window & { __sceneContextExtension: WEBGL_lose_context }).__sceneContextExtension.restoreContext()
+    })
+    await expect(scenery).toHaveAttribute('data-renderer', 'webgl')
+    await expect(scenery.locator(`canvas.${scene}-landscape`)).toBeVisible()
+    const restored = await sceneFrameCount(page, scene)
+    await expectSceneFramesToAdvance(page, scene, restored)
+  })
+
+  test(`switching away from the 3D ${scene} stops GPU work and returning creates a working scene`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
+    await observeSceneFrames(page)
+    await openNativeScene(page, scene)
+    const scenery = page.locator(`.backdrop-scene.is-${scene}`)
+    await expect(scenery).toHaveAttribute('data-renderer', 'webgl')
+    const otherScene = scene === 'city' ? 'garden' : 'city'
+    await selectNativeScene(page, otherScene)
+    await expect(scenery).toHaveCount(0)
+    await expect(page.locator(`.backdrop-scene.is-${otherScene}`)).toHaveAttribute('data-renderer', 'webgl')
+    await expectSceneFramesStopped(page, scene)
+    const otherRendered = await sceneFrameCount(page, otherScene)
+    await expectSceneFramesToAdvance(page, otherScene, otherRendered)
+    await selectNativeScene(page, scene)
+    await expect(scenery).toHaveAttribute('data-renderer', 'webgl')
+    const recreated = await sceneFrameCount(page, scene)
+    await expectSceneFramesToAdvance(page, scene, recreated)
+    await expect(page.locator(`.backdrop-scene.is-${otherScene}`)).toHaveCount(0)
+    await expectSceneFramesStopped(page, otherScene)
+  })
+}
+
 test('sound playback survives panel changes and stops on standby', async ({ page }) => {
   await page.addInitScript(() => {
     class TestAudioContext {

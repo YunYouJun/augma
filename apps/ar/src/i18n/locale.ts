@@ -1,5 +1,6 @@
 import type { MessageKey, Messages } from './messages/zh-CN'
 import { readonly, shallowRef } from 'vue'
+import { desktopHostServices, desktopHostState, hostRecord } from '../features/device/hostServices'
 import { enUS } from './messages/en-US'
 import { jaJP } from './messages/ja-JP'
 import { zhCN } from './messages/zh-CN'
@@ -47,6 +48,12 @@ export function resolveLocale(value: unknown): Locale | null {
 }
 
 function detectLocale(): Locale {
+  const host = desktopHostState()
+  if (desktopHostServices() && hostRecord(host)) {
+    const native = resolveLocale(host.locale)
+    if (native)
+      return native
+  }
   try {
     const saved = resolveLocale(localStorage.getItem(localeKey))
     if (saved)
@@ -71,13 +78,21 @@ const current = shallowRef<Locale>(detectLocale())
 export const locale = readonly(current)
 
 /**
- * Switch the UI language and remember the choice in this browser.
+ * Request a native language change, or remember the choice in an ordinary browser.
  *
  * @param next - The locale to activate
- * @returns `true` when the choice was saved, `false` when storage is unavailable
+ * @param persist - `false` applies a host snapshot without echoing it or writing browser storage
+ * @returns `true` when the choice was saved or sent to the host, `false` when browser storage is unavailable
  */
-export function setLocale(next: Locale): boolean {
+export function setLocale(next: Locale, persist = true): boolean {
+  const host = desktopHostServices()
+  if (host && persist) {
+    host.postMessage({ action: 'locale', value: next })
+    return true
+  }
   current.value = next
+  if (!persist || host)
+    return true
   try {
     localStorage.setItem(localeKey, next)
     return true

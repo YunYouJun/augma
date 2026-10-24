@@ -33,10 +33,39 @@ describe('macOS desktop bridge', () => {
     Object.assign(window, { __AUGMA_DESKTOP_MODULE__: 'weather', __AUGMA_DESKTOP_IMMERSIVE__: true })
     const { wrapper, bridge, select } = mountBridge()
     expect(select).toHaveBeenCalledWith('weather')
-    expect(bridge.immersive).toBe(true)
+    expect(bridge.immersive.value).toBe(true)
     expect(document.documentElement.classList.contains('augma-desktop-immersive')).toBe(true)
     wrapper.unmount()
     expect(document.documentElement.classList.contains('augma-desktop-immersive')).toBe(false)
+  })
+
+  it('changes presentation in place while preserving the active module', async () => {
+    Object.assign(window, { __AUGMA_DESKTOP_IMMERSIVE__: false })
+    const { wrapper, bridge, activeModule, select } = mountBridge()
+    activeModule.value = 'space'
+    for (const detail of [undefined, null, {}, { immersive: 'true' }])
+      dispatch('augma:presentation', detail)
+    expect(bridge.immersive.value).toBe(false)
+    dispatch('augma:presentation', { immersive: true })
+    await nextTick()
+    expect(bridge.immersive.value).toBe(true)
+    expect(document.documentElement.classList.contains('augma-desktop-immersive')).toBe(true)
+    expect(activeModule.value).toBe('space')
+    expect(select).not.toHaveBeenCalled()
+    dispatch('augma:presentation', { immersive: false })
+    expect(bridge.immersive.value).toBe(false)
+    expect(document.documentElement.classList.contains('augma-desktop-immersive')).toBe(false)
+    wrapper.unmount()
+    dispatch('augma:presentation', { immersive: true })
+    expect(bridge.immersive.value).toBe(false)
+  })
+
+  it('ignores native presentation events in an ordinary browser', () => {
+    const { wrapper, bridge } = mountBridge()
+    dispatch('augma:presentation', { immersive: true })
+    expect(bridge.immersive.value).toBe(false)
+    expect(document.documentElement.classList.contains('augma-desktop-immersive')).toBe(false)
+    wrapper.unmount()
   })
 
   it('accepts known modules and null from the menu, and ignores anything else', () => {

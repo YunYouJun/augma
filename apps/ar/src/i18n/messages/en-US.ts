@@ -294,6 +294,7 @@ export const enUS: Messages = {
   'result.show': 'HUD shown',
   'result.map': 'Simulated map opened',
   'result.scan': 'Scanning the simulated space',
+  'result.nativeSpace': 'Sent the simulated action to the native space. Check the Space panel.',
   'result.scanOffline': 'The device is not connected, so the space cannot be scanned',
   'result.audio': 'Sound is playing',
   'result.audioOffline': 'The device is not connected, so sound cannot play',

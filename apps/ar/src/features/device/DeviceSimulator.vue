@@ -18,6 +18,8 @@ import CameraControls from './CameraControls.vue'
 import CommandPanel from './CommandPanel.vue'
 import DeviceDock from './DeviceDock.vue'
 import DeviceWindow from './DeviceWindow.vue'
+import { desktopHostServices } from './hostServices'
+import { desktopNativeSpace } from './nativeSpace'
 import NavigationPanel from './NavigationPanel.vue'
 import NotificationPanel from './NotificationPanel.vue'
 import SceneBackdrop from './SceneBackdrop.vue'
@@ -29,6 +31,7 @@ import SpacePanel from './SpacePanel.vue'
 import SystemBar from './SystemBar.vue'
 import { useAssistantKey } from './useAssistantKey'
 import { useDesktopBridge } from './useDesktopBridge'
+import { useNativeControls } from './useNativeControls'
 import { useShortcuts } from './useShortcuts'
 import { useSpeechCommands } from './useSpeechCommands'
 import { useSpeechFeedback } from './useSpeechFeedback'
@@ -37,13 +40,14 @@ import WeatherPanel from './WeatherPanel.vue'
 import WorldScene from './WorldScene.vue'
 
 const device = useSimulator()
+const hostServices = desktopHostServices()
+const nativeSpace = desktopNativeSpace()
+const nativeMapCamera = (window as Window & { __AUGMA_DESKTOP_NATIVE_MAP_CAMERA__?: boolean }).__AUGMA_DESKTOP_NATIVE_MAP_CAMERA__ === true
 const { connection, online, activeModule, scene, selected, scanProgress, scanning, pinned, routeStep, routeProgress, remaining, routeInstruction, notices, unread, time } = device
 const { settings, storageAvailable, reset } = useDisplaySettings()
 const camera = useCamera()
 const xr = useXr()
 const root = useTemplateRef<HTMLElement>('deviceRoot')
-const depthEnabled = computed(() => settings.depthMotion && settings.showHud && online.value && !xr.ready.value)
-const { active: depthActive, reducedMotion } = useDepthMotion(root, depthEnabled)
 const sound = useSoundscape(toRef(settings, 'volume'))
 const view = useTemplateRef<InstanceType<typeof CameraView>>('cameraView')
 const canvas = useTemplateRef<HTMLCanvasElement>('xrCanvas')
@@ -55,17 +59,51 @@ const layoutResetVersion = shallowRef(0)
 let lastTrigger: HTMLElement | null = null
 const title = computed(() => activeModule.value ? t(`module.${activeModule.value}`) : '')
 const panelStyle = computed(() => ({ '--window-alpha': `${settings.opacity / 100 * 0.7}` }))
-const worldVisible = computed(() => online.value && settings.showHud && !settings.focus && !xr.ready.value && (activeModule.value === 'space' || activeModule.value === 'navigation'))
 const { immersive: desktopImmersive, voiceShortcut: nativeVoiceShortcut } = useDesktopBridge({ activeModule, select: selectDesktopModule, toggleSpeech: toggleSpeechShortcut })
-// The simulated surroundings stand in for the real world until the camera or AR shows it.
-const backdropVisible = computed(() => settings.sceneBackdrop && !desktopImmersive && !camera.stream.value && !xr.ready.value)
 const nativeVoiceLabel = computed(() => nativeVoiceShortcut.value ? chordLabel(nativeVoiceShortcut.value, true) : '')
 const shortcutsOpen = shallowRef(false)
+
+const feedback = useSpeechFeedback(() => settings.speechFeedback)
+const localeSaved = shallowRef(true)
+const assistantKey = useAssistantKey()
+const speech = useSpeechCommands({
+  isPanelVisible: () => activeModule.value === 'commands' && settings.showHud,
+  onCommand: (command) => {
+    executeCommand(command)
+  },
+  onReply: reply => feedback.speak(reply),
+  apiKey: () => assistantKey.key.value,
+})
+
+const { enabled: nativeControls, sceneVisible } = useNativeControls({
+  device,
+  settings,
+  sound,
+  camera,
+  xr,
+  speech,
+  message,
+  notification,
+  storageAvailable: computed(() => storageAvailable.value && localeSaved.value),
+  speechFeedbackSupported: feedback.supported,
+  startSpeech,
+  changeLocale,
+  resetSettings,
+  snapshot,
+  prepareXr,
+})
+
+const depthEnabled = computed(() => sceneVisible.value && settings.depthMotion && settings.showHud && online.value && !xr.ready.value)
+const { active: depthActive, reducedMotion } = useDepthMotion(root, depthEnabled)
+const worldVisible = computed(() => !nativeSpace && sceneVisible.value && online.value && settings.showHud && !settings.focus && !xr.ready.value && (activeModule.value === 'space' || (!nativeMapCamera && activeModule.value === 'navigation')))
+// The simulated surroundings stand in for the real world until the camera or AR shows it.
+const backdropVisible = computed(() => !nativeSpace && sceneVisible.value && settings.sceneBackdrop && !desktopImmersive.value && !camera.stream.value && !xr.ready.value)
+
 const shortcuts = useShortcuts({
   run: runShortcut,
-  available: id => id !== 'fullscreen' || fullscreenSupported.value,
+  available: id => !nativeControls && (id !== 'fullscreen' || fullscreenSupported.value),
   escape: () => {
-    if (!activeModule.value || !settings.showHud)
+    if (nativeControls || !activeModule.value || !settings.showHud)
       return false
     closeApp()
     return true
@@ -83,18 +121,6 @@ const shortcutHints = computed(() => {
       hints[id] = { label: chordLabel(chord, shortcuts.mac), aria: ariaChord(chord) }
   }
   return hints
-})
-
-const feedback = useSpeechFeedback(() => settings.speechFeedback)
-const localeSaved = shallowRef(true)
-const assistantKey = useAssistantKey()
-const speech = useSpeechCommands({
-  isPanelVisible: () => activeModule.value === 'commands' && settings.showHud,
-  onCommand: (command) => {
-    executeCommand(command)
-  },
-  onReply: reply => feedback.speak(reply),
-  apiKey: () => assistantKey.key.value,
 })
 
 function executeCommand(command: VoiceCommand) {
@@ -219,6 +245,10 @@ function snapshot() {
 }
 async function prepareXr() {
   camera.stop()
+  if (nativeMapCamera) {
+    xr.stop()
+    return
+  }
   if (canvas.value)
     await xr.prepare(canvas.value)
 }
@@ -238,13 +268,20 @@ function syncFullscreen() {
 }
 function resetSettings() {
   reset()
-  shortcuts.resetAll()
-  clearWindowPlacements()
-  layoutResetVersion.value++
+  if (!hostServices) {
+    shortcuts.resetAll()
+    clearWindowPlacements()
+    layoutResetVersion.value++
+  }
   toast({ key: 'toast.settingsReset' })
 }
 function runCommand(command: VoiceCommand): Message {
   speech.cancel()
+  if (nativeSpace && ['scan', 'routeStart', 'routeNext', 'routeStop'].includes(command)) {
+    nativeSpace.request(command)
+    device.openModule('space')
+    return { key: 'result.nativeSpace' }
+  }
   switch (command) {
     case 'hide':
       settings.showHud = false
@@ -262,7 +299,7 @@ function runCommand(command: VoiceCommand): Message {
       device.scan()
       return { key: 'result.scan' }
     case 'audio':
-      if (!online.value)
+      if (!hostServices && !online.value)
         return { key: 'result.audioOffline' }
       device.openModule('audio')
       void sound.play()
@@ -293,20 +330,22 @@ function runCommand(command: VoiceCommand): Message {
       if (!online.value)
         return { key: 'result.routeStartOffline' }
       device.startRoute()
+      if (nativeMapCamera)
+        device.openModule('space')
       return { key: 'result.routeStart', params: { name: { key: `landmark.${selected.value.id}.name` } } }
     case 'routeNext':
       if (!online.value || routeStep.value === null)
         return { key: 'result.routeNextIdle' }
       if (routeStep.value >= 4)
         return { key: 'result.routeAlreadyArrived' }
-      device.openModule('navigation')
+      device.openModule(nativeMapCamera ? 'space' : 'navigation')
       device.advanceRoute()
       return { key: routeStep.value === 4 ? 'result.routeArrived' : 'result.routeNext' }
     case 'routeStop':
       if (routeStep.value === null)
         return { key: 'result.routeStopIdle' }
       device.cancelRoute()
-      device.openModule('navigation')
+      device.openModule(nativeMapCamera ? 'space' : 'navigation')
       return { key: 'result.routeStop' }
   }
 }
@@ -314,7 +353,8 @@ watch(online, (value) => {
   if (!value) {
     camera.stop()
     xr.stop()
-    sound.pause()
+    if (!hostServices)
+      sound.pause()
   }
 })
 watch(activeModule, (module) => {
@@ -334,7 +374,8 @@ watch(locale, (value) => {
   document.title = t('app.documentTitle')
 }, { immediate: true })
 onMounted(() => {
-  void xr.detect()
+  if (!nativeMapCamera)
+    void xr.detect()
   fullscreenSupported.value = !!document.fullscreenEnabled
   syncFullscreen()
   document.addEventListener('fullscreenchange', syncFullscreen)
@@ -346,15 +387,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="deviceRoot" class="ar-app" :class="{ 'is-live': !!camera.stream.value || xr.ready.value, 'is-dark': settings.dark, 'is-desktop-immersive': desktopImmersive, 'has-depth': depthActive, 'has-curves': settings.curvedHud, 'has-window': activeModule && settings.showHud }" :style="panelStyle">
+  <div ref="deviceRoot" class="ar-app" :class="{ 'is-live': !!camera.stream.value || xr.ready.value, 'is-dark': settings.dark, 'is-desktop-immersive': desktopImmersive, 'has-native-controls': nativeControls, 'has-depth': depthActive, 'has-curves': settings.curvedHud, 'has-window': !nativeControls && activeModule && settings.showHud }" :style="panelStyle">
     <h1 class="agm-sr-only">{{ t('app.heading') }}</h1>
-    <SceneBackdrop v-if="backdropVisible" :scene="scene.id" :paused="!!activeModule && settings.showHud || shortcutsOpen" />
+    <SceneBackdrop v-if="backdropVisible" :scene="scene.id" :paused="!nativeControls && (!!activeModule && settings.showHud || shortcutsOpen)" :depth-enabled="depthActive" />
     <CameraView ref="cameraView" :stream="camera.stream.value" :mirror="settings.mirror" />
-    <canvas v-show="xr.ready.value" ref="xrCanvas" class="xr-canvas" :aria-label="t('app.xrCanvas')" />
-    <SystemBar :curved="settings.curvedHud" :time="time" :fullscreen="fullscreen" :fullscreen-supported="fullscreenSupported" :dark="settings.dark" :unread="unread" :camera-live="!!camera.stream.value" :shortcuts="shortcutHints" @commands="openApp('commands', $event)" @fullscreen="toggleFullscreen" @flip="camera.flip" @theme="settings.dark = !settings.dark" @settings="openApp('settings', $event)" @notifications="openApp('notifications', $event)" @device="openApp('device', $event)" />
+    <canvas v-show="sceneVisible && xr.ready.value" ref="xrCanvas" class="xr-canvas" :aria-label="t('app.xrCanvas')" />
+    <SystemBar v-if="!nativeControls" :curved="settings.curvedHud" :time="time" :fullscreen="fullscreen" :fullscreen-supported="fullscreenSupported" :dark="settings.dark" :unread="unread" :camera-live="!!camera.stream.value" :shortcuts="shortcutHints" @commands="openApp('commands', $event)" @fullscreen="toggleFullscreen" @flip="camera.flip" @theme="settings.dark = !settings.dark" @settings="openApp('settings', $event)" @notifications="openApp('notifications', $event)" @device="openApp('device', $event)" />
     <main class="device-workspace" :aria-label="t('app.workspace')">
       <WorldScene v-if="worldVisible" :map-mode="activeModule === 'navigation'" :scene="scene.id" :landmarks="scene.landmarks" :selected="selected.id" :scanning="scanning" :pinned="pinned" :route="routeStep !== null" :route-progress="routeProgress" @select="device.selectLandmark" />
-      <DeviceWindow v-if="activeModule && settings.showHud" :key="activeModule" :title="title" :app="activeModule" :reset-version="layoutResetVersion" @close="closeApp">
+      <DeviceWindow v-if="!nativeControls && activeModule && settings.showHud" :key="activeModule" :title="title" :app="activeModule" :reset-version="layoutResetVersion" @close="closeApp">
         <SpacePanel v-if="activeModule === 'space'" :scene="scene.id" :selected="selected" :scanning="scanning" :progress="scanProgress" :pinned="pinned" :online="online" @scene="device.changeScene" @scan="device.scan" @cancel="device.cancelScan" @pin="device.togglePin" @navigate="device.startRoute" />
         <NavigationPanel v-else-if="activeModule === 'navigation'" :landmarks="scene.landmarks" :selected="selected" :step="routeStep" :progress="routeProgress" :remaining="remaining" :instruction="routeInstruction" :online="online" @select="device.selectLandmark" @start="device.startRoute" @advance="device.advanceRoute" @cancel="device.cancelRoute" />
         <SoundPanel v-else-if="activeModule === 'audio'" v-model:volume="settings.volume" :playing="sound.playing.value" :busy="sound.busy.value" :elapsed="sound.elapsed.value" :duration="sound.duration" :track-index="sound.trackIndex.value" :error="sound.error.value ? t(sound.error.value) : ''" :online="online" @play="sound.play" @pause="sound.pause" @track="sound.selectTrack" @seek="sound.seek" />
@@ -365,10 +406,17 @@ onUnmounted(() => {
         <CommandPanel v-else-if="activeModule === 'commands'" :speech-available="speech.available" :native="speech.native" :voice-shortcut="nativeVoiceLabel" :assistant-ready="speech.assistantReady.value" :speech-status="speech.status.value" :transcript="speech.transcript.value" :reply="speech.reply.value" :speech-error="speech.error.value ? t(speech.error.value) : ''" @command="executeCommand" @start="startSpeech" @stop="speech.stop" @cancel="speech.cancel" @submit="speech.submitText" />
         <ArHud v-else :connection="connection" :live="!!camera.stream.value" :scene="scene.name" @connect="device.connect" @sleep="device.suspend('sleeping')" @disconnect="device.suspend('disconnected')" />
       </DeviceWindow>
-      <div v-if="!online && activeModule !== 'device'" class="standby-view"><p>{{ t(`connection.${connection}`) }}</p><AgmButton :loading="connection === 'connecting'" @click="device.connect">{{ t(connection === 'sleeping' ? 'device.wake' : 'device.connect') }}</AgmButton></div>
+      <div v-if="!nativeControls && !online && activeModule !== 'device'" class="standby-view"><p>{{ t(`connection.${connection}`) }}</p><AgmButton :loading="connection === 'connecting'" @click="device.connect">{{ t(connection === 'sleeping' ? 'device.wake' : 'device.connect') }}</AgmButton></div>
     </main>
-    <DeviceDock :curved="settings.curvedHud" :active="settings.showHud ? activeModule : null" :show-hud="settings.showHud" :mirror="settings.mirror" :shortcuts="shortcutHints" @select="openApp" @mirror="settings.mirror = !settings.mirror" @hud="settings.showHud = !settings.showHud" />
-    <AgmToast v-model:open="notification" :title="message ? t(message) : ''" :close-label="t('toast.close')" :region-label="t('toast.region')" />
-    <ShortcutsDialog v-model:open="shortcutsOpen" v-model:enabled="shortcutsEnabled" :bindings="shortcuts.bindings.value" :customized="customizedShortcuts" :hidden="fullscreenSupported ? [] : ['fullscreen']" :mac="shortcuts.mac" :native-voice="speech.native ? nativeVoiceShortcut : null" :storage-available="shortcuts.storageAvailable.value" @assign="shortcuts.assign" @reset="shortcuts.reset" @reset-all="shortcuts.resetAll" />
+    <DeviceDock v-if="!nativeControls" :curved="settings.curvedHud" :active="settings.showHud ? activeModule : null" :show-hud="settings.showHud" :mirror="settings.mirror" :shortcuts="shortcutHints" @select="openApp" @mirror="settings.mirror = !settings.mirror" @hud="settings.showHud = !settings.showHud" />
+    <AgmToast v-if="!nativeControls" v-model:open="notification" :title="message ? t(message) : ''" :close-label="t('toast.close')" :region-label="t('toast.region')" />
+    <ShortcutsDialog v-if="!nativeControls" v-model:open="shortcutsOpen" v-model:enabled="shortcutsEnabled" :bindings="shortcuts.bindings.value" :customized="customizedShortcuts" :hidden="fullscreenSupported ? [] : ['fullscreen']" :mac="shortcuts.mac" :native-voice="speech.native ? nativeVoiceShortcut : null" :storage-available="shortcuts.storageAvailable.value" @assign="shortcuts.assign" @reset="shortcuts.reset" @reset-all="shortcuts.resetAll" />
   </div>
 </template>
+
+<style scoped>
+/* The desktop renders its control panels in SwiftUI; this surface is only the scene. */
+.has-native-controls .device-workspace { inset: 0; }
+.has-native-controls :deep(.spatial-field) { inset: 0; height: auto; }
+.has-native-controls :deep(.map-legend) { display: none; }
+</style>
