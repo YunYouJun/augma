@@ -25,107 +25,6 @@ extension Animation {
   }
 }
 
-/// The clipped plate used by Augma action buttons (`--agm-cut`).
-struct CutCornerShape: InsettableShape {
-  var cut: CGFloat = 7
-  var insetAmount: CGFloat = 0
-
-  func path(in rect: CGRect) -> Path {
-    let r = rect.insetBy(dx: insetAmount, dy: insetAmount)
-    let c = min(cut, r.width / 2, r.height / 2)
-    var path = Path()
-    path.move(to: CGPoint(x: r.minX + c, y: r.minY))
-    path.addLine(to: CGPoint(x: r.maxX - c, y: r.minY))
-    path.addLine(to: CGPoint(x: r.maxX, y: r.minY + c))
-    path.addLine(to: CGPoint(x: r.maxX, y: r.maxY - c))
-    path.addLine(to: CGPoint(x: r.maxX - c, y: r.maxY))
-    path.addLine(to: CGPoint(x: r.minX + c, y: r.maxY))
-    path.addLine(to: CGPoint(x: r.minX, y: r.maxY - c))
-    path.addLine(to: CGPoint(x: r.minX, y: r.minY + c))
-    path.closeSubpath()
-    return path
-  }
-
-  func inset(by amount: CGFloat) -> CutCornerShape {
-    var shape = self
-    shape.insetAmount += amount
-    return shape
-  }
-}
-
-/// Cut-corner button with a light sweep on hover and a short press.
-struct AugmaButtonStyle: ButtonStyle {
-  enum Variant { case primary, outline }
-  var variant: Variant = .primary
-
-  func makeBody(configuration: Configuration) -> some View {
-    AugmaButtonBody(configuration: configuration, variant: variant)
-  }
-}
-
-private struct AugmaButtonBody: View {
-  let configuration: ButtonStyleConfiguration
-  let variant: AugmaButtonStyle.Variant
-  @Environment(\.isEnabled) private var isEnabled
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
-  @State private var hovering = false
-  @State private var sweep = 0
-
-  var body: some View {
-    let shape = CutCornerShape()
-    configuration.label
-      .font(.system(size: 13, weight: .semibold))
-      .foregroundStyle(variant == .primary ? AnyShapeStyle(Color.white) : AnyShapeStyle(.primary))
-      .padding(.horizontal, 18)
-      .frame(minHeight: 32)
-      .background {
-        ZStack {
-          switch variant {
-          case .primary:
-            shape.fill(Color.augmaAccent)
-          case .outline:
-            shape.fill(Color.primary.opacity(hovering ? 0.08 : 0.04))
-            shape.strokeBorder(hovering ? Color.augmaAccent : Color.primary.opacity(0.22), lineWidth: 1)
-          }
-          if sweep > 0 {
-            Sheen(intensity: variant == .primary ? 0.45 : 0.25)
-              .id(sweep)
-              .clipShape(shape)
-          }
-        }
-      }
-      .shadow(color: variant == .primary && hovering ? Color.augmaHighlight.opacity(0.45) : .clear, radius: 8, y: 2)
-      .scaleEffect(configuration.isPressed ? 0.97 : 1)
-      .opacity(isEnabled ? 1 : 0.5)
-      .contentShape(shape)
-      .animation(.augma(duration: 0.16), value: configuration.isPressed)
-      .animation(.easeOut(duration: 0.2), value: hovering)
-      .onHover { inside in
-        hovering = inside
-        if inside && isEnabled && !reduceMotion { sweep += 1 }
-      }
-  }
-}
-
-/// One pass of light across a surface; recreate it (new identity) to replay.
-private struct Sheen: View {
-  let intensity: Double
-  @State private var progress: CGFloat = 0
-
-  var body: some View {
-    GeometryReader { geometry in
-      let band = geometry.size.width * 0.45
-      LinearGradient(colors: [.clear, .white.opacity(intensity), .clear], startPoint: .leading, endPoint: .trailing)
-        .frame(width: band)
-        .offset(x: -band + progress * (geometry.size.width + band))
-    }
-    .allowsHitTesting(false)
-    .onAppear {
-      withAnimation(.augma(duration: 0.72)) { progress = 1 }
-    }
-  }
-}
-
 /// HUD rings: a 60-mark scale, a cyan orbit with two counter-rotating orange arcs and a dashed core.
 struct AugmaRing: View {
   var size: CGFloat = 96
@@ -188,27 +87,6 @@ struct StatusPing: View {
     }
     .frame(width: 22, height: 22)
     .accessibilityHidden(true)
-  }
-}
-
-/// Two luminous accent marks on opposite edges, as on the web Panel.
-struct HudAccentMarks: View {
-  var length: CGFloat = 30
-
-  var body: some View {
-    ZStack {
-      mark.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading).padding(.leading, 18)
-      mark.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing).padding(.trailing, 18)
-    }
-    .allowsHitTesting(false)
-    .accessibilityHidden(true)
-  }
-
-  private var mark: some View {
-    Rectangle()
-      .fill(Color.augmaAccent)
-      .frame(width: length, height: 2)
-      .shadow(color: Color.augmaHighlight.opacity(0.5), radius: 4)
   }
 }
 
@@ -275,30 +153,25 @@ extension View {
     modifier(MaterializeModifier(active: active, delay: delay))
   }
 
-  /// Augma glass: material, hairline, lit top edge and accent marks. On macOS 26 the
-  /// surface is Liquid Glass, which lights its own rim, so only the accent marks remain.
+  /// Native floating surfaces let the system supply the rim, contrast and accessibility treatment.
   @ViewBuilder
-  func augmaGlass(cornerRadius: CGFloat = 3, marks: Bool = true, markLength: CGFloat = 30) -> some View {
+  func augmaGlass(cornerRadius: CGFloat = 20, clear: Bool = false) -> some View {
     if #available(macOS 26, *) {
-      glassEffect(.regular, in: .rect(cornerRadius: cornerRadius))
-        .overlay {
-          if marks { HudAccentMarks(length: markLength) }
-        }
+      glassEffect(clear ? .clear : .regular, in: .rect(cornerRadius: cornerRadius))
     } else {
-      background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius))
-        .overlay {
-          RoundedRectangle(cornerRadius: cornerRadius)
-            .strokeBorder(Color.primary.opacity(0.14))
-        }
-        .overlay(alignment: .top) {
-          LinearGradient(colors: [.clear, .white.opacity(0.55), .clear], startPoint: .leading, endPoint: .trailing)
-            .frame(height: 1)
-            .padding(.horizontal, cornerRadius)
-            .allowsHitTesting(false)
-        }
-        .overlay {
-          if marks { HudAccentMarks(length: markLength) }
-        }
+      background(clear ? .ultraThinMaterial : .regularMaterial, in: RoundedRectangle(cornerRadius: cornerRadius))
+    }
+  }
+
+  /// Floating actions use system styles, including keyboard focus and disabled appearances.
+  @ViewBuilder
+  func nativeFloatingButton(prominent: Bool = false) -> some View {
+    if #available(macOS 26, *) {
+      if prominent { buttonStyle(.glassProminent) }
+      else { buttonStyle(.glass) }
+    } else {
+      if prominent { buttonStyle(.borderedProminent) }
+      else { buttonStyle(.bordered) }
     }
   }
 }

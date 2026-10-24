@@ -1,2 +1,5 @@
 "NSMicrophoneUsageDescription" = "話しかけた Augma の音声コマンドを認識するために使用します。";
 "NSSpeechRecognitionUsageDescription" = "話したコマンドを文字に変換してデモを操作するために使用します。";
+"NSCameraUsageDescription" = "カメラをオンにしたときにプレビューと撮影に使用します。写真は保存先を選んだ場合のみ、この Mac に保存されます。";
+
+"NSAppleEventsUsageDescription" = "送信したクイックメモを Apple メモに保存します。";

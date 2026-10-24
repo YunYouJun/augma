@@ -7,6 +7,7 @@ final class HudModel: ObservableObject {
   @Published var windowVisible = false
   @Published var clickThrough = false
   @Published var immersiveActive = false
+  @Published var immersiveVisible = false
   @Published var immersiveClickThrough = false
 
   var rendersDemoScene: Bool {

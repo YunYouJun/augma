@@ -7,6 +7,7 @@ import Speech
 final class SpeechCommandRecognizer {
   /// Event type, optional text (transcript or error detail) and, for errors, a code the page translates.
   var onEvent: (_ type: String, _ text: String?, _ code: String?) -> Void
+  var onLevel: (Double) -> Void
   var isRecording: Bool { engine != nil && !processing }
 
   private var engine: AVAudioEngine?
@@ -20,15 +21,16 @@ final class SpeechCommandRecognizer {
   private var tapInstalled = false
   private var lastText = ""
 
-  init(onEvent: @escaping (_ type: String, _ text: String?, _ code: String?) -> Void) {
+  init(onLevel: @escaping (Double) -> Void = { _ in }, onEvent: @escaping (_ type: String, _ text: String?, _ code: String?) -> Void) {
+    self.onLevel = onLevel
     self.onEvent = onEvent
   }
 
   /// Phrases that bias recognition toward the demo's commands in each supported language.
   private static let contextualStrings: [String: [String]] = [
-    "zh": ["打开地图", "扫描空间", "播放声音", "隐藏 HUD"],
-    "en": ["open the map", "scan the space", "play sound", "hide the HUD"],
-    "ja": ["地図を開いて", "空間をスキャンして", "サウンドを再生して", "HUDを隠して"],
+    "zh": ["记下", "开始专注二十五分钟", "暂停计时", "继续计时", "打开地图", "扫描空间", "播放声音", "隐藏 HUD"],
+    "en": ["note", "focus twenty five minutes", "pause timer", "resume timer", "open the map", "scan the space", "play sound", "hide the HUD"],
+    "ja": ["メモ", "25分集中", "タイマーを一時停止", "地図を開いて", "空間をスキャンして", "サウンドを再生して", "HUDを隠して"],
   ]
 
   /// Normalizes the page's locale to one this demo supports, falling back to Simplified Chinese.
@@ -40,18 +42,27 @@ final class SpeechCommandRecognizer {
     }
   }
 
-  func start(localeIdentifier: String? = nil) async {
+  static func requestSpeechAuthorization(
+    using requestAuthorization: (@escaping @Sendable (SFSpeechRecognizerAuthorizationStatus) -> Void) -> Void = {
+      SFSpeechRecognizer.requestAuthorization($0)
+    }
+  ) async -> SFSpeechRecognizerAuthorizationStatus {
+    await withCheckedContinuation { continuation in
+      // Speech may call back on a background queue. Do not inherit MainActor here.
+      requestAuthorization { @Sendable status in
+        continuation.resume(returning: status)
+      }
+    }
+  }
+
+  func start(localeIdentifier: String? = nil, maximumDuration: TimeInterval = 12) async {
     guard !starting, engine == nil, !processing else { return }
     generation += 1
     let session = generation
     starting = true
     lastText = ""
 
-    let speechPermission = await withCheckedContinuation { (continuation: CheckedContinuation<SFSpeechRecognizerAuthorizationStatus, Never>) in
-      SFSpeechRecognizer.requestAuthorization { status in
-        continuation.resume(returning: status)
-      }
-    }
+    let speechPermission = await Self.requestSpeechAuthorization()
     guard generation == session else { return }
     guard speechPermission == .authorized else {
       fail("speechPermission")
@@ -90,13 +101,27 @@ final class SpeechCommandRecognizer {
     self.engine = engine
     self.recognizer = recognizer
     self.request = request
-    task = recognizer.recognitionTask(with: request) { [weak self] result, error in
+    task = recognizer.recognitionTask(with: request) { @Sendable [weak self] result, error in
+      // Keep Speech's non-Sendable result objects on their callback queue.
+      let text = result?.bestTranscription.formattedString
+      let isFinal = result?.isFinal ?? false
+      let errorDescription = error?.localizedDescription
       Task { @MainActor [weak self] in
-        self?.handle(result: result, error: error, session: session)
+        self?.handle(text: text, isFinal: isFinal, errorDescription: errorDescription, session: session)
       }
     }
-    input.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
-      request.append(buffer)
+    let meter = AudioLevelMeter()
+    // Speech accepts buffers on the audio queue but has no Sendable annotation.
+    // Configure the request first; remove the tap before endAudio or teardown.
+    nonisolated(unsafe) let audioRequest = request
+    input.installTap(onBus: 0, bufferSize: 1024, format: format) { @Sendable [weak self] buffer, _ in
+      audioRequest.append(buffer)
+      if let level = meter.consume(buffer) {
+        Task { @MainActor [weak self] in
+          guard let self, self.generation == session, self.isRecording else { return }
+          self.onLevel(level)
+        }
+      }
     }
     tapInstalled = true
 
@@ -111,7 +136,7 @@ final class SpeechCommandRecognizer {
     starting = false
     onEvent("listening", nil, nil)
     timeout = Task { [weak self] in
-      do { try await Task.sleep(for: .seconds(12)) } catch { return }
+      do { try await Task.sleep(for: .seconds(max(1, min(60, maximumDuration)))) } catch { return }
       guard self?.generation == session else { return }
       self?.stop()
     }
@@ -120,6 +145,7 @@ final class SpeechCommandRecognizer {
   func stop() {
     guard engine != nil, !processing else { return }
     processing = true
+    onLevel(0)
     timeout?.cancel()
     timeout = nil
     engine?.stop()
@@ -138,6 +164,7 @@ final class SpeechCommandRecognizer {
 
   func cancel() {
     generation += 1
+    onLevel(0)
     timeout?.cancel()
     timeout = nil
     if let engine {
@@ -157,11 +184,11 @@ final class SpeechCommandRecognizer {
     lastText = ""
   }
 
-  private func handle(result: SFSpeechRecognitionResult?, error: Error?, session: Int) {
+  private func handle(text: String?, isFinal: Bool, errorDescription: String?, session: Int) {
     guard generation == session else { return }
-    if let result {
-      lastText = result.bestTranscription.formattedString
-      if result.isFinal {
+    if let text {
+      lastText = text
+      if isFinal {
         let text = lastText
         cancel()
         onEvent("final", text, nil)
@@ -169,13 +196,13 @@ final class SpeechCommandRecognizer {
       }
       onEvent("partial", lastText, nil)
     }
-    if let error {
+    if let errorDescription {
       if processing, !lastText.isEmpty {
         let text = lastText
         cancel()
         onEvent("final", text, nil)
       } else {
-        fail("recognitionFailed", detail: error.localizedDescription)
+        fail("recognitionFailed", detail: errorDescription)
       }
     }
   }

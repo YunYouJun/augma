@@ -1,10 +1,7 @@
 import Foundation
 
-/// Sends the page's assistant request to DeepSeek with the key from the Keychain.
-///
-/// The prompt and the answer format live in `apps/ar/src/features/device/assistant.ts`, which also keeps any
-/// command on the demo allowlist. This side never hands the key to the page: it checks the messages it forwards,
-/// pins the model and limits to match `deepSeekBody`, and returns the model's message content.
+/// Sends the native assistant's bounded conversation using a Keychain key.
+/// NativeAssistantConversation owns the prompt and strict action allowlist.
 enum DeepSeekClient {
   /// System prompt, four earlier exchanges and the question fit well within these limits.
   static let maxMessages = 12
@@ -64,7 +61,7 @@ enum DeepSeekClient {
   enum Failure: Error {
     case invalidInput, invalidKey, insufficientBalance, rateLimited, invalidResponse, http(Int)
 
-    /// Error code the web page translates into the active UI language.
+    /// Stable error code, also used by the standalone browser counterpart.
     var code: String {
       switch self {
       case .invalidInput: "deepseekInvalidInput"

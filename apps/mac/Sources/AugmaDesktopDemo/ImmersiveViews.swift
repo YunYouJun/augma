@@ -2,40 +2,104 @@ import AppKit
 import SwiftUI
 
 struct ImmersiveCanvasView: View {
-  @Binding var selection: DemoModule?
-  @State private var loadError: String?
-  @State private var panelRegions: [CGRect] = []
+  @ObservedObject var session: NativeDemoModel
+  @ObservedObject var preferences: NativePreferencesStore
+  let workspace: WorkspaceStore
+  let commands: WorkspaceCommands
+  let monitor: SystemMonitorStore
+  let weather: WeatherStore
+  let audio: NativeAudioStore
+  let maps: NativeMapStore
+  let camera: NativeCameraStore
   let onInteractiveRegionsChanged: ([CGRect]) -> Void
+
+  private var panelVisible: Bool { session.selection != nil && preferences.value.showHud }
 
   var body: some View {
     GeometryReader { geometry in
+      let available = ImmersiveLayout.content(in: geometry.size)
+      let wide = geometry.size.width >= 900
+      let spaceCanvas = !preferences.value.showHud ? available
+        : wide ? CGRect(x: 440, y: available.minY, width: max(200, geometry.size.width - 460), height: min(660, available.height))
+        : CGRect(x: 20, y: available.minY, width: available.width, height: min(300, available.height * 0.45))
+      let panel = session.selection == .browser ? available : session.selection == .space && !wide
+        ? CGRect(x: 20, y: spaceCanvas.maxY + 16, width: available.width, height: max(150, available.maxY - spaceCanvas.maxY - 16))
+        : CGRect(x: 20, y: available.minY, width: min(400, available.width), height: min(660, available.height))
       ZStack(alignment: .topLeading) {
-        ForEach(panelRegions.indices, id: \.self) { index in
-          let rect = panelRegions[index]
-          ActiveBackdropView()
-            .frame(width: rect.width, height: rect.height)
-            .clipShape(RoundedRectangle(cornerRadius: 3))
-            .position(x: rect.midX, y: rect.midY)
-            .allowsHitTesting(false)
+        if session.selection == .space {
+          NativeSpaceCanvas(store: session.space, preferences: preferences)
+            .frame(width: spaceCanvas.width, height: spaceCanvas.height)
+            .background(.regularMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .offset(x: spaceCanvas.minX, y: spaceCanvas.minY)
+            .shadow(radius: 12)
         }
-        DemoWebView(selection: $selection, loadError: $loadError, immersive: true) { regions in
-          if panelRegions != regions.panels {
-            panelRegions = regions.panels
+        if panelVisible {
+          VStack(spacing: 0) {
+            HStack {
+              Label(session.selection?.title ?? String(localized: "选择应用"), systemImage: session.selection?.symbol ?? "square.grid.2x2")
+                .font(.headline)
+              Spacer()
+              Button("关闭面板", systemImage: "xmark") { session.selection = nil }
+                .labelStyle(.iconOnly).buttonStyle(.borderless)
+            }
+            .padding(14)
+            Divider()
+            ImmersiveNativePanel(session: session, preferences: preferences, workspace: workspace, commands: commands,
+                                 monitor: monitor, weather: weather, audio: audio, maps: maps, camera: camera)
+              .scrollContentBackground(.hidden)
           }
-          onInteractiveRegionsChanged(regions.interactive)
+          .background { ActiveBackdropView().opacity(preferences.value.opacity / 100) }
+          .clipShape(RoundedRectangle(cornerRadius: 16))
+          .frame(width: panel.width, height: panel.height)
+          .offset(x: panel.minX, y: panel.minY)
+          .shadow(radius: 12)
         }
-        .frame(width: geometry.size.width, height: geometry.size.height)
-        if let loadError {
-          ContentUnavailableView("无法载入沉浸界面", systemImage: "exclamationmark.triangle", description: Text(loadError))
-            .frame(width: 420, height: 240)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
-            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-        }
-        LinkStartOverlay()
-          .frame(width: geometry.size.width, height: geometry.size.height)
+        LinkStartOverlay().frame(width: geometry.size.width, height: geometry.size.height)
       }
+      .onAppear { reportRegions(panel, spaceCanvas) }
+      .onChange(of: session.selection) { _, _ in reportRegions(panel, spaceCanvas) }
+      .onChange(of: preferences.value.showHud) { _, _ in reportRegions(panel, spaceCanvas) }
+      .onChange(of: geometry.size) { _, _ in reportRegions(panel, spaceCanvas) }
     }
     .background(Color.clear)
+    .focusedSceneValue(\.nativeDemo, session)
+  }
+
+  private func reportRegions(_ panel: CGRect, _ spaceCanvas: CGRect) {
+    onInteractiveRegionsChanged((session.selection == .space ? [spaceCanvas] : []) + (panelVisible ? [panel] : []))
+  }
+}
+
+private struct ImmersiveNativePanel: View {
+  @ObservedObject var session: NativeDemoModel
+  let preferences: NativePreferencesStore
+  let workspace: WorkspaceStore
+  let commands: WorkspaceCommands
+  let monitor: SystemMonitorStore
+  let weather: WeatherStore
+  let audio: NativeAudioStore
+  let maps: NativeMapStore
+  let camera: NativeCameraStore
+
+  var body: some View {
+    switch session.selection {
+    case .notes: QuickNotesView(store: workspace, commands: commands)
+    case .focus: FocusTimerView(store: workspace, commands: commands)
+    case .actions: WorkspaceCommandView(commands: commands, store: workspace, compact: true)
+    case .monitor: SystemMonitorView(store: monitor)
+    case .weather: NativeLiveWeatherView(store: weather)
+    case .audio: NativeAudioView(store: audio)
+    case .navigation: NativeMapView(store: maps)
+    case .camera: NativeCameraView(store: camera)
+    case .space: NativeSpaceControlsView(store: session.space, preferences: preferences)
+    case .settings: NativeScenePreferencesView(store: preferences)
+    case .notifications: NativeNotificationsView(store: session.notifications)
+    case .commands: NativeCommandView(store: session.assistant, commands: commands)
+    case .device: NativeDeviceView(store: session.device, space: session.space, camera: camera, preferences: preferences)
+    case .browser: NativeBrowserView(store: session.browser, presentation: .immersive)
+    case nil: EmptyView()
+    }
   }
 }
 
@@ -81,63 +145,6 @@ private struct LinkStartOverlay: View {
         try? await Task.sleep(for: .seconds(1.2))
         visible = false
       }
-    }
-  }
-}
-
-struct ImmersiveControlsView: View {
-  @Binding var selection: DemoModule?
-  @ObservedObject var model: HudModel
-  let toggleInteraction: () -> Void
-  let exit: () -> Void
-
-  var body: some View {
-    HStack(spacing: 10) {
-      AugmaRing(size: 22, spinning: !model.immersiveClickThrough)
-      Menu {
-        ForEach(DemoModule.allCases) { module in
-          Button(module.title, systemImage: module.symbol) {
-            selection = module
-          }
-        }
-      } label: {
-        Label(selection?.title ?? String(localized: "选择应用"), systemImage: "square.grid.2x2")
-      }
-      .frame(minWidth: 105)
-
-      Divider()
-        .frame(height: 20)
-
-      Button(model.immersiveClickThrough ? "操作界面" : "操作桌面", systemImage: model.immersiveClickThrough ? "cursorarrow.click" : "desktopcomputer", action: toggleInteraction)
-        .help(model.immersiveClickThrough ? "恢复界面交互，空白处仍可点击桌面" : "所有区域都允许点击下方桌面")
-
-      Button("退出", systemImage: "xmark", action: exit)
-        .help("退出沉浸模式")
-    }
-    .buttonStyle(.borderless)
-    .tint(.augmaAccent)
-    .padding(.horizontal, 14)
-    .padding(.vertical, 10)
-    .controlBarGlass()
-    .padding(4)
-    .augmaMaterialize(delay: 0.35)
-  }
-}
-
-private extension View {
-  /// Liquid Glass on macOS 26. Earlier systems keep a backdrop forced active, so the bar
-  /// stays blurred while the control panel is not key.
-  @ViewBuilder
-  func controlBarGlass() -> some View {
-    if #available(macOS 26, *) {
-      augmaGlass(markLength: 24)
-    } else {
-      background {
-        ActiveBackdropView()
-          .clipShape(RoundedRectangle(cornerRadius: 3))
-      }
-      .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(.primary.opacity(0.15)))
-      .overlay { HudAccentMarks(length: 24) }
     }
   }
 }

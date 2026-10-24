@@ -1,2 +1,5 @@
 "NSMicrophoneUsageDescription" = "用于识别你主动说出的 Augma 语音指令。";
 "NSSpeechRecognitionUsageDescription" = "用于将你主动说出的指令转换为文字并操作演示界面。";
+"NSCameraUsageDescription" = "用于在你主动开启摄像头时预览画面和拍照，照片仅在你选择保存后写入本机。";
+
+"NSAppleEventsUsageDescription" = "用于将你主动发送的快速记录保存到 macOS 备忘录。";

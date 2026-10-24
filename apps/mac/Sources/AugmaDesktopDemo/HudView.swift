@@ -2,38 +2,43 @@ import SwiftUI
 
 struct HudView: View {
   @ObservedObject var model: HudModel
+  @ObservedObject var monitor: SystemMonitorStore
+  let openMonitor: () -> Void
   let hideWindow: () -> Void
 
   var body: some View {
     VStack(alignment: .leading, spacing: 14) {
       HStack(alignment: .center, spacing: 12) {
-        AugmaRing(size: 34)
+        AugmaRing(size: 34, spinning: model.windowVisible)
         VStack(alignment: .leading, spacing: 2) {
           Text("AUGMA")
             .font(.system(size: 11, weight: .semibold, design: .monospaced))
             .tracking(3)
             .foregroundStyle(.secondary)
-          Text("桌面辅助视界")
+          Text(monitor.hudPinned ? "系统监控" : "桌面辅助视界")
             .font(.system(size: 20, weight: .light))
         }
         Spacer()
         HStack(spacing: 2) {
-          StatusPing(color: model.rendersDemoScene ? .augmaCyan : .secondary, active: model.rendersDemoScene)
-          Text(model.rendersDemoScene ? "DEMO SPACE" : "STANDBY")
+          StatusPing(color: monitor.hudPinned || model.rendersDemoScene ? .augmaCyan : .secondary,
+                     active: monitor.hudPinned || model.rendersDemoScene)
+          Text(monitor.hudPinned ? "SYSTEM" : model.rendersDemoScene ? "DEMO SPACE" : "STANDBY")
             .font(.system(size: 10, weight: .medium, design: .monospaced))
             .foregroundStyle(.secondary)
         }
       }
 
       Group {
-        if model.rendersDemoScene {
+        if monitor.hudPinned {
+          SystemMonitorHUD(store: monitor)
+        } else if model.rendersDemoScene {
           DemoSceneView()
         } else {
           ZStack {
             Color.primary.opacity(0.04)
             HStack(spacing: 18) {
               ZStack {
-                AugmaRing(size: 96)
+                AugmaRing(size: 96, spinning: model.windowVisible)
                 Image(systemName: "viewfinder")
                   .font(.system(size: 22, weight: .ultraLight))
               }
@@ -61,24 +66,40 @@ struct HudView: View {
       .animation(.augma(), value: model.rendersDemoScene)
 
       HStack(spacing: 10) {
-        Button(model.wantsDemoScene ? "退出演示空间" : "进入演示空间") {
-          if model.wantsDemoScene {
-            model.leaveDemoScene()
-          } else {
-            model.wantsDemoScene = true
+        if monitor.hudPinned {
+          Button("查看详情", action: openMonitor)
+            .nativeFloatingButton(prominent: true)
+          Button("取消固定监控") { monitor.hudPinned = false }
+            .nativeFloatingButton()
+        } else {
+          Button(model.wantsDemoScene ? "退出演示空间" : "进入演示空间") {
+            if model.wantsDemoScene { model.leaveDemoScene() }
+            else { model.wantsDemoScene = true }
           }
+          .nativeFloatingButton(prominent: true)
+          Button("固定系统监控") { monitor.hudPinned = true }
+            .nativeFloatingButton()
         }
-        .buttonStyle(AugmaButtonStyle())
         Spacer()
         Button("隐藏窗口", action: hideWindow)
-          .buttonStyle(AugmaButtonStyle(variant: .outline))
+          .nativeFloatingButton()
       }
     }
     .padding(20)
     .frame(width: 430, height: 320)
     .foregroundStyle(.primary)
-    .tint(.augmaAccent)
+
+    // Desktop text can sit directly behind this panel; clear glass doesn't blur
+    // it enough to keep monitoring values and actions legible.
     .augmaGlass()
     .augmaMaterialize(active: model.windowVisible)
+    .onChange(of: model.windowVisible, initial: true) { _, _ in updateMonitoring() }
+    .onChange(of: monitor.hudPinned) { _, _ in updateMonitoring() }
+    .onDisappear { monitor.stopObserving("hud") }
+  }
+
+  private func updateMonitoring() {
+    if model.windowVisible && monitor.hudPinned { monitor.startObserving("hud") }
+    else { monitor.stopObserving("hud") }
   }
 }

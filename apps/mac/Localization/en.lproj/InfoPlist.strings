@@ -1,2 +1,5 @@
 "NSMicrophoneUsageDescription" = "Augma uses the microphone to recognize the voice commands you choose to speak.";
 "NSSpeechRecognitionUsageDescription" = "Augma turns the commands you speak into text to control the demo.";
+"NSCameraUsageDescription" = "Augma previews the camera and takes photos only when you turn it on. Photos are saved on this Mac only when you choose to save them.";
+
+"NSAppleEventsUsageDescription" = "Save the quick notes you choose to send to Apple Notes.";

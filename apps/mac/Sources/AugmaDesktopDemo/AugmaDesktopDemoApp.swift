@@ -7,69 +7,49 @@ struct AugmaDesktopDemoApp: App {
 
   var body: some Scene {
     WindowGroup("Augma Demo", id: "demo") {
-      DemoContentView(enterImmersive: appDelegate.enterImmersive)
+      DemoContentView(appDelegate: appDelegate)
+        .environmentObject(appDelegate.sessions)
     }
     .defaultSize(width: 1100, height: 720)
     .commands {
+      NativeDemoCommands()
+      WorkspaceMenuCommands(appDelegate: appDelegate)
+      ImmersiveAssistantCommands(store: appDelegate.immersiveShortcut, toggle: appDelegate.toggleImmersiveAssistant)
       CommandMenu("语音") {
         Button(VoiceShortcut.title) {
-          NotificationCenter.default.post(name: .augmaToggleSpeech, object: nil)
+          if appDelegate.model.immersiveActive {
+            appDelegate.selectImmersiveModule(.actions)
+            appDelegate.commands.toggleVoice()
+          } else { appDelegate.showCommands(voice: true) }
         }
         .keyboardShortcut(VoiceShortcut.defaultKey, modifiers: VoiceShortcut.defaultModifiers)
       }
     }
 
+    Window("快捷指令", id: "quick-command") {
+      CommandUtilityView(appDelegate: appDelegate)
+    }
+    .defaultSize(width: 560, height: 520)
+    .windowResizability(.contentMinSize)
+    .defaultLaunchBehavior(.suppressed)
+    .restorationBehavior(.disabled)
+
+    Window("专注计时", id: "focus-timer") {
+      FloatingFocusView(store: appDelegate.workspace, commands: appDelegate.commands)
+    }
+    .windowResizability(.contentSize)
+    .defaultLaunchBehavior(.suppressed)
+
     Settings {
-      DeepSeekSettingsView()
+      NativeAppSettingsView(monitor: appDelegate.monitor, preferences: appDelegate.preferences,
+                            immersiveShortcut: appDelegate.immersiveShortcut, captures: appDelegate.captures)
     }
 
+    // Keep the status item static: custom observed labels can loop while macOS
+    // rasterizes them. The popup owns the live countdown and editable controls.
     MenuBarExtra("Augma", systemImage: "viewfinder") {
-      MenuBarControls(model: appDelegate.model, appDelegate: appDelegate)
+      MenuBarControls(hud: appDelegate.model, sessions: appDelegate.sessions, appDelegate: appDelegate)
     }
-  }
-}
-
-private struct MenuBarControls: View {
-  @Environment(\.openWindow) private var openWindow
-  @AppStorage("demoWindowAlwaysOnTop") private var demoWindowAlwaysOnTop = false
-  @ObservedObject var model: HudModel
-  let appDelegate: HudAppDelegate
-
-  var body: some View {
-    Button("打开演示") {
-      if model.immersiveActive {
-        appDelegate.exitImmersive()
-      } else {
-        openWindow(id: "demo")
-      }
-      NSApp.activate(ignoringOtherApps: true)
-    }
-    Toggle("演示窗口始终置顶", isOn: $demoWindowAlwaysOnTop)
-    if model.immersiveActive {
-      Menu("选择应用") {
-        ForEach(DemoModule.allCases) { module in
-          Button(module.title, systemImage: module.symbol) {
-            appDelegate.selectImmersiveModule(module)
-          }
-        }
-      }
-      Button(model.immersiveClickThrough ? "操作悬浮界面" : "操作桌面") {
-        appDelegate.toggleImmersiveInteraction()
-      }
-      Button("退出沉浸模式") {
-        appDelegate.exitImmersive()
-      }
-    }
-    Divider()
-    Button(model.windowVisible ? "隐藏 HUD" : "显示 HUD") {
-      appDelegate.toggleWindow()
-    }
-    Button(model.clickThrough ? "允许鼠标交互" : "启用鼠标穿透") {
-      appDelegate.toggleClickThrough()
-    }
-    Divider()
-    Button("退出 Augma") {
-      NSApp.terminate(nil)
-    }
+    .menuBarExtraStyle(.window)
   }
 }

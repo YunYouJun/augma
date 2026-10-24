@@ -1,12 +1,34 @@
 import AppKit
 import SwiftUI
 
-private final class ImmersiveCanvasPanel: NSPanel {
+private class ImmersivePanel: NSPanel {
+  var onExit: (() -> Void)?
+  var onNextControl: (() -> Void)?
+
+  override func sendEvent(_ event: NSEvent) {
+    if event.type == .keyDown, event.keyCode == 48,
+       event.modifierFlags.intersection([.command, .option, .control, .shift]) == .control,
+       let onNextControl {
+      onNextControl()
+      return
+    }
+    // A borderless scene may have WebKit focus or no SwiftUI focus target.
+    if event.type == .keyDown, event.keyCode == 53,
+       event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty,
+       let onExit {
+      onExit()
+      return
+    }
+    super.sendEvent(event)
+  }
+}
+
+private final class ImmersiveCanvasPanel: ImmersivePanel {
   override var canBecomeKey: Bool { true }
   override var canBecomeMain: Bool { false }
 }
 
-private final class ImmersiveControlsPanel: NSPanel {
+private final class ImmersiveControlsPanel: ImmersivePanel {
   override var canBecomeKey: Bool { true }
 }
 
@@ -15,24 +37,45 @@ final class ImmersiveOverlayController: NSObject {
   private let model: HudModel
   private var sourceWindow: NSWindow?
   private var canvasPanel: ImmersiveCanvasPanel?
-  private var controlsPanel: ImmersiveControlsPanel?
-  private var selection: Binding<DemoModule?>?
+  private var chromePanels: [ImmersiveLayout.Chrome: ImmersiveControlsPanel] = [:]
+  private var session: NativeDemoModel?
+  private var previousApplication: NSRunningApplication?
+  private var presentationScreen: NSScreen?
+  private let workspace: WorkspaceStore
+  private let commands: WorkspaceCommands
+  private let monitor: SystemMonitorStore
+  private let weather: WeatherStore
+  private let preferences: NativePreferencesStore
+  private let audio: NativeAudioStore
+  private let maps: NativeMapStore
+  private let camera: NativeCameraStore
   private var interactiveRegions: [CGRect] = []
   private var globalMouseMonitor: Any?
   private var localMouseMonitor: Any?
   private var mouseTrackingTimer: Timer?
 
-  init(model: HudModel) {
+  init(model: HudModel, workspace: WorkspaceStore, commands: WorkspaceCommands,
+       monitor: SystemMonitorStore, weather: WeatherStore, preferences: NativePreferencesStore, audio: NativeAudioStore,
+       maps: NativeMapStore, camera: NativeCameraStore) {
     self.model = model
+    self.workspace = workspace
+    self.commands = commands
+    self.monitor = monitor
+    self.weather = weather
+    self.preferences = preferences
+    self.audio = audio
+    self.maps = maps
+    self.camera = camera
   }
 
-  func start(selection: Binding<DemoModule?>) {
+  func start(session: NativeDemoModel) {
     guard !model.immersiveActive,
-          let sourceWindow = NSApp.keyWindow,
+          let sourceWindow = session.window ?? NSApp.keyWindow,
           let screen = sourceWindow.screen ?? NSScreen.main else { return }
 
     self.sourceWindow = sourceWindow
-    self.selection = selection
+    self.session = session
+    session.setImmersive(true)
     model.immersiveActive = true
     model.immersiveClickThrough = false
     interactiveRegions = []
@@ -42,27 +85,19 @@ final class ImmersiveOverlayController: NSObject {
     configure(canvas, level: .floating)
     canvas.ignoresMouseEvents = true
     canvas.acceptsMouseMovedEvents = true
-    canvas.contentView = NSHostingView(rootView: ImmersiveCanvasView(
-      selection: selection,
-      onInteractiveRegionsChanged: { [weak self] regions in
-        guard let self, self.interactiveRegions != regions else { return }
-        self.interactiveRegions = regions
-        self.updateMouseInterception()
-      }
-    ))
     canvasPanel = canvas
+    presentationScreen = screen
 
-    let controls = ImmersiveControlsPanel(contentRect: controlsFrame(on: screen), styleMask: [.borderless], backing: .buffered, defer: false)
-    controls.title = "Augma Immersive Controls"
-    configure(controls, level: .statusBar)
-    controls.hasShadow = true
-    controls.contentView = NSHostingView(rootView: ImmersiveControlsView(
-      selection: selection,
-      model: model,
-      toggleInteraction: { [weak self] in self?.toggleInteraction() },
-      exit: { [weak self] in self?.stop() }
+    makeChrome(.voice, screen: screen, content: ImmersiveVoiceCorner(select: { [weak self] in self?.select($0) }))
+    makeChrome(.clock, screen: screen, content: ImmersiveClockView())
+    makeChrome(.system, screen: screen, content: ImmersiveSystemCorner(
+      session: session, preferences: preferences, model: model, notices: session.notifications,
+      select: { [weak self] in self?.select($0) },
+      toggleInteraction: { [weak self] in self?.toggleInteraction() }, exit: { [weak self] in self?.stop() }
     ))
-    controlsPanel = controls
+    makeChrome(.dock, screen: screen, content: ImmersiveDockView(
+      session: session, preferences: preferences, camera: camera, select: { [weak self] in self?.select($0) }
+    ))
 
     NotificationCenter.default.addObserver(self, selector: #selector(screenDidChange), name: NSApplication.didChangeScreenParametersNotification, object: nil)
     let mouseEvents: NSEvent.EventTypeMask = [.mouseMoved, .leftMouseDragged, .rightMouseDragged]
@@ -79,10 +114,64 @@ final class ImmersiveOverlayController: NSObject {
     RunLoop.main.add(timer, forMode: .common)
     mouseTrackingTimer = timer
     sourceWindow.orderOut(nil)
-    canvas.orderFrontRegardless()
-    controls.makeKeyAndOrderFront(nil)
-    refreshShadowAfterEntrance(of: controls, delay: .milliseconds(1100))
+    show()
+  }
+
+  func show() {
+    guard model.immersiveActive, let session, let canvas = canvasPanel else { return }
+    if model.immersiveVisible {
+      NSApp.activate(ignoringOtherApps: true)
+      canvas.makeKeyAndOrderFront(nil)
+      showChrome()
+      return
+    }
+    let frontmost = NSWorkspace.shared.frontmostApplication
+    if frontmost?.processIdentifier != ProcessInfo.processInfo.processIdentifier { previousApplication = frontmost }
+    presentationScreen = NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) } ?? presentationScreen
+    updateScreenFrames()
+    canvas.contentView = NSHostingView(rootView: ImmersiveCanvasView(
+      session: session, preferences: preferences, workspace: workspace, commands: commands,
+      monitor: monitor, weather: weather, audio: audio, maps: maps, camera: camera,
+      onInteractiveRegionsChanged: { [weak self] regions in
+        guard let self, self.interactiveRegions != regions else { return }
+        self.interactiveRegions = regions
+        self.updateMouseInterception()
+      }
+    ))
+    model.immersiveVisible = true
+    mouseTrackingTimer?.fireDate = .now
+    NSApp.unhide(nil)
+    NSApp.activate(ignoringOtherApps: true)
+    canvas.makeKeyAndOrderFront(nil)
+    showChrome()
     updateMouseInterception()
+  }
+
+  func hide(restoreFocus: Bool = true) {
+    guard model.immersiveActive, model.immersiveVisible else { return }
+    model.immersiveVisible = false
+    commands.cancelVoice()
+    session?.assistant.cancel()
+    session?.browser.suspendPlayback()
+    mouseTrackingTimer?.fireDate = .distantFuture
+    canvasPanel?.orderOut(nil)
+    chromePanels.values.forEach { $0.orderOut(nil) }
+    // Unmount renderers and camera consumers while retaining their scene stores.
+    canvasPanel?.contentView = nil
+    interactiveRegions = []
+    if restoreFocus { previousApplication?.activate() }
+  }
+
+  func hideAfterOpeningProject(_ id: UUID) {
+    guard model.immersiveVisible, let session, session.selection == .space,
+          session.space.sceneID == .projects else { return }
+    let selected = session.space.projects.regions.first { $0.id == session.space.selectedProjectID }
+      ?? session.space.projects.regions.first
+    if selected?.id == id { hide(restoreFocus: false) }
+  }
+
+  func toggleVisibility() {
+    model.immersiveVisible ? hide() : show()
   }
 
   func stop() {
@@ -94,14 +183,20 @@ final class ImmersiveOverlayController: NSObject {
     localMouseMonitor = nil
     mouseTrackingTimer?.invalidate()
     mouseTrackingTimer = nil
+    commands.cancelVoice()
+    session?.setImmersive(false)
     canvasPanel?.close()
-    controlsPanel?.close()
+    chromePanels.values.forEach { $0.close() }
     canvasPanel = nil
-    controlsPanel = nil
-    selection = nil
+    chromePanels.removeAll()
+    session = nil
     interactiveRegions = []
+    model.immersiveVisible = false
     model.immersiveActive = false
+    previousApplication = nil
+    presentationScreen = nil
     model.immersiveClickThrough = false
+    sourceWindow?.deminiaturize(nil)
     sourceWindow?.makeKeyAndOrderFront(nil)
     sourceWindow = nil
     NSApp.activate(ignoringOtherApps: true)
@@ -109,21 +204,38 @@ final class ImmersiveOverlayController: NSObject {
 
   func toggleInteraction() {
     guard model.immersiveActive else { return }
+    if !model.immersiveVisible { show() }
     model.immersiveClickThrough.toggle()
     updateMouseInterception()
     if model.immersiveClickThrough {
-      controlsPanel?.makeKeyAndOrderFront(nil)
+      chromePanels[.system]?.makeKeyAndOrderFront(nil)
     } else {
       canvasPanel?.makeKeyAndOrderFront(nil)
-      controlsPanel?.orderFrontRegardless()
+      showChrome()
     }
   }
 
   func select(_ module: DemoModule) {
-    selection?.wrappedValue = module
+    preferences.value.showHud = true
+    session?.selection = module
+    if !model.immersiveVisible { show() }
+    canvasPanel?.makeKeyAndOrderFront(nil)
+    showChrome()
   }
 
-  private func configure(_ panel: NSPanel, level: NSWindow.Level) {
+  @discardableResult
+  func performSpace(_ action: NativeSpaceAction) -> Bool {
+    guard model.immersiveActive, let session else { return false }
+    session.performSpaceAction(action)
+    if !model.immersiveVisible { show() }
+    canvasPanel?.makeKeyAndOrderFront(nil)
+    showChrome()
+    return true
+  }
+
+  private func configure(_ panel: ImmersivePanel, level: NSWindow.Level) {
+    panel.onExit = { [weak self] in self?.stop() }
+    panel.onNextControl = { [weak self] in self?.focusNextControl() }
     panel.isOpaque = false
     panel.backgroundColor = .clear
     panel.hasShadow = false
@@ -133,15 +245,32 @@ final class ImmersiveOverlayController: NSObject {
     panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
   }
 
-  private func controlsFrame(on screen: NSScreen) -> NSRect {
-    let visible = screen.visibleFrame
-    let width: CGFloat = 400
-    let height: CGFloat = 56
-    return NSRect(x: visible.maxX - width - 20, y: visible.maxY - height - 12, width: width, height: height)
+  private func makeChrome<Content: View>(_ kind: ImmersiveLayout.Chrome, screen: NSScreen, content: Content) {
+    let panel = ImmersiveControlsPanel(contentRect: ImmersiveLayout.frame(for: kind, in: screen.visibleFrame),
+                                       styleMask: [.borderless], backing: .buffered, defer: false)
+    panel.title = "Augma Immersive " + String(describing: kind).capitalized
+    configure(panel, level: .statusBar)
+    panel.ignoresMouseEvents = kind == .clock
+    panel.contentView = NSHostingView(rootView: content)
+    chromePanels[kind] = panel
+  }
+
+  private func showChrome() {
+    for panel in chromePanels.values { panel.orderFrontRegardless() }
+  }
+
+  /// Keep the separate floating controls reachable without a mouse.
+  private func focusNextControl() {
+    let panels: [NSPanel] = [canvasPanel, chromePanels[.dock], chromePanels[.voice], chromePanels[.system]].compactMap { $0 }
+    guard !panels.isEmpty else { return }
+    let index = panels.firstIndex { $0 === NSApp.keyWindow } ?? 0
+    let next = panels[(index + 1) % panels.count]
+    next.makeKeyAndOrderFront(nil)
+    next.selectNextKeyView(nil)
   }
 
   private func updateMouseInterception() {
-    guard let canvasPanel else { return }
+    guard model.immersiveVisible, let canvasPanel else { return }
     guard !model.immersiveClickThrough, canvasPanel.frame.contains(NSEvent.mouseLocation) else {
       if !canvasPanel.ignoresMouseEvents { canvasPanel.ignoresMouseEvents = true }
       return
@@ -157,9 +286,17 @@ final class ImmersiveOverlayController: NSObject {
   }
 
   @objc private func screenDidChange(_ notification: Notification) {
-    guard let screen = sourceWindow?.screen ?? NSScreen.main else { return }
+    updateScreenFrames()
+  }
+
+  private func updateScreenFrames() {
+    let screen = presentationScreen.flatMap { selected in NSScreen.screens.first { $0 == selected } }
+      ?? NSScreen.main
+    guard let screen else { return }
     canvasPanel?.setFrame(screen.visibleFrame, display: true)
-    controlsPanel?.setFrame(controlsFrame(on: screen), display: true)
+    for (kind, panel) in chromePanels {
+      panel.setFrame(ImmersiveLayout.frame(for: kind, in: screen.visibleFrame), display: true)
+    }
     updateMouseInterception()
   }
 }
