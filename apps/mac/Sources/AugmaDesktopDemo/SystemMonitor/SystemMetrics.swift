@@ -8,6 +8,8 @@ struct SystemSnapshot: Sendable {
   var sampledAt: Date = .now
   var cpu: CPUUsage? = nil
   var memory: MemoryUsage? = nil
+  var applicationMemory: ApplicationMemorySnapshot? = nil
+  var sensors: HardwareSensorSnapshot? = nil
   var disks: [DiskUsage] = []
   var network: NetworkUsage? = nil
   var battery: BatteryStatus? = nil
@@ -165,6 +167,9 @@ actor SystemMetricsReader {
   private var previousNetwork: SystemNetworkCounters?
   private var previousInstant: Double?
   private var cachedDisks: [DiskUsage] = []
+  private var cachedSensors: HardwareSensorSnapshot?
+  private var lastSensorInstant: Double?
+  private var generation = 0
 
   func resetBaseline() {
     previousCPU = nil
@@ -172,7 +177,18 @@ actor SystemMetricsReader {
     previousInstant = nil
   }
 
-  func sample(includeDisks: Bool = true) -> SystemSnapshot {
+  func suspend() {
+    generation += 1
+    resetBaseline()
+    cachedDisks = []
+    cachedSensors = nil
+    lastSensorInstant = nil
+  }
+
+  func sample(options: SystemSamplingOptions) async -> SystemSnapshot {
+    let currentGeneration = generation
+    let applicationMemory = options.includeApplications ? await ApplicationMemoryReader.sample() : nil
+    guard !Task.isCancelled, currentGeneration == generation else { return SystemSnapshot() }
     let instant = Self.monotonicSeconds()
     let interval = previousInstant.map { instant - $0 }
     let host = mach_host_self()
@@ -185,9 +201,19 @@ actor SystemMetricsReader {
     previousCPU = cpuCounters
     previousNetwork = networkCounters
     previousInstant = instant
-    if includeDisks { cachedDisks = Self.readDisks() }
+    if options.includeDisks { cachedDisks = Self.readDisks() }
+    if options.includeSensors {
+      if lastSensorInstant.map({ instant - $0 >= 5 }) ?? true {
+        cachedSensors = HardwareSensorReader.read()
+        lastSensorInstant = instant
+      }
+    } else {
+      cachedSensors = nil
+      lastSensorInstant = nil
+    }
     return SystemSnapshot(
-      sampledAt: .now, cpu: cpu, memory: Self.readMemory(host: host), disks: cachedDisks,
+      sampledAt: .now, cpu: cpu, memory: Self.readMemory(host: host), applicationMemory: applicationMemory,
+      sensors: cachedSensors, disks: cachedDisks,
       network: network, battery: Self.readBattery()
     )
   }

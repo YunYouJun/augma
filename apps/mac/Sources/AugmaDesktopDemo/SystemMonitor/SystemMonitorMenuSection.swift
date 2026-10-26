@@ -9,11 +9,25 @@ struct SystemMonitorMenuSection: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
       HStack {
-        Label("系统监控", systemImage: "gauge.with.dots.needle.50percent").font(.headline)
+        Label {
+          Text("系统监控")
+        } icon: {
+          Image(systemName: "gauge.with.dots.needle.50percent").foregroundStyle(Color.augmaCyan)
+        }
+        .font(.headline)
         Spacer()
         Button("查看详情", action: openMonitor)
       }
-      if store.menuBarSummaryEnabled { SystemMonitorSummary(store: store) }
+      if !store.enabled {
+        Button("开启系统监控") { store.enabled = true }.nativeFloatingButton()
+      } else if store.menuBarSummaryEnabled {
+        SystemMonitorSummary(store: store)
+        if store.applicationMemoryEnabled {
+          ApplicationMemoryMenuSummary(snapshot: store.snapshot.applicationMemory, sampling: store.isSampling)
+        }
+        if store.sensorsEnabled { HardwareSensorMetrics(snapshot: store.snapshot.sensors, compact: true).font(.caption) }
+        if store.networkHistoryEnabled { NetworkHistoryView(history: store.networkHistory, compact: true) }
+      }
       Toggle("固定系统监控到 HUD", isOn: $store.hudPinned)
         .toggleStyle(.checkbox)
     }
@@ -29,7 +43,7 @@ struct SystemMonitorMenuSection: View {
   }
 
   private func updateObservation() {
-    if visible && store.menuBarSummaryEnabled { store.startObserving(observerID) }
+    if visible && store.menuBarSummaryEnabled { store.startObserving(observerID, demand: .expanded) }
     else { store.stopObserving(observerID) }
   }
 }

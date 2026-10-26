@@ -5,11 +5,12 @@ struct HudView: View {
   @ObservedObject var monitor: SystemMonitorStore
   let openMonitor: () -> Void
   let hideWindow: () -> Void
+  @State private var monitorVisible = false
 
   var body: some View {
     VStack(alignment: .leading, spacing: 14) {
       HStack(alignment: .center, spacing: 12) {
-        AugmaRing(size: 34, spinning: model.windowVisible)
+        AugmaRing(size: 34, spinning: model.windowVisible && model.rendersDemoScene)
         VStack(alignment: .leading, spacing: 2) {
           Text("AUGMA")
             .font(.system(size: 11, weight: .semibold, design: .monospaced))
@@ -21,7 +22,7 @@ struct HudView: View {
         Spacer()
         HStack(spacing: 2) {
           StatusPing(color: monitor.hudPinned || model.rendersDemoScene ? .augmaCyan : .secondary,
-                     active: monitor.hudPinned || model.rendersDemoScene)
+                     active: model.windowVisible && model.rendersDemoScene)
           Text(monitor.hudPinned ? "SYSTEM" : model.rendersDemoScene ? "DEMO SPACE" : "STANDBY")
             .font(.system(size: 10, weight: .medium, design: .monospaced))
             .foregroundStyle(.secondary)
@@ -38,7 +39,7 @@ struct HudView: View {
             Color.primary.opacity(0.04)
             HStack(spacing: 18) {
               ZStack {
-                AugmaRing(size: 96, spinning: model.windowVisible)
+                AugmaRing(size: 96, spinning: false)
                 Image(systemName: "viewfinder")
                   .font(.system(size: 22, weight: .ultraLight))
               }
@@ -93,13 +94,20 @@ struct HudView: View {
     // it enough to keep monitoring values and actions legible.
     .augmaGlass()
     .augmaMaterialize(active: model.windowVisible)
+    .background {
+      SystemMonitorVisibilityView { visible in
+        monitorVisible = visible
+        updateMonitoring()
+      }
+      .frame(width: 0, height: 0)
+    }
     .onChange(of: model.windowVisible, initial: true) { _, _ in updateMonitoring() }
     .onChange(of: monitor.hudPinned) { _, _ in updateMonitoring() }
     .onDisappear { monitor.stopObserving("hud") }
   }
 
   private func updateMonitoring() {
-    if model.windowVisible && monitor.hudPinned { monitor.startObserving("hud") }
+    if monitorVisible && model.windowVisible && monitor.hudPinned { monitor.startObserving("hud") }
     else { monitor.stopObserving("hud") }
   }
 }

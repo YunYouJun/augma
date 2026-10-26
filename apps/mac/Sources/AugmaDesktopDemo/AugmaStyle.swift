@@ -9,6 +9,11 @@ extension Color {
   static let augmaAccent = Color(light: (183, 94, 8), dark: (241, 167, 76))
   /// Continuous controls and healthy state (`--agm-cyan`).
   static let augmaCyan = Color(light: (37, 140, 164), dark: (103, 200, 218))
+  /// Status text stays readable on light glass; system green/red are too bright at caption sizes.
+  static let augmaHealthy = Color(light: (28, 117, 65), dark: (102, 211, 137))
+  static let augmaCritical = Color(light: (189, 41, 41), dark: (255, 128, 118))
+  /// Traffic direction is categorical; keep upload blue so orange retains its warning meaning.
+  static let augmaUpload = Color(light: (30, 100, 192), dark: (112, 175, 255))
 
   private init(light: (Double, Double, Double), dark: (Double, Double, Double)) {
     self.init(nsColor: NSColor(name: nil) { appearance in

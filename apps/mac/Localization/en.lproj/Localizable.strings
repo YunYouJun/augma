@@ -773,6 +773,41 @@
 "未找到 Craft Hub。请安装支持卸载指引的版本后重试。" = "Craft Hub was not found. Install a version with uninstall guidance and try again.";
 "此应用的标识无法用于管理跳转。" = "This application identifier cannot be used for the management shortcut.";
 "无法打开 Craft Hub，请确认已安装支持卸载指引的版本。" = "Could not open Craft Hub. Check that the installed version supports uninstall guidance.";
+/* Application memory ranking */
+"应用内存排行" = "Application Memory";
+"按应用归并辅助进程" = "Helper processes grouped by app";
+"按内存占用降序" = "Sorted by memory usage, highest first";
+"暂未发现可统计的应用" = "No measurable apps found";
+"%lld 个进程" = "%lld processes";
+"部分进程不可读取" = "Some processes could not be read";
+"相对最高应用的内存占用" = "Memory usage relative to the largest app";
+"内存占用前三" = "Top 3 by memory";
+"汇总当前用户应用及可确认归属的辅助进程，条形以首位应用为基准。占用包含压缩内存，与系统已用内存的统计口径不同。无法确认归属的共享系统服务不计入；部分进程不可读取时，占用可能不完整。" = "Groups the current user’s apps with identifiable helper processes. Bars are relative to the largest app. Usage includes compressed memory and differs from system memory used. Shared system services with unknown ownership are excluded; unreadable processes may make totals incomplete.";
+"收起排行" = "Collapse ranking";
+"查看全部 %lld 个应用" = "Show all %lld apps";
+
+/* Optional low-overhead monitoring */
+"启用系统监控" = "Enable system monitoring";
+"开启系统监控" = "Start system monitoring";
+"系统监控已暂停" = "System monitoring is paused";
+"温度与风扇" = "Temperature and fans";
+"网速历史曲线" = "Network speed history";
+"采集选项" = "Monitoring options";
+"仅手动刷新" = "Manual refresh only";
+"10 秒" = "10 seconds";
+"CPU 温度" = "CPU temperature";
+"风扇转速" = "Fan speed";
+"无风扇" = "No fans";
+"风扇 %lld" = "Fan %lld";
+"来自 %lld 个有效 CPU 测点的平均值" = "Average of %lld valid CPU sensors";
+"传感器更新" = "Sensors updated";
+"当前机型暂无法读取传感器" = "Sensors are currently unavailable on this Mac";
+"等待更多网速采样…" = "Waiting for more network samples…";
+"最近两分钟网速曲线" = "Network speed over the last two minutes";
+"最近两分钟" = "Last two minutes";
+"传感器最快每 5 秒读取一次，读取后立即关闭连接。机型或系统限制可能导致部分读数不可用。" = "Sensors are read at most once every 5 seconds; the connection closes immediately afterward. Some readings may be unavailable due to hardware or system restrictions.";
+"温度、风扇与曲线默认关闭。仅打开监控面板或菜单栏摘要时采集这些可选数据；只有 HUD 可见时不扫描应用进程。全部监控界面关闭后停止采样并释放数据。" = "Temperature, fans and history are off by default. Optional data is collected only while a monitoring panel or menu summary is visible. The HUD alone does not scan app processes. Closing all monitoring views stops sampling and releases data.";
+"开启后仅在监控界面可见时工作；也可选择仅手动刷新。" = "When enabled, monitoring runs only while its views are visible. You can also choose manual refresh only.";
 
 /* Weather locations and saved cities. */
 "使用当前位置查看天气，或搜索并添加多个城市。" = "Use your current location for weather, or search for and add multiple cities.";
@@ -789,8 +824,19 @@
 "暂时无法获取当前位置，请重试或手动添加城市。" = "Your current location is unavailable. Try again or add a city manually.";
 "获取位置超时，请重试或手动添加城市。" = "The location request timed out. Try again or add a city manually.";
 
+/* Capacity rings and semantic status */
+"当前占用" = "Current usage";
+"需关注" = "Attention";
+"已使用，共 %@" = "Used, of %@ total";
+"电量偏低" = "Low battery";
+"电量不足" = "Very low battery";
+"空间状态" = "Space status";
+
 /* Compact weather overview. */
 "更新于 %@" = "Updated %@";
 "数据已过期" = "Out of Date";
 "管理城市：%@" = "Manage city: %@";
 "查看天气" = "View Weather";
+
+/* Adaptive monitoring dashboard */
+"统计说明" = "How totals are calculated";

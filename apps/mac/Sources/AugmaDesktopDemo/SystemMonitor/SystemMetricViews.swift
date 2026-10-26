@@ -27,9 +27,9 @@ enum SystemMetricFormat {
 
   static func pressureColor(_ pressure: MemoryPressure) -> Color {
     switch pressure {
-    case .normal: .green
-    case .warning: .orange
-    case .critical: .red
+    case .normal: .augmaHealthy
+    case .warning: .augmaAccent
+    case .critical: .augmaCritical
     case .unknown: .secondary
     }
   }
@@ -60,114 +60,23 @@ struct SystemMetricUnavailable: View {
   }
 }
 
-struct SystemCPUMetrics: View {
-  let usage: CPUUsage?
-  let sampling: Bool
-
-  var body: some View {
-    if let usage {
-      LabeledContent("总占用", value: SystemMetricFormat.percent(usage.total))
-        .monospacedDigit()
-      ProgressView(value: min(1, max(0, usage.total)))
-        .accessibilityLabel("CPU 总占用")
-      LabeledContent("用户", value: SystemMetricFormat.percent(usage.user))
-        .monospacedDigit()
-      LabeledContent("系统", value: SystemMetricFormat.percent(usage.system))
-        .monospacedDigit()
-    } else {
-      SystemMetricUnavailable(sampling: sampling)
-    }
-  }
-}
-
-struct SystemMemoryMetrics: View {
-  let usage: MemoryUsage?
-
-  var body: some View {
-    if let usage {
-      LabeledContent("已使用", value: SystemMetricFormat.bytes(usage.used))
-      ProgressView(value: Double(usage.used), total: Double(max(1, usage.total)))
-        .tint(SystemMetricFormat.pressureColor(usage.pressure))
-        .accessibilityLabel("内存占用")
-      LabeledContent("总内存", value: SystemMetricFormat.bytes(usage.total))
-      LabeledContent("压缩内存", value: SystemMetricFormat.bytes(usage.compressed))
-      LabeledContent("交换空间", value: SystemMetricFormat.bytes(usage.swapUsed))
-      LabeledContent("内存压力") {
-        Text(SystemMetricFormat.pressure(usage.pressure))
-          .foregroundStyle(SystemMetricFormat.pressureColor(usage.pressure))
-      }
-    } else {
-      SystemMetricUnavailable()
-    }
-  }
-}
-
-struct SystemDiskMetrics: View {
-  let disk: DiskUsage
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Label(disk.name, systemImage: "internaldrive")
-        .font(.headline)
-        .lineLimit(1)
-        .help(disk.id)
-      ProgressView(value: Double(disk.used), total: Double(max(1, disk.total)))
-        .accessibilityLabel("磁盘占用")
-      LabeledContent("已使用", value: SystemMetricFormat.bytes(disk.used, style: .file))
-      LabeledContent("可用空间", value: SystemMetricFormat.bytes(disk.available, style: .file))
-      LabeledContent("总容量", value: SystemMetricFormat.bytes(disk.total, style: .file))
-    }
-    .padding(.vertical, 4)
-  }
-}
-
-struct SystemNetworkMetrics: View {
+struct SystemNetworkRateSummary: View {
   let usage: NetworkUsage?
-  let sampling: Bool
 
   var body: some View {
-    if let usage {
-      LabeledContent {
-        Text(SystemMetricFormat.rate(usage.receivedPerSecond)).monospacedDigit()
-      } label: {
-        Label("下载", systemImage: "arrow.down")
+    HStack(spacing: 16) {
+      Label {
+        Text(usage.map { SystemMetricFormat.rate($0.receivedPerSecond) } ?? "—").foregroundStyle(.secondary)
+      } icon: {
+        Image(systemName: "arrow.down").foregroundStyle(Color.augmaCyan).accessibilityLabel("下载")
       }
-      LabeledContent {
-        Text(SystemMetricFormat.rate(usage.sentPerSecond)).monospacedDigit()
-      } label: {
-        Label("上传", systemImage: "arrow.up")
+      Label {
+        Text(usage.map { SystemMetricFormat.rate($0.sentPerSecond) } ?? "—").foregroundStyle(.secondary)
+      } icon: {
+        Image(systemName: "arrow.up").foregroundStyle(Color.augmaUpload).accessibilityLabel("上传")
       }
-      LabeledContent("网络接口", value: usage.interface)
-    } else {
-      SystemMetricUnavailable(sampling: sampling)
+      Spacer(minLength: 0)
     }
-  }
-}
-
-struct SystemBatteryMetrics: View {
-  let battery: BatteryStatus?
-
-  var body: some View {
-    if let battery {
-      LabeledContent {
-        Text(SystemMetricFormat.percent(battery.level)).monospacedDigit()
-      } label: {
-        Label("电量", systemImage: SystemMetricFormat.batterySymbol(battery))
-      }
-      ProgressView(value: min(1, max(0, battery.level)))
-        .tint(battery.level < 0.2 && !battery.isPluggedIn ? .orange : .accentColor)
-        .accessibilityLabel("电池电量")
-      LabeledContent("电源状态", value: SystemMetricFormat.batteryState(battery))
-      if let minutes = battery.minutesRemaining, minutes > 0 {
-        LabeledContent(battery.isCharging ? "预计充满时间" : "预计剩余时间") {
-          Text(String(format: String(localized: "%lld 分钟"), minutes))
-        }
-      }
-    } else {
-      Label("未检测到电池", systemImage: "powerplug")
-        .foregroundStyle(.secondary)
-      Text("台式 Mac 可使用其他系统监控功能。")
-        .font(.caption).foregroundStyle(.secondary)
-    }
+    .font(.caption).monospacedDigit()
   }
 }

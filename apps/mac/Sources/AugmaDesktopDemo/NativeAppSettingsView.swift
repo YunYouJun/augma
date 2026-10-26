@@ -16,11 +16,8 @@ struct NativeAppSettingsView: View {
         .tabItem { Label("场景", systemImage: "viewfinder") }
       Form {
         Section("系统监控") {
-          Picker("刷新间隔", selection: $monitor.sampleInterval) {
-            Text("1 秒").tag(1.0)
-            Text("2 秒").tag(2.0)
-            Text("5 秒").tag(5.0)
-          }
+          Toggle("启用系统监控", isOn: $monitor.enabled)
+          SystemMonitorFeatureControls(store: monitor)
           Toggle("菜单栏显示监控摘要", isOn: $monitor.menuBarSummaryEnabled)
           Toggle("固定系统监控到 HUD", isOn: $monitor.hudPinned)
           Text("仅在监控面板、菜单栏摘要或 HUD 可见时采样；磁盘容量每 30 秒刷新，休眠时暂停。")

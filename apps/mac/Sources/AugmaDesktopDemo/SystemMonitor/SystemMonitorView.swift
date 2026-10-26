@@ -6,58 +6,129 @@ struct SystemMonitorView: View {
   @State private var refreshing = false
 
   var body: some View {
-    Form {
-      Section {
-        Toggle("在 HUD 固定显示系统指标", isOn: $store.hudPinned)
-        HStack {
-          LabeledContent("上次更新") {
-            Text(store.snapshot.sampledAt, format: .dateTime.hour().minute().second())
-              .monospacedDigit().foregroundStyle(.secondary)
-          }
-          Button("刷新", systemImage: "arrow.clockwise") {
-            Task {
-              refreshing = true
-              await store.refresh()
-              refreshing = false
+    GeometryReader { geometry in
+      let width = min(SystemMonitorDashboardLayout.maximumWidth, max(0, geometry.size.width - 40))
+      ScrollView {
+        LazyVStack(alignment: .leading, spacing: 16) {
+          controls
+          if store.enabled {
+            SystemMonitorDashboard(snapshot: store.snapshot,
+                                   columns: SystemMonitorDashboardLayout.columnCount(for: width), sampling: store.isSampling)
+            if store.sensorsEnabled {
+              GroupBox {
+                VStack(alignment: .leading, spacing: 10) {
+                  HardwareSensorMetrics(snapshot: store.snapshot.sensors)
+                  Text("传感器最快每 5 秒读取一次，读取后立即关闭连接。机型或系统限制可能导致部分读数不可用。")
+                    .font(.caption).foregroundStyle(.secondary)
+                }
+                .padding(8).frame(maxWidth: .infinity, alignment: .leading)
+              } label: { Label("温度与风扇", systemImage: "thermometer.medium").font(.headline) }
+            }
+            if store.applicationMemoryEnabled { ranking }
+            GroupBox {
+              VStack(alignment: .leading, spacing: 12) {
+                SystemMonitorNetworkOverview(usage: store.snapshot.network)
+                if store.networkHistoryEnabled { NetworkHistoryView(history: store.networkHistory) }
+                Text("网速表示当前网络接口的实际流量，不是网络带宽测速。切换接口或从睡眠中恢复后会重新采样。")
+                  .font(.caption).foregroundStyle(.secondary)
+              }
+              .padding(8).frame(maxWidth: .infinity, alignment: .leading)
+            } label: { Label("网络", systemImage: "network").font(.headline) }
+          } else {
+            GroupBox {
+              VStack(alignment: .leading, spacing: 8) {
+                Label("系统监控已暂停", systemImage: "pause.circle")
+                Text("开启后仅在监控界面可见时工作；也可选择仅手动刷新。")
+                  .foregroundStyle(.secondary)
+              }
+              .frame(maxWidth: .infinity, alignment: .leading).padding(12)
             }
           }
-          .disabled(refreshing || store.isSampling)
         }
-      }
-
-      Section("CPU") {
-        SystemCPUMetrics(usage: store.snapshot.cpu, sampling: store.isSampling)
-      }
-      Section("内存") {
-        SystemMemoryMetrics(usage: store.snapshot.memory)
-      }
-      Section("磁盘") {
-        if store.snapshot.disks.isEmpty {
-          SystemMetricUnavailable()
-        } else {
-          ForEach(store.snapshot.disks) { disk in SystemDiskMetrics(disk: disk) }
-        }
-      }
-      Section {
-        SystemNetworkMetrics(usage: store.snapshot.network, sampling: store.isSampling)
-      } header: {
-        Text("网络")
-      } footer: {
-        Text("网速表示当前网络接口的实际流量，不是网络带宽测速。切换接口或从睡眠中恢复后会重新采样。")
-      }
-      Section("电池") {
-        SystemBatteryMetrics(battery: store.snapshot.battery)
+        .frame(width: width)
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .top)
       }
     }
-    .formStyle(.grouped)
     .background {
       SystemMonitorVisibilityView { visible in
-        if visible { store.startObserving(observerID) }
+        if visible { store.startObserving(observerID, demand: .expanded) }
         else { store.stopObserving(observerID) }
       }
       .frame(width: 0, height: 0)
     }
     .onDisappear { store.stopObserving(observerID) }
+  }
+
+  private var controls: some View {
+    GroupBox {
+      VStack(alignment: .leading, spacing: 12) {
+        ViewThatFits(in: .horizontal) {
+          HStack(spacing: 20) {
+            enabledToggle.fixedSize()
+            pinToggle.fixedSize()
+            Spacer(minLength: 12)
+            updatedAt.fixedSize()
+            refreshButton
+          }
+          VStack(alignment: .leading, spacing: 10) {
+            enabledToggle
+            pinToggle
+            HStack { updatedAt; Spacer(minLength: 8); refreshButton }
+          }
+        }
+        DisclosureGroup("采集选项") {
+          SystemMonitorFeatureControls(store: store).padding(.top, 8)
+        }
+      }
+      .padding(8)
+    }
+  }
+
+  private var enabledToggle: some View {
+    Toggle("启用系统监控", isOn: $store.enabled).toggleStyle(.switch).controlSize(.small)
+  }
+
+  private var pinToggle: some View {
+    Toggle("在 HUD 固定显示系统指标", isOn: $store.hudPinned).toggleStyle(.switch).controlSize(.small)
+  }
+
+  private var updatedAt: some View {
+    HStack(spacing: 6) {
+      Text("上次更新")
+      if store.enabled && store.snapshot.memory != nil {
+        Text(store.snapshot.sampledAt, format: .dateTime.hour().minute().second()).monospacedDigit()
+      } else { Text("—") }
+    }
+    .font(.caption).foregroundStyle(.secondary)
+  }
+
+  private var refreshButton: some View {
+    Button("刷新", systemImage: "arrow.clockwise") {
+      Task {
+        refreshing = true
+        await store.refresh()
+        refreshing = false
+      }
+    }
+    .controlSize(.small)
+    .nativeFloatingButton()
+    .disabled(!store.enabled || refreshing || store.isSampling)
+  }
+
+  private var ranking: some View {
+    GroupBox {
+      LazyVStack(alignment: .leading, spacing: 8) {
+        ApplicationMemoryRanking(snapshot: store.snapshot.applicationMemory, sampling: store.isSampling)
+        DisclosureGroup("统计说明") {
+          Text("汇总当前用户应用及可确认归属的辅助进程，条形以首位应用为基准。占用包含压缩内存，与系统已用内存的统计口径不同。无法确认归属的共享系统服务不计入；部分进程不可读取时，占用可能不完整。")
+            .font(.caption).foregroundStyle(.secondary)
+        }
+      }
+      .padding(8)
+    } label: {
+      Label("应用内存排行", systemImage: "chart.bar.xaxis").font(.headline)
+    }
   }
 }
 
@@ -66,39 +137,8 @@ struct SystemMonitorSummary: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      HStack(spacing: 20) {
-        summary("CPU", symbol: "cpu", value: store.snapshot.cpu.map { SystemMetricFormat.percent($0.total) })
-        Spacer(minLength: 0)
-        summary("内存", symbol: "memorychip", value: store.snapshot.memory.map { SystemMetricFormat.bytes($0.used) })
-        if let battery = store.snapshot.battery {
-          Spacer(minLength: 0)
-          summary("电池", symbol: SystemMetricFormat.batterySymbol(battery), value: SystemMetricFormat.percent(battery.level))
-        }
-      }
-      HStack(spacing: 16) {
-        Label {
-          Text(store.snapshot.network.map { SystemMetricFormat.rate($0.receivedPerSecond) } ?? "—")
-        } icon: {
-          Image(systemName: "arrow.down").accessibilityLabel("下载")
-        }
-        Label {
-          Text(store.snapshot.network.map { SystemMetricFormat.rate($0.sentPerSecond) } ?? "—")
-        } icon: {
-          Image(systemName: "arrow.up").accessibilityLabel("上传")
-        }
-        Spacer(minLength: 0)
-        if let disk = store.snapshot.disks.first {
-          Text(String(format: String(localized: "可用 %@"), SystemMetricFormat.bytes(disk.available, style: .file)))
-        }
-      }
-      .font(.caption).monospacedDigit().foregroundStyle(.secondary)
-    }
-  }
-
-  private func summary(_ title: LocalizedStringKey, symbol: String, value: String?) -> some View {
-    VStack(alignment: .leading, spacing: 3) {
-      Label(title, systemImage: symbol).font(.caption).foregroundStyle(.secondary)
-      Text(value ?? "—").font(.system(.body, design: .rounded)).monospacedDigit()
+      SystemCapacitySummary(snapshot: store.snapshot)
+      SystemNetworkRateSummary(usage: store.snapshot.network)
     }
   }
 }
@@ -107,6 +147,11 @@ struct SystemMonitorHUD: View {
   @ObservedObject var store: SystemMonitorStore
 
   var body: some View {
+    if store.enabled { metrics }
+    else { Label("系统监控已暂停", systemImage: "pause.circle").foregroundStyle(.secondary) }
+  }
+
+  private var metrics: some View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
         Label("系统监控", systemImage: "gauge.with.dots.needle.50percent")
@@ -114,46 +159,19 @@ struct SystemMonitorHUD: View {
         Spacer()
         if let battery = store.snapshot.battery {
           Label(SystemMetricFormat.percent(battery.level), systemImage: SystemMetricFormat.batterySymbol(battery))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(SystemCapacityStyle.batteryColor(battery))
         }
       }
-      HStack(alignment: .firstTextBaseline, spacing: 24) {
-        metric("CPU", value: store.snapshot.cpu.map { SystemMetricFormat.percent($0.total) })
-        Spacer(minLength: 0)
-        metric("内存", value: store.snapshot.memory.map { SystemMetricFormat.bytes($0.used) })
-        Spacer(minLength: 0)
-        metric("磁盘可用", value: store.snapshot.disks.first.map { SystemMetricFormat.bytes($0.available, style: .file) })
-      }
+      SystemCapacitySummary(snapshot: store.snapshot, compact: true, includesBattery: false)
       Divider()
-      HStack(spacing: 20) {
-        Label {
-          Text(store.snapshot.network.map { SystemMetricFormat.rate($0.receivedPerSecond) } ?? "—")
-        } icon: {
-          Image(systemName: "arrow.down").accessibilityLabel("下载")
-        }
-        Label {
-          Text(store.snapshot.network.map { SystemMetricFormat.rate($0.sentPerSecond) } ?? "—")
-        } icon: {
-          Image(systemName: "arrow.up").accessibilityLabel("上传")
-        }
-        Spacer(minLength: 0)
-      }
-      .font(.system(.callout, design: .monospaced)).foregroundStyle(.secondary)
+      SystemNetworkRateSummary(usage: store.snapshot.network)
       if store.snapshot.cpu == nil || store.snapshot.network == nil {
         SystemMetricUnavailable(sampling: store.isSampling).font(.caption)
       }
     }
-    .padding(12)
+    .padding(.horizontal, 12)
+    .padding(.vertical, 6)
     .monospacedDigit()
     .accessibilityElement(children: .contain)
-  }
-
-  private func metric(_ title: LocalizedStringKey, value: String?) -> some View {
-    VStack(alignment: .leading, spacing: 5) {
-      Text(title).font(.caption).foregroundStyle(.secondary)
-      Text(value ?? "—")
-        .font(.system(size: 23, weight: .light, design: .rounded))
-        .lineLimit(1).minimumScaleFactor(0.7)
-    }
   }
 }
