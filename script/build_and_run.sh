@@ -111,6 +111,8 @@ cat >"$APP_CONTENTS/Info.plist" <<PLIST
   <dict><key>NSAllowsArbitraryLoadsInWebContent</key><true/></dict>
   <key>NSCameraUsageDescription</key><string>用于在你主动开启摄像头时预览画面和拍照，照片仅在你选择保存后写入本机。</string>
   <key>NSCameraUseContinuityCameraDeviceType</key><true/>
+  <key>NSLocationUsageDescription</key><string>在你点击“使用当前位置”时获取大致位置，以显示当地天气。</string>
+  <key>NSLocationWhenInUseUsageDescription</key><string>在你点击“使用当前位置”时获取大致位置，以显示当地天气。</string>
   <key>NSMicrophoneUsageDescription</key><string>用于识别你主动说出的 Augma 语音指令。</string>
   <key>NSSpeechRecognitionUsageDescription</key><string>用于将你主动说出的指令转换为文字并操作演示界面。</string>
   <key>NSAppleEventsUsageDescription</key><string>用于将你主动发送的快速记录保存到 macOS 备忘录。</string>

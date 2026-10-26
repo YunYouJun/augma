@@ -773,3 +773,24 @@
 "未找到 Craft Hub。请安装支持卸载指引的版本后重试。" = "Craft Hub was not found. Install a version with uninstall guidance and try again.";
 "此应用的标识无法用于管理跳转。" = "This application identifier cannot be used for the management shortcut.";
 "无法打开 Craft Hub，请确认已安装支持卸载指引的版本。" = "Could not open Craft Hub. Check that the installed version supports uninstall guidance.";
+
+/* Weather locations and saved cities. */
+"使用当前位置查看天气，或搜索并添加多个城市。" = "Use your current location for weather, or search for and add multiple cities.";
+"我的城市" = "My Cities";
+"添加城市" = "Add City";
+"删除城市" = "Remove City";
+"删除城市：%@" = "Remove city: %@";
+"使用当前位置" = "Use Current Location";
+"正在定位…" = "Locating…";
+"点击“使用当前位置”时才申请定位权限，仅获取一次大致位置。城市和天气缓存保存在本机。" = "Location permission is requested only when you click “Use Current Location”, for a single approximate location. Cities and weather are cached on this Mac.";
+"向 Open-Meteo 发送搜索词和城市坐标；定位时由 Apple 解析城市名称。免费天气接口仅限非商业使用。" = "Search terms and city coordinates are sent to Open-Meteo. Apple resolves the city name when using your location. The free weather API is for non-commercial use only.";
+"定位权限未开启。请在系统设置的“隐私与安全性 → 定位服务”中允许 Augma，或手动添加城市。" = "Location access is not allowed. Allow Augma in System Settings → Privacy & Security → Location Services, or add a city manually.";
+"系统定位服务已关闭。请开启定位服务，或手动添加城市。" = "Location Services are turned off. Enable them or add a city manually.";
+"暂时无法获取当前位置，请重试或手动添加城市。" = "Your current location is unavailable. Try again or add a city manually.";
+"获取位置超时，请重试或手动添加城市。" = "The location request timed out. Try again or add a city manually.";
+
+/* Compact weather overview. */
+"更新于 %@" = "Updated %@";
+"数据已过期" = "Out of Date";
+"管理城市：%@" = "Manage city: %@";
+"查看天气" = "View Weather";

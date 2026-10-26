@@ -2,157 +2,149 @@ import SwiftUI
 
 struct NativeLiveWeatherView: View {
   @ObservedObject var store: WeatherStore
+  @State private var showingCitySearch = false
   @State private var query = ""
-  @State private var searchTask: Task<Void, Never>?
   @State private var actionTask: Task<Void, Never>?
 
   var body: some View {
-    Form {
-      if let city = store.selectedCity {
-        Section {
-          HStack {
-            VStack(alignment: .leading, spacing: 4) {
-              Text(city.name).font(.title2.bold())
-              if !city.regionDescription.isEmpty { Text(city.regionDescription).foregroundStyle(.secondary) }
-            }
-            Spacer()
-            if store.isLoading { ProgressView().controlSize(.small) }
-            Button("刷新天气", systemImage: "arrow.clockwise") {
-              actionTask?.cancel()
-              actionTask = Task { await store.refresh() }
-            }
-            .disabled(store.isLoading)
+    ScrollView {
+      VStack(alignment: .leading, spacing: 18) {
+        if let city = store.selectedCity {
+          WeatherOverviewCard(city: city, snapshot: store.snapshot, isLoading: store.isLoading,
+                              errorMessage: store.errorMessage, notice: store.notice) {
+            perform { await store.refresh() }
           }
-          if let snapshot = store.snapshot {
-            WeatherCurrentReadings(snapshot: snapshot)
-            TimelineView(.periodic(from: .now, by: 60)) { context in
-              VStack(alignment: .leading, spacing: 4) {
-                if snapshot.isStale(at: context.date) {
-                  Label("天气数据已过期，显示上次读数", systemImage: "clock.badge.exclamationmark")
-                    .foregroundStyle(.secondary)
-                }
-                Text("天气时间：\(snapshot.observedAt.formatted(dateFormat(snapshot)))")
-                Text("获取时间：\(snapshot.fetchedAt.formatted(date: .abbreviated, time: .shortened))")
-              }
-              .font(.caption)
-              .foregroundStyle(.secondary)
-            }
-          } else if !store.isLoading {
-            ContentUnavailableView("尚无天气数据", systemImage: "cloud", description: Text("请刷新天气以获取所选城市的最新数据。"))
-          }
-          if let error = store.errorMessage {
-            Label(error, systemImage: "exclamationmark.triangle")
-              .foregroundStyle(.secondary)
-              .textSelection(.enabled)
-          }
-          if let notice = store.notice { Text(notice).font(.caption).foregroundStyle(.secondary) }
-        } header: { Text("当前天气") }
-      } else {
-        Section {
-          ContentUnavailableView("选择天气城市", systemImage: "cloud.sun", description: Text("搜索并选择城市后显示天气。不会自动获取设备位置。"))
+        } else {
+          emptyState
         }
+        if let message = store.locationErrorMessage {
+          Label(message, systemImage: "location.slash")
+            .font(.callout).foregroundStyle(.secondary).textSelection(.enabled)
+        }
+        if !store.savedCities.isEmpty { cities }
+        WeatherAttributionView()
       }
-
-      Section {
-        HStack {
-          TextField("城市名称，如上海或 Tokyo", text: $query)
-            .onSubmit(search)
-            .accessibilityLabel("搜索城市")
-          Button("搜索", systemImage: "magnifyingglass", action: search)
-            .disabled(query.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 || store.isSearching)
-          if store.isSearching { ProgressView().controlSize(.small) }
-        }
-        if let message = store.searchErrorMessage { Text(message).foregroundStyle(.secondary) }
-        ForEach(store.searchResults) { city in cityButton(city) }
-        if store.hasSearched && store.searchResults.isEmpty { Text("没有找到城市，请尝试其他名称。").foregroundStyle(.secondary) }
-      } header: { Text("切换城市") }
-
-      if !store.recentCities.isEmpty {
-        Section {
-          ForEach(store.recentCities) { city in cityButton(city) }
-        } header: { Text("最近选择") }
-      }
-
-      Section {
-        HStack {
-          Link("Weather data by Open-Meteo", destination: URL(string: "https://open-meteo.com/")!)
-          Text("·").foregroundStyle(.secondary)
-          Link("CC BY 4.0", destination: URL(string: "https://creativecommons.org/licenses/by/4.0/")!)
-        }
-        .font(.caption)
-        Link("城市数据：GeoNames", destination: URL(string: "https://www.geonames.org/")!)
-          .font(.caption)
-        Text("天气来自气象模型的当前估计；缓存 15 分钟，手动刷新间隔至少 1 分钟。")
-        Text("仅向 Open-Meteo 发送搜索词和所选城市坐标，无需定位权限。免费接口仅限非商业使用。")
-        Link("Open-Meteo 使用条款", destination: URL(string: "https://open-meteo.com/en/terms")!)
-          .font(.caption)
-      } header: { Text("数据来源") }
-      .font(.caption)
-      .foregroundStyle(.secondary)
+      .frame(maxWidth: 800)
+      .padding(24)
+      .frame(maxWidth: .infinity)
     }
-    .formStyle(.grouped)
     .task { await store.loadIfNeeded() }
-    .onDisappear {
-      searchTask?.cancel()
-      actionTask?.cancel()
-    }
+    .onDisappear { actionTask?.cancel() }
   }
 
-  private func cityButton(_ city: WeatherCity) -> some View {
-    Button {
-      searchTask?.cancel()
-      actionTask?.cancel()
-      actionTask = Task { await store.selectCity(city) }
-    } label: {
-      HStack {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(city.name)
-          if !city.regionDescription.isEmpty { Text(city.regionDescription).font(.caption).foregroundStyle(.secondary) }
-        }
-        Spacer()
-        if store.selectedCity?.id == city.id { Image(systemName: "checkmark").accessibilityLabel("当前城市") }
+  private var emptyState: some View {
+    VStack(spacing: 14) {
+      Image(systemName: "cloud.sun")
+        .symbolRenderingMode(.multicolor)
+        .font(.system(size: 48, weight: .light))
+        .accessibilityHidden(true)
+      Text("选择天气城市").font(.title2.bold())
+      Text("使用当前位置查看天气，或搜索并添加多个城市。")
+        .foregroundStyle(.secondary)
+      HStack(spacing: 10) {
+        locationButton.buttonStyle(.borderedProminent)
+        addCityButton
       }
-      .contentShape(Rectangle())
     }
-    .buttonStyle(.plain)
-    .padding(.vertical, 3)
+    .multilineTextAlignment(.center)
+    .padding(32)
+    .frame(maxWidth: .infinity)
+    .background(Color.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 20))
   }
 
-  private func search() {
-    searchTask?.cancel()
-    searchTask = Task { await store.search(query: query) }
+  private var cities: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      HStack(spacing: 12) {
+        Text("我的城市").font(.headline)
+        Spacer(minLength: 8)
+        locationButton
+        addCityButton
+      }
+      .controlSize(.small)
+      if store.savedCities.count <= 4 {
+        ViewThatFits(in: .horizontal) {
+          HStack(spacing: 10) { cityCards }
+          cityGrid
+        }
+      } else {
+        cityGrid
+      }
+    }
   }
 
-  private func dateFormat(_ snapshot: WeatherSnapshot) -> Date.FormatStyle {
-    Date.FormatStyle(date: .abbreviated, time: .shortened, timeZone: snapshot.timeZone)
+  private var cityGrid: some View {
+    LazyVGrid(columns: [GridItem(.adaptive(minimum: 175), spacing: 10)], spacing: 10) { cityCards }
+  }
+
+  private var cityCards: some View {
+    ForEach(store.savedCities) { city in
+      WeatherCityCard(city: city, snapshot: store.cachedWeather(for: city), isSelected: store.selectedCity?.id == city.id) {
+        perform { await store.selectCity(city) }
+      } remove: {
+        perform { await store.removeCity(city) }
+      }
+      .frame(minWidth: 175)
+    }
+  }
+
+  private var addCityButton: some View {
+    Button("添加城市", systemImage: "plus") { showingCitySearch = true }
+      .popover(isPresented: $showingCitySearch, arrowEdge: .bottom) {
+        WeatherCitySearchView(store: store, query: $query) { city in
+          showingCitySearch = false
+          query = ""
+          perform { await store.selectCity(city) }
+        }
+      }
+  }
+
+  private var locationButton: some View {
+    Button {
+      perform { await store.useCurrentLocation() }
+    } label: {
+      HStack(spacing: 6) {
+        if store.isLocating { ProgressView().controlSize(.small) }
+        Label(store.isLocating ? String(localized: "正在定位…") : String(localized: "使用当前位置"), systemImage: "location")
+      }
+    }
+    .disabled(store.isLocating)
+  }
+
+  private func perform(_ action: @escaping @MainActor () async -> Void) {
+    actionTask?.cancel()
+    actionTask = Task { await action() }
   }
 }
 
-private struct WeatherCurrentReadings: View {
-  let snapshot: WeatherSnapshot
+private struct WeatherAttributionView: View {
+  @State private var showingDetails = false
 
   var body: some View {
-    HStack(spacing: 24) {
-      VStack(spacing: 8) {
-        Image(systemName: snapshot.condition.symbol)
-          .symbolRenderingMode(.multicolor)
-          .font(.system(size: 48))
-          .accessibilityHidden(true)
-        Text(snapshot.temperature.formatted(.number.precision(.fractionLength(0))) + " °C")
-          .font(.system(size: 48, weight: .light, design: .rounded))
-          .monospacedDigit()
-        Text(snapshot.condition.description).foregroundStyle(.secondary)
-      }
-      .frame(maxWidth: .infinity)
-      VStack(spacing: 12) {
-        LabeledContent("体感温度", value: snapshot.apparentTemperature.formatted(.number.precision(.fractionLength(0))) + " °C")
-        LabeledContent("相对湿度", value: snapshot.relativeHumidity.formatted(.number.precision(.fractionLength(0))) + " %")
-        LabeledContent("风速", value: snapshot.windSpeed.formatted(.number.precision(.fractionLength(1))) + " km/h")
-        if let high = snapshot.highTemperature { LabeledContent("今日最高", value: high.formatted(.number.precision(.fractionLength(0))) + " °C") }
-        if let low = snapshot.lowTemperature { LabeledContent("今日最低", value: low.formatted(.number.precision(.fractionLength(0))) + " °C") }
-      }
-      .frame(maxWidth: .infinity)
+    HStack(spacing: 6) {
+      Link("Weather data by Open-Meteo", destination: URL(string: "https://open-meteo.com/")!)
+      Text("·")
+      Link("CC BY 4.0", destination: URL(string: "https://creativecommons.org/licenses/by/4.0/")!)
+      Spacer()
+      Button("数据来源", systemImage: "info.circle") { showingDetails.toggle() }
+        .labelStyle(.iconOnly)
+        .buttonStyle(.borderless)
+        .help("数据来源")
+        .popover(isPresented: $showingDetails) {
+          VStack(alignment: .leading, spacing: 12) {
+            Text("数据来源").font(.headline)
+            Link("城市数据：GeoNames", destination: URL(string: "https://www.geonames.org/")!)
+            Text("天气来自气象模型的当前估计；缓存 15 分钟，手动刷新间隔至少 1 分钟。")
+            Text("点击“使用当前位置”时才申请定位权限，仅获取一次大致位置。城市和天气缓存保存在本机。")
+            Text("向 Open-Meteo 发送搜索词和城市坐标；定位时由 Apple 解析城市名称。免费天气接口仅限非商业使用。")
+            Link("Open-Meteo 使用条款", destination: URL(string: "https://open-meteo.com/en/terms")!)
+          }
+          .font(.callout)
+          .padding(20)
+          .frame(width: 340, alignment: .leading)
+        }
     }
-    .padding(.vertical, 16)
+    .font(.caption2)
+    .foregroundStyle(.secondary)
+    .padding(.horizontal, 4)
   }
 }

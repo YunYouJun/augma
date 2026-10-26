@@ -186,6 +186,29 @@ final class WeatherTests: XCTestCase {
     XCTAssertEqual(count, 1)
   }
 
+  func testReturningToCityAfterCancellingItsRequestCanLoadImmediately() async {
+    let transport = WeatherControlledTransport()
+    let defaults = makeDefaults()
+    defer { defaults.removePersistentDomain(forName: defaultsSuite(defaults)) }
+    let store = WeatherStore(client: WeatherClient { try await transport.load($0) }, defaults: defaults, now: { self.time })
+    let first = Task { await store.selectCity(tokyo) }
+    await transport.waitForRequestCount(1)
+    let second = Task { await store.selectCity(shanghai) }
+    await transport.waitForRequestCount(2)
+    let third = Task { await store.selectCity(tokyo) }
+    await transport.waitForRequestCount(3)
+    await transport.complete(2, with: forecastData(temperature: 23, observedAt: time))
+    await third.value
+    await transport.complete(0, with: forecastData(temperature: 31, observedAt: time))
+    await transport.complete(1, with: forecastData(temperature: 19, observedAt: time))
+    await first.value
+    await second.value
+    XCTAssertEqual(store.selectedCity, tokyo)
+    XCTAssertEqual(store.snapshot?.temperature, 23)
+    XCTAssertNil(store.notice)
+    XCTAssertFalse(store.isLoading)
+  }
+
   func testOlderCitySearchCannotReplaceMoreRecentResults() async {
     let transport = WeatherControlledTransport()
     let defaults = makeDefaults()
@@ -224,6 +247,165 @@ final class WeatherTests: XCTestCase {
     XCTAssertEqual(count, 1)
   }
 
+  func testSavedCitiesSurviveRestartWithoutEvictionOrDuplicates() async {
+    let transport = WeatherQueuedTransport((0..<7).map { _ in .init(data: forecastData(temperature: 23, observedAt: time)) })
+    let client = WeatherClient { try await transport.load($0) }
+    let defaults = makeDefaults()
+    defer { defaults.removePersistentDomain(forName: defaultsSuite(defaults)) }
+    let store = WeatherStore(client: client, defaults: defaults, now: { self.time })
+    let cities = (1...7).map {
+      WeatherCity(id: $0, name: "City \($0)", latitude: 30, longitude: Double($0), country: nil, admin1: nil, timezone: nil)
+    }
+    for city in cities { await store.selectCity(city) }
+    await store.selectCity(cities[0])
+    XCTAssertEqual(store.savedCities, cities)
+    let restored = WeatherStore(client: client, defaults: defaults, now: { self.time })
+    await restored.loadIfNeeded()
+    XCTAssertEqual(restored.savedCities, cities)
+    XCTAssertEqual(restored.selectedCity, cities[0])
+    XCTAssertEqual(restored.snapshot?.cityID, cities[0].id)
+    let count = await transport.requestCount
+    XCTAssertEqual(count, 7)
+  }
+
+  func testLegacyRecentCitiesMigrateToSavedCitiesWithSelectedCityPreserved() throws {
+    let defaults = makeDefaults()
+    defer { defaults.removePersistentDomain(forName: defaultsSuite(defaults)) }
+    struct Legacy: Encodable {
+      let selectedCity: WeatherCity
+      let recentCities: [WeatherCity]
+      let snapshots: [WeatherSnapshot] = []
+    }
+    defaults.set(try JSONEncoder().encode(Legacy(selectedCity: tokyo, recentCities: [shanghai, shanghai])), forKey: WeatherStore.preferencesKey)
+    let store = WeatherStore(defaults: defaults)
+    XCTAssertEqual(store.savedCities, [tokyo, shanghai])
+    XCTAssertEqual(store.selectedCity, tokyo)
+  }
+
+  func testDeletingCitiesSelectsCachedFallbackAndPersistsEmptyState() async {
+    let transport = WeatherQueuedTransport([
+      .init(data: forecastData(temperature: 23, observedAt: time)),
+      .init(data: forecastData(temperature: 19, observedAt: time)),
+    ])
+    let defaults = makeDefaults()
+    defer { defaults.removePersistentDomain(forName: defaultsSuite(defaults)) }
+    let store = WeatherStore(client: WeatherClient { try await transport.load($0) }, defaults: defaults, now: { self.time })
+    await store.selectCity(tokyo)
+    await store.selectCity(shanghai)
+    await store.removeCity(shanghai)
+    XCTAssertEqual(store.selectedCity, tokyo)
+    XCTAssertEqual(store.snapshot?.temperature, 23)
+    XCTAssertNil(store.cachedWeather(for: shanghai))
+    await store.removeCity(tokyo)
+    XCTAssertTrue(store.savedCities.isEmpty)
+    XCTAssertNil(store.selectedCity)
+    XCTAssertNil(store.snapshot)
+    let restored = WeatherStore(defaults: defaults)
+    XCTAssertTrue(restored.savedCities.isEmpty)
+    XCTAssertNil(restored.selectedCity)
+    let count = await transport.requestCount
+    XCTAssertEqual(count, 2)
+  }
+
+  func testRemovingCityWhileItsWeatherLoadsCannotResurrectIt() async {
+    let transport = WeatherControlledTransport()
+    let defaults = makeDefaults()
+    defer { defaults.removePersistentDomain(forName: defaultsSuite(defaults)) }
+    let store = WeatherStore(client: WeatherClient { try await transport.load($0) }, defaults: defaults, now: { self.time })
+    let request = Task { await store.selectCity(tokyo) }
+    await transport.waitForRequestCount(1)
+    await store.removeCity(tokyo)
+    await transport.complete(0, with: forecastData(temperature: 23, observedAt: time))
+    await request.value
+    XCTAssertTrue(store.savedCities.isEmpty)
+    XCTAssertNil(store.selectedCity)
+    XCTAssertNil(store.snapshot)
+    XCTAssertFalse(store.isLoading)
+  }
+
+  func testLocationIsOnlyRequestedByExplicitActionAndFailureKeepsWeather() async {
+    let transport = WeatherQueuedTransport([.init(data: forecastData(temperature: 23, observedAt: time))])
+    let defaults = makeDefaults()
+    defer { defaults.removePersistentDomain(forName: defaultsSuite(defaults)) }
+    var locationRequests = 0
+    let store = WeatherStore(client: WeatherClient { try await transport.load($0) }, defaults: defaults, now: { self.time }, locate: {
+      locationRequests += 1
+      throw WeatherLocationFailure.denied
+    })
+    await store.loadIfNeeded()
+    await store.selectCity(tokyo)
+    XCTAssertEqual(locationRequests, 0)
+    await store.useCurrentLocation()
+    XCTAssertEqual(locationRequests, 1)
+    XCTAssertEqual(store.selectedCity, tokyo)
+    XCTAssertEqual(store.snapshot?.temperature, 23)
+    XCTAssertEqual(store.savedCities, [tokyo])
+    XCTAssertEqual(store.locationErrorMessage, WeatherLocationFailure.denied.localizedDescription)
+    XCTAssertFalse(store.isLocating)
+  }
+
+  func testMovingCurrentLocationInvalidatesWeatherForPreviousCoordinates() async {
+    let transport = WeatherQueuedTransport([
+      .init(data: forecastData(temperature: 23, observedAt: time)),
+      .init(data: forecastData(temperature: 19, observedAt: time)),
+    ])
+    let defaults = makeDefaults()
+    defer { defaults.removePersistentDomain(forName: defaultsSuite(defaults)) }
+    var location = WeatherCity(id: WeatherCity.currentLocationID, name: "Tokyo", latitude: 35.68, longitude: 139.69, country: nil, admin1: nil, timezone: nil)
+    let store = WeatherStore(client: WeatherClient { try await transport.load($0) }, defaults: defaults, now: { self.time }, locate: { location })
+    await store.useCurrentLocation()
+    XCTAssertEqual(store.snapshot?.temperature, 23)
+    location = WeatherCity(id: WeatherCity.currentLocationID, name: "Shanghai", latitude: 31.23, longitude: 121.47, country: nil, admin1: nil, timezone: nil)
+    await store.useCurrentLocation()
+    XCTAssertEqual(store.selectedCity, location)
+    XCTAssertEqual(store.savedCities, [location])
+    XCTAssertEqual(store.snapshot?.temperature, 19)
+    let count = await transport.requestCount
+    XCTAssertEqual(count, 2)
+    var restoredRequests = 0
+    let restored = WeatherStore(defaults: defaults, now: { self.time }, locate: { restoredRequests += 1; return location })
+    await restored.loadIfNeeded()
+    XCTAssertEqual(restored.selectedCity, location)
+    XCTAssertEqual(restored.snapshot?.temperature, 19)
+    XCTAssertEqual(restoredRequests, 0)
+  }
+
+  func testLateLocationDoesNotReplaceManuallySelectedCity() async {
+    let transport = WeatherQueuedTransport([.init(data: forecastData(temperature: 23, observedAt: time))])
+    let location = WeatherControlledLocation()
+    let defaults = makeDefaults()
+    defer { defaults.removePersistentDomain(forName: defaultsSuite(defaults)) }
+    let store = WeatherStore(client: WeatherClient { try await transport.load($0) }, defaults: defaults, now: { self.time }, locate: { try await location.locate() })
+    let request = Task { await store.useCurrentLocation() }
+    await location.waitForRequest()
+    await store.selectCity(tokyo)
+    location.complete(WeatherCity(id: WeatherCity.currentLocationID, name: "Shanghai", latitude: 31.23, longitude: 121.47, country: nil, admin1: nil, timezone: nil))
+    await request.value
+    XCTAssertEqual(store.selectedCity, tokyo)
+    XCTAssertEqual(store.savedCities, [tokyo])
+    XCTAssertNil(store.locationErrorMessage)
+    XCTAssertFalse(store.isLocating)
+  }
+
+  func testOverlappingLocationActionsShareOneRequest() async {
+    let transport = WeatherQueuedTransport([.init(data: forecastData(temperature: 23, observedAt: time))])
+    let location = WeatherControlledLocation()
+    let defaults = makeDefaults()
+    defer { defaults.removePersistentDomain(forName: defaultsSuite(defaults)) }
+    let store = WeatherStore(client: WeatherClient { try await transport.load($0) }, defaults: defaults, now: { self.time }, locate: { try await location.locate() })
+    let first = Task { await store.useCurrentLocation() }
+    await location.waitForRequest()
+    let second = Task { await store.useCurrentLocation() }
+    await Task.yield()
+    location.complete(WeatherCity(id: WeatherCity.currentLocationID, name: "Tokyo", latitude: 35.68, longitude: 139.69, country: nil, admin1: nil, timezone: nil))
+    await first.value
+    await second.value
+    XCTAssertEqual(location.requestCount, 1)
+    XCTAssertEqual(store.savedCities.count, 1)
+    XCTAssertTrue(store.selectedCity?.isCurrentLocation == true)
+    XCTAssertFalse(store.isLocating)
+  }
+
   private func forecastData(temperature: Double, observedAt: Date) -> Data {
     Data("""
       {"timezone":"Asia/Tokyo","current":{"time":\(observedAt.timeIntervalSince1970),"temperature_2m":\(temperature),"apparent_temperature":22,"relative_humidity_2m":65,"wind_speed_10m":8.5,"weather_code":2,"is_day":1},"daily":{"temperature_2m_max":[26],"temperature_2m_min":[18]}}
@@ -244,6 +426,32 @@ final class WeatherTests: XCTestCase {
   }
 
   private func defaultsSuite(_ defaults: UserDefaults) -> String { createdSuites[ObjectIdentifier(defaults)]! }
+}
+
+@MainActor
+private final class WeatherControlledLocation {
+  private var continuation: CheckedContinuation<WeatherCity, Error>?
+  private var waiter: CheckedContinuation<Void, Never>?
+  private(set) var requestCount = 0
+
+  func locate() async throws -> WeatherCity {
+    try await withCheckedThrowingContinuation {
+      continuation = $0
+      requestCount += 1
+      waiter?.resume()
+      waiter = nil
+    }
+  }
+
+  func waitForRequest() async {
+    if requestCount > 0 { return }
+    await withCheckedContinuation { waiter = $0 }
+  }
+
+  func complete(_ city: WeatherCity) {
+    continuation?.resume(returning: city)
+    continuation = nil
+  }
 }
 
 private actor WeatherQueuedTransport {

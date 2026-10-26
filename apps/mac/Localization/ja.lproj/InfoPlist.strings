@@ -3,3 +3,5 @@
 "NSCameraUsageDescription" = "カメラをオンにしたときにプレビューと撮影に使用します。写真は保存先を選んだ場合のみ、この Mac に保存されます。";
 
 "NSAppleEventsUsageDescription" = "送信したクイックメモを Apple メモに保存します。";
+"NSLocationUsageDescription" = "「現在地を使用」をクリックしたときに、おおよその位置を取得して現地の天気を表示します。";
+"NSLocationWhenInUseUsageDescription" = "「現在地を使用」をクリックしたときに、おおよその位置を取得して現地の天気を表示します。";

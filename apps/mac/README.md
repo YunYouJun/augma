@@ -103,7 +103,11 @@ Microsoft To Do 使用系统浏览器登录会话、OAuth 授权码 + PKCE 和 `
 
 在详情页或菜单栏勾选「固定系统监控到 HUD」后，独立窗口显示 CPU、内存、磁盘可用量、上下行速度和电量，固定内容不会让窗口始终置顶。关闭主窗口仍可使用 HUD，固定偏好会保留到下次启动；从 HUD、详情页、菜单栏或设置中取消固定都会立即隐藏窗口，「隐藏窗口」则保留固定偏好。HUD 在 macOS 26 上使用通透的 Clear Liquid Glass，macOS 15 使用超薄材质，避免整块灰白磨砂底。状态栏图标保持静态，实时读数位于弹层和 HUD 中。
 
-主窗口「天气」已替换三城固定温度示例：主动搜索并选择城市后，原生页面显示当前温度、体感、湿度、风速、天气状况及当日最高 / 最低温度。数据来自 [Open-Meteo](https://open-meteo.com/)，无需 API Key 或定位权限；仅发送搜索词和所选城市坐标。缓存 15 分钟，每城手动刷新间隔至少 1 分钟，离线或服务错误时保留上次读数并标注时间。免费接口[仅限非商业用途](https://open-meteo.com/en/terms)，页面附 Open-Meteo / CC BY 4.0 / GeoNames 署名。当前值是气象模型的估计，非设备传感器温度；本轮没有接入 CPU / GPU 温度。
+主窗口「天气」使用限宽居中的紧凑概览：突出当前温度和天气图标，最高 / 最低温并入天气摘要，体感、湿度与风速横向排列。更新时间和刷新入口位于卡片右上角，悬停时间可查看天气时间和获取时间。「我的城市」使用自适应卡片，支持切换、通过卡片菜单删除及重启恢复；「添加城市」在原生弹出面板中搜索，旧版最近选择和天气缓存会自动保留。排版参考 [Clima](https://dribbble.com/shots/26240563--Clima-dashboard) 的指标分组和 [Minimal Weather Widget](https://dribbble.com/shots/25580019-Minimal-Weather-Widget-UI) 的紧凑层级，图标继续使用原生 SF Symbols。
+
+手动选城无需定位权限；点击「使用当前位置」才请求 macOS 定位授权，获取一次大致位置，由 Apple 解析城市名，不持续跟踪。定位失败仍可手动添加城市；重新打开页面仅使用上次保存的位置，不自动重新定位。
+
+数据来自 [Open-Meteo](https://open-meteo.com/)，无需 API Key；发送搜索词和城市坐标，定位坐标取小数点后两位。城市、最后选择和天气缓存保存在本机，切换城市优先复用各自缓存。缓存 15 分钟，每城手动刷新间隔至少 1 分钟，离线或服务错误时保留上次读数并标注时间。免费接口[仅限非商业用途](https://open-meteo.com/en/terms)，页面「数据来源」附 Open-Meteo / CC BY 4.0 / GeoNames 署名。当前值是气象模型的估计，非设备传感器温度。
 
 Apple Weather 可通过 [WeatherKit](https://developer.apple.com/weatherkit/) 接入，需要 Apple Developer Program 会员和应用能力配置，本版本使用 Open-Meteo。沉浸模式复用同一原生天气、记录、计时、系统监控、声音、设置、地图和摄像头面板，并通过共享空间 Store 呈现 RealityKit 场景。通知、助手和设备均直接使用原生状态。
 

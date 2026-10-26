@@ -3,3 +3,5 @@
 "NSCameraUsageDescription" = "Augma previews the camera and takes photos only when you turn it on. Photos are saved on this Mac only when you choose to save them.";
 
 "NSAppleEventsUsageDescription" = "Save the quick notes you choose to send to Apple Notes.";
+"NSLocationUsageDescription" = "Augma uses your approximate location to show local weather only when you click “Use Current Location”.";
+"NSLocationWhenInUseUsageDescription" = "Augma uses your approximate location to show local weather only when you click “Use Current Location”.";

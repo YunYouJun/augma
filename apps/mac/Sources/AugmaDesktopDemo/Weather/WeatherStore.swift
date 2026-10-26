@@ -7,7 +7,7 @@ final class WeatherStore: ObservableObject {
   static let minimumRefreshInterval: TimeInterval = 60
 
   @Published private(set) var selectedCity: WeatherCity?
-  @Published private(set) var recentCities: [WeatherCity] = []
+  @Published private(set) var savedCities: [WeatherCity] = []
   @Published private(set) var snapshot: WeatherSnapshot?
   @Published private(set) var searchResults: [WeatherCity] = []
   @Published private(set) var isLoading = false
@@ -16,10 +16,13 @@ final class WeatherStore: ObservableObject {
   @Published private(set) var errorMessage: String?
   @Published private(set) var searchErrorMessage: String?
   @Published private(set) var notice: String?
+  @Published private(set) var isLocating = false
+  @Published private(set) var locationErrorMessage: String?
 
   private let client: WeatherClient
   private let defaults: UserDefaults
   private let now: () -> Date
+  private let locate: @MainActor () async throws -> WeatherCity
   private var snapshots: [Int: WeatherSnapshot] = [:]
   private var searchCache: [String: (date: Date, cities: [WeatherCity])] = [:]
   private var lastWeatherAttempt: [Int: Date] = [:]
@@ -27,16 +30,23 @@ final class WeatherStore: ObservableObject {
   private var weatherGeneration = UUID()
   private var searchGeneration = UUID()
   private var weatherTask: Task<Void, Never>?
+  private var locationTask: Task<Void, Never>?
+  private var locationGeneration = UUID()
 
-  init(client: WeatherClient = WeatherClient(), defaults: UserDefaults = .standard, now: @escaping () -> Date = { Date() }) {
+  init(client: WeatherClient = WeatherClient(), defaults: UserDefaults = .standard,
+       now: @escaping () -> Date = { Date() },
+       locate: @escaping @MainActor () async throws -> WeatherCity = { try await WeatherLocationClient().locate() }) {
     self.client = client
     self.defaults = defaults
     self.now = now
+    self.locate = locate
     if let data = defaults.data(forKey: Self.preferencesKey),
        let saved = try? JSONDecoder().decode(SavedWeather.self, from: data) {
-      recentCities = Array(saved.recentCities.filter(\.hasValidCoordinates).prefix(5))
+      var seen = Set<Int>()
+      savedCities = saved.savedCities.filter { $0.hasValidCoordinates && seen.insert($0.id).inserted }
       selectedCity = saved.selectedCity.flatMap { $0.hasValidCoordinates ? $0 : nil }
-      for snapshot in saved.snapshots where recentCities.contains(where: { $0.id == snapshot.cityID }) {
+      if let selectedCity, !savedCities.contains(where: { $0.id == selectedCity.id }) { savedCities.insert(selectedCity, at: 0) }
+      for snapshot in saved.snapshots where savedCities.contains(where: { $0.id == snapshot.cityID }) {
         snapshots[snapshot.cityID] = snapshot
       }
       snapshot = selectedCity.flatMap { snapshots[$0.id] }
@@ -60,15 +70,24 @@ final class WeatherStore: ObservableObject {
 
   func selectCity(_ city: WeatherCity) async {
     guard city.hasValidCoordinates else { return }
-    if selectedCity?.id == city.id {
+    cancelLocationRequest()
+    locationErrorMessage = nil
+    await activateCity(city)
+  }
+
+  private func activateCity(_ city: WeatherCity) async {
+    if selectedCity == city {
       await loadIfNeeded()
       return
     }
-    weatherTask?.cancel()
-    weatherTask = nil
-    weatherGeneration = UUID()
+    // A new device fix can reuse the location identity with different coordinates.
+    if let previous = savedCities.first(where: { $0.id == city.id }),
+       previous.latitude != city.latitude || previous.longitude != city.longitude {
+      snapshots.removeValue(forKey: city.id)
+      lastWeatherAttempt.removeValue(forKey: city.id)
+    }
+    cancelWeatherRequest()
     searchGeneration = UUID()
-    isLoading = false
     isSearching = false
     selectedCity = city
     snapshot = snapshots[city.id]
@@ -77,11 +96,58 @@ final class WeatherStore: ObservableObject {
     searchResults = []
     searchErrorMessage = nil
     hasSearched = false
-    recentCities.removeAll { $0.id == city.id }
-    recentCities.insert(city, at: 0)
-    recentCities = Array(recentCities.prefix(5))
+    if let index = savedCities.firstIndex(where: { $0.id == city.id }) {
+      savedCities[index] = city
+    } else {
+      savedCities.append(city)
+    }
     persist()
     await loadIfNeeded()
+  }
+
+  func removeCity(_ city: WeatherCity) async {
+    guard savedCities.contains(where: { $0.id == city.id }) else { return }
+    cancelLocationRequest()
+    savedCities.removeAll { $0.id == city.id }
+    snapshots.removeValue(forKey: city.id)
+    lastWeatherAttempt.removeValue(forKey: city.id)
+    if selectedCity?.id == city.id {
+      cancelWeatherRequest()
+      selectedCity = nil
+      snapshot = nil
+      errorMessage = nil
+      notice = nil
+      if let next = savedCities.first { await activateCity(next) }
+    }
+    persist()
+  }
+
+  func cachedWeather(for city: WeatherCity) -> WeatherSnapshot? { snapshots[city.id] }
+
+  /// Location access only starts in response to the user's location action.
+  func useCurrentLocation() async {
+    if let locationTask, isLocating { await locationTask.value; return }
+    let generation = UUID()
+    locationGeneration = generation
+    locationErrorMessage = nil
+    isLocating = true
+    let task = Task { [self] in
+      defer {
+        if locationGeneration == generation { isLocating = false; locationTask = nil }
+      }
+      do {
+        let city = try await locate()
+        guard !Task.isCancelled, locationGeneration == generation else { return }
+        guard city.isCurrentLocation, city.hasValidCoordinates else { throw WeatherLocationFailure.unavailable }
+        await activateCity(city)
+      } catch {
+        guard !Task.isCancelled, locationGeneration == generation, !Self.isCancellation(error) else { return }
+        locationErrorMessage = (error as? WeatherLocationFailure)?.localizedDescription
+          ?? WeatherLocationFailure.unavailable.localizedDescription
+      }
+    }
+    locationTask = task
+    await task.value
   }
 
   func refresh() async {
@@ -134,13 +200,25 @@ final class WeatherStore: ObservableObject {
 
   /// Explicitly cancels shared work. Individual windows must not call this on disappearance.
   func cancelRequests() {
+    cancelLocationRequest()
+    cancelWeatherRequest()
+    searchGeneration = UUID()
+    isSearching = false
+  }
+
+  private func cancelWeatherRequest() {
     if isLoading, let cityID = selectedCity?.id { lastWeatherAttempt.removeValue(forKey: cityID) }
     weatherTask?.cancel()
     weatherTask = nil
     weatherGeneration = UUID()
-    searchGeneration = UUID()
     isLoading = false
-    isSearching = false
+  }
+
+  private func cancelLocationRequest() {
+    locationGeneration = UUID()
+    locationTask?.cancel()
+    locationTask = nil
+    isLocating = false
   }
 
   private func fetchWeather(for city: WeatherCity) async {
@@ -183,9 +261,9 @@ final class WeatherStore: ObservableObject {
   }
 
   private func persist() {
-    let recentIDs = Set(recentCities.map(\.id))
-    snapshots = snapshots.filter { recentIDs.contains($0.key) }
-    let saved = SavedWeather(selectedCity: selectedCity, recentCities: recentCities, snapshots: Array(snapshots.values))
+    let savedIDs = Set(savedCities.map(\.id))
+    snapshots = snapshots.filter { savedIDs.contains($0.key) }
+    let saved = SavedWeather(selectedCity: selectedCity, savedCities: savedCities, snapshots: Array(snapshots.values))
     if let data = try? JSONEncoder().encode(saved) { defaults.set(data, forKey: Self.preferencesKey) }
   }
 
@@ -202,6 +280,29 @@ final class WeatherStore: ObservableObject {
 
 private struct SavedWeather: Codable {
   let selectedCity: WeatherCity?
-  let recentCities: [WeatherCity]
+  let savedCities: [WeatherCity]
   let snapshots: [WeatherSnapshot]
+
+  init(selectedCity: WeatherCity?, savedCities: [WeatherCity], snapshots: [WeatherSnapshot]) {
+    self.selectedCity = selectedCity
+    self.savedCities = savedCities
+    self.snapshots = snapshots
+  }
+
+  private enum CodingKeys: String, CodingKey { case selectedCity, savedCities, recentCities, snapshots }
+
+  init(from decoder: Decoder) throws {
+    let values = try decoder.container(keyedBy: CodingKeys.self)
+    selectedCity = try values.decodeIfPresent(WeatherCity.self, forKey: .selectedCity)
+    savedCities = try values.decodeIfPresent([WeatherCity].self, forKey: .savedCities)
+      ?? values.decodeIfPresent([WeatherCity].self, forKey: .recentCities) ?? []
+    snapshots = try values.decodeIfPresent([WeatherSnapshot].self, forKey: .snapshots) ?? []
+  }
+
+  func encode(to encoder: Encoder) throws {
+    var values = encoder.container(keyedBy: CodingKeys.self)
+    try values.encodeIfPresent(selectedCity, forKey: .selectedCity)
+    try values.encode(savedCities, forKey: .savedCities)
+    try values.encode(snapshots, forKey: .snapshots)
+  }
 }

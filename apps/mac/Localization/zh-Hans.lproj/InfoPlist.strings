@@ -3,3 +3,5 @@
 "NSCameraUsageDescription" = "用于在你主动开启摄像头时预览画面和拍照，照片仅在你选择保存后写入本机。";
 
 "NSAppleEventsUsageDescription" = "用于将你主动发送的快速记录保存到 macOS 备忘录。";
+"NSLocationUsageDescription" = "在你点击“使用当前位置”时获取大致位置，以显示当地天气。";
+"NSLocationWhenInUseUsageDescription" = "在你点击“使用当前位置”时获取大致位置，以显示当地天气。";

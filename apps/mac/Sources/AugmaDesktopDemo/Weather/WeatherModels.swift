@@ -1,6 +1,9 @@
 import Foundation
 
 struct WeatherCity: Codable, Equatable, Hashable, Identifiable, Sendable {
+  /// GeoNames identifiers are positive; the device location has a stable, separate identity.
+  static let currentLocationID = -1
+
   let id: Int
   let name: String
   let latitude: Double
@@ -8,6 +11,8 @@ struct WeatherCity: Codable, Equatable, Hashable, Identifiable, Sendable {
   let country: String?
   let admin1: String?
   let timezone: String?
+
+  var isCurrentLocation: Bool { id == Self.currentLocationID }
 
   var regionDescription: String {
     [admin1, country].compactMap { $0 }.filter { !$0.isEmpty && $0 != name }.joined(separator: " · ")
