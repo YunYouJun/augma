@@ -71,6 +71,14 @@ struct ApplicationDistrictSections: View {
         if district.canUndoRemoval { Button("撤销移除", action: district.undoRemoval) }
       }
       if let selected {
+        Section("应用管理") {
+          Button("在 Craft Hub 查看卸载指引", systemImage: "arrow.up.forward.app") {
+            district.openManagement(selected.id)
+          }
+          .accessibilityIdentifier("district-manage-app")
+          Text("查看卸载入口与说明。Augma 仅传递应用标识，不会卸载或清理文件。")
+            .font(.caption).foregroundStyle(.secondary)
+        }
         Section("大楼布局") {
           LabeledContent("应用", value: selected.applicationName)
           TextField("自定义名称（可留空）", text: $name)
