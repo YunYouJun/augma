@@ -17,6 +17,7 @@ final class ApplicationDistrictStore: ObservableObject {
   var writable: Bool { loadError == nil && !closed }
 
   private let client: InstalledApplicationClient
+  private let management: any ApplicationManagementOpening
   private let persistence: ApplicationDistrictPersisting?
   private var resolvedPaths: [String: String] = [:]
   private var tasks: [String: Task<Void, Never>] = [:]
@@ -25,8 +26,9 @@ final class ApplicationDistrictStore: ObservableObject {
   private var closed = false
 
   init(client: InstalledApplicationClient? = nil, persistence: ApplicationDistrictPersisting? = nil,
-       observeLifecycle: Bool = false) {
+       observeLifecycle: Bool = false, management: (any ApplicationManagementOpening)? = nil) {
     self.client = client ?? SystemInstalledApplicationClient()
+    self.management = management ?? ApplicationManagementShortcut()
     self.persistence = persistence
     reload()
     if observeLifecycle {
@@ -59,6 +61,12 @@ final class ApplicationDistrictStore: ObservableObject {
   }
 
   func refreshSuggestions() { suggestions = client.suggestions() }
+
+  func openManagement(_ id: String) {
+    guard !closed, buildings.contains(where: { $0.id == id }) else { return }
+    do { try management.openGuidance(bundleID: id); error = nil }
+    catch { self.error = error.localizedDescription }
+  }
 
   func refresh() {
     guard !closed else { return }
