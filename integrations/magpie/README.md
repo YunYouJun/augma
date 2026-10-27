@@ -48,7 +48,7 @@ Agent 插件仅管理 Augma 配置文件的 `version/runtime/model/managed/plugi
 插件面板使用官方 `magpie.options.get/set` 保存自己的设置：
 
 ```json
-{"integration":"augma-v1","effort":"medium"}
+{ "integration": "augma-v1", "effort": "medium" }
 ```
 
 Augma 在激活、打开设置、检测及请求前读取配置；受插件管理时，从 Magpie 的 `~/.config/magpie/plugins.json` 中读取唯一启用且带 `integration: augma-v1` 标记的条目。若 Augma 使用绝对路径的 `XDG_CONFIG_HOME`，则读取其 `magpie/plugins.json`，应与 Magpie 保持一致。不支持自动发现 Magpie portable 数据目录。

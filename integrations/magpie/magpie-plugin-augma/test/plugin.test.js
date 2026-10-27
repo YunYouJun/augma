@@ -1,11 +1,11 @@
+/* eslint test/no-import-node-test: off -- This standalone Magpie plugin uses Node's built-in test runner. */
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { connect } from '../agent.js'
 import { onRequest } from '../middleware.js'
 
 test('connection leaves model and effort to their owners; contains no gateway credentials', () => {
-  assert.deepEqual(connect({ gateway: { key: 'must-not-copy' }, model: { id: 'group/augma' } }),
-    { version: 1, runtime: 'dsh', managed: true, plugin: 'magpie-plugin-augma' })
+  assert.deepEqual(connect({ gateway: { key: 'must-not-copy' }, model: { id: 'group/augma' } }), { version: 1, runtime: 'dsh', managed: true, plugin: 'magpie-plugin-augma' })
 })
 
 test('Augma effort applies to Chat and Responses without changing input, tools or reasoning summary', () => {
@@ -33,6 +33,8 @@ test('unrelated clients and unsupported protocols are unchanged', () => {
 test('defaults to Medium and rejects invalid saved effort explicitly', () => {
   assert.equal(onRequest({}, { agent: 'augma', protocol: 'chat' }).reasoning_effort, 'medium')
   let rejected
-  onRequest({}, { agent: 'augma', protocol: 'chat', options: { effort: 'invalid' }, reject: (status, message) => { rejected = { status, message } } })
+  onRequest({}, { agent: 'augma', protocol: 'chat', options: { effort: 'invalid' }, reject: (status, message) => {
+    rejected = { status, message }
+  } })
   assert.equal(rejected.status, 400)
 })

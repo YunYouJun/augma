@@ -22,15 +22,18 @@ async function load() {
     magpie.onTheme(theme)
     const options = await magpie.options.get()
     const selected = options.effort ?? 'medium'
-    if (![...effort.options].some(option => option.value === selected)) throw new Error('Unsupported effort')
+    if (![...effort.options].some(option => option.value === selected))
+      throw new Error('Unsupported effort')
     effort.value = selected
     effort.disabled = false
     save.disabled = false
-  } catch { error() }
+  }
+  catch { error() }
 }
 document.getElementById('settings').addEventListener('submit', async (event) => {
   event.preventDefault()
-  if (saving) return
+  if (saving)
+    return
   saving = true
   save.disabled = effort.disabled = true
   try {
@@ -38,7 +41,11 @@ document.getElementById('settings').addEventListener('submit', async (event) => 
     await magpie.options.set({ ...options, integration: 'augma-v1', effort: effort.value })
     status.setAttribute('role', 'status')
     status.textContent = message('已保存。请返回 Augma 检测并测试。', 'Saved. Return to Augma to detect and test.')
-  } catch { error() }
-  finally { saving = false; save.disabled = effort.disabled = false }
+  }
+  catch { error() }
+  finally {
+    saving = false
+    save.disabled = effort.disabled = false
+  }
 })
 load()
