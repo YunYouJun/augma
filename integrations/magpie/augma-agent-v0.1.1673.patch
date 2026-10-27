@@ -1,0 +1,450 @@
+diff --git a/docs/reference.md b/docs/reference.md
+index 7be7f82..5fb7ec7 100644
+--- a/docs/reference.md
++++ b/docs/reference.md
+@@ -126,6 +126,7 @@ line; agents connected to magpie lose it when it quits.
+ | Kimi Code    | `~/.kimi/config.toml` (`$KIMI_SHARE_DIR`) | model (a `magpie` provider; magpie's models in Kimi's /model) |
+ | Qwen Code    | `~/.qwen/settings.json` (`$QWEN_HOME`) | model (magpie's models as `modelProviders.openai` entries on a `MAGPIE_QWEN_API_KEY` env var; settings.model; `security.auth.selectedType` openai while wired) |
+ | Muse Code    | `~/.config/muse/settings.json` (`$XDG_CONFIG_HOME`) | model (endpoint_transport to the gateway, auth none; magpie's models in Muse's list) |
++| Augma        | `~/Library/Application Support/Augma/Assistant/magpie.json` (macOS) | runtime, model and effort; version 1, imported on app activation, test required after a change |
+ | Empryo       | `~/.empryo/config.json` | defaultModel (a `magpie` provider at the gateway in `providers`) |
+ | Ante         | `~/.ante/catalog.json` and `settings.json` (`$ANTE_HOME`) | provider, model (a `magpie` provider on OpenAiCompatible, with no auth of magpie's: the gateway lets this machine in with any token and Ante counts a provider with none as authenticated; magpie's models in Ante's model picker, and Ante started on magpie, which is what its settings' `provider` decides) |
+ | AstrBot      | `data/cmd_config.json` under `$ASTRBOT_ROOT`, else `~/.astrbot` (the desktop app's) | model (a `magpie` entry in `provider_sources` and magpie's models in `provider`, the user's own entries kept; the default chat model in `agent_runner.config.model.provider_id`, or `provider_settings.default_provider_id` on AstrBot before 4.28's agent runner; restart AstrBot after connecting; Docker installs aren't reached) |
+diff --git a/docs/subsystems/agent-wiring.md b/docs/subsystems/agent-wiring.md
+index 7d73637..b1036c7 100644
+--- a/docs/subsystems/agent-wiring.md
++++ b/docs/subsystems/agent-wiring.md
+@@ -244,3 +244,8 @@ Settings included, so the form, the saved row and gateway traffic have not
+ been tried end to end. As with Cindy and Lody, the TUI leaves the row out
+ because there is nothing to pick. `magpie aionui add` opens the link.
+ 
++## Augma native assistant
++
++[`augma.go`](../../internal/agent/augma.go) detects the macOS app after its first launch exports `~/Library/Application Support/Augma/Assistant/magpie.json`. Schema version 1 holds `runtime`, `model`, `effort` and an optional `managed` flag. Connecting stashes these four keys, chooses DSH, and writes the catalog model and a supported effort. Unknown fields remain. Disconnect restores the original keys; unreadable or unsupported files are never overwritten. The agent exposes only the intersection of the catalog efforts and the installed Augma/DSH supported levels (through max, excluding ultra).
++
++Augma imports the file on activation and before a model request. A changed selection cancels the old runtime and invalidates its connection test; the user tests and enables it in Augma. The file cannot grant tools, enable sending, change the DSH executable, or contain credentials. Augma discovers the local gateway separately; the DSH desktop profile is not modified. There is no gateway-address `Check` hook: this adapter manages selections, while DSH manages its route. `TestAugmaRegistrationAndDetection`, `TestAugmaModelEffortAndDisconnect` and `TestAugmaRejectsInvalidConfigAndUnknownModel` cover registration, selections, restoration and refusal. `TestAugmaConnectKeepsExistingGroup` checks that first connect preserves the full named group ID through `Join`, before generic matching strips provider prefixes.
+diff --git a/internal/agent/agents.go b/internal/agent/agents.go
+index 2a154e9..a9250b0 100644
+--- a/internal/agent/agents.go
++++ b/internal/agent/agents.go
+@@ -124,6 +124,7 @@ func builtins(home, cfg string) []*Agent {
+ 		copilot(home),
+ 		crush(home, cfg),
+ 		dsh(home),
++		augma(home),
+ 		reasonix(home),
+ 		commandCode(home),
+ 		fx(home),
+diff --git a/internal/agent/augma.go b/internal/agent/augma.go
+new file mode 100644
+index 0000000..7b7dd0a
+--- /dev/null
++++ b/internal/agent/augma.go
+@@ -0,0 +1,210 @@
++package agent
++
++// Augma exports only runtime, model and effort to this versioned JSON file.
++// Its executable, credentials, consent and test state stay in the native app.
++// Changing a selection invalidates Augma's test; returning to the app imports
++// it and lets the user test and enable it. No DSH desktop profile is edited.
++import (
++	"encoding/json"
++	"fmt"
++	"os"
++	"path/filepath"
++	"runtime"
++	"slices"
++	"strings"
++	"unicode"
++
++	"github.com/yetone/magpie/internal/edit"
++)
++
++var augmaEfforts = []string{"none", "off", "minimal", "low", "medium", "high", "xhigh", "max"}
++
++type augmaConfig struct {
++	Version int    `json:"version"`
++	Runtime string `json:"runtime"`
++	Model   string `json:"model"`
++	Effort  string `json:"effort"`
++	Managed bool   `json:"managed"`
++}
++
++func readAugma(path string) (augmaConfig, map[string]json.RawMessage, error) {
++	var c augmaConfig
++	var raw map[string]json.RawMessage
++	b, err := edit.Read(path)
++	if err != nil {
++		return c, nil, err
++	}
++	if len(b) > 65536 || json.Unmarshal(b, &raw) != nil || raw == nil || json.Unmarshal(b, &c) != nil ||
++		c.Version != 1 || (c.Runtime != "dsh" && c.Runtime != "deepseek") || raw["model"] == nil || raw["effort"] == nil ||
++		string(raw["model"]) == "null" || string(raw["effort"]) == "null" || len([]rune(c.Model)) > 512 ||
++		strings.ContainsFunc(c.Model, func(r rune) bool { return unicode.IsSpace(r) || unicode.IsControl(r) }) ||
++		(c.Model != "" && !strings.Contains(c.Model, "/")) || (c.Managed && (c.Runtime != "dsh" || c.Model == "")) ||
++		(c.Effort != "" && !slices.Contains(augmaEfforts, c.Effort)) {
++		return c, nil, fmt.Errorf("Augma configuration is unreadable or unsupported; open a compatible Augma first")
++	}
++	return c, raw, nil
++}
++
++func augma(home string) *Agent {
++	path := filepath.Join(home, "Library", "Application Support", "Augma", "Assistant", "magpie.json")
++	key := "augma:" + path
++	get := func() augmaConfig { c, _, _ := readAugma(path); return c }
++	known := func(ref string) bool {
++		for _, model := range magpieModels("augma") {
++			if model.ID == ref {
++				return true
++			}
++		}
++		return false
++	}
++	restore := func() error {
++		c, _, err := readAugma(path)
++		if err != nil {
++			return err
++		}
++		if !c.Managed {
++			return nil
++		}
++		var had map[string]json.RawMessage
++		if v := stashLoad()[key]; v == "" || json.Unmarshal([]byte(v), &had) != nil || had == nil {
++			return fmt.Errorf("Augma's saved settings are missing; its current configuration was kept")
++		}
++		var kvs []edit.KV
++		var drop []string
++		for _, k := range []string{"runtime", "model", "effort", "managed"} {
++			if v, ok := had[k]; ok {
++				kvs = append(kvs, edit.KV{Path: k, Value: v})
++			} else {
++				drop = append(drop, k)
++			}
++		}
++		if err := edit.DelJSON(path, drop...); err != nil {
++			return err
++		}
++		if err := edit.SetJSON(path, kvs...); err != nil {
++			return err
++		}
++		forget(key)
++		return nil
++	}
++	efforts := func(ref string) []Option {
++		out := []Option{{Value: ""}}
++		for _, m := range magpieModels("augma") {
++			if m.ID != ref {
++				continue
++			}
++			for _, e := range m.Efforts {
++				if slices.Contains(augmaEfforts, e) {
++					out = append(out, Option{Value: e})
++				}
++			}
++		}
++		return out
++	}
++	a := &Agent{ID: "augma", Name: "Augma", Icon: "augma", UA: []string{"augma"}, Path: path, Spelled: prefixed, NoNames: true,
++		detect: func() bool {
++			st, err := os.Stat(path)
++			return runtime.GOOS == "darwin" && err == nil && st.Mode().IsRegular()
++		},
++		Notice: func() string {
++			return noticeAugma.String()
++		},
++		OwnVia: func(model string) string {
++			if known(model) {
++				return magpieID + "/" + model
++			}
++			return ""
++		},
++		Unwire: restore,
++		// No Check: Augma has no gateway address to rewire. DSH owns that
++		// route; this adapter owns only the model and effort selections.
++		Fields: []Field{{Key: "model", Label: "model",
++			Get: func() string {
++				c := get()
++				if c.Managed {
++					return magpieID + "/" + c.Model
++				}
++				return c.Model
++			},
++			Options: func(cur map[string]string) []Option {
++				return append(ownOptions("", cur["model"]), viaMagpie("augma", magpieID+"/")...)
++			},
++			Set: func(v string) error {
++				if v == "" {
++					return restore()
++				}
++				ref, ok := strings.CutPrefix(v, magpieID+"/")
++				if !ok || !known(ref) {
++					return fmt.Errorf("pick an Augma model from magpie's catalog")
++				}
++				c, raw, err := readAugma(path)
++				if err != nil {
++					return err
++				}
++				if !c.Managed {
++					had := map[string]json.RawMessage{}
++					for _, k := range []string{"runtime", "model", "effort", "managed"} {
++						if value, ok := raw[k]; ok {
++							had[k] = value
++						}
++					}
++					b, err := json.Marshal(had)
++					if err != nil {
++						return err
++					}
++					stashMu.Lock()
++					st := stashLoad()
++					st[key] = string(b)
++					err = stashWrite(st)
++					stashMu.Unlock()
++					if err != nil {
++						return err
++					}
++				}
++				effort := c.Effort
++				if !slices.ContainsFunc(efforts(ref), func(o Option) bool { return o.Value == effort }) {
++					effort = ""
++				}
++				return edit.SetJSON(path, edit.KV{Path: "runtime", Value: "dsh"}, edit.KV{Path: "managed", Value: true},
++					edit.KV{Path: "model", Value: ref}, edit.KV{Path: "effort", Value: effort})
++			},
++		}, {Key: "effort", Label: "effort",
++			Get: func() string { return get().Effort },
++			Options: func(map[string]string) []Option {
++				c := get()
++				if !c.Managed {
++					return nil
++				}
++				return efforts(c.Model)
++			},
++			Set: func(v string) error {
++				c, _, err := readAugma(path)
++				if err != nil {
++					return err
++				}
++				if !c.Managed {
++					if v == "" {
++						return nil
++					}
++					return fmt.Errorf("connect Augma to magpie before setting effort")
++				}
++				if !slices.ContainsFunc(efforts(c.Model), func(o Option) bool { return o.Value == v }) {
++					return fmt.Errorf("Augma model %q does not support effort %q", c.Model, v)
++				}
++				return edit.SetJSON(path, edit.KV{Path: "effort", Value: v})
++			},
++		}},
++	}
++	// Connect's generic matching strips provider prefixes. Augma already stores
++	// a complete gateway id, including named groups, so keep that exact selection.
++	a.Join = func() (bool, error) {
++		c := get()
++		if !known(c.Model) {
++			return false, nil
++		}
++		return true, a.Apply("model", magpieID+"/"+c.Model)
++	}
++	return atomic(a, path, stashPath())
++}
++
++var noticeAugma = newNotice("Return to Augma, test the new model and tools, then enable the assistant. Disconnect restores its previous settings.")
+diff --git a/internal/agent/augma_test.go b/internal/agent/augma_test.go
+new file mode 100644
+index 0000000..55b7e82
+--- /dev/null
++++ b/internal/agent/augma_test.go
+@@ -0,0 +1,136 @@
++package agent
++
++import (
++	"encoding/json"
++	"os"
++	"path/filepath"
++	"reflect"
++	"runtime"
++	"slices"
++	"testing"
++
++	"github.com/yetone/magpie/internal/catalog"
++	"github.com/yetone/magpie/internal/provider"
++)
++
++func augmaFixture(t *testing.T) (*Agent, string) {
++	t.Helper()
++	home, _ := museHome(t)
++	a := augma(home)
++	if err := os.MkdirAll(filepath.Dir(a.Path), 0o700); err != nil {
++		t.Fatal(err)
++	}
++	original := `{"version":1,"runtime":"deepseek","model":"group/augma","effort":"medium","future":{"keep":true}}`
++	if err := os.WriteFile(a.Path, []byte(original), 0o600); err != nil {
++		t.Fatal(err)
++	}
++	if err := catalog.SaveLive("fixture", "https://fixture.invalid/v1", []catalog.Model{
++		{ID: "terra", Efforts: []string{"low", "medium", "high", "ultra"}}, {ID: "small", Efforts: []string{"low"}},
++	}); err != nil {
++		t.Fatal(err)
++	}
++	if err := provider.Save(provider.Provider{ID: "fixture", Name: "Fixture", Key: "test", Chat: "https://fixture.invalid/v1", Models: []string{"terra", "small"}}); err != nil {
++		t.Fatal(err)
++	}
++	return a, original
++}
++
++func TestAugmaRegistrationAndDetection(t *testing.T) {
++	a, _ := augmaFixture(t)
++	if !slices.ContainsFunc(All(), func(v *Agent) bool { return v.ID == "augma" }) {
++		t.Fatal("Augma missing from agent list")
++	}
++	if a.Detected() != (runtime.GOOS == "darwin") {
++		t.Fatal("wrong platform detection")
++	}
++	if err := os.Remove(a.Path); err != nil {
++		t.Fatal(err)
++	}
++	if a.Detected() {
++		t.Fatal("uninstalled Augma detected")
++	}
++}
++
++func TestAugmaModelEffortAndDisconnect(t *testing.T) {
++	a, original := augmaFixture(t)
++	for range 2 {
++		if err := a.Apply("model", "magpie/fixture/terra"); err != nil {
++			t.Fatal(err)
++		}
++	}
++	if a.Field("effort").Get() != "medium" {
++		t.Fatal("user's effort lost")
++	}
++	if err := a.Apply("effort", "high"); err != nil {
++		t.Fatal(err)
++	}
++	if err := a.Field("effort").Set("ultra"); err == nil {
++		t.Fatal("unsupported DSH effort accepted")
++	}
++	if err := a.Apply("model", "magpie/fixture/small"); err != nil {
++		t.Fatal(err)
++	}
++	if a.Field("effort").Get() != "" {
++		t.Fatal("unsupported previous effort retained")
++	}
++	if err := a.Apply("effort", "low"); err != nil {
++		t.Fatal(err)
++	}
++	c, raw, err := readAugma(a.Path)
++	if err != nil || !c.Managed || c.Runtime != "dsh" || c.Model != "fixture/small" || string(raw["future"]) != "{\"keep\":true}" {
++		t.Fatalf("selection: %+v %v", c, err)
++	}
++	if err := a.Disconnect(); err != nil {
++		t.Fatal(err)
++	}
++	got, err := os.ReadFile(a.Path)
++	if err != nil {
++		t.Fatal(err)
++	}
++	var expected, actual any
++	json.Unmarshal([]byte(original), &expected)
++	json.Unmarshal(got, &actual)
++	if !reflect.DeepEqual(expected, actual) {
++		t.Fatalf("disconnect didn't restore original: %s", got)
++	}
++}
++
++func TestAugmaRejectsInvalidConfigAndUnknownModel(t *testing.T) {
++	a, original := augmaFixture(t)
++	if err := a.Field("model").Set("magpie/fixture/missing"); err == nil {
++		t.Fatal("unknown model accepted")
++	}
++	b, _ := os.ReadFile(a.Path)
++	if string(b) != original {
++		t.Fatal("unknown model changed config")
++	}
++	for _, bad := range []string{
++		"{", `{"version":99,"runtime":"dsh","model":"fixture/terra","effort":"medium"}`,
++		`{"version":1,"runtime":"dsh","model":null,"effort":"medium"}`,
++		`{"version":1,"runtime":"dsh","model":"fixture/terra","effort":null}`,
++		`{"version":1,"runtime":"dsh","model":"fixture/ terra","effort":"medium"}`,
++		`{"version":1,"runtime":"deepseek","model":"fixture/terra","effort":"medium","managed":true}`,
++	} {
++		os.WriteFile(a.Path, []byte(bad), 0o600)
++		if err := a.Field("model").Set("magpie/fixture/terra"); err == nil {
++			t.Fatal("invalid config overwritten")
++		}
++		b, _ := os.ReadFile(a.Path)
++		if string(b) != bad {
++			t.Fatal("invalid config changed")
++		}
++	}
++}
++
++func TestAugmaConnectKeepsExistingGroup(t *testing.T) {
++	a, _ := augmaFixture(t)
++	if err := provider.SaveGroup(provider.Group{ID: "augma", Name: "Augma", Members: []string{"fixture/terra"}}); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := a.ConnectHow(); err != nil {
++		t.Fatal(err)
++	}
++	if a.Field("model").Get() != "magpie/group/augma" || a.Field("effort").Get() != "medium" {
++		t.Fatalf("connect changed user's group: %v", a.Values())
++	}
++}
+diff --git a/internal/gui/assets/i18n.js b/internal/gui/assets/i18n.js
+index 26db7be..1a98406 100644
+--- a/internal/gui/assets/i18n.js
++++ b/internal/gui/assets/i18n.js
+@@ -3833,6 +3833,7 @@ const I18N = {
+     "dsh reads its config at start-up — restart open dsh sessions to use this.": "dsh 启动时读取配置，需重启已打开的 dsh 会话才会生效。",
+     "dsh's web search goes through magpie, which has nothing to search with yet: set up a provider that searches by itself (DeepSeek, Claude, Codex, …) or a search API under Settings › Web search.": "dsh 的联网搜索经过 magpie，而 magpie 目前还没有可用的搜索方式：请添加一个自带搜索的供应商（DeepSeek、Claude、Codex 等），或在“设置 › 联网搜索”中配置搜索 API。",
+     "fx reads its settings at start-up — restart open fx sessions to use this.": "fx 启动时读取设置，需重启已打开的 fx 会话才会生效。",
++    "Return to Augma, test the new model and tools, then enable the assistant. Disconnect restores its previous settings.": "返回 Augma，测试新的模型与工具后启用助手。断开管理将恢复之前的设置。",
+     "magpie couldn't ask WSL {distro} its networking mode (it has no wslinfo) and %UserProfile%\\.wslconfig doesn't set it to mirrored, so its {agent} was pointed at Windows ({url}) rather than 127.0.0.1; magpie listens there for WSL, and it answers once Windows' firewall lets WSL in. For 127.0.0.1, set networkingMode=mirrored under [wsl2] in %UserProfile%\\.wslconfig and run wsl --shutdown, then pick the model again.": "magpie 无法获取 WSL {distro} 的网络模式（其中没有 wslinfo），且 %UserProfile%\\.wslconfig 未将其设为 mirrored，因此其中的 {agent} 指向 Windows（{url}）而不是 127.0.0.1；magpie 会在该地址为 WSL 监听，Windows 防火墙放行 WSL 后即可连通。若要使用 127.0.0.1，请在 %UserProfile%\\.wslconfig 的 [wsl2] 下设置 networkingMode=mirrored 并运行 wsl --shutdown，然后重新选择模型。",
+     "magpie restarted the app-server codex sessions share, which none was on, so new codex sessions have this; restart the Codex app, if it is open, to see it there.": "magpie 已重启 codex 会话共用的 app-server（当时没有会话连着它），新的 codex 会话已生效；如果 Codex 应用开着，需重启它才能看到。",
+     "magpie's models are in Copilot Chat's model picker in your JetBrains IDE, under magpie, once the IDE restarts. They need Copilot signed in to GitHub on a plan with Bring Your Own Key: Copilot Free, Pro and Pro+ have it, Business and Enterprise when the organisation's policy allows it.": "JetBrains IDE 重启后，magpie 的模型会出现在 Copilot Chat 模型选择器的 magpie 分组下。前提是 Copilot 已用支持 Bring Your Own Key 的方案登录 GitHub：Copilot Free、Pro 和 Pro+ 都支持，Business 和 Enterprise 需组织策略允许。",
+@@ -7823,6 +7824,7 @@ const I18N = {
+     "dsh reads its config at start-up — restart open dsh sessions to use this.": "dsh 啟動時讀取設定，需重啟已打開的 dsh 會話才會生效。",
+     "dsh's web search goes through magpie, which has nothing to search with yet: set up a provider that searches by itself (DeepSeek, Claude, Codex, …) or a search API under Settings › Web search.": "dsh 的聯網搜尋經過 magpie，而 magpie 目前還沒有可用的搜尋方式：請新增一個自帶搜尋的供應商（DeepSeek、Claude、Codex 等），或在“設定 › 聯網搜尋”中設定搜尋 API。",
+     "fx reads its settings at start-up — restart open fx sessions to use this.": "fx 啟動時讀取設定，需重啟已打開的 fx 會話才會生效。",
++    "Return to Augma, test the new model and tools, then enable the assistant. Disconnect restores its previous settings.": "返回 Augma，測試新的模型與工具後啟用助手。斷開管理將恢復先前的設定。",
+     "magpie couldn't ask WSL {distro} its networking mode (it has no wslinfo) and %UserProfile%\\.wslconfig doesn't set it to mirrored, so its {agent} was pointed at Windows ({url}) rather than 127.0.0.1; magpie listens there for WSL, and it answers once Windows' firewall lets WSL in. For 127.0.0.1, set networkingMode=mirrored under [wsl2] in %UserProfile%\\.wslconfig and run wsl --shutdown, then pick the model again.": "magpie 無法取得 WSL {distro} 的網路模式（其中沒有 wslinfo），且 %UserProfile%\\.wslconfig 未將其設為 mirrored，因此其中的 {agent} 指向 Windows（{url}）而不是 127.0.0.1；magpie 會在該位址為 WSL 監聽，Windows 防火牆放行 WSL 後即可連通。若要使用 127.0.0.1，請在 %UserProfile%\\.wslconfig 的 [wsl2] 下設定 networkingMode=mirrored 並執行 wsl --shutdown，然後重新選擇模型。",
+     "magpie restarted the app-server codex sessions share, which none was on, so new codex sessions have this; restart the Codex app, if it is open, to see it there.": "magpie 已重啟 codex 會話共用的 app-server（當時沒有會話連著它），新的 codex 會話已生效；如果 Codex 應用開著，需重啟它才能看到。",
+     "magpie's models are in Copilot Chat's model picker in your JetBrains IDE, under magpie, once the IDE restarts. They need Copilot signed in to GitHub on a plan with Bring Your Own Key: Copilot Free, Pro and Pro+ have it, Business and Enterprise when the organisation's policy allows it.": "JetBrains IDE 重啟後，magpie 的模型會出現在 Copilot Chat 模型選擇器的 magpie 分組下。前提是 Copilot 已用支援 Bring Your Own Key 的方案登入 GitHub：Copilot Free、Pro 和 Pro+ 都支援，Business 和 Enterprise 需組織策略允許。",
+@@ -11815,6 +11817,7 @@ const I18N = {
+     "dsh reads its config at start-up — restart open dsh sessions to use this.": "dsh は起動時に設定を読み込みます。反映するには開いている dsh セッションを再起動してください。",
+     "dsh's web search goes through magpie, which has nothing to search with yet: set up a provider that searches by itself (DeepSeek, Claude, Codex, …) or a search API under Settings › Web search.": "dsh のウェブ検索は magpie を経由しますが、magpie にはまだ検索手段がありません。自前で検索するプロバイダ（DeepSeek、Claude、Codex など）を追加するか、「設定 › ウェブ検索」で検索 API を設定してください。",
+     "fx reads its settings at start-up — restart open fx sessions to use this.": "fx は起動時に設定を読み込みます。反映するには開いている fx セッションを再起動してください。",
++    "Return to Augma, test the new model and tools, then enable the assistant. Disconnect restores its previous settings.": "Augma に戻り、新しいモデルとツールをテストしてからアシスタントを有効にしてください。接続を解除すると以前の設定に戻ります。",
+     "magpie couldn't ask WSL {distro} its networking mode (it has no wslinfo) and %UserProfile%\\.wslconfig doesn't set it to mirrored, so its {agent} was pointed at Windows ({url}) rather than 127.0.0.1; magpie listens there for WSL, and it answers once Windows' firewall lets WSL in. For 127.0.0.1, set networkingMode=mirrored under [wsl2] in %UserProfile%\\.wslconfig and run wsl --shutdown, then pick the model again.": "magpie は WSL {distro} のネットワークモードを取得できず（wslinfo がありません）、%UserProfile%\\.wslconfig でも mirrored に設定されていないため、{agent} の接続先は 127.0.0.1 ではなく Windows（{url}）にしました。magpie はそこで WSL 向けに待ち受けており、Windows のファイアウォールが WSL を通せば応答します。127.0.0.1 にするには %UserProfile%\\.wslconfig の [wsl2] に networkingMode=mirrored を設定して wsl --shutdown を実行し、モデルを選び直してください。",
+     "magpie restarted the app-server codex sessions share, which none was on, so new codex sessions have this; restart the Codex app, if it is open, to see it there.": "magpie は codex セッションが共有する app-server を再起動しました（接続中のセッションはありませんでした）。新しい codex セッションには反映されています。Codex アプリが開いている場合は、再起動すると反映されます。",
+     "magpie's models are in Copilot Chat's model picker in your JetBrains IDE, under magpie, once the IDE restarts. They need Copilot signed in to GitHub on a plan with Bring Your Own Key: Copilot Free, Pro and Pro+ have it, Business and Enterprise when the organisation's policy allows it.": "IDE を再起動すると、JetBrains IDE の Copilot Chat のモデル選択に magpie の下で magpie のモデルが表示されます。Copilot が Bring Your Own Key のあるプランで GitHub にサインインしている必要があります。Copilot Free、Pro、Pro+ にはあり、Business と Enterprise は組織のポリシーが許可している場合です。",
+@@ -15807,6 +15810,7 @@ const I18N = {
+     "dsh reads its config at start-up — restart open dsh sessions to use this.": "dsh liest seine Konfiguration beim Start – offene dsh-Sitzungen neu starten, damit es gilt.",
+     "dsh's web search goes through magpie, which has nothing to search with yet: set up a provider that searches by itself (DeepSeek, Claude, Codex, …) or a search API under Settings › Web search.": "Die Websuche von dsh läuft über magpie, das noch nichts zum Suchen hat: einen Anbieter einrichten, der selbst sucht (DeepSeek, Claude, Codex, …), oder eine Such-API unter Einstellungen › Websuche.",
+     "fx reads its settings at start-up — restart open fx sessions to use this.": "fx liest seine Einstellungen beim Start – offene fx-Sitzungen neu starten, damit es gilt.",
++    "Return to Augma, test the new model and tools, then enable the assistant. Disconnect restores its previous settings.": "Zu Augma zurückkehren, das neue Modell und die Werkzeuge testen und dann den Assistenten aktivieren. Beim Trennen werden die vorherigen Einstellungen wiederhergestellt.",
+     "magpie couldn't ask WSL {distro} its networking mode (it has no wslinfo) and %UserProfile%\\.wslconfig doesn't set it to mirrored, so its {agent} was pointed at Windows ({url}) rather than 127.0.0.1; magpie listens there for WSL, and it answers once Windows' firewall lets WSL in. For 127.0.0.1, set networkingMode=mirrored under [wsl2] in %UserProfile%\\.wslconfig and run wsl --shutdown, then pick the model again.": "magpie konnte WSL {distro} nicht nach seinem Netzwerkmodus fragen (es hat kein wslinfo), und %UserProfile%\\.wslconfig setzt ihn nicht auf mirrored, daher zeigt sein {agent} auf Windows ({url}) statt auf 127.0.0.1; dort lauscht magpie für WSL, und es antwortet, sobald die Windows-Firewall WSL durchlässt. Für 127.0.0.1 networkingMode=mirrored unter [wsl2] in %UserProfile%\\.wslconfig setzen, wsl --shutdown ausführen und das Modell erneut wählen.",
+     "magpie restarted the app-server codex sessions share, which none was on, so new codex sessions have this; restart the Codex app, if it is open, to see it there.": "magpie hat den App-Server, den codex-Sitzungen teilen, neu gestartet (keine war verbunden), neue codex-Sitzungen haben es also; die Codex-App, falls offen, neu starten, um es dort zu sehen.",
+     "magpie's models are in Copilot Chat's model picker in your JetBrains IDE, under magpie, once the IDE restarts. They need Copilot signed in to GitHub on a plan with Bring Your Own Key: Copilot Free, Pro and Pro+ have it, Business and Enterprise when the organisation's policy allows it.": "Nach einem Neustart der IDE stehen magpies Modelle in der Modellauswahl von Copilot Chat in Ihrer JetBrains-IDE unter magpie. Dafür muss Copilot bei GitHub mit einem Plan mit Bring Your Own Key angemeldet sein: Copilot Free, Pro und Pro+ haben es, Business und Enterprise, wenn die Richtlinie der Organisation es erlaubt.",
+@@ -16047,6 +16051,7 @@ const NOTICES = [
+   "dsh reads its config at start-up — restart open dsh sessions to use this.",
+   "dsh's web search goes through magpie, which has nothing to search with yet: set up a provider that searches by itself (DeepSeek, Claude, Codex, …) or a search API under Settings › Web search.",
+   "fx reads its settings at start-up — restart open fx sessions to use this.",
++  "Return to Augma, test the new model and tools, then enable the assistant. Disconnect restores its previous settings.",
+   "magpie couldn't ask WSL {distro} its networking mode (it has no wslinfo) and %UserProfile%\\.wslconfig doesn't set it to mirrored, so its {agent} was pointed at Windows ({url}) rather than 127.0.0.1; magpie listens there for WSL, and it answers once Windows' firewall lets WSL in. For 127.0.0.1, set networkingMode=mirrored under [wsl2] in %UserProfile%\\.wslconfig and run wsl --shutdown, then pick the model again.",
+   "magpie restarted the app-server codex sessions share, which none was on, so new codex sessions have this; restart the Codex app, if it is open, to see it there.",
+   "magpie's models are in Copilot Chat's model picker in your JetBrains IDE, under magpie, once the IDE restarts. They need Copilot signed in to GitHub on a plan with Bring Your Own Key: Copilot Free, Pro and Pro+ have it, Business and Enterprise when the organisation's policy allows it.",
+diff --git a/internal/gui/assets/icons/augma.svg b/internal/gui/assets/icons/augma.svg
+new file mode 100644
+index 0000000..a878de5
+--- /dev/null
++++ b/internal/gui/assets/icons/augma.svg
+@@ -0,0 +1,5 @@
++<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
++  <path fill="#258ca4" fill-rule="evenodd" d="M56.7 32A24.7 24.7 0 1 1 7.3 32A24.7 24.7 0 1 1 56.7 32ZM55.3 32A23.3 23.3 0 1 1 8.7 32A23.3 23.3 0 1 1 55.3 32Z"/>
++  <path fill="#263442" fill-rule="evenodd" d="M17.81 45.53 29.89 18.47 34.11 18.47 46.19 45.53 40.41 45.53 37.27 38.49 26.73 38.49 23.59 45.53Z M32 26.69 35.48 34.48 28.52 34.48Z"/>
++  <path fill="#f28c12" d="M44.02 9.4A25.6 25.6 0 0 1 57.04 26.68A1.6 1.6 0 0 1 53.91 27.34A22.4 22.4 0 0 0 42.52 12.22A1.6 1.6 0 0 1 44.02 9.4ZM19.98 54.6A25.6 25.6 0 0 1 6.96 37.32A1.6 1.6 0 0 1 10.09 36.66A22.4 22.4 0 0 0 21.48 51.78A1.6 1.6 0 0 1 19.98 54.6Z"/>
++</svg>
