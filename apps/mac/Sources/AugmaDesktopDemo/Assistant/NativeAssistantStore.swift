@@ -20,6 +20,11 @@ final class NativeAssistantStore: ObservableObject {
   @Published private(set) var reply = ""
   @Published private(set) var error = ""
   @Published private(set) var phase = "idle"
+  @Published private(set) var runtimeProgress = ""
+  @Published private(set) var permission: AssistantPermission?
+  private let runtimeOwner = UUID()
+  private let toolScope = NativeToolScope()
+  private let usesRuntime: Bool
   @Published private(set) var assistantReady: Bool
   let voice = VoiceActivityModel()
   let preferences: NativePreferencesStore
@@ -45,17 +50,22 @@ final class NativeAssistantStore: ObservableObject {
 
   init(
     preferences: NativePreferencesStore,
-    keyProvider: @escaping () -> String? = {
-      UserDefaults.standard.bool(forKey: DeepSeekSettings.enabledKey) ? DeepSeekKeychain.load() : nil
-    },
-    completion: @escaping Completion = { messages, key in try await DeepSeekClient.complete(messages, apiKey: key) },
+    keyProvider: (() -> String?)? = nil,
+    completion: Completion? = nil,
     feedbackSpeaker: ((String, String) -> Void)? = nil
   ) {
     self.preferences = preferences
-    self.keyProvider = keyProvider
-    self.completion = completion
+    usesRuntime = keyProvider == nil && completion == nil
+    self.keyProvider = keyProvider ?? { DeepSeekSettings.isReady ? DeepSeekKeychain.load() : nil }
+    self.completion = completion ?? { try await DeepSeekClient.complete($0, apiKey: $1) }
     self.feedbackSpeaker = feedbackSpeaker
-    assistantReady = keyProvider() != nil
+    assistantReady = usesRuntime ? AssistantRuntimeSettings.isReady : self.keyProvider() != nil
+    if usesRuntime {
+      NativeAssistantRuntime.shared.$permission.sink { [weak self] value in
+        guard let self else { return }
+        self.permission = value?.owner == self.runtimeOwner ? value : nil
+      }.store(in: &observers)
+    }
     NotificationCenter.default.publisher(for: .augmaDeepSeekConfigChanged)
       .sink { [weak self] _ in self?.refreshConfiguration() }.store(in: &observers)
     NotificationCenter.default.publisher(for: .augmaCancelSpeech)
@@ -120,6 +130,17 @@ final class NativeAssistantStore: ObservableObject {
       execute(action)
       return
     }
+    if usesRuntime {
+      guard AssistantRuntimeSettings.isReady else {
+        assistantReady = false
+        fail(AssistantRuntimeError.notEnabled.localizedDescription)
+        return
+      }
+      assistantReady = true
+      if AssistantRuntimeSettings.backend() == .dsh { askRuntime(question); return }
+      ask(question, key: "")
+      return
+    }
     guard let key = keyProvider() else {
       assistantReady = false
       fail(text("未识别这条指令。可尝试示例，或在设置中启用 DeepSeek 助手。"))
@@ -152,6 +173,9 @@ final class NativeAssistantStore: ObservableObject {
 
   func cancel() {
     generation += 1
+    if usesRuntime, request != nil { NativeAssistantRuntime.shared.cancel(owner: runtimeOwner) }
+    toolScope.revoke()
+    runtimeProgress = ""
     request?.cancel()
     request = nil
     recordingStart?.cancel()
@@ -165,13 +189,15 @@ final class NativeAssistantStore: ObservableObject {
     closed = true
     cancel()
     history = []
+    if usesRuntime { NativeAssistantRuntime.shared.cancel(owner: runtimeOwner) }
     observers.removeAll()
   }
 
   private func refreshConfiguration() {
     cancel()
     history = []
-    assistantReady = keyProvider() != nil
+    if usesRuntime { NativeAssistantRuntime.shared.cancel(owner: runtimeOwner) }
+    assistantReady = usesRuntime ? AssistantRuntimeSettings.isReady : keyProvider() != nil
   }
 
   private func ask(_ question: String, key: String) {
@@ -187,7 +213,12 @@ final class NativeAssistantStore: ObservableObject {
     let complete = completion
     request = Task { [weak self] in
       do {
-        let content = try await complete(messages, key)
+        let content: String
+        if let self, self.usesRuntime {
+          content = try await NativeAssistantRuntime.shared.complete(messages: messages, owner: self.runtimeOwner)
+        } else {
+          content = try await complete(messages, key)
+        }
         guard !Task.isCancelled, let self, !self.closed, self.generation == token else { return }
         let answer = try NativeAssistantConversation.parse(content)
         self.request = nil
@@ -200,6 +231,42 @@ final class NativeAssistantStore: ObservableObject {
         guard !Task.isCancelled, let self, !self.closed, self.generation == token else { return }
         self.request = nil
         self.fail(self.completionError(error))
+      }
+    }
+  }
+
+  private func askRuntime(_ question: String) {
+    setPhase("interpreting")
+    runtimeProgress = text("正在连接 DSH…")
+    let token = generation
+    toolScope.openPanel = { [weak self] action in
+      guard let self, !self.closed, self.generation == token, let perform = self.performAction else {
+        return NativeAssistantResult(message: "Window unavailable", isError: true)
+      }
+      return perform(action)
+    }
+    request = Task { [weak self] in
+      guard let self else { return }
+      do {
+        let messages = [
+          ["role": "system", "content": "Answer in \(self.preferences.locale). Return JSON only: {\"reply\": string, \"command\": null}. Reply in at most 600 characters. Native tools provide real system data and can open requested panels. Only report actual tool outcomes. Do not invent readings. For advice use memory pressure, not just high RAM usage."],
+          ["role": "user", "content": question],
+        ]
+        let content = try await NativeAssistantRuntime.shared.complete(messages: messages, owner: self.runtimeOwner,
+          scope: self.toolScope, onEvent: { [weak self] status in
+            guard self?.generation == token else { return }; self?.runtimeProgress = status
+          })
+        guard !Task.isCancelled, !self.closed, self.generation == token else { return }
+        let answer = try NativeAssistantConversation.parse(content)
+        guard answer.command == nil else { throw AssistantRuntimeError.protocolViolation }
+        self.history.append(.init(question: question, answer: answer))
+        self.history = Array(self.history.suffix(NativeAssistantConversation.historyLimit))
+        self.request = nil; self.runtimeProgress = ""
+        self.finish(.init(message: answer.reply))
+      } catch {
+        guard !Task.isCancelled, !self.closed, self.generation == token else { return }
+        self.request = nil; self.runtimeProgress = ""
+        self.fail((error as? AssistantRuntimeError)?.localizedDescription ?? AssistantRuntimeError.taskFailed.localizedDescription)
       }
     }
   }

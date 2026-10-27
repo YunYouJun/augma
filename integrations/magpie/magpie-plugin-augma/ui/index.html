@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Augma</title>
+<style>body{max-width:680px} .controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0} #status{min-height:1.5em} [role=alert]{color:var(--magpie-danger,#c34848)}</style>
+</head><body>
+<h2>Augma · DSH</h2>
+<p id="guide">在应用列表的 Augma 卡片选择模型或路由组。推理强度在这里保存。</p>
+<form id="settings"><div class="controls"><label id="effort-label" for="effort">推理强度</label><select id="effort" disabled>
+<option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="xhigh">XHigh</option><option value="max">Max</option>
+</select><button id="save" type="submit" disabled>保存</button></div></form>
+<p id="status" role="status" aria-live="polite"></p>
+<p id="hint" class="muted">仅应用于 Augma。修改模型或强度后，返回 Augma 检测并测试，通过后重新启用助手。请选用当前模型支持的强度。</p>
+<script src="_magpie/bridge.js"></script><script src="settings.js"></script>
+</body></html>

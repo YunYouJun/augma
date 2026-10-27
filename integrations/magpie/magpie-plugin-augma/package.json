@@ -1,0 +1,14 @@
+{
+  "name": "magpie-plugin-augma",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Manage Augma models and reasoning in official Magpie using the installed DSH runtime",
+  "scripts": { "test": "node --test test/*.test.js" },
+  "magpie": {
+    "agent": "agent.js",
+    "middleware": "middleware.js",
+    "page": { "title": "Augma", "file": "ui/index.html", "icon": "icon.svg" },
+    "panels": [{ "slot": "agents", "title": "Augma reasoning", "titles": { "zh": "Augma 推理强度" }, "file": "ui/index.html" }]
+  }
+}

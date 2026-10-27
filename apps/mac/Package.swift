@@ -7,8 +7,11 @@ let package = Package(
   products: [
     .executable(name: "AugmaDesktopDemo", targets: ["AugmaDesktopDemo"]),
   ],
+  dependencies: [
+    .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", exact: "0.12.1"),
+  ],
   targets: [
-    .executableTarget(name: "AugmaDesktopDemo"),
+    .executableTarget(name: "AugmaDesktopDemo", dependencies: [.product(name: "MCP", package: "swift-sdk")]),
     .testTarget(name: "AugmaDesktopDemoTests", dependencies: ["AugmaDesktopDemo"]),
   ]
 )
