@@ -26,23 +26,23 @@ struct AssistantSettingsView: View {
         Text("DeepSeek API（兼容）").tag(AssistantBackend.deepseek)
       }
       .pickerStyle(.segmented)
-      .padding(.horizontal, 24)
-      .padding(.top, 24)
-      .padding(.bottom, 12)
+      .padding(.horizontal, NativePageLayout.pagePadding)
+      .padding(.top, NativePageLayout.pagePadding)
+      .padding(.bottom, NativePageLayout.itemSpacing)
       .accessibilityIdentifier("assistant-runtime-picker")
       .disabled(magpieConfiguration.isManaged)
       if magpieConfiguration.isManaged {
         Text("模型和推理强度由 Magpie 管理。修改后返回 Augma，测试通过即可启用；断开管理会恢复原配置。")
           .font(.caption).foregroundStyle(.secondary)
           .frame(maxWidth: .infinity, alignment: .leading)
-          .padding(.horizontal, 24)
-          .padding(.bottom, 12)
+          .padding(.horizontal, NativePageLayout.pagePadding)
+          .padding(.bottom, NativePageLayout.itemSpacing)
       }
       if !magpieConfiguration.failure.isEmpty {
         Text(magpieConfiguration.failure).font(.caption).foregroundStyle(.red)
           .frame(maxWidth: .infinity, alignment: .leading)
-          .padding(.horizontal, 24)
-          .padding(.bottom, 12)
+          .padding(.horizontal, NativePageLayout.pagePadding)
+          .padding(.bottom, NativePageLayout.itemSpacing)
       }
       if backend == .deepseek { DeepSeekSettingsView() }
       else {
@@ -103,18 +103,18 @@ struct AssistantSettingsView: View {
             Text("测试会发送一条请求及真实系统摘要、应用名称与占用，核对模型和工具往返；可能消耗模型额度。通过后可单独启用助手。")
               .font(.caption).foregroundStyle(.secondary)
             ViewThatFits(in: .horizontal) {
-              HStack(spacing: 12) { testActions }
+              HStack(spacing: NativePageLayout.itemSpacing) { testActions }
                 .fixedSize(horizontal: true, vertical: false)
-              VStack(alignment: .leading, spacing: 12) { testActions }
+              VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) { testActions }
             }
             if !feedback.isEmpty { Text(feedback).textSelection(.enabled).fixedSize(horizontal: false, vertical: true) }
             if !runtime.status.isEmpty, runtime.status != feedback { Text(runtime.status).font(.caption).foregroundStyle(.secondary) }
           }
         }
         .formStyle(.grouped)
-        .contentMargins(.horizontal, 24, for: .scrollContent)
-        .contentMargins(.top, 12, for: .scrollContent)
-        .contentMargins(.bottom, 24, for: .scrollContent)
+        .contentMargins(.horizontal, NativePageLayout.pagePadding, for: .scrollContent)
+        .contentMargins(.top, NativePageLayout.itemSpacing, for: .scrollContent)
+        .contentMargins(.bottom, NativePageLayout.pagePadding, for: .scrollContent)
       }
     }
     .controlSize(.regular)

@@ -20,12 +20,18 @@ struct NativeScenePreferencesView: View {
       }
       Section("HUD") {
         Toggle("显示 HUD", isOn: store.binding(\.showHud))
-        HStack {
-          Slider(value: store.binding(\.opacity), in: 60...100, step: 1) {
-            Text("不透明度")
+        LabeledContent("不透明度") {
+          HStack(spacing: NativePageLayout.itemSpacing) {
+            Slider(value: store.binding(\.opacity), in: 60...100, step: 1) {
+              Text("不透明度")
+            }
+            .labelsHidden()
+            .accessibilityLabel("不透明度")
+            Text("\(Int(store.value.opacity))%")
+              .monospacedDigit().foregroundStyle(.secondary)
+              .frame(width: 42, alignment: .trailing)
           }
-          Text("\(Int(store.value.opacity))%")
-            .monospacedDigit().foregroundStyle(.secondary).frame(width: 42, alignment: .trailing)
+          .frame(minWidth: 120, idealWidth: 180, maxWidth: 240)
         }
         Toggle("镜像画面", isOn: store.binding(\.mirror))
         Toggle("景深动效", isOn: store.binding(\.depthMotion))
@@ -47,5 +53,7 @@ struct NativeScenePreferencesView: View {
       }
     }
     .formStyle(.grouped)
+    .controlSize(.regular)
+    .contentMargins(NativePageLayout.pagePadding, for: .scrollContent)
   }
 }

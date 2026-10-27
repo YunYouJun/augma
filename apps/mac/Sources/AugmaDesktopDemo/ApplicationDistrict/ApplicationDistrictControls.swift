@@ -35,8 +35,8 @@ struct ApplicationDistrictSections: View {
           }
         }
         ForEach(district.buildings.sorted { $0.slot < $1.slot }) { building in
-          HStack(spacing: 9) {
-            applicationIcon(building.id).frame(width: 30, height: 30)
+          HStack(spacing: NativePageLayout.itemSpacing) {
+            applicationIcon(building.id).frame(width: 32, height: 32)
             Button {
               space.selectedApplicationID = building.id
             } label: {
@@ -53,15 +53,16 @@ struct ApplicationDistrictSections: View {
             Button {
               space.selectedApplicationID = building.id
               district.open(building.id)
-            } label: { Image(systemName: "arrow.up.forward.app") }
+            } label: { Image(systemName: "arrow.up.forward.app").frame(width: 28, height: 28) }
+            .buttonStyle(.borderless)
             .help("打开或切换应用")
             .accessibilityLabel(Text("打开或切换应用") + Text("：" + building.title))
             .accessibilityIdentifier("district-open-" + building.id)
             .disabled(district.opening.contains(building.id))
           }
-          .padding(.vertical, 3)
+          .padding(.vertical, 4)
         }
-        HStack {
+        HStack(spacing: NativePageLayout.itemSpacing) {
           Text(String(format: String(localized: "%lld / 12 座大楼"), district.buildings.count))
             .font(.caption).foregroundStyle(.secondary)
           Spacer()
@@ -80,10 +81,18 @@ struct ApplicationDistrictSections: View {
             .font(.caption).foregroundStyle(.secondary)
         }
         Section("大楼布局") {
-          LabeledContent("应用", value: selected.applicationName)
-          TextField("自定义名称（可留空）", text: $name)
-            .accessibilityIdentifier("district-building-name")
-            .onSubmit { district.rename(selected.id, to: name) }
+          VStack(alignment: .leading, spacing: 4) {
+            Text("应用").font(.caption).foregroundStyle(.secondary)
+            Text(selected.applicationName).fixedSize(horizontal: false, vertical: true)
+          }
+          VStack(alignment: .leading, spacing: 8) {
+            Text("自定义名称（可留空）").font(.callout.weight(.medium))
+            TextField("自定义名称（可留空）", text: $name)
+              .labelsHidden().textFieldStyle(.roundedBorder)
+              .accessibilityLabel("自定义名称（可留空）")
+              .accessibilityIdentifier("district-building-name")
+              .onSubmit { district.rename(selected.id, to: name) }
+          }
           Button("保存名称") { district.rename(selected.id, to: name) }
             .disabled(!district.writable)
           Toggle("固定位置", isOn: Binding(get: { selected.fixed }, set: { district.setFixed(selected.id, $0) }))

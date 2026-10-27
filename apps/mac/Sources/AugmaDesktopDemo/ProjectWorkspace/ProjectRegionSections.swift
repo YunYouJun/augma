@@ -95,12 +95,13 @@ private struct ProjectRegionEditor: View {
       Section("工作区入口") {
         if region.craftHub == nil {
           Text(region.folder.displayPath).font(.callout).textSelection(.enabled)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityIdentifier("project-folder-path")
-          HStack {
-            Button("在访达中查看") { projects.revealFolder(regionID) }
-            Button("重新选择文件夹…") {
-              ProjectWorkspacePanels.chooseFolder { projects.rebindFolder(regionID, url: $0) }
-            }.disabled(!projects.editable)
+          ViewThatFits(in: .horizontal) {
+            HStack(spacing: NativePageLayout.itemSpacing) { folderActions }
+              .fixedSize(horizontal: true, vertical: false)
+            VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) { folderActions }
           }
         } else {
           Text("打开工作区前会重新读取 Craft Hub 项目目录；工作网址和应用仍使用下方配置。")
@@ -117,8 +118,9 @@ private struct ProjectRegionEditor: View {
       if let report = projects.reports[regionID] {
         Section("打开结果") {
           ForEach(report.items) { item in
-            HStack(alignment: .top) {
+            HStack(alignment: .top, spacing: NativePageLayout.itemSpacing) {
               Image(systemName: symbol(item.state)).foregroundStyle(tint(item.state))
+                .frame(width: 20)
               VStack(alignment: .leading, spacing: 3) {
                 Text(item.title).lineLimit(2)
                 Text(status(item.state)).font(.caption).foregroundStyle(.secondary)
@@ -135,20 +137,26 @@ private struct ProjectRegionEditor: View {
         }
       }
       Section("编辑项目区域") {
-        TextField("区域名称", text: draftBinding(\.name, region: region))
-          .disabled(region.craftHub != nil)
-          .accessibilityIdentifier("project-region-name")
-        Text("工作网址（每行一个）")
-        TextEditor(text: draftBinding(\.websites, region: region))
-          .font(.body).frame(height: 110)
-          .accessibilityLabel("工作网址（每行一个）").accessibilityIdentifier("project-websites")
+        VStack(alignment: .leading, spacing: 8) {
+          Text("区域名称").font(.callout.weight(.medium))
+          TextField("区域名称", text: draftBinding(\.name, region: region))
+            .labelsHidden().textFieldStyle(.roundedBorder)
+            .accessibilityLabel("区域名称")
+            .disabled(region.craftHub != nil)
+            .accessibilityIdentifier("project-region-name")
+        }
+        VStack(alignment: .leading, spacing: 8) {
+          Text("工作网址（每行一个）").font(.callout.weight(.medium))
+          TextEditor(text: draftBinding(\.websites, region: region))
+            .font(.body).frame(height: 110)
+            .accessibilityLabel("工作网址（每行一个）").accessibilityIdentifier("project-websites")
+        }
         Text("支持 https:// 和 http://，包括 localhost；最多 10 个网址。")
           .font(.caption).foregroundStyle(.secondary)
-        HStack {
-          Button("保存配置") { projects.saveDraft(regionID) }.accessibilityIdentifier("project-save")
-          if projects.draft(for: region) != ProjectRegionDraft(region) {
-            Button("撤销配置编辑") { projects.discardDraft(regionID) }
-          }
+        ViewThatFits(in: .horizontal) {
+          HStack(spacing: NativePageLayout.itemSpacing) { saveActions(for: region) }
+            .fixedSize(horizontal: true, vertical: false)
+          VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) { saveActions(for: region) }
         }
         Picker("区域位置", selection: Binding(get: { region.slot }, set: { projects.move(regionID, to: $0) })) {
           ForEach(0..<ProjectRegion.capacity, id: \.self) { slot in
@@ -163,20 +171,41 @@ private struct ProjectRegionEditor: View {
     }
   }
 
+  @ViewBuilder private var folderActions: some View {
+    Button("在访达中查看") { projects.revealFolder(regionID) }
+    Button("重新选择文件夹…") {
+      ProjectWorkspacePanels.chooseFolder { projects.rebindFolder(regionID, url: $0) }
+    }.disabled(!projects.editable)
+  }
+
+  @ViewBuilder private func saveActions(for region: ProjectRegion) -> some View {
+    Button("保存配置") { projects.saveDraft(regionID) }.accessibilityIdentifier("project-save")
+    if projects.draft(for: region) != ProjectRegionDraft(region) {
+      Button("撤销配置编辑") { projects.discardDraft(regionID) }
+    }
+  }
+
   private func draftBinding(_ keyPath: WritableKeyPath<ProjectRegionDraft, String>, region: ProjectRegion) -> Binding<String> {
     Binding(get: { projects.draft(for: region)[keyPath: keyPath] }, set: {
       var draft = projects.draft(for: region); draft[keyPath: keyPath] = $0; projects.setDraft(regionID, draft)
     })
   }
   private func applicationBinding(_ app: ProjectApplication?, title: String, editor: Bool) -> some View {
-    HStack {
-      LabeledContent(title, value: app?.name ?? String(localized: "未选择应用"))
-      Button("选择…") {
-        ProjectWorkspacePanels.chooseApplication { projects.bindApplication(regionID, url: $0, editor: editor) }
+    VStack(alignment: .leading, spacing: 8) {
+      Text(title).font(.callout.weight(.medium))
+      HStack(alignment: .firstTextBaseline, spacing: NativePageLayout.itemSpacing) {
+        Text(app?.name ?? String(localized: "未选择应用"))
+          .foregroundStyle(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+          .frame(maxWidth: .infinity, alignment: .leading)
+        Button("选择…") {
+          ProjectWorkspacePanels.chooseApplication { projects.bindApplication(regionID, url: $0, editor: editor) }
+        }
+        .fixedSize(horizontal: true, vertical: false)
+        .help(editor ? "选择 VS Code 应用" : "选择 Chrome 应用")
+        .accessibilityIdentifier(editor ? "project-choose-editor" : "project-choose-browser")
+        .disabled(!projects.editable)
       }
-      .help(editor ? "选择 VS Code 应用" : "选择 Chrome 应用")
-      .accessibilityIdentifier(editor ? "project-choose-editor" : "project-choose-browser")
-      .disabled(!projects.editable)
     }
   }
   private func symbol(_ state: ProjectOpenState) -> String {

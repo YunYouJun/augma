@@ -11,6 +11,8 @@ struct NativeSpaceControlsView: View {
       NativeSpaceControlSections(store: store, preferences: preferences)
     }
     .formStyle(.grouped)
+    .controlSize(.regular)
+    .contentMargins(NativePageLayout.pagePadding, for: .scrollContent)
     .accessibilityIdentifier("native-space-controls")
   }
 }
@@ -49,7 +51,7 @@ struct NativeSpaceControlSections: View {
 
   private var scanSection: some View {
     Section("模拟扫描") {
-      HStack {
+      HStack(spacing: NativePageLayout.itemSpacing) {
         Text(scanStatus)
         Spacer(minLength: 8)
         Text("\(Int(store.scanProgress))%")
@@ -125,13 +127,11 @@ struct NativeSpaceControlSections: View {
             .font(.callout)
             .foregroundStyle(index == step ? .primary : .secondary)
         }
-        Button(step >= 4 ? String(localized: "重新开始模拟路线") : String(localized: "前进一步"), systemImage: step >= 4 ? "arrow.clockwise" : "location") {
-          if step >= 4 { store.startRoute() } else { store.advanceRoute() }
+        ViewThatFits(in: .horizontal) {
+          HStack(spacing: NativePageLayout.itemSpacing) { routeActions(step: step) }
+            .fixedSize(horizontal: true, vertical: false)
+          VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) { routeActions(step: step) }
         }
-        .buttonStyle(.borderedProminent)
-        .accessibilityIdentifier("native-space-route-advance")
-        Button("结束模拟路线", action: store.cancelRoute)
-          .accessibilityIdentifier("native-space-route-end")
       } else {
         Text("手动推进路线，预览通往当前地标的虚拟路径。")
           .font(.callout).foregroundStyle(.secondary)
@@ -144,7 +144,7 @@ struct NativeSpaceControlSections: View {
 
   private var displaySection: some View {
     Section("空间显示") {
-      HStack {
+      HStack(spacing: NativePageLayout.itemSpacing) {
         Button("缩小", systemImage: "minus.magnifyingglass") {
           store.setView(yaw: store.viewYaw, pitch: store.viewPitch, scale: store.viewScale / 1.15)
         }
@@ -163,6 +163,16 @@ struct NativeSpaceControlSections: View {
       Toggle("显示 HUD", isOn: preferences.binding(\.showHud))
         .accessibilityIdentifier("native-space-hud")
     }
+  }
+
+  @ViewBuilder private func routeActions(step: Int) -> some View {
+    Button(step >= 4 ? String(localized: "重新开始模拟路线") : String(localized: "前进一步"), systemImage: step >= 4 ? "arrow.clockwise" : "location") {
+      if step >= 4 { store.startRoute() } else { store.advanceRoute() }
+    }
+    .buttonStyle(.borderedProminent)
+    .accessibilityIdentifier("native-space-route-advance")
+    Button("结束模拟路线", action: store.cancelRoute)
+      .accessibilityIdentifier("native-space-route-end")
   }
 
   private var scanStatus: String {

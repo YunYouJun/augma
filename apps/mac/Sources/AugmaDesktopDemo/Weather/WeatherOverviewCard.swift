@@ -9,7 +9,7 @@ struct WeatherOverviewCard: View {
   let refresh: () -> Void
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 14) {
+    VStack(alignment: .leading, spacing: 16) {
       HStack(alignment: .top, spacing: 12) {
         VStack(alignment: .leading, spacing: 4) {
           HStack(spacing: 7) {
@@ -30,14 +30,14 @@ struct WeatherOverviewCard: View {
         HStack(spacing: 10) {
           if let snapshot { WeatherUpdateStatus(snapshot: snapshot) }
           if isLoading {
-            ProgressView().controlSize(.small).frame(width: 22, height: 22)
+            ProgressView().controlSize(.small).frame(width: 28, height: 28)
           } else {
             Button("刷新天气", systemImage: "arrow.clockwise", action: refresh)
               .labelStyle(.iconOnly)
               .buttonStyle(.borderless)
               .foregroundStyle(.secondary)
               .help("刷新天气")
-              .frame(width: 22, height: 22)
+              .frame(width: 28, height: 28)
           }
         }
         .padding(.top, 3)
@@ -54,9 +54,7 @@ struct WeatherOverviewCard: View {
       }
       if let notice { Text(notice).font(.caption).foregroundStyle(.secondary) }
     }
-    .padding(22)
-    .background(Color.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 20))
-    .overlay { RoundedRectangle(cornerRadius: 20).strokeBorder(Color.primary.opacity(0.06)) }
+    .nativeCard()
   }
 }
 

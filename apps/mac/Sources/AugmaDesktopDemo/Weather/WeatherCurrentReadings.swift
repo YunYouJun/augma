@@ -16,9 +16,9 @@ struct WeatherCurrentReadings: View {
           }
           .monospacedDigit()
           .accessibilityElement(children: .combine)
-          HStack(spacing: 12) {
-            Text(snapshot.condition.description).fontWeight(.medium)
-            temperatureRange
+          ViewThatFits(in: .horizontal) {
+            HStack(spacing: 12) { conditions }.fixedSize()
+            VStack(alignment: .leading, spacing: 6) { conditions }
           }
           .font(.callout)
         }
@@ -31,12 +31,22 @@ struct WeatherCurrentReadings: View {
           .accessibilityHidden(true)
       }
       Divider().overlay(Color.primary.opacity(0.02))
-      HStack(spacing: 16) {
-        metric("体感温度", symbol: "thermometer.medium", value: snapshot.apparentTemperature, unit: "°C")
-        metric("相对湿度", symbol: "humidity", value: snapshot.relativeHumidity, unit: "%")
-        metric("风速", symbol: "wind", value: snapshot.windSpeed, unit: "km/h", fractionLength: 1)
+      ViewThatFits(in: .horizontal) {
+        HStack(spacing: 16) { metrics }.frame(minWidth: 420)
+        VStack(alignment: .leading, spacing: 16) { metrics }
       }
     }
+  }
+
+  @ViewBuilder private var conditions: some View {
+    Text(snapshot.condition.description).fontWeight(.medium)
+    temperatureRange
+  }
+
+  @ViewBuilder private var metrics: some View {
+    metric("体感温度", symbol: "thermometer.medium", value: snapshot.apparentTemperature, unit: "°C")
+    metric("相对湿度", symbol: "humidity", value: snapshot.relativeHumidity, unit: "%")
+    metric("风速", symbol: "wind", value: snapshot.windSpeed, unit: "km/h", fractionLength: 1)
   }
 
   private var temperatureRange: some View {

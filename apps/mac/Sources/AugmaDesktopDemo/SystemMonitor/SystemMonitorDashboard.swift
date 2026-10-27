@@ -1,8 +1,8 @@
 import SwiftUI
 
 enum SystemMonitorDashboardLayout {
-  static let spacing: CGFloat = 16
-  static let maximumWidth: CGFloat = 1_040
+  static let spacing: CGFloat = NativePageLayout.sectionSpacing
+  static let maximumWidth: CGFloat = NativePageLayout.wideContentWidth
 
   static func columnCount(for width: CGFloat) -> Int {
     // Two readable 320 pt cards replace the full-width form on desktop windows.
@@ -31,7 +31,7 @@ struct SystemMonitorMetricCard<Metric: View, Details: View>: View {
         }
       }
       .frame(maxWidth: .infinity, minHeight: 120, alignment: .center)
-      .padding(8)
+      .padding(NativePageLayout.itemSpacing)
     } label: {
       Label(title, systemImage: symbol).font(.headline)
     }
@@ -66,13 +66,23 @@ private struct DashboardFact: View {
   var color: Color = .primary
 
   var body: some View {
-    HStack(alignment: .firstTextBaseline, spacing: 8) {
-      Text(title).font(.caption).foregroundStyle(.secondary)
-      Spacer(minLength: 0)
-      Text(value).font(.callout).monospacedDigit().foregroundStyle(color)
-        .fixedSize(horizontal: true, vertical: false)
+    ViewThatFits(in: .horizontal) {
+      HStack(alignment: .firstTextBaseline, spacing: 8) {
+        Text(title).font(.caption).foregroundStyle(.secondary)
+          .fixedSize(horizontal: true, vertical: false)
+        Spacer(minLength: 0)
+        valueText.fixedSize(horizontal: true, vertical: false)
+      }
+      VStack(alignment: .leading, spacing: 4) {
+        Text(title).font(.caption).foregroundStyle(.secondary)
+        valueText
+      }
     }
     .accessibilityElement(children: .combine)
+  }
+
+  private var valueText: some View {
+    Text(value).font(.callout).monospacedDigit().foregroundStyle(color)
   }
 }
 
@@ -184,7 +194,7 @@ struct SystemMonitorNetworkOverview: View {
         Spacer(minLength: 8)
         upload
         Spacer(minLength: 8)
-        interface
+        interface.fixedSize(horizontal: true, vertical: false)
       }
       VStack(alignment: .leading, spacing: 12) {
         HStack { download; Spacer(minLength: 12); upload }
@@ -212,7 +222,8 @@ struct SystemMonitorNetworkOverview: View {
   private var interface: some View {
     VStack(alignment: .leading, spacing: 6) {
       Text("网络接口").font(.caption).foregroundStyle(.secondary)
-      Text(usage?.interface ?? "—").font(.system(.title3, design: .rounded)).lineLimit(1)
+      Text(usage?.interface ?? "—").font(.system(.title3, design: .rounded))
+        .fixedSize(horizontal: false, vertical: true)
     }
   }
 }

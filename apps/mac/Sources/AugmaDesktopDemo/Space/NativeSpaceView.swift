@@ -10,11 +10,11 @@ struct NativeSpaceView: View {
     GeometryReader { geometry in
       if !preferences.value.showHud {
         preview
-          .padding(16)
+          .padding(NativePageLayout.pagePadding)
       } else if geometry.size.width >= 760 {
         HStack(spacing: 0) {
           preview
-            .padding(16)
+            .padding(NativePageLayout.pagePadding)
             .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
           Divider()
           NativeSpaceControlsView(store: store, preferences: preferences)
@@ -29,6 +29,8 @@ struct NativeSpaceView: View {
           NativeSpaceControlSections(store: store, preferences: preferences)
         }
         .formStyle(.grouped)
+        .controlSize(.regular)
+        .contentMargins(.horizontal, NativePageLayout.pagePadding, for: .scrollContent)
       }
     }
   }
@@ -68,6 +70,6 @@ struct NativeSpaceView: View {
           .padding(12)
         }
       }
-      .clipShape(RoundedRectangle(cornerRadius: 14))
+      .clipShape(RoundedRectangle(cornerRadius: NativePageLayout.cornerRadius))
   }
 }

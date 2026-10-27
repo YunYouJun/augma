@@ -13,25 +13,27 @@ struct NativeBrowserView: View {
   var body: some View {
     VStack(spacing: 0) {
       HStack(spacing: 8) {
-        Button("后退", systemImage: "chevron.left", action: store.goBack)
+        toolbarButton("后退", symbol: "chevron.left", action: store.goBack)
           .disabled(!store.canGoBack)
           .accessibilityIdentifier("native-browser-back")
-        Button("前进", systemImage: "chevron.right", action: store.goForward)
+        toolbarButton("前进", symbol: "chevron.right", action: store.goForward)
           .disabled(!store.canGoForward)
           .accessibilityIdentifier("native-browser-forward")
         Button(action: store.reloadOrStop) {
           Label(store.isLoading ? String(localized: "停止载入") : String(localized: "重新载入"),
                 systemImage: store.isLoading ? "xmark" : "arrow.clockwise")
+            .frame(width: 28, height: 28)
         }
         .disabled(!store.hasPage)
         .accessibilityIdentifier("native-browser-reload")
 
         TextField("输入网址或搜索", text: $store.addressInput)
           .textFieldStyle(.roundedBorder)
+          .frame(minHeight: 28)
           .focused($addressFocused)
           .onSubmit(openAddress)
           .accessibilityIdentifier("native-browser-address")
-        Button("打开网页", systemImage: "arrow.right", action: openAddress)
+        toolbarButton("打开网页", symbol: "arrow.right", action: openAddress)
           .disabled(store.addressInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
           .accessibilityIdentifier("native-browser-go")
         Menu {
@@ -41,20 +43,23 @@ struct NativeBrowserView: View {
             .disabled(!store.hasPage)
         } label: {
           Label("网页选项", systemImage: "ellipsis.circle")
+            .frame(width: 28, height: 28)
         }
         .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
         .fixedSize()
         .accessibilityIdentifier("native-browser-menu")
       }
       .labelStyle(.iconOnly)
       .buttonStyle(.borderless)
-      .padding(12)
+      .padding(NativePageLayout.itemSpacing)
 
       if !store.title.isEmpty {
         Text(store.title)
           .font(.caption)
           .foregroundStyle(.secondary)
           .lineLimit(1)
+          .frame(maxWidth: .infinity, alignment: .leading)
           .padding(.horizontal, 12)
           .padding(.bottom, 8)
           .accessibilityIdentifier("native-browser-title")
@@ -93,9 +98,17 @@ struct NativeBrowserView: View {
         .accessibilityIdentifier("native-browser-empty")
       }
     }
+    .controlSize(.regular)
     .background(.background)
     .onChange(of: store.addressFocusRequest) { _, _ in addressFocused = true }
     .onExitCommand { addressFocused = false }
+  }
+
+  private func toolbarButton(_ title: LocalizedStringKey, symbol: String, action: @escaping () -> Void) -> some View {
+    Button(action: action) {
+      Label(title, systemImage: symbol).frame(width: 28, height: 28)
+    }
+    .help(Text(title))
   }
 
   private func openAddress() {

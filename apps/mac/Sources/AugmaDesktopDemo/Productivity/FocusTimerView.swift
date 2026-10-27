@@ -7,26 +7,34 @@ struct FocusTimerView: View {
   @Environment(\.openWindow) private var openWindow
 
   var body: some View {
-    Form {
-      Section {
+    NativePage {
+      NativePageSection("专注计时") {
         FocusTimerReadout(session: store.data.focus, large: true)
         FocusTimerControls(store: store, commands: commands)
         if store.data.focus == nil || store.data.focus?.status == .completed {
-          Stepper(value: $minutes, in: 1...180) { Text(String(format: String(localized: "%lld 分钟"), minutes)) }
-          Button("开始专注", systemImage: "play.fill") { commands.execute(.startFocus(Double(minutes) * 60)) }
-            .buttonStyle(.borderedProminent).disabled(!store.writable)
+          VStack(spacing: NativePageLayout.itemSpacing) {
+            Stepper(value: $minutes, in: 1...180) { Text(String(format: String(localized: "%lld 分钟"), minutes)).monospacedDigit() }
+              .frame(maxWidth: 260)
+            Button("开始专注", systemImage: "play.fill") { commands.execute(.startFocus(Double(minutes) * 60)) }
+              .buttonStyle(.borderedProminent)
+              .controlSize(.large)
+              .disabled(!store.writable)
+          }
+          .frame(maxWidth: .infinity)
         }
         Button("打开悬浮计时", systemImage: "pin") { openWindow(id: "focus-timer") }
+          .buttonStyle(.bordered)
+          .frame(maxWidth: .infinity)
         Text("关闭主窗口后继续计时；重新打开 App 时恢复。睡眠期间按实际经过时间计算。")
-          .font(.callout).foregroundStyle(.secondary)
+          .font(.caption).foregroundStyle(.secondary)
       }
-      Section("到时通知") { FocusNotificationSettings(notifications: store.notifications) }
-      Section {
+      NativePageSection("到时通知") { FocusNotificationSettings(notifications: store.notifications) }
+      VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
         WorkspaceSaveStatus(store: store)
         WorkspaceResultView(commands: commands, store: store)
       }
       if !store.data.completions.isEmpty {
-        Section("最近完成") {
+        NativePageSection("最近完成") {
           ForEach(store.data.completions.prefix(10)) { completion in
             LabeledContent(FocusTime.label(completion.duration)) {
               Text(completion.completedAt, format: .dateTime.month().day().hour().minute()).foregroundStyle(.secondary)
@@ -35,7 +43,6 @@ struct FocusTimerView: View {
         }
       }
     }
-    .formStyle(.grouped)
   }
 }
 
@@ -78,17 +85,39 @@ struct FocusTimerControls: View {
 
   var body: some View {
     if let session = store.data.focus, session.status != .completed {
-      HStack {
-        Button(session.status == .running ? "暂停计时" : "继续计时", systemImage: session.status == .running ? "pause" : "play") {
-          commands.execute(session.status == .running ? .pause : .resume)
+      ViewThatFits(in: .horizontal) {
+        HStack(spacing: NativePageLayout.itemSpacing) {
+          pauseButton(session)
+          extendButton
+          endButton
         }
-        Button("延长 5 分钟", systemImage: "plus") { commands.execute(.extend) }
-          .disabled(!commands.isAvailable(.extend))
-        Spacer()
-        Button("结束计时", systemImage: "stop") { commands.execute(.cancel) }
+        .fixedSize(horizontal: true, vertical: false)
+        VStack(spacing: NativePageLayout.itemSpacing) {
+          pauseButton(session)
+          extendButton
+          endButton
+        }
       }
+      .frame(maxWidth: .infinity)
+      .buttonStyle(.bordered)
       .disabled(!store.writable)
     }
+  }
+
+  private func pauseButton(_ session: FocusSession) -> some View {
+    Button(session.status == .running ? "暂停计时" : "继续计时", systemImage: session.status == .running ? "pause" : "play") {
+      commands.execute(session.status == .running ? .pause : .resume)
+    }
+    .buttonStyle(.borderedProminent)
+  }
+
+  private var extendButton: some View {
+    Button("延长 5 分钟", systemImage: "plus") { commands.execute(.extend) }
+      .disabled(!commands.isAvailable(.extend))
+  }
+
+  private var endButton: some View {
+    Button("结束计时", systemImage: "stop") { commands.execute(.cancel) }
   }
 }
 
@@ -118,7 +147,8 @@ struct FloatingFocusView: View {
       }
       WorkspaceSaveStatus(store: store)
     }
-    .padding(20).frame(width: 380)
+    .padding(NativePageLayout.pagePadding).frame(width: 380)
+    .controlSize(.regular)
     .background { DemoWindowLevelView(alwaysOnTop: true).frame(width: 0, height: 0) }
   }
 }

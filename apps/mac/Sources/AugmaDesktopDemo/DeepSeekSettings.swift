@@ -76,15 +76,20 @@ struct DeepSeekSettingsView: View {
       }
       Section("DeepSeek API Key") {
         SecureField(hasKey ? "输入新密钥以替换现有密钥" : "输入 API Key", text: $newKey)
+          .textFieldStyle(.roundedBorder)
+          .accessibilityLabel("DeepSeek API Key")
           .onSubmit(saveKey)
-        HStack {
-          Button("保存密钥", action: saveKey)
-            .disabled(newKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-          Button("删除密钥", action: removeKey)
-            .disabled(!hasKey)
-          Spacer()
+        VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+          HStack(spacing: NativePageLayout.itemSpacing) {
+            Button("保存密钥", action: saveKey)
+              .buttonStyle(.borderedProminent)
+              .disabled(newKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            Button("删除密钥", action: removeKey)
+              .buttonStyle(.bordered)
+              .disabled(!hasKey)
+          }
           Text(hasKey ? "已保存在 macOS 钥匙串" : "未配置密钥")
-            .foregroundStyle(.secondary)
+            .font(.caption).foregroundStyle(.secondary)
         }
         if !feedback.isEmpty {
           Text(feedback).font(.caption)
@@ -92,8 +97,10 @@ struct DeepSeekSettingsView: View {
       }
     }
     .formStyle(.grouped)
-    .frame(width: 480)
-    .padding()
+    .controlSize(.regular)
+    .contentMargins(.horizontal, NativePageLayout.pagePadding, for: .scrollContent)
+    .contentMargins(.top, NativePageLayout.itemSpacing, for: .scrollContent)
+    .contentMargins(.bottom, NativePageLayout.pagePadding, for: .scrollContent)
   }
 
   private func saveKey() {

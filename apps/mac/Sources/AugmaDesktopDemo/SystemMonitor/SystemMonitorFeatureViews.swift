@@ -4,18 +4,28 @@ struct SystemMonitorFeatureControls: View {
   @ObservedObject var store: SystemMonitorStore
 
   var body: some View {
-    Picker("刷新间隔", selection: $store.sampleInterval) {
-      Text("仅手动刷新").tag(0.0)
-      Text("1 秒").tag(1.0)
-      Text("2 秒").tag(2.0)
-      Text("5 秒").tag(5.0)
-      Text("10 秒").tag(10.0)
+    VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+      VStack(alignment: .leading, spacing: 8) {
+        Text("刷新间隔").font(.callout.weight(.medium))
+        Picker("刷新间隔", selection: $store.sampleInterval) {
+          Text("仅手动刷新").tag(0.0)
+          Text("1 秒").tag(1.0)
+          Text("2 秒").tag(2.0)
+          Text("5 秒").tag(5.0)
+          Text("10 秒").tag(10.0)
+        }
+        .labelsHidden()
+        .pickerStyle(.menu)
+        .accessibilityLabel("刷新间隔")
+      }
+      Toggle("应用内存排行", isOn: $store.applicationMemoryEnabled)
+      Toggle("温度与风扇", isOn: $store.sensorsEnabled)
+      Toggle("网速历史曲线", isOn: $store.networkHistoryEnabled)
+      Text("温度、风扇与曲线默认关闭。仅打开监控面板或菜单栏摘要时采集这些可选数据；只有 HUD 可见时不扫描应用进程。全部监控界面关闭后停止采样并释放数据。")
+        .font(.caption).foregroundStyle(.secondary)
     }
-    Toggle("应用内存排行", isOn: $store.applicationMemoryEnabled)
-    Toggle("温度与风扇", isOn: $store.sensorsEnabled)
-    Toggle("网速历史曲线", isOn: $store.networkHistoryEnabled)
-    Text("温度、风扇与曲线默认关闭。仅打开监控面板或菜单栏摘要时采集这些可选数据；只有 HUD 可见时不扫描应用进程。全部监控界面关闭后停止采样并释放数据。")
-      .font(.caption).foregroundStyle(.secondary)
+    .toggleStyle(.switch)
+    .controlSize(.regular)
   }
 }
 

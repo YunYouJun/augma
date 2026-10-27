@@ -18,8 +18,30 @@ struct WorkspaceCommandView: View {
   private var rowIDs: [String] { (parsed == nil ? [] : ["input"]) + actions.map(\.id) }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 14) {
-      HStack {
+    GeometryReader { geometry in
+      content
+        .frame(width: min(NativePageLayout.contentWidth, max(0, geometry.size.width - NativePageLayout.pagePadding * 2)),
+               height: max(0, geometry.size.height - NativePageLayout.pagePadding * 2), alignment: .top)
+        .padding(NativePageLayout.pagePadding)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+    .controlSize(.regular)
+    .defaultFocus($inputFocused, true)
+    .onAppear {
+      selection = rowIDs.first
+      commands.startPendingVoice()
+    }
+    .task {
+      // Wait until the new utility window has installed its field editor.
+      await Task.yield()
+      inputFocused = true
+    }
+    .onChange(of: commands.query) { _, _ in selection = rowIDs.first }
+  }
+
+  private var content: some View {
+    VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+      HStack(spacing: NativePageLayout.itemSpacing) {
         Image(systemName: "command").foregroundStyle(.secondary)
         TextField("搜索操作，或输入“记下…”、“专注 25 分钟”", text: $commands.query)
           .textFieldStyle(.roundedBorder).focused($inputFocused)
@@ -28,7 +50,9 @@ struct WorkspaceCommandView: View {
           .onKeyPress(.upArrow) { moveSelection(.up); return .handled }
           .disabled(["requesting", "listening", "processing"].contains(commands.speechPhase))
         NativeVoiceButton(commands: commands)
+          .fixedSize(horizontal: true, vertical: false)
       }
+      .layoutPriority(1)
       NativeVoiceStatus(commands: commands)
       List(selection: $selection) {
         if parsed != nil {
@@ -44,36 +68,36 @@ struct WorkspaceCommandView: View {
           .foregroundStyle(commands.isAvailable(action.command) ? .primary : .secondary)
         }
       }
-      .listStyle(.inset).frame(minHeight: compact ? 160 : 220)
+      .listStyle(.inset)
+      .environment(\.defaultMinListRowHeight, compact ? 28 : 32)
+      .frame(minHeight: 0, maxHeight: .infinity)
       .onKeyPress(.return) { runSelection(); return .handled }
       .onTapGesture(count: 2, perform: runSelection)
       .overlay {
         if rowIDs.isEmpty { ContentUnavailableView("没有匹配的操作", systemImage: "magnifyingglass") }
       }
-      HStack {
+      footer
+        .fixedSize(horizontal: false, vertical: true)
+        .layoutPriority(1)
+    }
+  }
+
+  private var footer: some View {
+    VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+      HStack(spacing: NativePageLayout.itemSpacing) {
         Text("↑↓ 选择 · Return 执行").font(.caption).foregroundStyle(.secondary)
         Spacer()
         Button("执行指令", action: runSelection)
           .buttonStyle(.borderedProminent)
+          .controlSize(.large)
+          .fixedSize(horizontal: true, vertical: false)
           .disabled(rowIDs.isEmpty || !["idle", "error"].contains(commands.speechPhase))
       }
       WorkspaceResultView(commands: commands, store: store)
       WorkspaceSaveStatus(store: store)
       Text("例如：记下 明天买咖啡豆 · 专注二十五分钟 · 暂停计时 · 继续计时 · 撤销")
-        .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+        .font(.caption).foregroundStyle(.secondary)
     }
-    .padding(20)
-    .defaultFocus($inputFocused, true)
-    .onAppear {
-      selection = rowIDs.first
-      commands.startPendingVoice()
-    }
-    .task {
-      // Wait until the new utility window has installed its field editor.
-      await Task.yield()
-      inputFocused = true
-    }
-    .onChange(of: commands.query) { _, _ in selection = rowIDs.first }
   }
 
   private func runSelection() {
@@ -119,15 +143,25 @@ private struct VoiceStatusContent: View {
   let cancel: () -> Void
   var body: some View {
     if !["idle", "error"].contains(voice.phase) {
-      HStack {
-        VStack(alignment: .leading, spacing: 6) {
-          Text(voice.phase == "listening" ? "正在聆听，再点一次结束并执行" : voice.phase == "requesting" ? "正在等待语音权限…" : "正在识别…")
-          Text("语音文字会显示在输入框中。").font(.caption).foregroundStyle(.secondary)
-          Button("取消语音", action: cancel)
+      ViewThatFits(in: .horizontal) {
+        HStack(spacing: NativePageLayout.itemSpacing) {
+          status
+            .frame(minWidth: 200, maxWidth: .infinity, alignment: .leading)
+          VoiceActivityView(activity: voice).frame(width: 160)
         }
-        Spacer()
-        VoiceActivityView(activity: voice).frame(width: 160)
+        VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+          status
+          VoiceActivityView(activity: voice)
+        }
       }
+    }
+  }
+
+  private var status: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text(voice.phase == "listening" ? "正在聆听，再点一次结束并执行" : voice.phase == "requesting" ? "正在等待语音权限…" : "正在识别…")
+      Text("语音文字会显示在输入框中。").font(.caption).foregroundStyle(.secondary)
+      Button("取消语音", action: cancel)
     }
   }
 }
@@ -141,12 +175,20 @@ struct WorkspaceResultView: View {
         Image(systemName: commands.resultIsError ? "exclamationmark.circle" : "checkmark.circle")
           .foregroundStyle(commands.resultIsError ? Color.red : Color.accentColor)
         Text(result).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
-        if let destination = commands.resultDestination, !commands.resultIsError {
-          Button("查看") { commands.navigate?(destination) }
+        ViewThatFits(in: .horizontal) {
+          HStack(spacing: 8) { resultActions }
+            .fixedSize(horizontal: true, vertical: false)
+          VStack(alignment: .trailing, spacing: 8) { resultActions }
         }
-        if store.canUndo { Button("撤销") { commands.execute(.undo) } }
       }
       .padding(12).background(.quaternary, in: RoundedRectangle(cornerRadius: 10))
     }
+  }
+
+  @ViewBuilder private var resultActions: some View {
+    if let destination = commands.resultDestination, !commands.resultIsError {
+      Button("查看") { commands.navigate?(destination) }
+    }
+    if store.canUndo { Button("撤销") { commands.execute(.undo) } }
   }
 }

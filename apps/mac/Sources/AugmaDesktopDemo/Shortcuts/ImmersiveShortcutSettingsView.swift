@@ -41,7 +41,7 @@ struct ImmersiveShortcutSettingsView: View {
         }
         .accessibilityIdentifier("immersive-global-shortcut")
         Text("Augma 运行时，在其他应用中也可使用。再次按下隐藏助手，保留当前面板和内容；Esc 或右上退出按钮返回主窗口。")
-          .font(.callout).foregroundStyle(.secondary)
+          .font(.caption).foregroundStyle(.secondary)
         if let error = store.registrationError {
           Label("快捷键注册失败，可能已被其他应用占用。请更换组合或重试。", systemImage: "exclamationmark.triangle")
             .foregroundStyle(.orange)
@@ -51,5 +51,7 @@ struct ImmersiveShortcutSettingsView: View {
       }
     }
     .formStyle(.grouped)
+    .controlSize(.regular)
+    .contentMargins(NativePageLayout.pagePadding, for: .scrollContent)
   }
 }

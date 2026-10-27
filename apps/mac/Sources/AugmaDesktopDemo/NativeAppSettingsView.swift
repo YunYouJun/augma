@@ -25,11 +25,12 @@ struct NativeAppSettingsView: View {
         }
       }
       .formStyle(.grouped)
+      .contentMargins(NativePageLayout.pagePadding, for: .scrollContent)
       .tabItem { Label("系统监控", systemImage: "gauge.with.dots.needle.50percent") }
       AssistantSettingsView()
         .tabItem { Label("助手", systemImage: "sparkles") }
     }
+    .controlSize(.regular)
     .frame(width: 540, height: 620)
-    .padding()
   }
 }

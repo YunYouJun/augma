@@ -7,26 +7,21 @@ struct NativeLiveWeatherView: View {
   @State private var actionTask: Task<Void, Never>?
 
   var body: some View {
-    ScrollView {
-      VStack(alignment: .leading, spacing: 18) {
-        if let city = store.selectedCity {
-          WeatherOverviewCard(city: city, snapshot: store.snapshot, isLoading: store.isLoading,
-                              errorMessage: store.errorMessage, notice: store.notice) {
-            perform { await store.refresh() }
-          }
-        } else {
-          emptyState
+    NativePage {
+      if let city = store.selectedCity {
+        WeatherOverviewCard(city: city, snapshot: store.snapshot, isLoading: store.isLoading,
+                            errorMessage: store.errorMessage, notice: store.notice) {
+          perform { await store.refresh() }
         }
-        if let message = store.locationErrorMessage {
-          Label(message, systemImage: "location.slash")
-            .font(.callout).foregroundStyle(.secondary).textSelection(.enabled)
-        }
-        if !store.savedCities.isEmpty { cities }
-        WeatherAttributionView()
+      } else {
+        emptyState
       }
-      .frame(maxWidth: 800)
-      .padding(24)
-      .frame(maxWidth: .infinity)
+      if let message = store.locationErrorMessage {
+        Label(message, systemImage: "location.slash")
+          .font(.callout).foregroundStyle(.secondary).textSelection(.enabled)
+      }
+      if !store.savedCities.isEmpty { cities }
+      WeatherAttributionView()
     }
     .task { await store.loadIfNeeded() }
     .onDisappear { actionTask?.cancel() }
@@ -41,29 +36,41 @@ struct NativeLiveWeatherView: View {
       Text("选择天气城市").font(.title2.bold())
       Text("使用当前位置查看天气，或搜索并添加多个城市。")
         .foregroundStyle(.secondary)
-      HStack(spacing: 10) {
-        locationButton.buttonStyle(.borderedProminent)
-        addCityButton
+      ViewThatFits(in: .horizontal) {
+        HStack(spacing: NativePageLayout.itemSpacing) { emptyActions }.fixedSize()
+        VStack(spacing: NativePageLayout.itemSpacing) { emptyActions }
       }
+      .controlSize(.large)
     }
     .multilineTextAlignment(.center)
-    .padding(32)
     .frame(maxWidth: .infinity)
-    .background(Color.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 20))
+    .nativeCard()
+  }
+
+  @ViewBuilder private var emptyActions: some View {
+    locationButton.buttonStyle(.borderedProminent)
+    addCityButton
   }
 
   private var cities: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      HStack(spacing: 12) {
-        Text("我的城市").font(.headline)
-        Spacer(minLength: 8)
-        locationButton
-        addCityButton
+    VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+      ViewThatFits(in: .horizontal) {
+        HStack(spacing: NativePageLayout.itemSpacing) {
+          Text("我的城市").font(.headline).fixedSize()
+          Spacer(minLength: 8)
+          HStack(spacing: NativePageLayout.itemSpacing) { cityActions }.fixedSize()
+        }
+        VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+          Text("我的城市").font(.headline)
+          ViewThatFits(in: .horizontal) {
+            HStack(spacing: NativePageLayout.itemSpacing) { cityActions }.fixedSize()
+            VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) { cityActions }
+          }
+        }
       }
-      .controlSize(.small)
       if store.savedCities.count <= 4 {
         ViewThatFits(in: .horizontal) {
-          HStack(spacing: 10) { cityCards }
+          HStack(spacing: NativePageLayout.itemSpacing) { cityCards }
           cityGrid
         }
       } else {
@@ -72,8 +79,13 @@ struct NativeLiveWeatherView: View {
     }
   }
 
+  @ViewBuilder private var cityActions: some View {
+    locationButton
+    addCityButton
+  }
+
   private var cityGrid: some View {
-    LazyVGrid(columns: [GridItem(.adaptive(minimum: 175), spacing: 10)], spacing: 10) { cityCards }
+    LazyVGrid(columns: [GridItem(.adaptive(minimum: 175), spacing: NativePageLayout.itemSpacing)], spacing: NativePageLayout.itemSpacing) { cityCards }
   }
 
   private var cityCards: some View {

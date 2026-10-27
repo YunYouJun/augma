@@ -8,9 +8,9 @@ struct WeatherCitySearchView: View {
   @FocusState private var isSearchFocused: Bool
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 14) {
+    VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
       Text("添加城市").font(.headline)
-      HStack {
+      HStack(alignment: .firstTextBaseline, spacing: NativePageLayout.itemSpacing) {
         TextField("城市名称，如上海或 Tokyo", text: $query)
           .textFieldStyle(.roundedBorder)
           .focused($isSearchFocused)
@@ -52,8 +52,9 @@ struct WeatherCitySearchView: View {
         Text("没有找到城市，请尝试其他名称。").font(.callout).foregroundStyle(.secondary)
       }
     }
-    .padding(20)
+    .padding(NativePageLayout.cardPadding)
     .frame(width: 360)
+    .controlSize(.regular)
     .task { isSearchFocused = true }
     .onDisappear { searchTask?.cancel() }
   }

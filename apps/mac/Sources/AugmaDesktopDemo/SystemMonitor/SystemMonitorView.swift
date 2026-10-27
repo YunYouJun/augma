@@ -7,21 +7,22 @@ struct SystemMonitorView: View {
 
   var body: some View {
     GeometryReader { geometry in
-      let width = min(SystemMonitorDashboardLayout.maximumWidth, max(0, geometry.size.width - 40))
+      let width = min(SystemMonitorDashboardLayout.maximumWidth,
+                      max(0, geometry.size.width - NativePageLayout.pagePadding * 2))
       ScrollView {
-        LazyVStack(alignment: .leading, spacing: 16) {
+        LazyVStack(alignment: .leading, spacing: NativePageLayout.sectionSpacing) {
           controls
           if store.enabled {
             SystemMonitorDashboard(snapshot: store.snapshot,
                                    columns: SystemMonitorDashboardLayout.columnCount(for: width), sampling: store.isSampling)
             if store.sensorsEnabled {
               GroupBox {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
                   HardwareSensorMetrics(snapshot: store.snapshot.sensors)
                   Text("传感器最快每 5 秒读取一次，读取后立即关闭连接。机型或系统限制可能导致部分读数不可用。")
                     .font(.caption).foregroundStyle(.secondary)
                 }
-                .padding(8).frame(maxWidth: .infinity, alignment: .leading)
+                .padding(NativePageLayout.itemSpacing).frame(maxWidth: .infinity, alignment: .leading)
               } label: { Label("温度与风扇", systemImage: "thermometer.medium").font(.headline) }
             }
             if store.applicationMemoryEnabled { ranking }
@@ -32,24 +33,23 @@ struct SystemMonitorView: View {
                 Text("网速表示当前网络接口的实际流量，不是网络带宽测速。切换接口或从睡眠中恢复后会重新采样。")
                   .font(.caption).foregroundStyle(.secondary)
               }
-              .padding(8).frame(maxWidth: .infinity, alignment: .leading)
+              .padding(NativePageLayout.itemSpacing).frame(maxWidth: .infinity, alignment: .leading)
             } label: { Label("网络", systemImage: "network").font(.headline) }
           } else {
             GroupBox {
-              VStack(alignment: .leading, spacing: 8) {
+              VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
                 Label("系统监控已暂停", systemImage: "pause.circle")
                 Text("开启后仅在监控界面可见时工作；也可选择仅手动刷新。")
                   .foregroundStyle(.secondary)
               }
-              .frame(maxWidth: .infinity, alignment: .leading).padding(12)
+              .frame(maxWidth: .infinity, alignment: .leading).padding(NativePageLayout.itemSpacing)
             }
           }
         }
-        .frame(width: width)
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .top)
+        .nativePageContent(maxWidth: SystemMonitorDashboardLayout.maximumWidth)
       }
     }
+    .controlSize(.regular)
     .background {
       SystemMonitorVisibilityView { visible in
         if visible { store.startObserving(observerID, demand: .expanded) }
@@ -71,7 +71,7 @@ struct SystemMonitorView: View {
             updatedAt.fixedSize()
             refreshButton
           }
-          VStack(alignment: .leading, spacing: 10) {
+          VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
             enabledToggle
             pinToggle
             HStack { updatedAt; Spacer(minLength: 8); refreshButton }
@@ -81,16 +81,17 @@ struct SystemMonitorView: View {
           SystemMonitorFeatureControls(store: store).padding(.top, 8)
         }
       }
-      .padding(8)
+      .padding(NativePageLayout.itemSpacing)
+      .frame(maxWidth: .infinity, alignment: .leading)
     }
   }
 
   private var enabledToggle: some View {
-    Toggle("启用系统监控", isOn: $store.enabled).toggleStyle(.switch).controlSize(.small)
+    Toggle("启用系统监控", isOn: $store.enabled).toggleStyle(.switch)
   }
 
   private var pinToggle: some View {
-    Toggle("在 HUD 固定显示系统指标", isOn: $store.hudPinned).toggleStyle(.switch).controlSize(.small)
+    Toggle("在 HUD 固定显示系统指标", isOn: $store.hudPinned).toggleStyle(.switch)
   }
 
   private var updatedAt: some View {
@@ -111,21 +112,21 @@ struct SystemMonitorView: View {
         refreshing = false
       }
     }
-    .controlSize(.small)
+    .fixedSize(horizontal: true, vertical: false)
     .nativeFloatingButton()
     .disabled(!store.enabled || refreshing || store.isSampling)
   }
 
   private var ranking: some View {
     GroupBox {
-      LazyVStack(alignment: .leading, spacing: 8) {
+      LazyVStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
         ApplicationMemoryRanking(snapshot: store.snapshot.applicationMemory, sampling: store.isSampling)
         DisclosureGroup("统计说明") {
           Text("汇总当前用户应用及可确认归属的辅助进程，条形以首位应用为基准。占用包含压缩内存，与系统已用内存的统计口径不同。无法确认归属的共享系统服务不计入；部分进程不可读取时，占用可能不完整。")
             .font(.caption).foregroundStyle(.secondary)
         }
       }
-      .padding(8)
+      .padding(NativePageLayout.itemSpacing)
     } label: {
       Label("应用内存排行", systemImage: "chart.bar.xaxis").font(.headline)
     }

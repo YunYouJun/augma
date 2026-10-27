@@ -42,14 +42,14 @@ struct WeatherCityCard: View {
             }
           }
         }
-        .padding(14)
+        .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(fill, in: RoundedRectangle(cornerRadius: 13))
+        .background(fill, in: RoundedRectangle(cornerRadius: NativePageLayout.cornerRadius))
         .overlay {
-          RoundedRectangle(cornerRadius: 13)
+          RoundedRectangle(cornerRadius: NativePageLayout.cornerRadius)
             .strokeBorder(isSelected ? Color.augmaCyan.opacity(0.6) : Color.primary.opacity(0.07), lineWidth: 1)
         }
-        .contentShape(RoundedRectangle(cornerRadius: 13))
+        .contentShape(RoundedRectangle(cornerRadius: NativePageLayout.cornerRadius))
       }
       .buttonStyle(.plain)
       .onHover { isHovered = $0 }

@@ -16,21 +16,23 @@ struct QuickNotesView: View {
   }
 
   var body: some View {
-    VStack(spacing: 0) {
-      VStack(alignment: .leading, spacing: 12) {
+    NativePage {
+      VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
         NoteComposer(store: store, commands: commands)
         WorkspaceSaveStatus(store: store)
-        HStack {
-          Text("待发送与历史记录").font(.headline)
+      }
+      .nativeCard()
+      VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+        Text("待发送与历史记录").font(.headline)
+        HStack(spacing: NativePageLayout.itemSpacing) {
           TextField("搜索记录", text: $search).textFieldStyle(.roundedBorder)
+            .accessibilityLabel("搜索记录")
           Button("导出记录", systemImage: "square.and.arrow.up") { export(notes) }
+            .fixedSize(horizontal: true, vertical: false)
             .disabled(notes.isEmpty)
         }
       }
-      .padding(20)
-      Divider()
-      ScrollView {
-        LazyVStack(alignment: .leading, spacing: 0) {
+      LazyVStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
         ForEach(notes) { note in
           VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -59,19 +61,17 @@ struct QuickNotesView: View {
             Text(note.text).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
             if let captures = commands.captures { CaptureDeliveryControls(note: note, captures: captures) }
           }
-          .padding(.vertical, 8)
-          .padding(.horizontal, 20)
+          .nativeCard()
           .accessibilityElement(children: .contain)
-          Divider()
-        }
         }
       }
+      .frame(minHeight: notes.isEmpty ? 160 : 0)
       .overlay {
         if notes.isEmpty {
           ContentUnavailableView(search.isEmpty ? "没有待发送的记录" : "没有匹配的记录", systemImage: "checkmark.circle")
         }
       }
-      WorkspaceResultView(commands: commands, store: store).padding(.horizontal, 20).padding(.bottom, 12)
+      WorkspaceResultView(commands: commands, store: store)
     }
     .sheet(item: $editing) { note in NoteEditor(note: note, store: store) }
     .fileExporter(isPresented: $exporting, document: exportDocument, contentType: .plainText, defaultFilename: "Augma Notes.md") { result in
@@ -91,25 +91,32 @@ struct NoteComposer: View {
   @State private var showingConnections = false
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      HStack {
-        Picker("记录类型", selection: Binding(get: { store.data.captureDestination ?? .appleNotes }, set: store.selectCaptureDestination)) {
-          Text("笔记 → 备忘录").tag(CaptureDestination.appleNotes)
-          Text("待办 → To Do").tag(CaptureDestination.microsoftToDo)
+    VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+      ViewThatFits(in: .horizontal) {
+        HStack(spacing: NativePageLayout.itemSpacing) {
+          destinationPicker
+          connectionsButton
         }
-        .labelsHidden().accessibilityLabel("记录类型")
-        Button("连接设置") { showingConnections = true }
+        .fixedSize(horizontal: true, vertical: false)
+        VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+          destinationPicker
+          connectionsButton
+        }
       }
       TextField("记下想法、待办或一句话…", text: Binding(get: { store.data.noteDraft }, set: store.updateDraft), axis: .vertical)
         .lineLimit(3...6).textFieldStyle(.roundedBorder)
+        .multilineTextAlignment(.leading)
+        .accessibilityLabel("记下想法、待办或一句话…")
         .disabled(!store.writable)
-      HStack {
+      HStack(spacing: NativePageLayout.itemSpacing) {
         Text("草稿保存在此 Mac").font(.caption).foregroundStyle(.secondary)
         Spacer()
         Button("发送记录", systemImage: "paperplane") {
           _ = commands.captures?.submit(store.data.noteDraft, clearDraft: true)
         }
         .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .fixedSize(horizontal: true, vertical: false)
         .keyboardShortcut(.return, modifiers: .command)
         .disabled(commands.captures == nil || !store.writable || store.data.noteDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
       }
@@ -124,6 +131,19 @@ struct NoteComposer: View {
         .frame(width: 540, height: 560)
       }
     }
+  }
+
+  private var destinationPicker: some View {
+    Picker("记录类型", selection: Binding(get: { store.data.captureDestination ?? .appleNotes }, set: store.selectCaptureDestination)) {
+      Text("笔记 → 备忘录").tag(CaptureDestination.appleNotes)
+      Text("待办 → To Do").tag(CaptureDestination.microsoftToDo)
+    }
+    .labelsHidden()
+  }
+
+  private var connectionsButton: some View {
+    Button("连接设置") { showingConnections = true }
+      .fixedSize(horizontal: true, vertical: false)
   }
 }
 
@@ -151,7 +171,8 @@ private struct NoteEditor: View {
         .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || text.count > 20_000)
       }
     }
-    .padding(20).frame(width: 480)
+    .padding(NativePageLayout.pagePadding).frame(width: 480)
+    .controlSize(.regular)
   }
 }
 
@@ -169,10 +190,10 @@ struct WorkspaceSaveStatus: View {
     if let error = store.saveError {
       VStack(alignment: .leading, spacing: 8) {
         Label(error, systemImage: "exclamationmark.triangle").foregroundStyle(.red)
-        HStack {
-          if store.writable { Button("重试保存") { store.retrySave() } }
-          else { Button("恢复备份") { Task { await store.restoreBackup() } } }
-          Button("显示数据文件") { NSWorkspace.shared.activateFileViewerSelecting([store.fileURL]) }
+        ViewThatFits(in: .horizontal) {
+          HStack(spacing: NativePageLayout.itemSpacing) { saveActions }
+            .fixedSize(horizontal: true, vertical: false)
+          VStack(alignment: .leading, spacing: 8) { saveActions }
         }
       }
       .font(.callout)
@@ -180,5 +201,11 @@ struct WorkspaceSaveStatus: View {
       Label(store.saving ? "正在保存…" : "已保存在此 Mac", systemImage: store.saving ? "arrow.triangle.2.circlepath" : "checkmark.circle")
         .font(.caption).foregroundStyle(.secondary)
     }
+  }
+
+  @ViewBuilder private var saveActions: some View {
+    if store.writable { Button("重试保存") { store.retrySave() } }
+    else { Button("恢复备份") { Task { await store.restoreBackup() } } }
+    Button("显示数据文件") { NSWorkspace.shared.activateFileViewerSelecting([store.fileURL]) }
   }
 }
