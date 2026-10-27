@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
   name: "AugmaDesktopDemo",
-  platforms: [.macOS(.v15)],
+  platforms: [.macOS(.v26)],
   products: [
     .executable(name: "AugmaDesktopDemo", targets: ["AugmaDesktopDemo"]),
   ],

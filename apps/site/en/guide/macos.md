@@ -4,7 +4,7 @@ The macOS app puts the [AR demo](/en/guide/ar) in a native window: switch apps f
 
 <a class="agm-button agm-button--primary macos-download" href="https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS.zip">Download Augma for macOS</a>
 
-Requires macOS 15 or later, on Macs with Apple silicon or Intel processors. Earlier versions and SHA-256 checksums are on [GitHub Releases](https://github.com/YunYouJun/augma/releases).
+Requires macOS 26 or later, on Macs with Apple silicon or Intel processors. Earlier versions and SHA-256 checksums are on [GitHub Releases](https://github.com/YunYouJun/augma/releases).
 
 ## Install and first launch
 
@@ -23,4 +23,4 @@ The camera and WebXR depend on WebKit's support for local pages; the simulated i
 
 ## Build from source
 
-You need Node.js 24, pnpm and Xcode. From the repository root, run `pnpm mac:run` to build and launch; `pnpm mac:package` produces the same universal package as the release, `apps/mac/dist/Augma-macOS.zip`.
+You need Node.js 24, pnpm and Xcode 26 or later. From the repository root, run `pnpm mac:run` to build and launch; `pnpm mac:package` produces the same universal package as the release, `apps/mac/dist/Augma-macOS.zip`.

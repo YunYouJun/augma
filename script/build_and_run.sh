@@ -9,7 +9,7 @@ esac
 
 APP_NAME="AugmaDesktopDemo"
 BUNDLE_ID="cn.yunyoujun.augma.desktop-demo"
-MIN_SYSTEM_VERSION="15.0"
+MIN_SYSTEM_VERSION="26.0"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PACKAGE_DIR="$ROOT_DIR/apps/mac"
 APP_BUNDLE="$PACKAGE_DIR/dist/Augma.app"
@@ -17,10 +17,12 @@ ARCHIVE="$PACKAGE_DIR/dist/Augma-macOS.zip"
 APP_CONTENTS="$APP_BUNDLE/Contents"
 APP_BINARY="$APP_CONTENTS/MacOS/$APP_NAME"
 VERSION="$(node -p "require('$ROOT_DIR/package.json').version")"
-MICROSOFT_CLIENT_ID="${AUGMA_MICROSOFT_CLIENT_ID:-}"
-if [[ -n "$MICROSOFT_CLIENT_ID" && ! "$MICROSOFT_CLIENT_ID" =~ ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$ ]]; then
-  echo "AUGMA_MICROSOFT_CLIENT_ID must be a Microsoft Application (Client) ID." >&2
-  exit 2
+# Published packages must let users sign in without registering their own app.
+# Local development can still run Notes before the maintainer completes setup.
+if [[ "$MODE" == "--package" ]]; then
+  MICROSOFT_CLIENT_ID="$(node "$ROOT_DIR/scripts/microsoft-todo.mjs" client-id)"
+else
+  MICROSOFT_CLIENT_ID="$(node "$ROOT_DIR/scripts/microsoft-todo.mjs" client-id --allow-missing)"
 fi
 WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/augma-build.XXXXXX")"
 trap 'rm -rf "$WORK_DIR"' EXIT
@@ -119,6 +121,10 @@ cat >"$APP_CONTENTS/Info.plist" <<PLIST
 </dict>
 </plist>
 PLIST
+
+if [[ "$MODE" != "--package" ]]; then
+  bash "$ROOT_DIR/script/sign_mac_dev.sh" "$APP_BUNDLE"
+fi
 
 open_app() {
   /usr/bin/open -n "$APP_BUNDLE"

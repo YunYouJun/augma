@@ -4,7 +4,7 @@ macOS アプリは [AR デモ](/ja/guide/ar) をネイティブウインドウ�
 
 <a class="agm-button agm-button--primary macos-download" href="https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS.zip">Augma for macOS をダウンロード</a>
 
-macOS 15 以降が必要です。Apple シリコンと Intel プロセッサの Mac のどちらでも使えます。過去のバージョンと SHA-256 チェックサムは [GitHub Releases](https://github.com/YunYouJun/augma/releases) にあります。
+macOS 26 以降が必要です。Apple シリコンと Intel プロセッサの Mac のどちらでも使えます。過去のバージョンと SHA-256 チェックサムは [GitHub Releases](https://github.com/YunYouJun/augma/releases) にあります。
 
 ## インストールと初回の起動
 
@@ -23,4 +23,4 @@ macOS 15 以降が必要です。Apple シリコンと Intel プロセッサの 
 
 ## ソースからビルドする
 
-Node.js 24、pnpm、Xcode が必要です。リポジトリのルートで `pnpm mac:run` を実行するとビルドして起動します。`pnpm mac:package` は、リリースと同じユニバーサルパッケージ `apps/mac/dist/Augma-macOS.zip` を生成します。
+Node.js 24、pnpm、Xcode 26 以降が必要です。リポジトリのルートで `pnpm mac:run` を実行するとビルドして起動します。`pnpm mac:package` は、リリースと同じユニバーサルパッケージ `apps/mac/dist/Augma-macOS.zip` を生成します。

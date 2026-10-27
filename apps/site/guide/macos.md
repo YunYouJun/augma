@@ -4,7 +4,7 @@ macOS 客户端把 [AR 演示](/guide/ar) 放进原生窗口：侧栏切换应�
 
 <a class="agm-button agm-button--primary macos-download" href="https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS.zip">下载 Augma for macOS</a>
 
-需要 macOS 15 或更高版本，Apple 芯片与 Intel 芯片的 Mac 均可使用。历史版本与 SHA-256 校验值见 [GitHub Releases](https://github.com/YunYouJun/augma/releases)。
+需要 macOS 26 或更高版本，Apple 芯片与 Intel 芯片的 Mac 均可使用。历史版本与 SHA-256 校验值见 [GitHub Releases](https://github.com/YunYouJun/augma/releases)。
 
 ## 安装与首次打开
 
@@ -23,4 +23,4 @@ macOS 客户端把 [AR 演示](/guide/ar) 放进原生窗口：侧栏切换应�
 
 ## 从源码构建
 
-需要 Node.js 24、pnpm 与 Xcode。在仓库根目录运行 `pnpm mac:run` 构建并启动；`pnpm mac:package` 生成与发布相同的通用安装包 `apps/mac/dist/Augma-macOS.zip`。
+需要 Node.js 24、pnpm 与 Xcode 26 或更高版本。在仓库根目录运行 `pnpm mac:run` 构建并启动；`pnpm mac:package` 生成与发布相同的通用安装包 `apps/mac/dist/Augma-macOS.zip`。

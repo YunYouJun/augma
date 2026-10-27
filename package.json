@@ -13,6 +13,8 @@
     "mac:run": "./script/build_and_run.sh",
     "mac:verify": "./script/build_and_run.sh --verify",
     "mac:package": "./script/build_and_run.sh --package",
+    "mac:setup-todo": "node scripts/microsoft-todo.mjs setup",
+    "mac:check-todo": "node scripts/microsoft-todo.mjs check",
     "icons:sync": "node scripts/sync-app-icon.mjs",
     "icons:check": "node scripts/sync-app-icon.mjs --check",
     "generate": "node scripts/generate.mjs",
