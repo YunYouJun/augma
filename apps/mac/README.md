@@ -210,7 +210,7 @@ Augma 通过 ACP over stdio 启动自己拥有的 DSH 无界面进程，不打�
 
 Augma 使用专属运行 profile 和 `~/Library/Application Support/Augma/Assistant/Sessions` 保存 DSH 会话；不修改 DSH 全局/桌面 profile，不复制 Magpie 登录凭据。Magpie 的本地 `magpie-augma` 标记用于应用用量归属，不是订阅密钥。会话文件可能包含已发送的问题、工具结果和回答，留在本机；此版本没有自动保留期限或跨 App 重启的聊天历史浏览器。关闭 Augma 会回收其子进程，不结束用户原本运行的 DSH 或 Magpie。
 
-安装 [Augma Magpie 插件](../../integrations/magpie/README.md) 后，官方 Magpie 的应用列表会显示 Augma；卡片中选择模型或路由组，页面底部或独立 Augma 插件页保存推理强度，无需修改 Magpie 源码。Augma 导出不含凭据的 `~/Library/Application Support/Augma/Assistant/magpie.json`，并在受管理时读取插件自己的推理强度设置。返回 Augma 或检测连接时同步新选择，变更会取消旧请求并清除测试状态，需要重新测试和启用。断开管理恢复接入前的配置。当前已验证 `group/augma` → GPT-6.1 Terra / Medium，继续复用本机 DSH。
+安装 [Augma Magpie 插件](../../integrations/magpie/README.md) 后，官方 Magpie 的应用列表会显示 Augma；卡片中选择模型或路由组，Agent 页底部的「Augma 推理强度」面板保存推理强度，不增加独立导航 tab，无需修改 Magpie 源码。Augma 导出不含凭据的 `~/Library/Application Support/Augma/Assistant/magpie.json`，并在受管理时读取插件自己的推理强度设置。返回 Augma 或检测连接时同步新选择，变更会取消旧请求并清除测试状态，需要重新测试和启用。断开管理恢复接入前的配置。当前已验证 `group/augma` → GPT-6.1 Terra / Medium，继续复用本机 DSH。
 
 检测失败会区分运行时缺失、入口失效、未验证版本、Magpie 未运行、无模型及模型不可用。请求失败提供鉴权、额度、超时或通用任务错误；不展示可能含私密内容的 provider 原始错误，也不静默改用另一条付费路由。当前仅固定验证 DSH 0.2.0-rc.2，其他版本会被拒绝，需先更新兼容验证。
 
@@ -218,7 +218,7 @@ Augma 使用专属运行 profile 和 `~/Library/Application Support/Augma/Assist
 
 选择「DeepSeek API（兼容）」后继续使用原有开关与 macOS 钥匙串密钥。未匹配指令及最多四轮对话发送至 [DeepSeek Chat Completions API](https://api-docs.deepseek.com/api/create-chat-completion/)；白名单回复仍由原生服务校验。浏览网页不能访问密钥或原生状态。没有启用此后端时不会因为 DSH 失败而调用它。旧客户端、语音最终事件、本地命令及清理结构校验均有回归测试。
 
-DSH 的支持矩阵、真实联调、性能与验收限制见[运行时验证记录](../../docs/plans/2026-10-26-dsh-runtime-validation.md)。
+DSH 的支持矩阵、真实联调、性能与验收限制见[运行时验证记录](../../docs/plans/2026-10-26-dsh-runtime-validation.md)；插件接入、真实联调与验收限制见[插件迁移验证记录](../../docs/plans/2026-10-27-augma-magpie-plugin-validation.md)。
 
 ## 原生界面验证
 

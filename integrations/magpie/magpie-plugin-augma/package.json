@@ -1,8 +1,8 @@
 {
   "name": "magpie-plugin-augma",
+  "type": "module",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "description": "Manage Augma models and reasoning in official Magpie using the installed DSH runtime",
   "scripts": { "test": "node --test test/*.test.js" },
   "magpie": {
