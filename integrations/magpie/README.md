@@ -1,11 +1,11 @@
 # Augma 的 Magpie 插件
 
-使用官方 Magpie 的 `magpie.agent`、`magpie.panels/page` 和 `magpie.middleware` 扩展点，无需修改、重编译或重新签名 Magpie。插件源码位于 [`magpie-plugin-augma`](magpie-plugin-augma)。本机已验证官方 **0.1.1673**、本机 **DSH 0.2.0-rc.2** 和包含配置同步功能的 Augma。
+使用官方 Magpie 的 `magpie.agent`、`magpie.panels` 和 `magpie.middleware` 扩展点，无需修改、重编译或重新签名 Magpie。插件源码位于 [`magpie-plugin-augma`](magpie-plugin-augma)。本机已验证官方 **0.1.1673**、本机 **DSH 0.2.0-rc.2** 和包含配置同步功能的 Augma。
 
 ## 管理入口
 
 - **模型/路由组**：Magpie → Agent → Augma 卡片的原生模型选择器。
-- **推理强度**：Agent 页面底部「Augma 推理强度」，或侧栏/导航中的「Augma」插件页。选择后点击「保存」。支持 Low、Medium、High、XHigh、Max；选用当前模型支持的值，Augma 检测会核对 DSH 公布的能力。
+- **推理强度**：Agent 页面底部「Augma 推理强度」面板。选择后点击「保存」，不增加独立导航 tab。支持 Low、Medium、High、XHigh、Max；选用当前模型支持的值，Augma 检测会核对 DSH 公布的能力。
 - **应用与验证**：返回 Augma → 设置 → 助手 → 检测连接与模型 → 测试模型与只读工具 → 启用 DSH 助手。模型或强度改变会撤销旧测试状态，不能继续使用旧会话。
 
 本机最终设置是 `group/augma` → `codex/gpt-6.1-terra`，推理强度 **Medium**。更换来源模型时，编辑 Magpie 的 Augma 路由组即可继续保留专属用量归属。
@@ -48,7 +48,7 @@ Agent 插件仅管理 Augma 配置文件的 `version/runtime/model/managed/plugi
 插件面板使用官方 `magpie.options.get/set` 保存自己的设置：
 
 ```json
-{"integration":"augma-v1","effort":"medium"}
+{ "integration": "augma-v1", "effort": "medium" }
 ```
 
 Augma 在激活、打开设置、检测及请求前读取配置；受插件管理时，从 Magpie 的 `~/.config/magpie/plugins.json` 中读取唯一启用且带 `integration: augma-v1` 标记的条目。若 Augma 使用绝对路径的 `XDG_CONFIG_HOME`，则读取其 `magpie/plugins.json`，应与 Magpie 保持一致。不支持自动发现 Magpie portable 数据目录。

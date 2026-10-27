@@ -8,7 +8,6 @@
   "magpie": {
     "agent": "agent.js",
     "middleware": "middleware.js",
-    "page": { "title": "Augma", "file": "ui/index.html", "icon": "icon.svg" },
     "panels": [{ "slot": "agents", "title": "Augma reasoning", "titles": { "zh": "Augma 推理强度" }, "file": "ui/index.html" }]
   }
 }

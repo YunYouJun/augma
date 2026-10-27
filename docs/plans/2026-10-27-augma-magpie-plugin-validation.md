@@ -17,6 +17,7 @@
 4. 额外直接向本机网关发出标记为 Augma、请求强度 High 的普通文本请求；插件实际覆盖为 Medium，HTTP 200，回答 `AUGMA_PLUGIN_OK`。证明 middleware 在官方网关中运行。
 5. Augma 普通文字输入「请只回复一句中文确认插件连接正常，不调用工具。」得到「插件连接正常。」；真实调用 HTTP 200 / Terra / Medium。
 6. 使用官方 CLI 断开插件管理，核对配置精确恢复为接入前四项；重新连接完整的 `magpie/group/augma` 后保留 Medium 和专属路由。
+7. 后续在本机官方 Magpie 0.1.1697 移除重复的 `magpie.page` 注册，保留 Agent 页底部面板。同步本地安装目录后打开「插件」刷新，顶栏 Augma tab 消失；返回 Agent，模型仍为 Augma 路由组，面板正常读取 Medium。无需重启，Magpie 插件配置和 Augma 接入配置的文件摘要均保持不变，插件 Node 4 项测试通过。
 
 ## 请求记录（仅保留非敏感字段）
 
@@ -43,6 +44,6 @@
 
 ## 使用范围
 
-模型选择器使用官方 Agent 插件能力，推理强度位于插件面板/插件页；官方卡片内的内置 effort 控件并未修改。插件从本地目录安装，未发布到 npm/插件市场。验证版本为官方 0.1.1673，未把尚未安装的更新版本视为已验证。DSH 固定兼容 0.2.0-rc.2，插件配置读取默认或绝对 `XDG_CONFIG_HOME` 路径；Magpie portable 目录不自动发现。
+模型选择器使用官方 Agent 插件能力，推理强度位于 Agent 页底部插件面板，不增加独立导航 tab；官方卡片内的内置 effort 控件并未修改。插件从本地目录安装，未发布到 npm/插件市场。迁移验证版本为官方 0.1.1673。DSH 固定兼容 0.2.0-rc.2，插件配置读取默认或绝对 `XDG_CONFIG_HOME` 路径；Magpie portable 目录不自动发现。
 
 安装、管理及卸载见 [插件说明](../../integrations/magpie/README.md)。
