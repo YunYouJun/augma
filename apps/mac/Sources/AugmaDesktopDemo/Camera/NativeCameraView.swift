@@ -57,6 +57,7 @@ struct NativeCameraView: View {
       if let data = store.photoData, let image = NSImage(data: data) {
         NativePageSection("最近拍摄") {
           Image(nsImage: image).resizable().scaledToFit().frame(maxHeight: 160)
+            .frame(maxWidth: .infinity)
             .accessibilityLabel(Text("最近拍摄的照片"))
           ViewThatFits(in: .horizontal) {
             HStack(spacing: NativePageLayout.itemSpacing) { photoActions }

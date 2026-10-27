@@ -13,7 +13,8 @@ struct DemoContentView: View {
     self.appDelegate = appDelegate
     _model = StateObject(wrappedValue: NativeDemoModel(preferences: appDelegate.preferences, audio: appDelegate.audio,
                                                     commands: appDelegate.commands, applications: appDelegate.applicationDistrict,
-                                                    projects: appDelegate.projectWorkspaces))
+                                                    projects: appDelegate.projectWorkspaces, navigation: appDelegate.navigation,
+                                                    market: appDelegate.market))
     preferences = appDelegate.preferences
   }
 
@@ -54,9 +55,23 @@ struct DemoContentView: View {
         .frame(width: 0, height: 0)
     }
     .toolbar {
+      ToolbarItemGroup(placement: .primaryAction) {
+        Button("返回首页", systemImage: "house") { model.goHome() }
+          .help("返回首页（⇧⌘H）")
+          .accessibilityIdentifier("main-go-home")
+        Button("快速记录", systemImage: "square.and.pencil") {
+          preferences.value.showHud = true
+          model.selection = .notes
+        }
+        .help("快速记录（⇧⌘N）")
+        .accessibilityIdentifier("main-quick-capture")
+        Button("打开 Microsoft To Do", systemImage: "checklist") { appDelegate.captures.openDestination(.microsoftToDo) }
+          .help("打开 Microsoft To Do（⌥⌘T）")
+          .accessibilityIdentifier("main-open-todo")
+      }
       ToolbarItem(placement: .primaryAction) {
         Button(layout == .augma ? "切换为侧栏布局" : "切换为 Augma 布局",
-               systemImage: layout == .augma ? "sidebar.left" : "circle.grid.3x1") { layout = layout.toggled }
+               systemImage: layout == .augma ? "sidebar.left" : "circle.grid.2x2") { layout = layout.toggled }
           .accessibilityIdentifier("main-layout-toggle")
           .keyboardShortcut("0", modifiers: [.command, .option])
       }

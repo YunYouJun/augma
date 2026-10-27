@@ -9,6 +9,7 @@ final class NativeDemoModel: ObservableObject {
   @Published var selection: DemoModule? = .notes {
     didSet {
       if oldValue == .commands, selection != .commands, !performingAssistantAction { assistant.cancel() }
+      rememberPage()
     }
   }
   @Published private(set) var isImmersive = false
@@ -19,20 +20,26 @@ final class NativeDemoModel: ObservableObject {
   let notifications: NativeNotificationStore
   let device: NativeDeviceStore
   let assistant: NativeAssistantStore
+  let market: ApplicationMarketStore
   let browser: NativeBrowserStore
   weak var commands: WorkspaceCommands?
   var performingAssistantAction = false
   private var observers: [AnyCancellable] = []
   private var closed = false
+  private let navigation: NativeNavigationStore?
+  private let navigationSessionID = UUID()
 
   init(preferences: NativePreferencesStore? = nil, audio: NativeAudioStore? = nil,
        space: NativeSpaceStore? = nil, commands: WorkspaceCommands? = nil, applications: ApplicationDistrictStore? = nil,
-       projects: ProjectWorkspaceStore? = nil) {
+       projects: ProjectWorkspaceStore? = nil, navigation: NativeNavigationStore? = nil,
+       market: ApplicationMarketStore? = nil) {
     let preferences = preferences ?? NativePreferencesStore()
     self.preferences = preferences
     self.audio = audio
     self.space = space ?? NativeSpaceStore(applications: applications, projects: projects)
     self.commands = commands
+    self.navigation = navigation
+    self.market = market ?? ApplicationMarketStore()
     let notifications = NativeNotificationStore()
     self.notifications = notifications
     device = NativeDeviceStore(notifications: notifications)
@@ -44,12 +51,49 @@ final class NativeDemoModel: ObservableObject {
     assistant.performWorkspaceCommand = { [weak self] command in
       self?.performAssistantWorkspaceCommand(command) ?? NativeAssistantResult(message: String(localized: "窗口已关闭。"), isError: true)
     }
+    assistant.performCleanupRequest = { [weak self] text in
+      guard let self, self.market.requestCleanup(text) else {
+        return .init(message: String(localized: "清理工具正忙，请等待当前操作完成。"), isError: true)
+      }
+      self.performingAssistantAction = true
+      self.selection = .market
+      self.preferences.value.showHud = true
+      self.performingAssistantAction = false
+      return .init(message: String(localized: "已打开应用市场，按保留规则生成计划；执行前请核对并确认。"))
+    }
     device.onSuspend = { [weak self] in
       self?.space.cancelScan()
       self?.space.cancelRoute()
       self?.assistant.cancel()
     }
+    if let location = navigation?.startupLocation {
+      self.space.selectScene(location.spaceScene)
+      selection = location.module
+    }
     observeSpaceActivity()
+    self.space.$sceneID.dropFirst().sink { [weak self] scene in
+      self?.rememberPage(scene: scene)
+    }.store(in: &observers)
+  }
+
+  var pageLocation: NativePageLocation? {
+    selection.map { NativePageLocation(module: $0, spaceScene: space.sceneID) }
+  }
+
+  func activateNavigation() {
+    if let pageLocation { navigation?.activate(navigationSessionID, location: pageLocation) }
+  }
+
+  func goHome() {
+    let location = navigation?.homeLocation ?? .workspace
+    if location.module == .space { space.selectScene(location.spaceScene) }
+    selection = location.module
+    preferences.value.showHud = true
+  }
+
+  private func rememberPage(scene: NativeSpaceSceneID? = nil) {
+    guard !closed, let selection else { return }
+    navigation?.remember(NativePageLocation(module: selection, spaceScene: scene ?? space.sceneID), sessionID: navigationSessionID)
   }
 
   func setImmersive(_ value: Bool) {
@@ -120,6 +164,10 @@ struct NativeDemoCommands: Commands {
 
   var body: some Commands {
     CommandMenu("应用") {
+      Button("返回首页", systemImage: "house") { model?.goHome() }
+        .keyboardShortcut("h", modifiers: [.command, .shift])
+        .disabled(model == nil)
+      Divider()
       ForEach(Array(DemoModule.applications.enumerated()), id: \.element) { index, module in
         if index < 9 {
           Button(module.title, systemImage: module.symbol) { model?.selection = module }

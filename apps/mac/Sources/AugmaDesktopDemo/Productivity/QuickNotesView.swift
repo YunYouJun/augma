@@ -103,6 +103,9 @@ struct NoteComposer: View {
           connectionsButton
         }
       }
+      if store.data.captureDestination == .microsoftToDo, let captures = commands.captures {
+        MicrosoftCaptureControls(store: captures.microsoft) { captures.openDestination(.microsoftToDo) }
+      }
       TextField("记下想法、待办或一句话…", text: Binding(get: { store.data.noteDraft }, set: store.updateDraft), axis: .vertical)
         .lineLimit(3...6).textFieldStyle(.roundedBorder)
         .multilineTextAlignment(.leading)

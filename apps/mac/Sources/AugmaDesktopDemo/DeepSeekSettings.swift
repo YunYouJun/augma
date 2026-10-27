@@ -73,6 +73,8 @@ struct DeepSeekSettingsView: View {
         Text("开启后，本地规则无法识别的指令和问题会连同最近几轮对话发送给 DeepSeek。助手用语音回答，或从演示版已有操作中选择一项执行；API 调用可能产生费用。")
           .font(.caption)
           .foregroundStyle(.secondary)
+        Text("系统清理面板也可使用此密钥与开关，仅在你确认后发送匿名占用摘要并生成建议。")
+          .font(.caption).foregroundStyle(.secondary)
       }
       Section("DeepSeek API Key") {
         SecureField(hasKey ? "输入新密钥以替换现有密钥" : "输入 API Key", text: $newKey)

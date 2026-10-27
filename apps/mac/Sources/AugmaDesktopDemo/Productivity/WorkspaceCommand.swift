@@ -9,6 +9,7 @@ enum WorkspaceCommand: Equatable {
   case open(DemoModule)
   case audio(NativeAudioAction)
   case space(NativeSpaceAction)
+  case cleanup(String)
 
   static func parse(_ input: String) -> WorkspaceCommand? {
     let raw = input.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -20,6 +21,7 @@ enum WorkspaceCommand: Equatable {
     if let note = capture("^(?:(?:记下|记录|记一笔|帮我记下)(?:一下)?[：:\\s]*|(?:note|remember)\\s+|メモ(?:して)?[：:\\s]*)(.+)$", in: raw) {
       return .note(note)
     }
+    if DiskCleanupGoal.parse(raw) != nil { return .cleanup(raw) }
     let text = raw.replacingOccurrences(of: "[。.!！]+$", with: "", options: .regularExpression)
     let compact = text.lowercased().replacingOccurrences(of: " ", with: "")
     let spacePhrases: [(NativeSpaceAction, [String])] = [
@@ -47,6 +49,7 @@ enum WorkspaceCommand: Equatable {
       (.focus, ["专注计时", "打开计时", "focus", "timer", "タイマー"]),
       (.actions, ["快捷指令", "打开指令", "commands", "コマンド"]),
       (.monitor, ["系统监控", "打开系统监控", "查看系统信息", "查看网速", "磁盘还剩多少", "monitor", "systemmonitor", "opensystemmonitor", "システムモニタ", "システムモニタを開く"]),
+      (.market, ["应用市场", "打开应用市场", "market", "openmarket", "appmarket", "アプリマーケットを開く"]),
       (.weather, ["打开天气", "weather", "openweather", "天気を開く"]),
       (.audio, ["打开声音", "sound", "opensound", "サウンドを開く"]),
       (.navigation, ["打开地图", "打开导航", "地图导航", "map", "maps", "openmaps", "opennavigation", "地図を開く", "ナビを開く"]),
@@ -111,6 +114,7 @@ struct WorkspaceAction: Identifiable {
   static var all: [WorkspaceAction] { [
     .init(id: "notes", title: String(localized: "快速记录"), symbol: "square.and.pencil", command: .open(.notes)),
     .init(id: "monitor", title: String(localized: "系统监控"), symbol: "gauge.with.dots.needle.50percent", command: .open(.monitor)),
+    .init(id: "market", title: String(localized: "应用市场"), symbol: "shippingbox", command: .open(.market)),
     .init(id: "weather", title: String(localized: "天气"), symbol: "cloud.sun", command: .open(.weather)),
     .init(id: "navigation", title: String(localized: "地图导航"), symbol: "map", command: .open(.navigation)),
     .init(id: "camera", title: String(localized: "摄像头"), symbol: "camera", command: .open(.camera)),

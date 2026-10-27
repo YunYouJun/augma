@@ -19,6 +19,7 @@ struct WorkspaceDetailView: View {
         case .focus: FocusTimerView(store: store, commands: commands)
         case .actions: WorkspaceCommandView(commands: commands, store: store)
         case .monitor: SystemMonitorView(store: monitor)
+        case .market: ApplicationMarketView(store: model.market)
         case .weather: NativeLiveWeatherView(store: weather)
         case .audio: NativeAudioView(store: audio)
         case .navigation: NativeMapView(store: maps)

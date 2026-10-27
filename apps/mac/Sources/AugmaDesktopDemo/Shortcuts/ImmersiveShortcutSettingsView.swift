@@ -24,9 +24,12 @@ struct ImmersiveAssistantCommands: Commands {
 struct ImmersiveShortcutSettingsView: View {
   @ObservedObject var store: ImmersiveShortcutStore
   @AppStorage(NativeWindowLayout.storageKey) private var layout = NativeWindowLayout.augma
+  let navigation: NativeNavigationStore
+  let sessions: DemoSessionRegistry
 
   var body: some View {
     Form {
+      NativeStartupSettingsView(store: navigation, sessions: sessions)
       Section("主窗口布局") {
         Picker("窗口布局", selection: $layout) {
           Text("Augma 布局").tag(NativeWindowLayout.augma)

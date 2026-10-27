@@ -22,6 +22,7 @@ extension SystemMetricsReader: SystemMetricsSampling {}
 @MainActor
 final class SystemMonitorStore: ObservableObject {
   let simulatorCleanup = SimulatorCleanupStore()
+  lazy var cleanup = SystemCleanupStore(simulator: simulatorCleanup)
   @Published private(set) var snapshot = SystemSnapshot()
   @Published private(set) var isSampling = false
   @Published private(set) var networkHistory = NetworkHistory()

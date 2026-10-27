@@ -68,7 +68,7 @@ enum SystemCapacityStyle {
   }
 }
 
-/// A native read-only Gauge with a static Augma ring. No timer, animation or glass layer.
+/// A native read-only Gauge whose arc animates only when its reading changes.
 struct SystemCapacityRing: View {
   let title: LocalizedStringKey
   let fraction: Double?
@@ -84,6 +84,8 @@ struct SystemCapacityRing: View {
     }
     .gaugeStyle(CapacityRingStyle(tint: tint, size: size, available: SystemCapacityStyle.fraction(fraction) != nil))
     .accessibilityValue(SystemCapacityStyle.fraction(fraction).map { SystemMetricFormat.percent($0) } ?? String(localized: "暂不可用"))
+    // Keep inherited animations out of the labels and availability changes;
+    // the progress arc opts into its own value-driven animation below.
     .transaction { $0.animation = nil }
   }
 }
@@ -93,6 +95,7 @@ private struct CapacityRingStyle: GaugeStyle {
   let size: CGFloat
   let available: Bool
   @Environment(\.colorSchemeContrast) private var contrast
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   func makeBody(configuration: Configuration) -> some View {
     let width: CGFloat = size < 40 ? 3 : 4
@@ -101,10 +104,13 @@ private struct CapacityRingStyle: GaugeStyle {
         .stroke(Color.secondary.opacity(contrast == .increased ? 0.4 : 0.17),
                 style: StrokeStyle(lineWidth: width, dash: available ? [] : [2, 3]))
       // Unavailable readings have a dashed track, never a fabricated zero-percent arc.
-      if available && configuration.value > 0 {
+      if available {
         Circle().inset(by: width / 2).trim(from: 0, to: configuration.value)
           .stroke(tint, style: StrokeStyle(lineWidth: width, lineCap: .round))
           .rotationEffect(.degrees(-90))
+          // Preserve the arc's identity at zero without leaving a round-cap dot.
+          .opacity(configuration.value > 0 ? 1 : 0)
+          .animation(reduceMotion ? nil : .easeInOut(duration: 0.35), value: configuration.value)
       }
       configuration.currentValueLabel.foregroundStyle(available ? tint : .secondary)
         .accessibilityHidden(true)

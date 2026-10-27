@@ -14,6 +14,7 @@ final class DemoSessionRegistry: ObservableObject {
     sessions.removeAll { $0.model == nil || $0.model === model }
     sessions.append(WeakSession(model))
     current = model
+    model.activateNavigation()
     if let pending {
       self.pending = nil
       apply(pending, to: model)
@@ -24,11 +25,15 @@ final class DemoSessionRegistry: ObservableObject {
     sessions.removeAll { $0.model == nil || $0.model === model }
     sessions.append(WeakSession(model))
     if current !== model { current = model }
+    model.activateNavigation()
   }
 
   func unregister(_ model: NativeDemoModel) {
     sessions.removeAll { $0.model == nil || $0.model === model }
-    if current === model { current = sessions.last?.model }
+    if current === model {
+      current = sessions.last?.model
+      current?.activateNavigation()
+    }
   }
 
   func perform(_ request: Request, openWindow: () -> Void) {
@@ -49,7 +54,10 @@ final class DemoSessionRegistry: ObservableObject {
   private func apply(_ request: Request, to model: NativeDemoModel) {
     switch request {
     case .open(let module):
-      if let module { model.selection = module }
+      if let module {
+        model.selection = module
+        model.preferences.value.showHud = true
+      }
       if model.selection == .space { model.preferences.value.showHud = true }
     case .voice:
       model.toggleSpeech()

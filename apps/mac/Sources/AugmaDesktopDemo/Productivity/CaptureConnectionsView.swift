@@ -43,10 +43,10 @@ private struct MicrosoftConnectionForm: View {
           }
           .disabled(store.busy || sending)
         } else {
-          Button("登录 Microsoft") { store.signIn() }
+          Button("连接 Microsoft To Do") { store.signIn() }
             .disabled(!store.configured || store.busy || sending)
           if !store.configured {
-            Text("此构建尚未配置 Microsoft 登录。可在下方开发者配置中设置应用 ID。")
+            Text("此版本尚未配置 Microsoft 登录，请联系 Augma 维护者或在连接设置中配置应用 ID。")
               .font(.caption).foregroundStyle(.secondary)
           }
         }
@@ -62,7 +62,9 @@ private struct MicrosoftConnectionForm: View {
           .font(.caption).foregroundStyle(.secondary)
       }
       Section {
-        DisclosureGroup("开发者配置") {
+        DisclosureGroup("自定义 Microsoft 应用（高级）") {
+          Text("通常只需登录 Microsoft；仅自建或调试应用时需要填写应用 ID。")
+            .font(.caption).foregroundStyle(.secondary)
           VStack(alignment: .leading, spacing: 8) {
             Text("Microsoft Application（Client）ID").font(.callout.weight(.medium))
             TextField("Microsoft Application（Client）ID", text: $clientID)
@@ -87,11 +89,13 @@ private struct MicrosoftConnectionForm: View {
     .formStyle(.grouped)
     .controlSize(.regular)
     .onAppear { clientID = store.clientID }
-    .task { if store.connected && store.lists.isEmpty { await store.refreshLists() } }
   }
 
   @ViewBuilder private var applicationIDActions: some View {
     Button("保存应用 ID") { store.configure(clientID: clientID) }
+    if store.canUseBundledClientID {
+      Button("使用 Augma 默认配置") { store.useBundledClientID(); clientID = store.clientID }
+    }
   }
 }
 

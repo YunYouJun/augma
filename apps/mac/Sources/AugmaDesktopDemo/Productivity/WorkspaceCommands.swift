@@ -14,6 +14,7 @@ final class WorkspaceCommands: ObservableObject {
   private let audio: NativeAudioStore?
   var navigate: ((DemoModule) -> Void)?
   var operateSpace: ((NativeSpaceAction) -> Void)?
+  var requestCleanup: ((String) -> Bool)?
   var pendingVoice = false
   private var observers: [AnyCancellable] = []
   private lazy var recognizer = SpeechCommandRecognizer(onLevel: { [weak self] value in
@@ -60,6 +61,7 @@ final class WorkspaceCommands: ObservableObject {
     case .open: true
     case .audio(let action): isAudioAvailable(action)
     case .space: operateSpace != nil
+    case .cleanup: requestCleanup != nil
     }
   }
 
@@ -112,6 +114,14 @@ final class WorkspaceCommands: ObservableObject {
       operateSpace(action)
       message = String(localized: "已将操作交给原生空间。")
       resultDestination = .space
+    case .cleanup(let text):
+      guard requestCleanup?(text) == true else {
+        feedback(String(localized: "清理工具正忙，请等待当前操作完成。"), error: true)
+        return false
+      }
+      navigate?(.market)
+      resultDestination = .market
+      message = String(localized: "已打开应用市场，按保留规则生成计划；执行前请核对并确认。")
     }
     if success {
       if let actionID { store.rememberAction(actionID) }

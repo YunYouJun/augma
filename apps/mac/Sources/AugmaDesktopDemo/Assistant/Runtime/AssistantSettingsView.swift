@@ -52,7 +52,7 @@ struct AssistantSettingsView: View {
               .disabled(!testedCurrent || busy)
               .onChange(of: enabled) { _, _ in AssistantRuntimeSettings.notifyChange() }
               .accessibilityIdentifier("assistant-dsh-enabled")
-            Text("文字与语音只在本地指令未匹配时发送给 DSH，经 Magpie 使用所选模型。工具可读取系统摘要和应用名称与占用，或打开你请求的面板。")
+            Text("文字与语音只在本地指令未匹配时发送给 DSH，经 Magpie 使用所选模型。工具可读取系统摘要和应用名称与占用，或打开你请求的面板。清理建议仍仅发送确认后的匿名摘要。")
               .font(.caption).foregroundStyle(.secondary)
           }
           Section("DSH 连接") {

@@ -12,6 +12,7 @@ final class MicrosoftToDoStore: ObservableObject {
     didSet { defaults.set(selectedListID, forKey: "captureMicrosoftListID") }
   }
   private let defaults: UserDefaults
+  private let bundledClientID: String
   private let vault: any MicrosoftCredentialStorage
   private let client: MicrosoftGraphClient
   private let authentication = MicrosoftWebAuthentication()
@@ -23,20 +24,31 @@ final class MicrosoftToDoStore: ObservableObject {
   private var generation = UUID()
 
   init(defaults: UserDefaults = .standard, vault: any MicrosoftCredentialStorage = MicrosoftKeychain(),
-       client: MicrosoftGraphClient = MicrosoftGraphClient()) {
+       client: MicrosoftGraphClient = MicrosoftGraphClient(),
+       bundledClientID: String? = Bundle.main.object(forInfoDictionaryKey: "AugmaMicrosoftClientID") as? String) {
     self.defaults = defaults
     self.vault = vault
     self.client = client
-    clientID = defaults.string(forKey: "captureMicrosoftClientID")
-      ?? Bundle.main.object(forInfoDictionaryKey: "AugmaMicrosoftClientID") as? String ?? ""
+    self.bundledClientID = Self.validClientID(bundledClientID) ?? ""
+    clientID = Self.validClientID(defaults.string(forKey: "captureMicrosoftClientID")) ?? self.bundledClientID
     selectedListID = defaults.string(forKey: "captureMicrosoftListID") ?? ""
-    if !clientID.isEmpty {
-      do { credentials = try vault.load(clientID: clientID); connected = credentials != nil }
-      catch { self.error = error.localizedDescription }
-    }
+    // File-based Keychain reads may present a blocking authorization dialog.
+    // Restore only in response to an explicit connection or delivery action.
   }
 
-  var configured: Bool { UUID(uuidString: clientID) != nil }
+  var configured: Bool { Self.validClientID(clientID) != nil }
+  var canUseBundledClientID: Bool { !bundledClientID.isEmpty && clientID != bundledClientID }
+
+  private static func validClientID(_ input: String?) -> String? {
+    guard let value = input?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
+          UUID(uuidString: value) != nil, value != "00000000-0000-0000-0000-000000000000" else { return nil }
+    return value
+  }
+
+  private var connectionRequiredMessage: String {
+    configured ? String(localized: "请先在快速记录的连接设置中登录 Microsoft To Do。")
+      : String(localized: "此版本尚未配置 Microsoft 登录，请联系 Augma 维护者或在连接设置中配置应用 ID。")
+  }
 
   func deliveryTarget() -> CaptureDelivery {
     CaptureDelivery(destination: .microsoftToDo, listID: selectedListID.isEmpty ? nil : selectedListID,
@@ -44,17 +56,21 @@ final class MicrosoftToDoStore: ObservableObject {
   }
 
   func configure(clientID input: String) {
-    let value = input.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-    guard UUID(uuidString: value) != nil else {
+    guard let value = Self.validClientID(input) else {
       error = String(localized: "请输入有效的 Microsoft Application（Client）ID。")
       return
     }
     guard !busy, !connected else { return }
+    selectedListID = ""
     clientID = value
     defaults.set(value, forKey: "captureMicrosoftClientID")
     error = nil
-    do { credentials = try vault.load(clientID: value); connected = credentials != nil }
-    catch { self.error = error.localizedDescription }
+  }
+
+  func useBundledClientID() {
+    guard canUseBundledClientID, !busy, !connected else { return }
+    configure(clientID: bundledClientID)
+    defaults.removeObject(forKey: "captureMicrosoftClientID")
   }
 
   func signIn() {
@@ -65,6 +81,11 @@ final class MicrosoftToDoStore: ObservableObject {
     loginTask = Task {
       defer { if generation == revision { busy = false; loginTask = nil } }
       do {
+        try restoreConnectionIfNeeded()
+        if connected {
+          try await loadLists()
+          return
+        }
         let request = try MicrosoftOAuthRequest()
         let code = try await authentication.signIn(request, clientID: clientID)
         let tokens = try await client.token(clientID: clientID, fields: [
@@ -115,12 +136,21 @@ final class MicrosoftToDoStore: ObservableObject {
   }
 
   func refreshLists() async {
-    guard connected, !busy else { return }
+    guard !busy else { return }
     busy = true
     error = nil
     defer { busy = false }
-    do { try await loadLists() }
+    do {
+      try restoreConnectionIfNeeded()
+      try await loadLists()
+    }
     catch { self.error = Self.message(for: error) }
+  }
+
+  private func restoreConnectionIfNeeded() throws {
+    guard credentials == nil, configured else { return }
+    credentials = try vault.load(clientID: clientID)
+    connected = credentials != nil
   }
 
   private func loadLists() async throws {
@@ -140,8 +170,9 @@ final class MicrosoftToDoStore: ObservableObject {
   }
 
   func prepare(_ delivery: CaptureDelivery) async throws -> CaptureDelivery {
+    try restoreConnectionIfNeeded()
     guard let credentials, connected else {
-      throw CaptureError.message(String(localized: "请先在快速记录的连接设置中登录 Microsoft To Do。"))
+      throw CaptureError.message(connectionRequiredMessage)
     }
     if let connection = delivery.connectionID, connection != credentials.connectionID {
       throw CaptureError.message(String(localized: "登录账户已变更。请检查内容后选择“改用当前目标重试”。"))
@@ -158,6 +189,7 @@ final class MicrosoftToDoStore: ObservableObject {
   }
 
   func createTask(_ note: QuickNote) async throws -> CaptureReceipt {
+    try restoreConnectionIfNeeded()
     guard let list = note.delivery?.listID, note.delivery?.connectionID == credentials?.connectionID, connected else {
       throw CaptureError.message(String(localized: "Microsoft 连接已变更，请检查目标后重试。"))
     }
@@ -176,7 +208,7 @@ final class MicrosoftToDoStore: ObservableObject {
     if let accessToken, tokenExpiry > .now { return accessToken }
     if let refreshTask { return try await refreshTask.value }
     guard let credentials else {
-      throw CaptureError.message(String(localized: "请先在快速记录的连接设置中登录 Microsoft To Do。"))
+      throw CaptureError.message(connectionRequiredMessage)
     }
     let revision = generation
     let task = Task { @MainActor in

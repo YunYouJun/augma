@@ -159,25 +159,15 @@ extension View {
   }
 
   /// Native floating surfaces let the system supply the rim, contrast and accessibility treatment.
-  @ViewBuilder
   func augmaGlass(cornerRadius: CGFloat = 20, clear: Bool = false) -> some View {
-    if #available(macOS 26, *) {
-      glassEffect(clear ? .clear : .regular, in: .rect(cornerRadius: cornerRadius))
-    } else {
-      background(clear ? .ultraThinMaterial : .regularMaterial, in: RoundedRectangle(cornerRadius: cornerRadius))
-    }
+    glassEffect(clear ? .clear : .regular, in: .rect(cornerRadius: cornerRadius))
   }
 
   /// Floating actions use system styles, including keyboard focus and disabled appearances.
   @ViewBuilder
   func nativeFloatingButton(prominent: Bool = false) -> some View {
-    if #available(macOS 26, *) {
-      if prominent { buttonStyle(.glassProminent) }
-      else { buttonStyle(.glass) }
-    } else {
-      if prominent { buttonStyle(.borderedProminent) }
-      else { buttonStyle(.bordered) }
-    }
+    if prominent { buttonStyle(.glassProminent) }
+    else { buttonStyle(.glass) }
   }
 }
 

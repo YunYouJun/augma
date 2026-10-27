@@ -31,11 +31,11 @@ struct SystemMonitorView: View {
               VStack(alignment: .leading, spacing: 12) {
                 SystemMonitorNetworkOverview(usage: store.snapshot.network)
                 if store.networkHistoryEnabled { NetworkHistoryView(history: store.networkHistory) }
-                Text("网速表示当前网络接口的实际流量，不是网络带宽测速。切换接口或从睡眠中恢复后会重新采样。")
+                Text("仅统计自动选择的物理网卡，包含互联网和局域网流量，不叠加 VPN 虚拟接口或本机回环流量。网速不是带宽测速；切换网卡或唤醒后会重新采样。")
                   .font(.caption).foregroundStyle(.secondary)
               }
               .padding(NativePageLayout.itemSpacing).frame(maxWidth: .infinity, alignment: .leading)
-            } label: { Label("网络", systemImage: "network").font(.headline) }
+            } label: { Label("当前网卡流量", systemImage: "network").font(.headline) }
           } else {
             GroupBox {
               VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
@@ -59,7 +59,7 @@ struct SystemMonitorView: View {
       .frame(width: 0, height: 0)
     }
     .onDisappear { store.stopObserving(observerID) }
-    .sheet(isPresented: $showingCleanup) { SimulatorCleanupPanel(monitor: store, store: store.simulatorCleanup) }
+    .sheet(isPresented: $showingCleanup) { SystemCleanupView(monitor: store, store: store.cleanup) }
   }
 
   private var controls: some View {

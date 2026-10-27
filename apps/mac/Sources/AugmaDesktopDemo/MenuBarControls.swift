@@ -28,6 +28,7 @@ struct MenuBarControls: View {
           ForEach(DemoModule.productivity) { module in
             Button(module.title, systemImage: module.symbol) { appDelegate.openModule(module) }
           }
+          Button("打开 Microsoft To Do", systemImage: "checklist") { appDelegate.captures.openDestination(.microsoftToDo) }
           Button("悬浮计时", systemImage: "pin") { openWindow(id: "focus-timer") }
           Menu("演示应用") {
             ForEach(DemoModule.applications) { module in

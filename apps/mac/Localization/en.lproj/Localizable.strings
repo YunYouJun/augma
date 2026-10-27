@@ -262,7 +262,9 @@
 "紧张" = "Critical";
 "网络" = "Network";
 "网络接口" = "Network Interface";
-"网速表示当前网络接口的实际流量，不是网络带宽测速。切换接口或从睡眠中恢复后会重新采样。" = "Network speed shows actual traffic on the current interface, rather than a bandwidth test. Sampling restarts after an interface change or wake from sleep.";
+"当前网卡流量" = "Current Interface Traffic";
+"以太网" = "Ethernet";
+"仅统计自动选择的物理网卡，包含互联网和局域网流量，不叠加 VPN 虚拟接口或本机回环流量。网速不是带宽测速；切换网卡或唤醒后会重新采样。" = "Shows internet and local network traffic on one automatically selected physical interface. VPN and loopback counters are excluded to avoid double counting. This is not a bandwidth test; sampling restarts after switching interfaces or waking from sleep.";
 "获取时间：%@" = "Fetched: %@";
 "菜单栏显示监控摘要" = "Show Monitor Summary in Menu Bar";
 "请刷新天气以获取所选城市的最新数据。" = "Refresh the weather to load the latest data for your selected city.";
@@ -615,11 +617,16 @@
 "刷新清单" = "Refresh lists";
 "断开连接" = "Disconnect";
 "登录 Microsoft" = "Sign in with Microsoft";
+"连接 Microsoft To Do" = "Connect to Microsoft To Do";
 "此构建尚未配置 Microsoft 登录。可在下方开发者配置中设置应用 ID。" = "Microsoft sign-in is not configured for this build. Set an application ID in Developer configuration below.";
 "正在连接…" = "Connecting…";
 "取消登录" = "Cancel sign-in";
 "登录凭据保存在 macOS 钥匙串。仅在你发送待办时上传记录内容。" = "Credentials are stored in macOS Keychain. Note content is uploaded only when you send a task.";
 "开发者配置" = "Developer configuration";
+"自定义 Microsoft 应用（高级）" = "Custom Microsoft app (Advanced)";
+"通常只需登录 Microsoft；仅自建或调试应用时需要填写应用 ID。" = "Usually, just sign in to Microsoft. An application ID is only needed for a custom app or development.";
+"使用 Augma 默认配置" = "Use Augma defaults";
+"此版本尚未配置 Microsoft 登录，请联系 Augma 维护者或在连接设置中配置应用 ID。" = "Microsoft sign-in is not configured in this version. Contact the Augma maintainer or set an application ID in connection settings.";
 "保存应用 ID" = "Save application ID";
 "在 Microsoft Entra 注册支持个人及组织账户的应用，添加 iOS / macOS 平台和下方回调地址，并授予 Tasks.ReadWrite 委托权限。不需要 Client Secret。" = "Register an app in Microsoft Entra for personal and organization accounts, add the iOS / macOS platform and callback below, and grant delegated Tasks.ReadWrite permission. No client secret is needed.";
 "Microsoft 应用注册" = "Microsoft app registration";
@@ -841,7 +848,104 @@
 /* Adaptive monitoring dashboard */
 "统计说明" = "How totals are calculated";
 
-/* DSH / Magpie assistant integration */
+/* Disk and memory cleanup */
+"旧安装包" = "Old installers";
+"Xcode 构建缓存" = "Xcode build cache";
+"清理项已失效，请重新扫描。" = "This item has expired. Scan again.";
+"文件已变化或路径不安全，请重新扫描。" = "The file changed or its path could not be verified. Scan again.";
+"无法完整读取，已跳过此项。" = "Could not read this item completely. It was skipped.";
+"已达到扫描上限，请稍后重新扫描。" = "The scan limit was reached. Try scanning again later.";
+"已移入废纸篓 %lld 项，跳过 %lld 项。" = "Moved %lld items to Trash; skipped %lld.";
+"AI 建议暂不可用，请检查网络、密钥或稍后重试。" = "AI advice is unavailable. Check your connection and API key, or try again later.";
+"清理磁盘与内存" = "Disk & Memory Cleanup";
+"将所选项目移入废纸篓？" = "Move selected items to Trash?";
+"移入废纸篓" = "Move to Trash";
+"共 %lld 项，约 %@。可从废纸篓恢复；清空废纸篓后才会释放磁盘空间。Xcode 缓存需要重新构建。" = "%lld items, about %@. You can restore them from Trash. Disk space is freed only after emptying Trash. Xcode caches must be rebuilt.";
+"将匿名摘要发送给 DeepSeek？" = "Send an anonymous summary to DeepSeek?";
+"发送摘要并分析" = "Send Summary & Analyze";
+"仅发送内存、磁盘读数、清理类别的数量与大小，以及匿名应用占用。不发送文件名、路径、应用名称或文件内容。API 调用可能收费。AI 只给建议，操作仍需你选择并确认。" = "Only memory and disk readings, cleanup category counts and sizes, and anonymous app usage are sent. File names, paths, app names and file contents are excluded. API charges may apply. AI provides advice; you choose and confirm all actions.";
+"请求退出应用？" = "Request app quit?";
+"请求退出" = "Request Quit";
+"已请求正常退出；应用可能等待保存或拒绝退出。请稍后刷新占用。" = "Requested normal quit. The app may wait for you to save or decline to quit. Refresh usage shortly.";
+"应用已退出、状态已变化或无法正常退出，请在活动监视器中检查。" = "The app has quit, changed state, or could not quit normally. Check Activity Monitor.";
+"将请求 %@ 正常退出，请先保存工作。释放的内存以系统后续读数为准。" = "A normal quit will be requested for %@. Save your work first. Check subsequent readings for actual memory usage.";
+"按需扫描“下载”中的 dmg / pkg / xip 安装包和 Xcode DerivedData，仅列出至少 7 天未修改的项目。不会扫描个人文档或系统目录。" = "Scan installers (dmg / pkg / xip) in Downloads and Xcode DerivedData on demand. Only items unmodified for at least 7 days are listed. Personal documents and system folders are excluded.";
+"扫描可清理项目" = "Scan for Cleanup";
+"重新扫描" = "Scan Again";
+"部分目录无法读取或已达到扫描上限，结果不完整；未完整检查的项目不会列出。" = "Some folders could not be read or the scan limit was reached. Results are incomplete; partially inspected items are excluded.";
+"本次扫描未发现符合条件的项目。" = "No eligible items were found in this scan.";
+"已选 %lld 项 · %@" = "%lld selected · %@";
+"移入废纸篓…" = "Move to Trash…";
+"正在移入废纸篓…" = "Moving to Trash…";
+"移入废纸篓后仍占用磁盘空间；确认不再需要后，可在 Finder 中清空废纸篓。" = "Items in Trash still use disk space. When you no longer need them, empty Trash in Finder.";
+"磁盘清理" = "Disk Cleanup";
+"在 Finder 中显示" = "Show in Finder";
+"结合内存压力判断是否需要退出应用。正常退出闲置应用可减少占用；macOS 会自动管理可回收缓存。" = "Use memory pressure to decide whether to quit apps. Quitting unused apps can reduce usage; macOS manages reclaimable caches automatically.";
+"请求退出…" = "Request Quit…";
+"启用系统监控与应用内存排行后，可查看并退出高占用应用。" = "Enable system monitoring and app memory ranking to review and quit apps with high usage.";
+"打开活动监视器" = "Open Activity Monitor";
+"内存整理" = "Memory Management";
+"使用已配置的 DeepSeek 分析匿名占用摘要，帮助决定先检查哪些项目。建议不会自动勾选文件或退出应用。" = "Use your configured DeepSeek assistant to analyze anonymous usage and suggest what to review first. Advice does not select files or quit apps.";
+"获取 AI 清理建议…" = "Get AI Cleanup Advice…";
+"配置 DeepSeek 助手…" = "Configure DeepSeek…";
+"先完成一次磁盘扫描。" = "Complete a disk scan first.";
+"建议基于本次摘要；请结合当前使用情况决定。" = "Advice reflects this summary. Consider your current work before acting.";
+"AI 清理建议" = "AI Cleanup Advice";
+"系统清理面板也可使用此密钥与开关，仅在你确认后发送匿名占用摘要并生成建议。" = "The cleanup panel also uses this key and switch. An anonymous usage summary is sent for advice only after you confirm.";
+"请求退出 %@" = "Request Quit: %@";
+"收起清理项目" = "Show Fewer Cleanup Items";
+"查看全部清理项目" = "Show All Cleanup Items";
+
+/* Home, quick capture and native To Do navigation. */
+"首页与启动" = "Home and startup";
+"启动时显示" = "On startup";
+"恢复上次位置" = "Resume last location";
+"指定首页" = "Open home page";
+"首页页面" = "Home page";
+"首页 3D 场景" = "Home 3D scene";
+"将当前页面设为首页" = "Use current page as home";
+"恢复上次活动窗口的页面和 3D 场景，首次使用进入应用街区。首页偏好在之后新开的窗口生效；工具栏的首页按钮可随时返回指定首页。" = "Resume the last active window’s page and 3D scene. The first launch opens App District. Home preferences apply to newly opened windows; use the toolbar’s Home button to return at any time.";
+"返回首页" = "Go home";
+"返回首页（⇧⌘H）" = "Go home (⇧⌘H)";
+"快速记录（⇧⌘N）" = "Quick capture (⇧⌘N)";
+"打开 Microsoft To Do" = "Open Microsoft To Do";
+"打开 Microsoft To Do（⌥⌘T）" = "Open Microsoft To Do (⌥⌘T)";
+"尚未连接 Microsoft To Do" = "Microsoft To Do is not connected";
+"优先打开本机应用，未安装时在浏览器中打开。" = "Open the installed app, or use the browser if it is not installed.";
+"已在浏览器中打开 Microsoft To Do。" = "Opened Microsoft To Do in your browser.";
+"无法打开 %@，请检查是否已安装。" = "Could not open %@. Check that it is installed.";
+
+/* Homebrew cleanup */
+"清理正在进行" = "Cleanup in Progress";
+"请等待本次清理结束后退出，以便核对操作结果。" = "Wait for cleanup to finish before quitting so you can review the results.";
+"继续等待" = "Keep Waiting";
+"Homebrew 操作超时，请检查后重新预览。" = "Homebrew timed out. Check its state and preview again.";
+"Homebrew 输出超过上限，请在终端中检查。" = "Homebrew output exceeded the limit. Check it in Terminal.";
+"未找到 Homebrew；请自行安装后重试。" = "Homebrew was not found. Install it yourself, then try again.";
+"Homebrew 未完成操作：" = "Homebrew could not finish:";
+"Homebrew 版本或预览已变化，请重新预览并确认。" = "Homebrew or its preview changed. Preview again and confirm.";
+"此 Homebrew 版本或报告格式尚未验证，仅提供预览。" = "This Homebrew version or report format has not been verified. Preview only.";
+"检测到 Homebrew 环境配置，可能改变清理范围，仅提供预览。" = "Homebrew environment files may change the cleanup scope. Preview only.";
+"操作未完成；若清理已经开始，部分项目可能已移除。请重新预览。" = "The operation did not finish. Some items may already have been removed. Preview again.";
+"由 Homebrew 管理旧版本、过期下载和日志的清理。先预览，再单独确认永久移除；不会自动卸载不再需要的依赖。" = "Homebrew manages cleanup of old versions, expired downloads, and logs. Preview first, then confirm permanent removal. Unused dependencies will not be automatically uninstalled.";
+"预览 Homebrew 清理" = "Preview Homebrew Cleanup";
+"预览 %lld 项 · Homebrew 估算 %@" = "%lld preview items · Homebrew estimates %@";
+"按 Homebrew 规则清理…" = "Clean Up with Homebrew…";
+"本次预览未发现可清理项目。" = "No cleanup items were found in this preview.";
+"预览不是完整的删除清单。执行时 Homebrew 会重新判断，也可能清理未在预览中列出的失效缓存。" = "The preview is not a complete deletion list. Homebrew evaluates items again and may also remove unreferenced caches that were not listed.";
+"正在核对预览并清理 Homebrew…" = "Checking the preview and running Homebrew cleanup…";
+"Homebrew 清理已完成。" = "Homebrew cleanup finished.";
+"Homebrew 报告操作失败，部分项目可能已移除。" = "Homebrew reported a failure. Some items may have been removed.";
+"卷可用空间变化：%@（包含其他应用的并发写入）" = "Volume free-space change: %@ (includes concurrent writes by other apps)";
+"无法读取卷空间变化，请在系统储存空间中核对。" = "Could not read the free-space change. Check Storage in System Settings.";
+"Homebrew 清理" = "Homebrew Cleanup";
+"永久清理 Homebrew 项目？" = "Permanently Remove Homebrew Items?";
+"永久清理" = "Remove Permanently";
+"旧版本、过期下载、日志及失效缓存会由 Homebrew 直接移除，无法从废纸篓恢复，之后可能需要重新下载。执行前会重新核对预览；实际范围由 Homebrew 规则决定，不会自动卸载闲置依赖。" = "Homebrew directly removes old versions, expired downloads, logs, and unreferenced caches. They cannot be restored from Trash and may need to be downloaded again. The preview is checked again; Homebrew determines the final scope. Unused dependencies will not be automatically uninstalled.";
+"查看 Homebrew 原始报告" = "View Original Homebrew Report";
+"仅发送内存、磁盘读数、清理类别和 Homebrew 预览的数量与估算，以及匿名应用占用。不发送文件名、路径、应用名称、工具原始报告或文件内容。API 调用可能收费。AI 只给建议，操作仍需你选择并确认。" = "Only memory and disk readings, cleanup category and Homebrew preview counts and estimates, and anonymous app usage are sent. File names, paths, app names, raw tool reports, and file contents are not sent. API calls may incur charges. AI only advises; you choose and confirm actions.";
+
+// DSH native runtime
 "AI 助手" = "AI assistant";
 "AI 助手设置" = "AI assistant settings";
 "AI 运行时" = "AI runtime";
@@ -876,40 +980,80 @@
 "模型额度不足或请求受限。请在 Magpie 中检查额度。" = "The model quota is exhausted or requests are limited. Check quota in Magpie.";
 "模型未完成请求。请在 DSH 或 Magpie 中检查模型状态后重试。" = "The model did not complete the request. Check its status in DSH or Magpie and try again.";
 "DSH 隔离配置已改变。为保护工具边界，连接未启动。" = "The isolated DSH configuration changed. The connection was not started to preserve tool restrictions.";
+"文字与语音只在本地指令未匹配时发送给 DSH，经 Magpie 使用所选模型。工具可读取系统摘要和应用名称与占用，或打开你请求的面板。清理建议仍仅发送确认后的匿名摘要。" = "Text and speech are sent to DSH only when local commands do not match, using the selected model through Magpie. Tools can read system summaries and app names and memory use, or open requested panels. Cleanup advice sends only confirmed anonymous summaries.";
 "支持 DSH 0.2.0-rc.2。使用 Augma 专属隔离配置，不修改 DSH 桌面配置。Magpie 的登录、订阅和路由在 Magpie 中管理。" = "Supports DSH 0.2.0-rc.2 with an isolated Augma configuration. DSH desktop settings are preserved. Manage sign-in, subscriptions and routes in Magpie.";
 "切换模型后重新检测，以读取该模型公布的推理选项。" = "Detect again after changing models to read its advertised reasoning options.";
 "测试会发送一条请求及真实系统摘要、应用名称与占用，核对模型和工具往返；可能消耗模型额度。通过后可单独启用助手。" = "The test sends one request with real system summaries, app names and memory use to verify the model and tools. It may use model quota. Enable the assistant separately after the test passes.";
 "已读取 DSH 会话的模型选项。可测试后启用。" = "Model options were read from the DSH session. Test before enabling.";
 "模型与两项只读工具测试通过。现在可以启用助手。" = "The model and both read-only tools passed. You can now enable the assistant.";
 "未匹配的问题会发送给所选 AI 运行时。DSH 管理模型上下文；原生工具仅提供已授权的系统摘要、应用占用与面板操作。" = "Unmatched questions are sent to the selected AI runtime. DSH manages model context; native tools provide authorized system summaries, app usage and panel actions.";
-"默认" = "Default";
-"DSH 已暂停，将在下次请求时连接。" = "DSH is idle and will reconnect on the next request.";
-"无法读取 Magpie 的 Augma 配置。请修复配置后重新检测；原文件未被覆盖。" = "Cannot read the Augma configuration managed by Magpie. Repair it and detect again; the original file was not overwritten.";
-"模型和推理强度由 Magpie 管理。修改后返回 Augma，测试通过即可启用；断开管理会恢复原配置。" = "Magpie manages the model and reasoning effort. Return to Augma after a change, test and enable the assistant. Disconnecting restores the previous settings.";
-"文字与语音只在本地指令未匹配时发送给 DSH，经 Magpie 使用所选模型。工具可读取系统摘要和应用名称与占用，或打开你请求的面板。" = "Text and speech are sent to DSH through Magpie only when no local command matches. Tools may read system summaries, application names and usage, or open panels you request.";
-
-/* Simulator cleanup and application memory review. */
-"清理磁盘与内存" = "Disk & Memory Cleanup";
-"发送摘要并分析" = "Send Summary & Analyze";
-"请求退出应用？" = "Request app quit?";
-"请求退出" = "Request Quit";
-"已请求正常退出；应用可能等待保存或拒绝退出。请稍后刷新占用。" = "Requested normal quit. The app may wait for you to save or decline to quit. Refresh usage shortly.";
-"应用已退出、状态已变化或无法正常退出，请在活动监视器中检查。" = "The app has quit, changed state, or could not quit normally. Check Activity Monitor.";
-"将请求 %@ 正常退出，请先保存工作。释放的内存以系统后续读数为准。" = "A normal quit will be requested for %@. Save your work first. Check subsequent readings for actual memory usage.";
-"结合内存压力判断是否需要退出应用。正常退出闲置应用可减少占用；macOS 会自动管理可回收缓存。" = "Use memory pressure to decide whether to quit apps. Quitting unused apps can reduce usage; macOS manages reclaimable caches automatically.";
-"请求退出…" = "Request Quit…";
-"启用系统监控与应用内存排行后，可查看并退出高占用应用。" = "Enable system monitoring and app memory ranking to review and quit apps with high usage.";
-"打开活动监视器" = "Open Activity Monitor";
-"内存整理" = "Memory Management";
-"AI 清理建议" = "AI Cleanup Advice";
-"请求退出 %@" = "Request Quit: %@";
-"继续等待" = "Keep Waiting";
-"卷可用空间变化：%@（包含其他应用的并发写入）" = "Volume free-space change: %@ (includes concurrent writes by other apps)";
-"无法读取卷空间变化，请在系统储存空间中核对。" = "Could not read the free-space change. Check Storage in System Settings.";
+"将匿名摘要发送给所选 AI 运行时？" = "Send an anonymous summary to the selected AI runtime?";
+"使用已配置的 AI 运行时分析匿名占用摘要，帮助决定先检查哪些项目。建议不会自动勾选文件或退出应用。" = "Use the configured AI runtime to analyze anonymous usage summaries and suggest what to review first. Advice never selects files or quits apps automatically.";
 "配置 AI 助手…" = "Configure AI assistant…";
+
+// App Market and goal-based disk cleanup
+"应用市场" = "App Market";
+"按需安装本地工具，让 Augma 按你的目标调用。" = "Install local tools on demand and let Augma use them for your goals.";
+"AI 优化计划…" = "Refine plan with AI…";
+"共 %lld 项，约 %@。仅执行本次勾选项，文件变化或计划过期时将跳过。" = "%lld items, about %@. Only these checked items will run. Changed files and expired plans are skipped.";
+"仅发送目标容量、保留规则和最多 12 项的匿名编号、类别与大小。不发送文件名、路径、原始指令或文件内容。调用可能收费；AI 只能调整已有候选，执行仍需确认。" = "Sends only the target size, protection rules and anonymous IDs, categories and sizes for up to 12 items. No file names, paths, original request or file contents. Usage may cost money. AI can only refine existing candidates; execution requires confirmation.";
+"免费开源 · 本地磁盘占用分析" = "Free and open source · Local disk analysis";
+"通过 Homebrew 安装命令行版。Mole 分析占用，Augma 按保留规则生成计划并执行你确认的项目。" = "Install the CLI through Homebrew. Mole analyzes disk usage; Augma applies protection rules and executes the items you confirm.";
+"已安装，可分析" = "Installed · Ready to analyze";
+"版本尚未适配" = "Version not yet supported";
+"安装 Mole CLI" = "Install Mole CLI";
+"项目主页" = "Project website";
+"需要已安装的 Homebrew；Augma 不会自动安装包管理器。" = "Homebrew must already be installed. Augma does not install a package manager automatically.";
+"清理目标" = "Cleanup goal";
+"默认保留模型目录和项目源码；最近项目暂按保留全部 Xcode 构建缓存处理。" = "Model folders and project source are protected. To preserve recent projects, all Xcode build caches are currently kept.";
+"选择扫描目录…" = "Choose scan folder…";
+"生成清理计划" = "Generate cleanup plan";
+"先扫描和预览，再选择执行。容量目标会显示差额。" = "Scan and preview, then choose what to run. Any target shortfall is shown.";
+"AI 清理" = "AI Cleanup";
+"正在检测本地工具…" = "Checking local tools…";
+"正在安装 Mole CLI…" = "Installing Mole CLI…";
+"正在分析磁盘占用并检查清理候选…" = "Analyzing disk usage and checking cleanup candidates…";
+"正在优化计划…" = "Refining the plan…";
+"计划候选约 %@ · 已按规则保留 %lld 项" = "Plan candidates: about %@ · %lld candidates protected";
+"目标 %@ · 候选差额 %@（估算，尚未释放）" = "Target %@ · Candidate shortfall %@ (estimated; no space freed yet)";
+"当前仅允许处理下载目录中至少 7 天未修改的 dmg / pkg / xip 安装包。其他占用只供查看，不会自动删除。" = "Currently only dmg / pkg / xip installers in Downloads untouched for at least 7 days are eligible. Other disk usage is for review only.";
+"保留规则下没有可执行候选，可从占用列表中继续检查。" = "No eligible candidates under these protection rules. Review disk usage for further investigation.";
+"磁盘占用（仅查看）" = "Disk usage (view only)";
+"AI 已调整计划" = "AI-refined plan";
+"本地清理计划" = "Local cleanup plan";
+"请输入清理磁盘的目标，例如：帮我尽量腾出 20 GB，保留模型和最近项目。" = "Enter a disk cleanup goal, such as: free up to 20 GB while keeping models and recent projects.";
+"正在通过 Homebrew 安装 Mole CLI，可能需要几分钟。安装不会执行清理。" = "Installing Mole CLI through Homebrew. This may take a few minutes. Installation does not run cleanup.";
+"Mole CLI 已安装，可以生成清理计划。" = "Mole CLI is installed. You can generate a cleanup plan.";
+"先安装 Mole CLI，安装完成后可继续本次分析。" = "Install Mole CLI first to continue this analysis.";
+"Mole 版本尚未适配，请保留当前版本并查看诊断。" = "This Mole version is not supported yet. Keep your current version and review diagnostics.";
+"计划已变化或过期，请重新扫描并确认。" = "The plan changed or expired. Scan again and confirm.";
+"已移入废纸篓 %lld 项，跳过 %lld 项。确认后清空废纸篓才会释放空间。" = "Moved %lld items to Trash; skipped %lld. Space is freed only after you review and empty Trash.";
+"磁盘可用空间：操作前 %@，操作后 %@。读数也受其他应用影响。" = "Available disk space: %@ before, %@ after. Other apps also affect these readings.";
+"请先在应用市场安装 Mole CLI。" = "Install Mole CLI from App Market first.";
+"检测到 Homebrew 环境配置，请在终端安装 Mole 后刷新。" = "A Homebrew environment configuration was detected. Install Mole in Terminal, then refresh.";
+"Mole 操作未完成：" = "Mole operation did not complete:";
+"无法验证 Mole 的扫描报告，请查看版本或缩小扫描范围。" = "Could not validate the Mole report. Check the version or scan a smaller folder.";
+"安装或清理正在进行" = "Installation or cleanup in progress";
 "请等待本次操作结束后退出，以便核对操作结果。" = "Wait for this operation to finish before quitting so its result can be checked.";
+"清理工具正忙，请等待当前操作完成。" = "The cleanup tool is busy. Wait for the current operation to finish.";
+"已打开应用市场，按保留规则生成计划；执行前请核对并确认。" = "Opened App Market to plan cleanup with your protection rules. Review and confirm before execution.";
 "工具操作超时，请缩小范围或稍后重试。" = "The tool timed out. Choose a smaller scope or try again later.";
 "工具输出超过上限，请缩小范围或在终端中检查。" = "Tool output exceeded the limit. Choose a smaller scope or inspect it in Terminal.";
+"已按保留规则生成本地计划，请核对具体项目。" = "A local plan was generated with your protection rules. Review the individual items.";
+"Mole 占用分析暂不可用，已回退到本地候选计划。可缩小目录后重新扫描。" = "Mole disk analysis is unavailable. A local candidate plan is shown instead. Try scanning a smaller folder.";
+"帮我尽量腾出 20 GB，保留模型和最近项目。" = "Help free up to 20 GB, keeping models and recent projects.";
+"保留规则下没有可执行候选。可选择更小目录重新扫描，或在 Finder 中检查其他占用。" = "No eligible candidates under these protection rules. Scan a smaller folder or review other disk usage in Finder.";
+"当前仅允许处理下载目录顶层至少 7 天未修改的 dmg / pkg / xip 安装包。其他占用只供查看，不会自动删除。" = "Currently only dmg / pkg / xip installers directly in Downloads, untouched for at least 7 days, are eligible. Other disk usage is for review only.";
+
+"默认" = "Default";
+
+"DSH 已暂停，将在下次请求时连接。" = "DSH is idle and will reconnect on the next request.";
+
+"无法读取 Magpie 的 Augma 配置。请修复配置后重新检测；原文件未被覆盖。" = "Cannot read the Augma configuration managed by Magpie. Repair it and detect again; the original file was not overwritten.";
+
+"模型和推理强度由 Magpie 管理。修改后返回 Augma，测试通过即可启用；断开管理会恢复原配置。" = "Magpie manages the model and reasoning effort. Return to Augma after a change, test and enable the assistant. Disconnecting restores the previous settings.";
+
+/* Simulator cleanup */
 "AI 建议不会自动勾选或删除项目，请结合测试环境用途判断。" = "AI suggestions do not select or delete items. Consider how each test environment is used.";
 "AI 建议暂不可用；仍可手动查看和选择模拟器项目。" = "AI suggestions are unavailable. You can still review and select simulator items manually.";
 "仅发送匿名编号、类型、容量、使用时间间隔、状态和关联设备数量。不发送设备名称、UUID、路径或内容。API 调用可能收费；AI 只给建议，操作仍需逐项选择并确认。" = "Only anonymous IDs, types, sizes, time since last use, states, and device counts are sent. Device names, UUIDs, paths, and contents stay local. API calls may incur charges. AI only advises; select and confirm each item yourself.";
@@ -939,6 +1083,7 @@
 "模拟器清理未完成；部分项目可能已移除，请重新扫描核对。" = "Simulator cleanup did not complete. Some items may have been removed. Scan again to verify.";
 "模拟器设备" = "Simulator devices";
 "正在复查并清理所选模拟器项目…" = "Rechecking and removing selected simulator items…";
+"此设备当前不可用" = "This device is currently unavailable";
 "永久删除" = "Delete permanently";
 "永久删除所选模拟器项目？" = "Permanently delete the selected simulator items?";
 "状态未知" = "State unknown";
@@ -946,6 +1091,7 @@
 "确认已超过五分钟，请重新扫描。" = "Confirmation is over five minutes old. Scan again.";
 "等待系统完成" = "Waiting for the system";
 "获取模拟器 AI 建议…" = "Get simulator AI suggestions…";
+"设备数据约 %@ · 运行时映像约 %@" = "Device data ≈ %@ · runtime images ≈ %@";
 "设备正在运行或状态未知，请先在模拟器中关闭设备。" = "The device is running or its state is unknown. Shut it down in Simulator first.";
 "运行时状态或删除能力无法验证，仅供查看。" = "The runtime state or deletion capability could not be verified. View only.";
 "部分最后使用时间无法读取。" = "Some last-use timestamps could not be read.";

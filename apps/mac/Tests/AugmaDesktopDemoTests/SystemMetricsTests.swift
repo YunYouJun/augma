@@ -59,11 +59,17 @@ final class SystemMetricsTests: XCTestCase {
     let all = [vpn, ethernet, wifi]
     XCTAssertEqual(SystemMetricMath.selectNetworkInterface(all, primary: "en0", previous: "en5")?.interface, "en0")
     XCTAssertEqual(SystemMetricMath.selectNetworkInterface(all, primary: "utun4", previous: "en0")?.interface, "en0")
-    XCTAssertEqual(SystemMetricMath.selectNetworkInterface(all, primary: "utun4", previous: nil)?.interface, "en5")
+    XCTAssertEqual(SystemMetricMath.selectNetworkInterface(all, primary: "utun4", previous: nil)?.interface, "en0")
     XCTAssertNil(SystemMetricMath.selectNetworkInterface([vpn], primary: "utun4", previous: nil))
     for name in ["lo0", "awdl0", "llw0", "bridge0", "utun0", "vmenet0", "en", "enx"] {
       XCTAssertFalse(SystemMetricMath.isPhysicalInterface(name))
     }
+  }
+
+  func testFallbackDoesNotChooseAnInterfaceForItsHistoricalTraffic() {
+    let wifi = SystemNetworkCounters(interface: "en0", received: 1_000, sent: 1_000)
+    let ethernet = SystemNetworkCounters(interface: "en5", received: 900_000_000, sent: 900_000_000)
+    XCTAssertEqual(SystemMetricMath.selectNetworkInterface([ethernet, wifi], primary: nil, previous: nil)?.interface, "en0")
   }
 
   func testMemoryExcludesPurgeableCacheAndCountsCompressedStoreOnce() throws {

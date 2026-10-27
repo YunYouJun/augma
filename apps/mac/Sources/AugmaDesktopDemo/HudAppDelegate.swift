@@ -15,8 +15,10 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
   let workspace = WorkspaceStore()
   lazy var captures = QuickCaptureStore(workspace: workspace)
   let monitor = SystemMonitorStore()
+  let market = ApplicationMarketStore()
   let weather = WeatherStore()
   let preferences = NativePreferencesStore()
+  let navigation = NativeNavigationStore()
   let audio = NativeAudioStore()
   let maps = NativeMapStore()
   let camera = NativeCameraStore()
@@ -47,6 +49,7 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
     }
     immersiveShortcut.start { [weak self] in self?.toggleImmersiveAssistant() }
     commands.navigate = { [weak self] module in self?.openModule(module) }
+    commands.requestCleanup = { [weak self] text in self?.market.requestCleanup(text) ?? false }
     commands.operateSpace = { [weak self] action in
       guard let self else { return }
       if self.immersiveOverlay.performSpace(action) { return }
@@ -189,15 +192,16 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-    if monitor.simulatorCleanup.isCleaning {
+    if monitor.cleanup.isCleaning || market.isMutating {
       let alert = NSAlert()
-      alert.messageText = String(localized: "正在复查并清理所选模拟器项目…")
+      alert.messageText = String(localized: "安装或清理正在进行")
       alert.informativeText = String(localized: "请等待本次操作结束后退出，以便核对操作结果。")
       alert.addButton(withTitle: String(localized: "继续等待"))
       alert.runModal()
       return .terminateCancel
     }
-    monitor.simulatorCleanup.cancelReadOnly()
+    monitor.cleanup.cancel()
+    market.cancel()
     commands.cancelVoice()
     Task {
       let notesSaved = await workspace.flush()
@@ -240,6 +244,7 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func applicationWillTerminate(_ notification: Notification) {
+    market.cancel()
     immersiveShortcut.stop()
     applicationDistrict.shutdown()
     projectWorkspaces.shutdown()

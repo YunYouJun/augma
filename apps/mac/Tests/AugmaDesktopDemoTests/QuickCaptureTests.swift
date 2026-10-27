@@ -37,9 +37,15 @@ private final class CaptureSenderStub: CaptureSending {
 @MainActor
 final class MemoryMicrosoftCredentials: MicrosoftCredentialStorage {
   var value: MicrosoftCredentials?
+  var reads = 0
+  var loadError: Error?
   var writes = 0
   init(_ value: MicrosoftCredentials? = nil) { self.value = value }
-  func load(clientID: String) throws -> MicrosoftCredentials? { value }
+  func load(clientID: String) throws -> MicrosoftCredentials? {
+    reads += 1
+    if let loadError { throw loadError }
+    return value
+  }
   func save(_ credentials: MicrosoftCredentials, clientID: String) throws { value = credentials; writes += 1 }
   func remove(clientID: String) throws { value = nil }
 }

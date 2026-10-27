@@ -64,19 +64,22 @@ struct SystemNetworkRateSummary: View {
   let usage: NetworkUsage?
 
   var body: some View {
-    HStack(spacing: 16) {
+    HStack(spacing: 10) {
       Label {
         Text(usage.map { SystemMetricFormat.rate($0.receivedPerSecond) } ?? "—").foregroundStyle(.secondary)
       } icon: {
         Image(systemName: "arrow.down").foregroundStyle(Color.augmaCyan).accessibilityLabel("下载")
       }
+      .frame(maxWidth: .infinity)
       Label {
         Text(usage.map { SystemMetricFormat.rate($0.sentPerSecond) } ?? "—").foregroundStyle(.secondary)
       } icon: {
         Image(systemName: "arrow.up").foregroundStyle(Color.augmaUpload).accessibilityLabel("上传")
       }
-      Spacer(minLength: 0)
+      .frame(maxWidth: .infinity)
     }
     .font(.caption).monospacedDigit()
+    .help(usage.map { String(localized: "当前网卡流量") + " · " + $0.interfaceDescription }
+      ?? String(localized: "当前网卡流量"))
   }
 }

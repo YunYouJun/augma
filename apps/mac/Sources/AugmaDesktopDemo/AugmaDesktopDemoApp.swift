@@ -42,7 +42,8 @@ struct AugmaDesktopDemoApp: App {
 
     Settings {
       NativeAppSettingsView(monitor: appDelegate.monitor, preferences: appDelegate.preferences,
-                            immersiveShortcut: appDelegate.immersiveShortcut, captures: appDelegate.captures)
+                            immersiveShortcut: appDelegate.immersiveShortcut, captures: appDelegate.captures,
+                            navigation: appDelegate.navigation, sessions: appDelegate.sessions)
     }
 
     // Keep the status item static: custom observed labels can loop while macOS

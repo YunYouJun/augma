@@ -30,6 +30,7 @@ final class NativeAssistantStore: ObservableObject {
   let preferences: NativePreferencesStore
   var performAction: ((NativeAssistantAction) -> NativeAssistantResult)?
   var performWorkspaceCommand: ((WorkspaceCommand) -> NativeAssistantResult)?
+  var performCleanupRequest: ((String) -> NativeAssistantResult)?
   private(set) var history: [NativeAssistantTurn] = []
 
   var isBusy: Bool { phase != "idle" }
@@ -120,6 +121,10 @@ final class NativeAssistantStore: ObservableObject {
     let match = NativeAssistantCommandParser.match(question)
     if match == .refused {
       finish(.init(message: text("已保留当前状态。")))
+      return
+    }
+    if DiskCleanupGoal.parse(question) != nil, let performCleanupRequest {
+      finish(performCleanupRequest(question))
       return
     }
     if let workspaceCommand, let performWorkspaceCommand {

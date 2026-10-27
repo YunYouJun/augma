@@ -5,6 +5,7 @@ struct NativeCommandView: View {
   let commands: WorkspaceCommands
   @State private var previewsVoice = false
   private let examples = ["打开地图", "扫描空间", "打开天气", "播放声音", "打开浏览器", "打开深色模式", "隐藏 HUD"]
+  private let cleanupExample = "帮我尽量腾出 20 GB，保留模型和最近项目。"
 
   var body: some View {
     ScrollView {
@@ -36,6 +37,7 @@ struct NativeCommandView: View {
             exampleButton(command)
           }
         }
+        exampleButton(cleanupExample)
         Text(store.text("还可打开通知、设置和摄像头面板，切换浅色模式，控制模拟路线，或暂停声音。打开摄像头面板不会开始拍摄。"))
           .font(.caption)
           .foregroundStyle(.secondary)

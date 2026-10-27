@@ -5,12 +5,14 @@ struct NativeAppSettingsView: View {
   @ObservedObject var preferences: NativePreferencesStore
   @ObservedObject var immersiveShortcut: ImmersiveShortcutStore
   let captures: QuickCaptureStore
+  let navigation: NativeNavigationStore
+  let sessions: DemoSessionRegistry
 
   var body: some View {
     TabView {
       CaptureConnectionsView(captures: captures)
         .tabItem { Label("快速记录", systemImage: "square.and.pencil") }
-      ImmersiveShortcutSettingsView(store: immersiveShortcut)
+      ImmersiveShortcutSettingsView(store: immersiveShortcut, navigation: navigation, sessions: sessions)
         .tabItem { Label("窗口与快捷键", systemImage: "keyboard") }
       NativeScenePreferencesView(store: preferences)
         .tabItem { Label("场景", systemImage: "viewfinder") }

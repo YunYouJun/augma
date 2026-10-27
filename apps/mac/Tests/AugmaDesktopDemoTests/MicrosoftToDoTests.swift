@@ -12,6 +12,110 @@ private func microsoftResponse(_ request: URLRequest, status: Int = 200, body: S
 }
 
 final class MicrosoftToDoTests: XCTestCase {
+  @MainActor func testStartupAndConfigurationNeverReadCredentials() throws {
+    let suite = "augma.microsoft.deferred.\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suite)!
+    defer { defaults.removePersistentDomain(forName: suite) }
+    defaults.set("saved-list", forKey: "captureMicrosoftListID")
+    let vault = MemoryMicrosoftCredentials(MicrosoftCredentials(refreshToken: "saved-refresh", connectionID: UUID()))
+    vault.loadError = CaptureError.message("Keychain authorization required")
+    let start = ContinuousClock.now
+    let store = MicrosoftToDoStore(defaults: defaults, vault: vault, bundledClientID: UUID().uuidString)
+    XCTAssertLessThan(start.duration(to: .now), .milliseconds(100))
+    XCTAssertEqual(vault.reads, 0, "Startup must not ask Keychain for credentials")
+    XCTAssertFalse(store.connected)
+    XCTAssertNil(store.error)
+    XCTAssertEqual(store.deliveryTarget().listID, "saved-list")
+    XCTAssertNil(store.deliveryTarget().connectionID)
+    store.configure(clientID: UUID().uuidString)
+    store.useBundledClientID()
+    XCTAssertEqual(vault.reads, 0, "Changing app configuration must not request Keychain authorization")
+    XCTAssertNil(store.error)
+  }
+
+  @MainActor func testFirstSendRestoresSavedConnectionAndRetriesOnlyOnUserAction() async throws {
+    let suite = "augma.microsoft.deferred.\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suite)!
+    defer { defaults.removePersistentDomain(forName: suite) }
+    defaults.set("saved-list", forKey: "captureMicrosoftListID")
+    let credentials = MicrosoftCredentials(refreshToken: "saved-refresh", connectionID: UUID())
+    let vault = MemoryMicrosoftCredentials(credentials)
+    vault.loadError = CaptureError.message("Keychain authorization denied")
+    let log = MicrosoftRequestLog()
+    let client = MicrosoftGraphClient { request in
+      await log.record(request)
+      if request.url!.path.hasSuffix("/token") {
+        return microsoftResponse(request, body: "{\"access_token\":\"access\",\"expires_in\":3600}")
+      }
+      return microsoftResponse(request, body: "{\"value\":[{\"id\":\"saved-list\",\"displayName\":\"Saved\"}]}")
+    }
+    let store = MicrosoftToDoStore(defaults: defaults, vault: vault, client: client, bundledClientID: UUID().uuidString)
+    let target = store.deliveryTarget()
+    do {
+      _ = try await store.prepare(target)
+      XCTFail("Denied Keychain access must stop delivery")
+    } catch { XCTAssertEqual(error.localizedDescription, "Keychain authorization denied") }
+    XCTAssertEqual(vault.reads, 1)
+    XCTAssertFalse(store.connected)
+    let deniedRequests = await log.requests
+    XCTAssertTrue(deniedRequests.isEmpty)
+    vault.loadError = nil
+    let prepared = try await store.prepare(target)
+    XCTAssertTrue(store.connected)
+    XCTAssertEqual(prepared.connectionID, credentials.connectionID)
+    XCTAssertEqual(prepared.listID, "saved-list")
+    _ = try await store.prepare(prepared)
+    XCTAssertEqual(vault.reads, 2, "After a successful restore, later sends reuse in-memory credentials")
+    XCTAssertEqual(store.selectedListID, "saved-list")
+  }
+
+  @MainActor func testSharedApplicationWorksWithoutLocalSetupAndInvalidOverridesFallBack() throws {
+    let suite = "augma.microsoft.configuration.\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suite)!
+    defer { defaults.removePersistentDomain(forName: suite) }
+    let shared = UUID().uuidString.lowercased()
+    for saved in [nil, "", "  ", "invalid", "00000000-0000-0000-0000-000000000000"] as [String?] {
+      defaults.set(saved, forKey: "captureMicrosoftClientID")
+      let store = MicrosoftToDoStore(defaults: defaults, vault: MemoryMicrosoftCredentials(), bundledClientID: shared)
+      XCTAssertTrue(store.configured)
+      XCTAssertEqual(store.clientID, shared)
+      XCTAssertFalse(store.connected)
+    }
+  }
+
+  @MainActor func testCustomApplicationCanReturnToSharedConfigurationAcrossRestart() throws {
+    let suite = "augma.microsoft.configuration.\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suite)!
+    defer { defaults.removePersistentDomain(forName: suite) }
+    let shared = UUID().uuidString.lowercased()
+    let custom = UUID().uuidString.lowercased()
+    defaults.set(custom, forKey: "captureMicrosoftClientID")
+    defaults.set("old-list", forKey: "captureMicrosoftListID")
+    let store = MicrosoftToDoStore(defaults: defaults, vault: MemoryMicrosoftCredentials(), bundledClientID: shared)
+    XCTAssertEqual(store.clientID, custom)
+    XCTAssertTrue(store.canUseBundledClientID)
+    store.useBundledClientID()
+    XCTAssertEqual(store.clientID, shared)
+    XCTAssertEqual(store.selectedListID, "")
+    XCTAssertNil(defaults.object(forKey: "captureMicrosoftClientID"))
+    let restored = MicrosoftToDoStore(defaults: defaults, vault: MemoryMicrosoftCredentials(), bundledClientID: shared)
+    XCTAssertEqual(restored.clientID, shared)
+    XCTAssertFalse(restored.canUseBundledClientID)
+  }
+
+  @MainActor func testUnconfiguredBuildExplainsMissingApplicationBeforeSending() async throws {
+    let suite = "augma.microsoft.configuration.\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suite)!
+    defer { defaults.removePersistentDomain(forName: suite) }
+    let store = MicrosoftToDoStore(defaults: defaults, vault: MemoryMicrosoftCredentials(), bundledClientID: nil)
+    do {
+      _ = try await store.prepare(store.deliveryTarget())
+      XCTFail("An unconfigured application must not send")
+    } catch {
+      XCTAssertEqual(error.localizedDescription, String(localized: "此版本尚未配置 Microsoft 登录，请联系 Augma 维护者或在连接设置中配置应用 ID。"))
+    }
+  }
+
   func testOAuthUsesPKCEAndRejectsWrongStateOrRedirect() throws {
     let request = try MicrosoftOAuthRequest()
     let url = request.authorizationURL(clientID: "client-id")
@@ -125,8 +229,9 @@ final class MicrosoftToDoTests: XCTestCase {
       return microsoftResponse(request, body: "{\"value\":[{\"id\":\"default\",\"displayName\":\"Tasks\",\"wellknownListName\":\"defaultList\"},{\"id\":\"work\",\"displayName\":\"Work\"}]}")
     }
     let store = MicrosoftToDoStore(defaults: defaults, vault: vault, client: client)
-    XCTAssertTrue(store.connected)
+    XCTAssertFalse(store.connected)
     await store.refreshLists()
+    XCTAssertTrue(store.connected)
     XCTAssertEqual(vault.value?.refreshToken, "rotated-refresh")
     XCTAssertEqual(vault.value?.connectionID, credentials.connectionID)
     XCTAssertEqual(store.selectedListID, "default")

@@ -7,6 +7,8 @@ struct WorkspaceMenuCommands: Commands {
     CommandMenu("日常") {
       Button("快速记录") { setup(); appDelegate.openModule(.notes) }
         .keyboardShortcut("n", modifiers: [.command, .shift])
+      Button("打开 Microsoft To Do") { appDelegate.captures.openDestination(.microsoftToDo) }
+        .keyboardShortcut("t", modifiers: [.command, .option])
       Button("快捷指令") { setup(); appDelegate.showCommands() }
         .keyboardShortcut("k", modifiers: .command)
       Button("专注计时") { setup(); appDelegate.openModule(.focus) }
@@ -15,6 +17,7 @@ struct WorkspaceMenuCommands: Commands {
       Divider()
       Button("系统监控") { setup(); appDelegate.openModule(.monitor) }
         .keyboardShortcut("m", modifiers: [.command, .option])
+      Button("应用市场") { setup(); appDelegate.openModule(.market) }
       Button("天气") { setup(); appDelegate.openModule(.weather) }
     }
   }

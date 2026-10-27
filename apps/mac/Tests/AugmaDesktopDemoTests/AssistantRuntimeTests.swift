@@ -361,6 +361,14 @@ final class DSHLiveIntegrationTests: XCTestCase {
     process.standardOutput = pipe
     try process.run(); process.waitUntilExit()
     print("AUGMA_LIVE_PROCESS", String(decoding: pipe.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self))
+    // Synthetic numeric business snapshot: no user files are scanned, selected or removed.
+    let scan = CleanupScan(candidates: [CleanupCandidate(id: UUID(), url: URL(filePath: "/test/fixture.dmg"),
+      category: .installers, bytes: 4_096, fingerprint: "fixture")])
+    let cleanupMessages = try CleanupAdvice.messages(scan: scan, snapshot: SystemSnapshot(), locale: "en")
+    let cleanupReply = try await runtime.complete(messages: cleanupMessages, owner: UUID(), testing: true)
+    let advice = try CleanupAdvice.parse(cleanupReply, scan: scan, applicationIDs: [])
+    XCTAssertFalse(advice.summary.isEmpty)
+    print("AUGMA_LIVE_CLEANUP structuredAdvice=true syntheticSnapshot=true toolScope=none")
     runtime.shutdown()
     try await Task.sleep(for: .seconds(3))
     XCTAssertEqual(kill(pid, 0), -1, "Only the runtime-owned process must exit")

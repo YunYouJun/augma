@@ -9,12 +9,15 @@ final class QuickCaptureStore: ObservableObject {
   let microsoft: MicrosoftToDoStore
   private let workspace: WorkspaceStore
   private let sender: any CaptureSending
+  private let destinationOpener: CaptureDestinationOpener
   private var tasks: [UUID: Task<Void, Never>] = [:]
 
-  init(workspace: WorkspaceStore, microsoft: MicrosoftToDoStore = MicrosoftToDoStore(), sender: (any CaptureSending)? = nil) {
+  init(workspace: WorkspaceStore, microsoft: MicrosoftToDoStore = MicrosoftToDoStore(), sender: (any CaptureSending)? = nil,
+       destinationOpener: CaptureDestinationOpener = CaptureDestinationOpener()) {
     self.workspace = workspace
     self.microsoft = microsoft
     self.sender = sender ?? NativeCaptureSender(microsoft: microsoft)
+    self.destinationOpener = destinationOpener
     // A previous process may have exited after the server accepted a write.
     for note in workspace.data.notes where note.delivery?.status == .sending {
       var delivery = note.delivery!
@@ -93,12 +96,15 @@ final class QuickCaptureStore: ObservableObject {
   }
 
   func openDestination(_ destination: CaptureDestination) {
-    if destination == .appleNotes {
-      if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Notes") {
-        NSWorkspace.shared.openApplication(at: url, configuration: .init())
+    Task {
+      do {
+        let result = try await destinationOpener.open(destination)
+        message = result == .website
+          ? String(localized: "已在浏览器中打开 Microsoft To Do。")
+          : String(format: String(localized: "已打开 %@。"), destination.title)
+      } catch {
+        message = error.localizedDescription
       }
-    } else {
-      NSWorkspace.shared.open(URL(string: "https://to-do.office.com/tasks/")!)
     }
   }
 }

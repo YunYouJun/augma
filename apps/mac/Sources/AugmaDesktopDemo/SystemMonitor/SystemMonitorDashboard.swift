@@ -222,7 +222,7 @@ struct SystemMonitorNetworkOverview: View {
   private var interface: some View {
     VStack(alignment: .leading, spacing: 6) {
       Text("网络接口").font(.caption).foregroundStyle(.secondary)
-      Text(usage?.interface ?? "—").font(.system(.title3, design: .rounded))
+      Text(usage?.interfaceDescription ?? "—").font(.system(.title3, design: .rounded))
         .fixedSize(horizontal: false, vertical: true)
     }
   }

@@ -2,7 +2,6 @@ import Darwin
 import DiskArbitration
 import Foundation
 import IOKit.ps
-import SystemConfiguration
 
 struct SystemSnapshot: Sendable {
   var sampledAt: Date = .now
@@ -45,6 +44,9 @@ struct NetworkUsage: Sendable {
   var interface: String
   var receivedPerSecond: Double
   var sentPerSecond: Double
+  var kind: SystemNetworkInterfaceKind = .unknown
+
+  var interfaceDescription: String { kind.label.map { "\($0) (\(interface))" } ?? interface }
 }
 
 struct BatteryStatus: Sendable {
@@ -66,6 +68,7 @@ struct SystemNetworkCounters: Sendable {
   var interface: String
   var received: UInt64
   var sent: UInt64
+  var kind: SystemNetworkInterfaceKind = .unknown
 }
 
 enum SystemMetricMath {
@@ -103,7 +106,8 @@ enum SystemMetricMath {
     return NetworkUsage(
       interface: current.interface,
       receivedPerSecond: Double(current.received - previous.received) / interval,
-      sentPerSecond: Double(current.sent - previous.sent) / interval
+      sentPerSecond: Double(current.sent - previous.sent) / interval,
+      kind: current.kind
     )
   }
 
@@ -122,13 +126,9 @@ enum SystemMetricMath {
     let physical = candidates.filter { isPhysicalInterface($0.interface) }
     if let primary, let selected = physical.first(where: { $0.interface == primary }) { return selected }
     if let previous, let selected = physical.first(where: { $0.interface == previous }) { return selected }
-    // With no physical default (for example a VPN default), pick one interface
-    // and keep it stable rather than double-counting all active connections.
-    return physical.max {
-      let left = Double($0.received) + Double($0.sent)
-      let right = Double($1.received) + Double($1.sent)
-      return left == right ? $0.interface > $1.interface : left < right
-    }
+    // If system configuration is unavailable, keep a stable fallback. Boot-time
+    // totals say nothing about which connection is currently in use.
+    return physical.min { $0.interface < $1.interface }
   }
 
   static func memoryUsage(
@@ -304,17 +304,7 @@ actor SystemMetricsReader {
       }
       return candidates
     }
-    return SystemMetricMath.selectNetworkInterface(candidates, primary: defaultInterface(), previous: previous)
-  }
-
-  private static func defaultInterface() -> String? {
-    guard let store = SCDynamicStoreCreate(nil, "AugmaSystemMonitor" as CFString, nil, nil) else { return nil }
-    for key in ["State:/Network/Global/IPv4", "State:/Network/Global/IPv6"] {
-      if let state = SCDynamicStoreCopyValue(store, key as CFString) as? [String: Any],
-        let name = state["PrimaryInterface"] as? String, SystemMetricMath.isPhysicalInterface(name)
-      { return name }
-    }
-    return nil
+    return SystemNetworkConfiguration.read().select(candidates, previous: previous)
   }
 
   private static func readDisks() -> [DiskUsage] {
