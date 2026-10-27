@@ -21,6 +21,7 @@ extension SystemMetricsReader: SystemMetricsSampling {}
 /// One sampler serves every window, menu popup and HUD. No timer runs without a visible consumer.
 @MainActor
 final class SystemMonitorStore: ObservableObject {
+  let simulatorCleanup = SimulatorCleanupStore()
   @Published private(set) var snapshot = SystemSnapshot()
   @Published private(set) var isSampling = false
   @Published private(set) var networkHistory = NetworkHistory()

@@ -6,6 +6,7 @@ struct ApplicationMemoryIdentity: Sendable {
   var processIdentifier: Int32
   var name: String
   var bundlePath: String
+  var launchedAt: Date? = nil
 }
 
 struct ApplicationMemoryUsage: Identifiable, Sendable {
@@ -108,7 +109,8 @@ enum ApplicationMemoryReader {
           let path = ApplicationMemoryAggregation.applicationPath(for: url.path)
         else { return nil }
         return ApplicationMemoryIdentity(processIdentifier: app.processIdentifier,
-                                         name: app.localizedName ?? url.deletingPathExtension().lastPathComponent, bundlePath: path)
+                                         name: app.localizedName ?? url.deletingPathExtension().lastPathComponent,
+                                         bundlePath: path, launchedAt: app.launchDate)
       }
     }
     guard !Task.isCancelled, let pids = processIDs() else { return nil }

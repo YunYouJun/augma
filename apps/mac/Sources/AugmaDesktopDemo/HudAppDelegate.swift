@@ -189,6 +189,15 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+    if monitor.simulatorCleanup.isCleaning {
+      let alert = NSAlert()
+      alert.messageText = String(localized: "正在复查并清理所选模拟器项目…")
+      alert.informativeText = String(localized: "请等待本次操作结束后退出，以便核对操作结果。")
+      alert.addButton(withTitle: String(localized: "继续等待"))
+      alert.runModal()
+      return .terminateCancel
+    }
+    monitor.simulatorCleanup.cancelReadOnly()
     commands.cancelVoice()
     Task {
       let notesSaved = await workspace.flush()
