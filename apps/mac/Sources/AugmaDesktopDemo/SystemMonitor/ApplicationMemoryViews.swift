@@ -40,7 +40,6 @@ struct ApplicationMemoryRow: View {
   let rank: Int
   var largestFootprint: UInt64 = 0
   var compact = false
-  @State private var icon: NSImage?
 
   var body: some View {
     HStack(alignment: .center, spacing: compact ? 8 : 12) {
@@ -50,12 +49,8 @@ struct ApplicationMemoryRow: View {
         .foregroundStyle(rank == 1 ? Color.augmaCyan : .secondary)
         .frame(minWidth: compact ? 12 : 20, alignment: .trailing)
         .accessibilityHidden(true)
-      Group {
-        if let icon { Image(nsImage: icon).resizable() }
-        else { Image(systemName: "app").resizable().foregroundStyle(.secondary) }
-      }
-      .frame(width: compact ? 22 : 32, height: compact ? 22 : 32)
-      .accessibilityHidden(true)
+      AppleIconView(request: .application(bundlePath: usage.application.bundlePath), size: compact ? 22 : 32)
+        .accessibilityHidden(true)
       VStack(alignment: .leading, spacing: compact ? 2 : 6) {
         HStack(alignment: .firstTextBaseline) {
           Text(usage.application.name)
@@ -86,7 +81,6 @@ struct ApplicationMemoryRow: View {
     }
     .padding(.vertical, compact ? 2 : 5)
     .accessibilityElement(children: .combine)
-    .task(id: usage.id) { icon = NSWorkspace.shared.icon(forFile: usage.application.bundlePath) }
   }
 }
 
