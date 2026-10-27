@@ -26,7 +26,7 @@ struct NativeAppSettingsView: View {
       }
       .formStyle(.grouped)
       .tabItem { Label("系统监控", systemImage: "gauge.with.dots.needle.50percent") }
-      DeepSeekSettingsView()
+      AssistantSettingsView()
         .tabItem { Label("助手", systemImage: "sparkles") }
     }
     .frame(width: 540, height: 620)

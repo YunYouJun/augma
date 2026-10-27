@@ -137,7 +137,32 @@ Apple Weather 可通过 [WeatherKit](https://developer.apple.com/weatherkit/) �
 
 原生菜单、设置窗口和权限说明提供简体中文、English 与日本語，跟随 macOS 的首选语言，也可在「系统设置 → 通用 → 语言与地区 → 应用」中为 Augma 单独指定。字符串表位于 `apps/mac/Localization/*.lproj`，以 Swift 源码中的简体中文原文为键，由 `script/build_and_run.sh` 复制进 App 包。用户在场景设置中另选的语言保存在原生偏好中，空间文字与助手识别使用该语言。普通浏览器仍自行保存网页语言。原生功能直接使用本地化字符串。
 
-日常快捷指令始终只在本机匹配。演示语音面板默认也在本机匹配；需要理解其他说法或回答问题时，可在 App 菜单的「设置」中输入自己的 DeepSeek API Key，并打开「使用 DeepSeek 助手回答未匹配的指令」。只有无法在本机匹配的指令文字会连同最近四轮对话发送至 [DeepSeek Chat Completions API](https://api-docs.deepseek.com/api/create-chat-completion/)（`deepseek-flash`）。macOS 的提示词、命令白名单、回复校验、有限历史和取消逻辑全部位于原生 `Assistant/` 模块；密钥保存在 macOS 钥匙串，由原生网络客户端附加到请求。网页浏览器不能访问助手、密钥或原生状态。助手用一两句话作答，回复显示在面板中并朗读；也可以选择一个演示指令，返回值必须在上述操作白名单内，结果由演示界面播报。格式错误或请求失败时不执行操作。DeepSeek API 需要自行申请密钥，调用可能收费，具体以[官方模型与价格页](https://api-docs.deepseek.com/quick_start/pricing/)为准。本地指令在未配置或未开启 DeepSeek 时照常可用。
+日常快捷指令始终只在本机匹配。演示助手也先匹配本地指令；文字输入与系统语音识别的最终文字共用同一入口。未匹配的问题才会交给明确启用的 AI 运行时。本地指令、记录和计时不依赖模型可用性。
+
+### DSH / Magpie 助手
+
+新配置默认选择 **DSH / Magpie**，默认不开启发送。已保存过 DeepSeek 开关的安装（包括显式关闭）继续保留该选择，钥匙串条目不会迁移或删除。
+
+1. 自行安装可用的 **DeepSeek Harness 0.2.0-rc.2**，在 Magpie 中完成登录、模型来源和路由配置，并启动本地网关。网关联调覆盖 Magpie 0.1.1293；应用列表和推理强度管理通过官方 Magpie 0.1.1673 的独立插件验证。
+2. 打开「设置 → 助手」，选择 DSH / Magpie。路径留空会检测已安装的运行时，也可填写完整可执行文件路径。macOS 桌面版的入口为 `/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh`。旧的 `~/.local/bin/dsh` 可能只是失效 shim；仅能找到命令不代表能运行。
+3. 点击「检测连接与模型」，选择 DSH 会话实际公布的模型和推理选项。模型标签显示路由 ID；切换模型后重新检测推理选项。首版仅开放 Magpie 路由，不继承 DSH 桌面端的其他 provider 或工具配置。
+4. 点击「测试模型与只读工具」。这会发送一次模型请求，并让模型读取真实系统摘要、应用名称和占用，可能消耗所选模型额度。两项工具均成功后，单独打开「启用 DSH 助手」。修改路径、模型或推理选项会清除测试状态，需要重新测试。
+
+Augma 通过 ACP over stdio 启动自己拥有的 DSH 无界面进程，不打开 DSH 桌面窗口、不自动安装或升级。DSH 管理模型上下文、工具循环与压缩。Augma 只传当前任务，不把用于显示的最近四轮记录重放给 DSH；首版显示消息级进度与工具状态，不提供逐 token 输出。每个窗口有独立会话，共享一条进程连接。闲置 60 秒释放连接；下次任务可恢复本次 App 运行期间的空闲会话。取消、关闭窗口或更改配置结束旧任务，下一次取消后任务使用新会话。App 重启后不自动恢复旧聊天窗口或会话映射。
+
+原生工具仅包括 `system_summary`、`application_usage` 与 `open_panel`。前两项读取内存压力、交换空间、磁盘容量和最多十个应用名称、近似占用及读取完整性；不读取文件内容、路径、网页标签或进程命令行。打开面板只作用于当前窗口，不开启摄像头、不导航网址。模型没有任意 shell、文件写入、结束应用、删除文件或清理命令工具。
+
+Augma 使用专属运行 profile 和 `~/Library/Application Support/Augma/Assistant/Sessions` 保存 DSH 会话；不修改 DSH 全局/桌面 profile，不复制 Magpie 登录凭据。Magpie 的本地 `magpie-augma` 标记用于应用用量归属，不是订阅密钥。会话文件可能包含已发送的问题、工具结果和回答，留在本机；此版本没有自动保留期限或跨 App 重启的聊天历史浏览器。关闭 Augma 会回收其子进程，不结束用户原本运行的 DSH 或 Magpie。
+
+安装 [Augma Magpie 插件](../../integrations/magpie/README.md) 后，官方 Magpie 的应用列表会显示 Augma；卡片中选择模型或路由组，页面底部或独立 Augma 插件页保存推理强度，无需修改 Magpie 源码。Augma 导出不含凭据的 `~/Library/Application Support/Augma/Assistant/magpie.json`，并在受管理时读取插件自己的推理强度设置。返回 Augma 或检测连接时同步新选择，变更会取消旧请求并清除测试状态，需要重新测试和启用。断开管理恢复接入前的配置。当前已验证 `group/augma` → GPT-6.1 Terra / Medium，继续复用本机 DSH。
+
+检测失败会区分运行时缺失、入口失效、未验证版本、Magpie 未运行、无模型及模型不可用。请求失败提供鉴权、额度、超时或通用任务错误；不展示可能含私密内容的 provider 原始错误，也不静默改用另一条付费路由。当前仅固定验证 DSH 0.2.0-rc.2，其他版本会被拒绝，需先更新兼容验证。
+
+### DeepSeek API 兼容入口
+
+选择「DeepSeek API（兼容）」后继续使用原有开关与 macOS 钥匙串密钥。未匹配指令及最多四轮对话发送至 [DeepSeek Chat Completions API](https://api-docs.deepseek.com/api/create-chat-completion/)；白名单回复仍由原生服务校验。浏览网页不能访问密钥或原生状态。没有启用此后端时不会因为 DSH 失败而调用它。旧客户端、语音最终事件和本地命令均有回归测试。
+
+插件接入、真实联调与验收限制见[插件迁移验证记录](../../docs/plans/2026-10-27-augma-magpie-plugin-validation.md)。
 
 ## 原生界面验证
 

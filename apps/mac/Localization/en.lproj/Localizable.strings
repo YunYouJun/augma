@@ -840,3 +840,50 @@
 
 /* Adaptive monitoring dashboard */
 "统计说明" = "How totals are calculated";
+
+/* DSH / Magpie assistant integration */
+"AI 助手" = "AI assistant";
+"AI 助手设置" = "AI assistant settings";
+"AI 运行时" = "AI runtime";
+"DeepSeek API（兼容）" = "DeepSeek API (compatibility)";
+"启用 DSH 助手" = "Enable DSH assistant";
+"DSH 连接" = "DSH connection";
+"DSH 可执行文件" = "DSH executable";
+"自动检测已安装的 DSH" = "Automatically detect installed DSH";
+"检测连接与模型" = "Detect connection and models";
+"模型" = "Model";
+"推理选项" = "Reasoning options";
+"测试" = "Test";
+"测试模型与只读工具" = "Test model and read-only tools";
+"允许一次" = "Allow once";
+"拒绝" = "Reject";
+"正在连接 DSH…" = "Connecting to DSH…";
+"DSH 已连接" = "DSH connected";
+"正在生成回答…" = "Generating reply…";
+"正在读取原生工具结果…" = "Reading native tool results…";
+"允许本次原生工具请求？" = "Allow this native tool request?";
+"未找到 DSH。请在 AI 助手设置中选择已安装的 DSH 可执行文件。" = "DSH was not found. Select an installed DSH executable in AI assistant settings.";
+"DSH 无法启动。请检查路径、运行时依赖或失效的命令入口。" = "DSH could not start. Check its path, runtime dependencies or obsolete launcher.";
+"此 DSH 版本尚未通过兼容验证。当前支持 0.2.0-rc.2。" = "This DSH version has not been validated. Version 0.2.0-rc.2 is currently supported.";
+"DSH 协议不兼容或输出超过限制。连接已结束。" = "DSH protocol is incompatible or output exceeded its limit. The connection was closed.";
+"DSH 连接已断开。请重试；未完成的操作不会自动重放。" = "DSH disconnected. Try again; unfinished operations are never replayed automatically.";
+"AI 请求超时，请稍后重试。" = "The AI request timed out. Try again later.";
+"Magpie 未运行或本地网关不可用。请打开 Magpie 后重试。" = "Magpie is not running or its local gateway is unavailable. Open Magpie and try again.";
+"Magpie 没有可用模型。请在 Magpie 中配置模型来源。" = "Magpie has no available models. Configure model sources in Magpie.";
+"请先在 AI 助手设置中测试并启用所选运行时。" = "Test and enable the selected runtime in AI assistant settings first.";
+"所选模型已不可用。请刷新模型并重新选择，不会自动切换路由。" = "The selected model is unavailable. Refresh and choose a model; routes are never switched automatically.";
+"模型鉴权失败。请在 Magpie 中检查登录状态。" = "Model authentication failed. Check your sign-in in Magpie.";
+"模型额度不足或请求受限。请在 Magpie 中检查额度。" = "The model quota is exhausted or requests are limited. Check quota in Magpie.";
+"模型未完成请求。请在 DSH 或 Magpie 中检查模型状态后重试。" = "The model did not complete the request. Check its status in DSH or Magpie and try again.";
+"DSH 隔离配置已改变。为保护工具边界，连接未启动。" = "The isolated DSH configuration changed. The connection was not started to preserve tool restrictions.";
+"支持 DSH 0.2.0-rc.2。使用 Augma 专属隔离配置，不修改 DSH 桌面配置。Magpie 的登录、订阅和路由在 Magpie 中管理。" = "Supports DSH 0.2.0-rc.2 with an isolated Augma configuration. DSH desktop settings are preserved. Manage sign-in, subscriptions and routes in Magpie.";
+"切换模型后重新检测，以读取该模型公布的推理选项。" = "Detect again after changing models to read its advertised reasoning options.";
+"测试会发送一条请求及真实系统摘要、应用名称与占用，核对模型和工具往返；可能消耗模型额度。通过后可单独启用助手。" = "The test sends one request with real system summaries, app names and memory use to verify the model and tools. It may use model quota. Enable the assistant separately after the test passes.";
+"已读取 DSH 会话的模型选项。可测试后启用。" = "Model options were read from the DSH session. Test before enabling.";
+"模型与两项只读工具测试通过。现在可以启用助手。" = "The model and both read-only tools passed. You can now enable the assistant.";
+"未匹配的问题会发送给所选 AI 运行时。DSH 管理模型上下文；原生工具仅提供已授权的系统摘要、应用占用与面板操作。" = "Unmatched questions are sent to the selected AI runtime. DSH manages model context; native tools provide authorized system summaries, app usage and panel actions.";
+"默认" = "Default";
+"DSH 已暂停，将在下次请求时连接。" = "DSH is idle and will reconnect on the next request.";
+"无法读取 Magpie 的 Augma 配置。请修复配置后重新检测；原文件未被覆盖。" = "Cannot read the Augma configuration managed by Magpie. Repair it and detect again; the original file was not overwritten.";
+"模型和推理强度由 Magpie 管理。修改后返回 Augma，测试通过即可启用；断开管理会恢复原配置。" = "Magpie manages the model and reasoning effort. Return to Augma after a change, test and enable the assistant. Disconnecting restores the previous settings.";
+"文字与语音只在本地指令未匹配时发送给 DSH，经 Magpie 使用所选模型。工具可读取系统摘要和应用名称与占用，或打开你请求的面板。" = "Text and speech are sent to DSH through Magpie only when no local command matches. Tools may read system summaries, application names and usage, or open panels you request.";

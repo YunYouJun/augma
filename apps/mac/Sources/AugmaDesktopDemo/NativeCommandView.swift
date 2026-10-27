@@ -40,6 +40,9 @@ struct NativeCommandView: View {
         if !store.reply.isEmpty {
           LabeledContent("Augma") { Text(store.reply).textSelection(.enabled) }
         }
+        if !store.runtimeProgress.isEmpty {
+          Text(store.runtimeProgress).font(.caption).foregroundStyle(.secondary)
+        }
         if !store.error.isEmpty {
           Text(store.error).foregroundStyle(.red).textSelection(.enabled)
         }
@@ -57,17 +60,19 @@ struct NativeCommandView: View {
           .font(.caption)
           .foregroundStyle(.secondary)
       }
-      Section(store.text("DeepSeek 助手")) {
-        Text(store.text(store.assistantReady
-          ? "未匹配的指令和问题会连同最近四轮对话发送给 DeepSeek。"
-          : "在 Augma 设置中启用 DeepSeek 助手后，可处理其他指令和问题。"))
+      Section(store.text("AI 助手")) {
+        Text(store.text("未匹配的问题会发送给所选 AI 运行时。DSH 管理模型上下文；原生工具仅提供已授权的系统摘要、应用占用与面板操作。"))
           .font(.caption)
           .foregroundStyle(.secondary)
-        SettingsLink { Label(store.text("DeepSeek 助手"), systemImage: "gearshape") }
+        SettingsLink { Label(store.text("AI 助手设置"), systemImage: "gearshape") }
       }
     }
     .formStyle(.grouped)
     .accessibilityIdentifier("native-assistant")
+    .alert(store.permission?.title ?? "", isPresented: Binding(get: { store.permission != nil }, set: { if !$0 { store.permission?.resolve(false) } })) {
+      Button(store.text("允许一次")) { store.permission?.resolve(true) }
+      Button(store.text("拒绝"), role: .cancel) { store.permission?.resolve(false) }
+    }
   }
 
   private var voiceButtonTitle: String {

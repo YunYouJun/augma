@@ -36,6 +36,7 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
   private let logger = Logger(subsystem: "cn.yunyoujun.augma.desktop-demo", category: "lifecycle")
 
   func applicationDidFinishLaunching(_ notification: Notification) {
+    AssistantMagpieConfiguration.shared.start()
     NSApp.setActivationPolicy(.regular)
     applicationDistrict.onOpen = { [weak self] id in
       guard let self, self.model.immersiveVisible, id != Bundle.main.bundleIdentifier else { return }
@@ -198,6 +199,7 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
         audio.shutdown()
         camera.shutdown()
         maps.cancelRequests()
+        await NativeAssistantRuntime.shared.shutdownAndWait()
         sender.reply(toApplicationShouldTerminate: true)
       }
       else {
