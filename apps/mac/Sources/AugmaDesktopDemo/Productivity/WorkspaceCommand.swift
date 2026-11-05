@@ -1,13 +1,8 @@
 import Foundation
 
-enum NativeAudioAction: Equatable {
-  case play, pause, next, previous
-}
-
 enum WorkspaceCommand: Equatable {
   case note(String), task(String), startFocus(TimeInterval), pause, resume, extend, cancel, undo
   case open(DemoModule)
-  case audio(NativeAudioAction)
   case space(NativeSpaceAction)
   case cleanup(String)
 
@@ -32,13 +27,6 @@ enum WorkspaceCommand: Equatable {
       (.routeStop, ["结束模拟路线", "停止模拟导航", "stopsimulatedroute", "シミュレーション経路を終了"]),
     ]
     for (action, phrases) in spacePhrases where phrases.contains(compact) { return .space(action) }
-    let audioPhrases: [(NativeAudioAction, [String])] = [
-      (.play, ["播放声音", "播放音乐", "开始播放声音", "继续播放声音", "playsound", "playaudio", "playmusic", "resumesound", "サウンドを再生", "音楽を再生", "音を再生"]),
-      (.pause, ["暂停声音", "暂停音乐", "停止声音", "pausesound", "pauseaudio", "pausemusic", "サウンドを一時停止", "音楽を一時停止", "音を一時停止"]),
-      (.next, ["下一首", "下一曲", "nexttrack", "nextsong", "次の曲", "次の曲へ"]),
-      (.previous, ["上一首", "上一曲", "previoustrack", "previoussong", "前の曲", "前の曲へ"]),
-    ]
-    for (action, phrases) in audioPhrases where phrases.contains(compact) { return .audio(action) }
     if ["暂停专注", "暂停计时", "pause", "pausefocus", "pausetimer", "タイマーを一時停止"].contains(compact) { return .pause }
     if ["继续专注", "继续计时", "恢复计时", "resume", "resumefocus", "resumetimer", "タイマーを再開"].contains(compact) { return .resume }
     if ["延长五分钟", "延长5分钟", "再加五分钟", "再加5分钟", "extend", "add5minutes", "5分延長"].contains(compact) { return .extend }
@@ -51,7 +39,7 @@ enum WorkspaceCommand: Equatable {
       (.monitor, ["系统监控", "打开系统监控", "查看系统信息", "查看网速", "磁盘还剩多少", "monitor", "systemmonitor", "opensystemmonitor", "システムモニタ", "システムモニタを開く"]),
       (.market, ["应用市场", "打开应用市场", "market", "openmarket", "appmarket", "アプリマーケットを開く"]),
       (.weather, ["打开天气", "weather", "openweather", "天気を開く"]),
-      (.audio, ["打开声音", "sound", "opensound", "サウンドを開く"]),
+      (.audio, ["打开声音", "查看声音", "正在播放", "查看正在播放", "sound", "opensound", "nowplaying", "shownowplaying", "サウンドを開く", "再生中の曲"]),
       (.navigation, ["打开地图", "打开导航", "地图导航", "map", "maps", "openmaps", "opennavigation", "地図を開く", "ナビを開く"]),
       (.camera, ["打开摄像头", "摄像头", "camera", "opencamera", "カメラを開く"]),
       (.space, ["打开空间", "空间", "space", "openspace", "空間を開く"]),
@@ -121,8 +109,7 @@ struct WorkspaceAction: Identifiable {
     .init(id: "space", title: String(localized: "空间"), symbol: "viewfinder", command: .open(.space)),
     .init(id: "browser", title: String(localized: "网页"), symbol: "globe", command: .open(.browser)),
     .init(id: "spaceScan", title: String(localized: "模拟扫描"), symbol: "viewfinder.circle", command: .space(.scan)),
-    .init(id: "audioPlay", title: String(localized: "播放声音"), symbol: "play.circle", command: .audio(.play)),
-    .init(id: "audioPause", title: String(localized: "暂停声音"), symbol: "pause.circle", command: .audio(.pause)),
+    .init(id: "audio", title: String(localized: "正在播放"), symbol: "waveform", command: .open(.audio)),
     .init(id: "focus25", title: String(localized: "专注 25 分钟"), symbol: "timer", command: .startFocus(1500)),
     .init(id: "focus5", title: String(localized: "休息 5 分钟"), symbol: "cup.and.saucer", command: .startFocus(300)),
     .init(id: "pause", title: String(localized: "暂停计时"), symbol: "pause", command: .pause),

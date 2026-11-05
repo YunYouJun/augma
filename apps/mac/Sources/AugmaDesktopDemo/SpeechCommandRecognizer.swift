@@ -28,9 +28,9 @@ final class SpeechCommandRecognizer {
 
   /// Phrases that bias recognition toward the demo's commands in each supported language.
   private static let contextualStrings: [String: [String]] = [
-    "zh": ["记下", "开始专注二十五分钟", "暂停计时", "继续计时", "打开地图", "扫描空间", "播放声音", "隐藏 HUD"],
-    "en": ["note", "focus twenty five minutes", "pause timer", "resume timer", "open the map", "scan the space", "play sound", "hide the HUD"],
-    "ja": ["メモ", "25分集中", "タイマーを一時停止", "地図を開いて", "空間をスキャンして", "サウンドを再生して", "HUDを隠して"],
+    "zh": ["记下", "开始专注二十五分钟", "暂停计时", "继续计时", "打开地图", "扫描空间", "查看正在播放", "隐藏 HUD"],
+    "en": ["note", "focus twenty five minutes", "pause timer", "resume timer", "open the map", "scan the space", "show now playing", "hide the HUD"],
+    "ja": ["メモ", "25分集中", "タイマーを一時停止", "地図を開いて", "空間をスキャンして", "再生中の音楽を表示", "HUDを隠して"],
   ]
 
   /// Normalizes the page's locale to one this demo supports, falling back to Simplified Chinese.

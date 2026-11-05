@@ -36,7 +36,8 @@ if [[ ${#CANDIDATES[@]} -ne 1 ]]; then
   exit 1
 fi
 
-codesign --force --sign "${CANDIDATES[0]}" --identifier cn.yunyoujun.augma.desktop-demo \
+BUNDLE_ID="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP_BUNDLE/Contents/Info.plist")"
+codesign --force --sign "${CANDIDATES[0]}" --identifier "$BUNDLE_ID" \
   --timestamp=none "$APP_BUNDLE"
 codesign --verify --strict "$APP_BUNDLE"
 # Only persist after signing succeeds. No certificate or private key is exported.

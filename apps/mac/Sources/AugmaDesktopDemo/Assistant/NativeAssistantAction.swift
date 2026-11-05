@@ -3,7 +3,7 @@ import Foundation
 /// Only these actions may be selected by an assistant response. Camera opens
 /// its controls; recording and photography always require a separate action.
 enum NativeAssistantAction: String, CaseIterable, Sendable {
-  case map, scan, audio, audioPause, hide, show, weather, notifications, settings, camera, browser
+  case map, scan, audio, hide, show, weather, notifications, settings, camera, browser
   case dark, light, routeStart, routeNext, routeStop
 }
 
@@ -32,9 +32,6 @@ enum NativeAssistantCommandParser {
     let jaView = contains("開|表示|見せ|見て|見る|出して|確認|起動")
     let enView = contains(#"\b(?:open|show|view|display|see|check|bring up|pull up|go to|launch)\b"#, in: english)
     let rules: [(NativeAssistantAction, Bool)] = [
-      (.audioPause, (contains("暂停|停止|关闭") && contains("声音|音乐|播放"))
-        || (contains("一時停止|停止|止め|ストップ|やめ") && contains("音|サウンド|再生"))
-        || (contains(#"\b(?:pause|stop|mute)\b"#, in: english) && contains(#"\b(?:sound|music|audio|playback)\b"#, in: english))),
       (.routeStop, (contains("结束|停止|取消") && contains("导航|路线"))
         || (contains("終了|停止|止め|やめ|キャンセル|終わ") && contains("ナビ|ルート|案内"))
         || (contains(#"\b(?:end|stop|cancel|exit|quit)\b"#, in: english) && contains(#"\b(?:navigation|navigating|route|directions)\b"#, in: english))),
@@ -72,9 +69,9 @@ enum NativeAssistantCommandParser {
         || (contains(#"\bcamera\b"#, in: english) && (enView || contains(#"\b(?:turn on|start)\b"#, in: english)))),
       (.browser, (contains("网页|浏览器") && zhView) || (contains("ブラウザ|ウェブ") && jaView)
         || (contains(#"\b(?:browser|web|website)\b"#, in: english) && enView)),
-      (.audio, (contains("声音|音乐|音频") && contains("播放|打开|放|听"))
-        || (contains("音|サウンド|オーディオ") && contains("再生|流して|かけて|聴|聞|オン|つけ"))
-        || (contains(#"\b(?:sound|music|audio|soundscape)\b"#, in: english) && contains(#"\b(?:play|open|start|turn on|listen)\b"#, in: english))),
+      (.audio, (contains("声音|音乐|正在播放") && zhView)
+        || (contains("音楽|サウンド|再生中") && jaView)
+        || (contains(#"\b(?:sound|music|audio|now playing)\b"#, in: english) && enView)),
     ]
     return rules.first(where: { $0.1 }).map { .action($0.0) } ?? .unmatched
   }

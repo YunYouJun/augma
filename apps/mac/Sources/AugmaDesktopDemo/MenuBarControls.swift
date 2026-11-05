@@ -38,7 +38,6 @@ struct MenuBarControls: View {
               }
             }
           }
-          SessionPlaybackMenu(audio: appDelegate.audio)
           Toggle("始终置顶", isOn: $alwaysOnTop)
           Button(hud.immersiveVisible ? "隐藏沉浸助手" : "唤起沉浸助手") { appDelegate.toggleImmersiveAssistant() }
           if hud.immersiveActive {
@@ -83,16 +82,5 @@ private struct WorkspaceMenuContent: View {
     }
     WorkspaceSaveStatus(store: store)
     WorkspaceResultView(commands: commands, store: store)
-  }
-}
-
-private struct SessionPlaybackMenu: View {
-  @ObservedObject var audio: NativeAudioStore
-  var body: some View {
-    Button(audio.playing ? String(localized: "暂停声音") : String(localized: "播放声音"), systemImage: audio.playing ? "pause.fill" : "play.fill") {
-      if audio.playing { audio.pause() }
-      else { audio.play() }
-    }
-    .disabled(audio.busy)
   }
 }

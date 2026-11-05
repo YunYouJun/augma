@@ -108,7 +108,7 @@ private final class NativeSpaceIntegrationFixture {
     let preferences = NativePreferencesStore(defaults: defaults, preferredLocalizations: ["zh-Hans"])
     let clock = NativeSpaceIntegrationClock()
     self.clock = clock
-    audio = NativeAudioStore(defaults: defaults, engine: NativeSpaceIntegrationAudioEngine(), observeLifecycle: false, automaticallyTick: false)
+    audio = NativeAudioStore(observeLifecycle: false)
     space = NativeSpaceStore(uptime: { clock.value }, autoTick: false, observeLifecycle: false)
     model = NativeDemoModel(preferences: preferences, audio: audio, space: space)
   }
@@ -122,13 +122,3 @@ private final class NativeSpaceIntegrationFixture {
 
 @MainActor
 private final class NativeSpaceIntegrationClock { var value: TimeInterval = 0 }
-
-@MainActor
-private final class NativeSpaceIntegrationAudioEngine: NativeAudioEngineBackend {
-  var onConfigurationChange: (() -> Void)?
-  func play(trackIndex: Int, from elapsed: TimeInterval) throws {}
-  func pause() {}
-  func setVolume(_ fraction: Double) {}
-  func reset() {}
-  func stop() {}
-}

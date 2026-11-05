@@ -6,8 +6,7 @@ final class NativeAssistantConversationTests: XCTestCase {
     let examples: [(NativeAssistantAction, [String])] = [
       (.map, ["请打开地图", "Open the map", "地図を開いて"]),
       (.scan, ["扫描周围空间", "Scan the room", "空間をスキャンして"]),
-      (.audio, ["播放音乐", "Play some music", "サウンドを再生して"]),
-      (.audioPause, ["暂停声音", "Stop the music", "音楽を止めて"]),
+      (.audio, ["查看正在播放的音乐", "Show now playing", "再生中の音楽を表示"]),
       (.hide, ["隐藏 HUD", "Hide the HUD", "HUDを隠して"]),
       (.show, ["显示 HUD", "Restore the HUD", "HUDを表示して"]),
       (.weather, ["看看天气", "Show the forecast", "天気を見せて"]),
@@ -34,6 +33,9 @@ final class NativeAssistantConversationTests: XCTestCase {
       XCTAssertEqual(NativeAssistantCommandParser.match(text), .refused, text)
     }
     XCTAssertEqual(NativeAssistantCommandParser.match("Explain how clouds form"), .unmatched)
+    for phrase in ["播放音乐", "暂停声音", "Play some music", "Stop the music", "音楽を再生して", "音楽を止めて"] {
+      XCTAssertEqual(NativeAssistantCommandParser.match(phrase), .unmatched, phrase)
+    }
   }
 
   func testAnswerRequiresAnExactSchemaAndAllowedAction() throws {
@@ -43,7 +45,7 @@ final class NativeAssistantConversationTests: XCTestCase {
       XCTAssertEqual(result.command, action)
     }
     for invalid in [
-      "null", "[]", "true", "not json", #"{"reply":"hi"}"#, #"{"reply":"hi","command":false}"#,
+      "null", "[]", "true", "not json", #"{"reply":"x","command":"audioPause"}"#, #"{"reply":"hi"}"#, #"{"reply":"hi","command":false}"#,
       #"{"reply":"hi","command":"cameraStart"}"#, #"{"reply":"hi","command":"runShell"}"#,
       #"{"reply":"hi","command":"browser","url":"https://example.com"}"#,
       #"{"reply":"hi","command":null,"extra":1}"#, #"{"reply":" ","command":null}"#,

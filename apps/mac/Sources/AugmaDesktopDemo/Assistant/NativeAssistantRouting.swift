@@ -25,10 +25,6 @@ extension NativeDemoModel {
       case .extend: key = "已延长 5 分钟。"
       case .cancel: key = "计时已结束。"
       case .undo: key = "已撤销上一步。"
-      case .audio(.play): key = "已开始播放。"
-      case .audio(.pause): key = "已暂停播放。"
-      case .audio(.next): key = "已切换到下一首。"
-      case .audio(.previous): key = "已切换到上一首。"
       default: key = commands.result ?? ""
       }
       return .init(message: assistant.text(key))
@@ -40,6 +36,7 @@ extension NativeDemoModel {
     defer { performingAssistantAction = false }
     let destination: DemoModule?
     switch action {
+    case .audio: destination = .audio
     case .map: destination = .navigation
     case .weather: destination = .weather
     case .notifications: destination = .notifications
@@ -57,11 +54,6 @@ extension NativeDemoModel {
     case .routeStart: performSpaceAction(.routeStart)
     case .routeNext: performSpaceAction(.routeNext)
     case .routeStop: performSpaceAction(.routeStop)
-    case .audio, .audioPause:
-      guard let audio else { return .init(message: assistant.text("声音暂不可用。"), isError: true) }
-      if action == .audio { audio.play() } else { audio.pause() }
-      if let error = audio.error { return .init(message: error, isError: true) }
-      return .init(message: action == .audio ? assistant.text("已开始播放。") : assistant.text("已暂停播放。"))
     case .hide, .show:
       preferences.value.showHud = action == .show
       selection = .space

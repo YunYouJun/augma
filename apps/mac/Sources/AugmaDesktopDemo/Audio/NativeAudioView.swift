@@ -5,98 +5,90 @@ struct NativeAudioView: View {
 
   var body: some View {
     NativePage {
-      NativePageSection("声音") {
-        VStack(alignment: .leading, spacing: 8) {
-          Text("声音库").font(.callout.weight(.medium))
-          Picker("声音库", selection: Binding(get: { store.trackIndex }, set: store.selectTrack)) {
-            ForEach(Array(NativeAudioStore.tracks.enumerated()), id: \.element.id) { index, track in
-              Text(track.name).tag(index)
-            }
+      NativePageSection("正在播放") {
+        switch store.status {
+        case .track(let track): NativeNowPlayingContent(track: track, lyrics: store.lyrics)
+        case .loading:
+          ProgressView("正在读取网易云音乐…")
+            .frame(maxWidth: .infinity, minHeight: 160)
+        case .notRunning:
+          ContentUnavailableView("网易云音乐未运行", systemImage: "music.note",
+            description: Text("在网易云音乐中播放歌曲后，这里会显示当前播放信息。"))
+        case .idle:
+          ContentUnavailableView("当前没有正在播放的音乐", systemImage: "music.note",
+            description: Text("暂未读取到网易云音乐的当前播放信息。"))
+        case .unavailable:
+          ContentUnavailableView {
+            Label("暂时无法读取播放信息", systemImage: "waveform.slash")
+          } description: {
+            Text("请确认网易云音乐正在运行后重试。")
+          } actions: {
+            Button("重新读取") { store.refresh() }
           }
-          .labelsHidden()
-          .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        Text(NativeAudioStore.tracks[store.trackIndex].subtitle)
-          .font(.callout).foregroundStyle(.secondary)
-        NativeAudioProgressView(store: store)
-        HStack(spacing: 20) {
-          Button(action: store.previous) {
-            Label("上一首", systemImage: "backward.end.fill")
-              .labelStyle(.iconOnly)
-              .frame(width: 16, height: 16)
-          }
-          .frame(width: 36, height: 36)
-          Button(store.playing ? String(localized: "暂停") : String(localized: "播放"), systemImage: store.playing ? "pause.fill" : "play.fill") {
-            if store.playing { store.pause() } else { store.play() }
-          }
-          .buttonStyle(.borderedProminent)
-          .disabled(store.busy)
-          Button(action: store.next) {
-            Label("下一首", systemImage: "forward.end.fill")
-              .labelStyle(.iconOnly)
-              .frame(width: 16, height: 16)
-          }
-          .frame(width: 36, height: 36)
-        }
-        .buttonStyle(.bordered)
-        .controlSize(.large)
-        .frame(maxWidth: .infinity)
-        Divider()
-        VStack(alignment: .leading, spacing: 8) {
-          HStack {
-            Text("音量").font(.callout.weight(.medium))
-            Spacer()
-            Text("\(Int(store.volume))%")
-              .monospacedDigit().foregroundStyle(.secondary)
-          }
-          Slider(value: Binding(get: { store.volume }, set: {
-            if store.volume != $0 { store.volume = $0 }
-          }), in: 0...100, step: 1) { Text("音量") }
-            .labelsHidden()
-        }
-        if let error = store.error {
-          Label(error, systemImage: "exclamationmark.triangle")
-            .foregroundStyle(.red)
         }
       }
-      Text("声音在本机合成，播放不需要网络。关闭窗口后继续播放，暂停或退出 App 时停止。")
+      Text("读取本机播放信息，联网获取歌词并缓存在本机。播放操作请在网易云音乐中完成。")
         .font(.caption).foregroundStyle(.secondary)
     }
+    .onAppear { store.startObserving() }
   }
 }
 
-private struct NativeAudioProgressView: View {
-  @ObservedObject var store: NativeAudioStore
-  @State private var draft: Double?
-  @State private var editing = false
+private struct NativeNowPlayingContent: View {
+  let track: NativeNowPlayingTrack
+  let lyrics: NativeLyricsStore
 
   var body: some View {
-    VStack(spacing: 8) {
-      Slider(value: Binding(get: { draft ?? store.elapsed }, set: {
-        guard $0 != (draft ?? store.elapsed) else { return }
-        if editing { draft = $0 }
-        else { store.seek($0) }
-      }), in: 0...store.duration) {
-        Text("播放进度")
-      } onEditingChanged: { isEditing in
-        editing = isEditing
-        if !isEditing, let draft {
-          store.seek(draft)
-          self.draft = nil
+    VStack(alignment: .leading, spacing: 24) {
+      ViewThatFits(in: .horizontal) {
+        HStack(alignment: .center, spacing: 24) { artwork; metadata }
+        VStack(alignment: .leading, spacing: 20) { artwork; metadata }
+      }
+      if track.elapsed != nil, let duration = track.duration {
+        TimelineView(.animation(minimumInterval: 1, paused: !track.playing)) { context in
+          let elapsed = track.elapsed(at: context.date) ?? 0
+          VStack(spacing: 8) {
+            ProgressView(value: elapsed, total: duration).accessibilityLabel("播放进度")
+            HStack { Text(time(elapsed)); Spacer(); Text(time(duration)) }
+              .font(.caption).monospacedDigit().foregroundStyle(.secondary)
+          }
         }
       }
-      .labelsHidden()
-      HStack {
-        Text(time(draft ?? store.elapsed))
-        Spacer()
-        Text(time(store.duration))
-      }
-      .font(.caption).monospacedDigit().foregroundStyle(.secondary)
+      Divider()
+      NativeLyricsView(store: lyrics, track: track)
     }
+    .textSelection(.enabled)
   }
 
-  private func time(_ value: Double) -> String {
-    let seconds = max(0, Int(value))
+  private var metadata: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Label("网易云音乐", systemImage: "music.note").font(.caption).foregroundStyle(.secondary)
+      Text(track.title).font(.title2.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
+      if let artist = track.artist { Text(artist).font(.title3).foregroundStyle(.secondary) }
+      if let album = track.album { Text(album).font(.callout).foregroundStyle(.secondary) }
+      Label(track.playing ? String(localized: "正在播放") : String(localized: "已暂停"),
+            systemImage: track.playing ? "waveform" : "pause.fill")
+        .font(.caption).foregroundStyle(.secondary).padding(.top, 4)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private var artwork: some View {
+    Group {
+      if let data = track.artwork, let image = NSImage(data: data) {
+        Image(nsImage: image).resizable().scaledToFill()
+      } else {
+        Rectangle().fill(.quaternary)
+          .overlay { Image(systemName: "music.note").font(.system(size: 44)).foregroundStyle(.secondary) }
+      }
+    }
+    .frame(width: 128, height: 128)
+    .clipShape(.rect(cornerRadius: 16))
+    .accessibilityLabel("专辑封面")
+  }
+
+  private func time(_ value: TimeInterval) -> String {
+    let seconds = Int(max(0, value))
     return String(format: "%d:%02d", seconds / 60, seconds % 60)
   }
 }

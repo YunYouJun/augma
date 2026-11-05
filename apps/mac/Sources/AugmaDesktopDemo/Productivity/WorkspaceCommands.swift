@@ -11,7 +11,6 @@ final class WorkspaceCommands: ObservableObject {
   let voice = VoiceActivityModel()
   let store: WorkspaceStore
   let captures: QuickCaptureStore?
-  private let audio: NativeAudioStore?
   var navigate: ((DemoModule) -> Void)?
   var operateSpace: ((NativeSpaceAction) -> Void)?
   var requestCleanup: ((String) -> Bool)?
@@ -21,16 +20,9 @@ final class WorkspaceCommands: ObservableObject {
     self?.voice.receive(level: value)
   }, onEvent: { [weak self] type, text, code in self?.receiveSpeech(type: type, text: text, code: code) })
 
-  init(store: WorkspaceStore, audio: NativeAudioStore? = nil, captures: QuickCaptureStore? = nil) {
+  init(store: WorkspaceStore, captures: QuickCaptureStore? = nil) {
     self.store = store
     self.captures = captures
-    self.audio = audio
-    if let audio {
-      // Transport controls can change from another window. Forward only the
-      // availability flags, not the audio progress clock, to the command list.
-      audio.$playing.combineLatest(audio.$busy).dropFirst()
-        .sink { [weak self] _ in self?.objectWillChange.send() }.store(in: &observers)
-    }
     NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)
       .sink { [weak self] _ in
         guard let self, ["listening", "processing"].contains(self.voice.phase) else { return }
@@ -59,18 +51,8 @@ final class WorkspaceCommands: ObservableObject {
     case .startFocus: store.writable && (store.data.focus == nil || store.data.focus?.status == .completed)
     case .note, .task: store.writable
     case .open: true
-    case .audio(let action): isAudioAvailable(action)
     case .space: operateSpace != nil
     case .cleanup: requestCleanup != nil
-    }
-  }
-
-  private func isAudioAvailable(_ action: NativeAudioAction) -> Bool {
-    guard let audio, !audio.busy else { return false }
-    switch action {
-    case .play: return !audio.playing
-    case .pause: return audio.playing
-    case .next, .previous: return true
     }
   }
 
@@ -104,8 +86,6 @@ final class WorkspaceCommands: ObservableObject {
     case .open(let module):
       navigate?(module)
       message = String(format: String(localized: "已打开 %@。"), module.title)
-    case .audio(let action):
-      return executeAudio(action, actionID: actionID)
     case .space(let action):
       guard let operateSpace else {
         feedback(String(localized: "原生空间暂不可用。"), error: true)
@@ -131,43 +111,6 @@ final class WorkspaceCommands: ObservableObject {
       feedback(store.saveError ?? String(localized: "当前无法执行。请检查已有计时、输入内容或操作状态。"), error: true)
     }
     return success
-  }
-
-  private func executeAudio(_ action: NativeAudioAction, actionID: String?) -> Bool {
-    guard let audio else {
-      feedback(String(localized: "声音暂不可用。"), error: true)
-      return false
-    }
-    guard !audio.busy else {
-      feedback(String(localized: "声音正在准备，请稍后重试。"), error: true)
-      return false
-    }
-    let message: String
-    switch action {
-    case .play:
-      audio.play()
-      message = String(localized: "已开始播放。")
-    case .pause:
-      audio.pause()
-      message = String(localized: "已暂停播放。")
-    case .next:
-      audio.next()
-      message = String(localized: "已切换到下一首。")
-    case .previous:
-      audio.previous()
-      message = String(localized: "已切换到上一首。")
-    }
-    if let error = audio.error {
-      feedback(error, error: true)
-      return false
-    }
-    if action == .play, !audio.playing {
-      feedback(String(localized: "声音暂不可用。"), error: true)
-      return false
-    }
-    if let actionID { store.rememberAction(actionID) }
-    feedback(message, destination: .audio)
-    return true
   }
 
   func feedback(_ text: String, error: Bool = false, destination: DemoModule? = nil) {

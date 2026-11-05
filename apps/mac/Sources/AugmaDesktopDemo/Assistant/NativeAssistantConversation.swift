@@ -54,7 +54,7 @@ enum NativeAssistantConversation {
     Set command only when the user explicitly asks for one of these supported actions, otherwise null:
     - map: open the native map and route planning controls
     - scan: start a simulated scan in the native 3D space
-    - audio / audioPause: play / pause the app soundscape
+    - audio: open the read-only current music information panel. Playback cannot be controlled.
     - hide / show: hide / show the HUD
     - weather: open the weather panel
     - notifications / settings: open that app panel

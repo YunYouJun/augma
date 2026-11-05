@@ -3,16 +3,19 @@ set -euo pipefail
 
 MODE="${1:-run}"
 case "$MODE" in
-  run|--debug|--logs|--telemetry|--verify|--package) ;;
-  *) echo "usage: $0 [run|--debug|--logs|--telemetry|--verify|--package]" >&2; exit 2 ;;
+  run|--debug|--logs|--telemetry|--verify|--build|--package) ;;
+  *) echo "usage: $0 [run|--debug|--logs|--telemetry|--verify|--build|--package]" >&2; exit 2 ;;
 esac
 
 APP_NAME="AugmaDesktopDemo"
-BUNDLE_ID="cn.yunyoujun.augma.desktop-demo"
+BUNDLE_ID="${AUGMA_BUNDLE_ID:-cn.yunyoujun.augma.desktop-demo}"
+DISPLAY_NAME="${AUGMA_APP_DISPLAY_NAME:-Augma}"
+BUILD_CONFIGURATION="${AUGMA_BUILD_CONFIGURATION:-debug}"
+case "$BUILD_CONFIGURATION" in debug|release) ;; *) echo "Invalid build configuration" >&2; exit 2 ;; esac
 MIN_SYSTEM_VERSION="26.0"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PACKAGE_DIR="$ROOT_DIR/apps/mac"
-APP_BUNDLE="$PACKAGE_DIR/dist/Augma.app"
+APP_BUNDLE="${AUGMA_APP_BUNDLE:-$PACKAGE_DIR/dist/Augma.app}"
 ARCHIVE="$PACKAGE_DIR/dist/Augma-macOS.zip"
 APP_CONTENTS="$APP_BUNDLE/Contents"
 APP_BINARY="$APP_CONTENTS/MacOS/$APP_NAME"
@@ -38,17 +41,24 @@ fi
 SDK_FLAGS=(-Xswiftc -Xclang-linker -Xswiftc -isysroot -Xswiftc -Xclang-linker -Xswiftc "$(xcrun --sdk macosx --show-sdk-path)")
 
 # A download package is a universal release build; local runs stay fast debug builds.
-BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c debug "${SDK_FLAGS[@]}")
+BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c "$BUILD_CONFIGURATION" "${SDK_FLAGS[@]}")
+app_pids() {
+  while read -r pid command; do
+    if [[ "$command" == "$APP_BINARY" ]]; then printf '%s\n' "$pid"; fi
+  done < <(ps -axo pid=,comm=)
+}
 if [[ "$MODE" == "--package" ]]; then
   BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c release --arch arm64 --arch x86_64 "${SDK_FLAGS[@]}")
-else
-  pkill -x "$APP_NAME" >/dev/null 2>&1 || true
+elif [[ "$MODE" != "--build" ]]; then
+  while read -r pid; do
+    if [[ -n "$pid" ]]; then kill -TERM "$pid"; fi
+  done < <(app_pids)
   # Give the app time to flush native notes/drafts before replacing its bundle.
   for attempt in {1..50}; do
-    pgrep -x "$APP_NAME" >/dev/null || break
+    [[ -n "$(app_pids)" ]] || break
     sleep 0.1
   done
-  if pgrep -x "$APP_NAME" >/dev/null; then
+  if [[ -n "$(app_pids)" ]]; then
     echo "Augma is still running. Resolve any unsaved-data prompt before rebuilding." >&2
     exit 1
   fi
@@ -63,6 +73,16 @@ cp "$BUILD_DIR/$APP_NAME" "$APP_BINARY"
 # String tables live outside the SwiftPM target so SwiftUI finds them in the main bundle.
 cp -R "$PACKAGE_DIR/Localization/." "$APP_CONTENTS/Resources/"
 chmod +x "$APP_BINARY"
+# Compile the small read-only media-session bridge for the same architectures as the app.
+NOW_PLAYING_DIR="$APP_CONTENTS/Resources/NowPlaying"
+mkdir -p "$NOW_PLAYING_DIR"
+NOW_PLAYING_ARCHS=(-arch "$(uname -m)")
+if [[ "$MODE" == "--package" ]]; then NOW_PLAYING_ARCHS=(-arch arm64 -arch x86_64); fi
+xcrun clang -dynamiclib -fobjc-arc -fblocks -framework Foundation \
+  -mmacosx-version-min="$MIN_SYSTEM_VERSION" "${NOW_PLAYING_ARCHS[@]}" \
+  "$PACKAGE_DIR/Support/NowPlaying/ReadNowPlaying.m" -o "$NOW_PLAYING_DIR/ReadNowPlaying.dylib"
+cp "$PACKAGE_DIR/Support/NowPlaying/read-now-playing.pl" "$NOW_PLAYING_DIR/"
+codesign --force --sign - "$NOW_PLAYING_DIR/ReadNowPlaying.dylib"
 # assets/brand is a pinned copy of YunLeFun/icons assets/apps/augma/v1.
 node "$ROOT_DIR/scripts/sync-app-icon.mjs" --check
 ICONSET="$WORK_DIR/AppIcon.iconset"
@@ -92,8 +112,8 @@ cat >"$APP_CONTENTS/Info.plist" <<PLIST
 <dict>
   <key>CFBundleExecutable</key><string>$APP_NAME</string>
   <key>CFBundleIdentifier</key><string>$BUNDLE_ID</string>
-  <key>CFBundleName</key><string>Augma</string>
-  <key>CFBundleDisplayName</key><string>Augma</string>
+  <key>CFBundleName</key><string>$DISPLAY_NAME</string>
+  <key>CFBundleDisplayName</key><string>$DISPLAY_NAME</string>
   <key>CFBundleDevelopmentRegion</key><string>zh-Hans</string>
   <key>CFBundleLocalizations</key><array><string>zh-Hans</string><string>en</string><string>ja</string></array>
   <key>CFBundlePackageType</key><string>APPL</string>
@@ -122,6 +142,11 @@ cat >"$APP_CONTENTS/Info.plist" <<PLIST
 </plist>
 PLIST
 
+# Acceptance bundles must not register the daily app's sign-in callback.
+if [[ "$BUNDLE_ID" != "cn.yunyoujun.augma.desktop-demo" ]]; then
+  /usr/libexec/PlistBuddy -c 'Delete :CFBundleURLTypes' "$APP_CONTENTS/Info.plist"
+fi
+
 if [[ "$MODE" != "--package" ]]; then
   bash "$ROOT_DIR/script/sign_mac_dev.sh" "$APP_BUNDLE"
 fi
@@ -131,6 +156,7 @@ open_app() {
 }
 
 case "$MODE" in
+  --build) echo "Built $DISPLAY_NAME: $APP_BUNDLE" ;;
   run) open_app ;;
   --debug) lldb -- "$APP_BINARY" ;;
   --logs)

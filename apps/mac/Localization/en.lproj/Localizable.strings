@@ -1117,3 +1117,53 @@
 "扫描时间：%@" = "Scanned: %@";
 "不可用" = "Unavailable";
 "部分设备型号无法读取，已使用通用图标。" = "Some device models could not be read. Generic icons are used.";
+
+"正在播放" = "Now Playing";
+
+"正在读取网易云音乐…" = "Reading NetEase Cloud Music…";
+
+"网易云音乐未运行" = "NetEase Cloud Music Is Not Running";
+
+"在网易云音乐中播放歌曲后，这里会显示当前播放信息。" = "Play a song in NetEase Cloud Music to see its information here.";
+
+"当前没有正在播放的音乐" = "No Music Is Playing";
+
+"暂未读取到网易云音乐的当前播放信息。" = "No current playback information is available from NetEase Cloud Music.";
+
+"暂时无法读取播放信息" = "Playback Information Is Unavailable";
+
+"请确认网易云音乐正在运行后重试。" = "Make sure NetEase Cloud Music is running, then try again.";
+
+"重新读取" = "Read Again";
+
+"仅在本机读取网易云音乐的当前播放信息。播放操作请在网易云音乐中完成。" = "Reads current playback information from NetEase Cloud Music on this Mac. Use NetEase Cloud Music to control playback.";
+
+"网易云音乐" = "NetEase Cloud Music";
+
+"歌词" = "Lyrics";
+
+"当前播放信息未提供歌词。" = "Lyrics are not provided by the current playback session.";
+
+"专辑封面" = "Album Artwork";
+
+"查看正在播放" = "Show Now Playing";
+
+"还可打开通知、设置和摄像头面板，切换浅色模式，控制模拟路线，或查看当前播放信息。打开摄像头面板不会开始拍摄。" = "You can also open notifications, settings or camera controls, switch to light mode, control the simulated route, or view current playback information. Opening camera controls does not start capture.";
+
+"播放元数据" = "Playback Metadata";
+
+"本地缓存" = "Cached Locally";
+
+"正在获取歌词…" = "Fetching lyrics…";
+
+"暂无匹配的歌词。" = "No matching lyrics are available.";
+
+"暂时无法获取歌词。" = "Lyrics are temporarily unavailable.";
+
+"纯音乐，无歌词。" = "Instrumental — no lyrics.";
+
+"此歌词没有时间轴。" = "These lyrics have no timing information.";
+
+"同步歌词" = "Synced Lyrics";
+
+"读取本机播放信息，联网获取歌词并缓存在本机。播放操作请在网易云音乐中完成。" = "Reads local playback information, fetches lyrics online and caches them on this Mac. Use NetEase Cloud Music to control playback.";

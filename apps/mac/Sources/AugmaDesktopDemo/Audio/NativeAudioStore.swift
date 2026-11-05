@@ -1,200 +1,110 @@
 import AppKit
 import Combine
-import CoreFoundation
-import Foundation
 
-/// App-owned audio transport. Every window uses this instance, so changing the
-/// visible scene cannot start a second sound engine or interrupt playback.
+enum NativeAudioStatus: Equatable {
+  case loading, notRunning, idle, unavailable
+  case track(NativeNowPlayingTrack)
+}
+
+/// Shared across windows. Observing never starts, stops or changes audio.
 @MainActor
 final class NativeAudioStore: ObservableObject {
-  static let tracks = NativeAudioTrack.library
-  static let volumeKey = "augma.nativeAudio.volume.v1"
-  let duration: TimeInterval = 120
-
-  @Published private(set) var trackIndex = 0
-  @Published private(set) var playing = false
-  @Published private(set) var busy = false
-  @Published private(set) var error: String?
-  @Published private(set) var elapsed: TimeInterval = 0
-  @Published var volume: Double {
+  @Published private(set) var status: NativeAudioStatus = .loading {
     didSet {
-      let clamped = volume.isFinite ? min(100, max(0, volume)) : 35
-      if volume != clamped { volume = clamped }
-      defaults.set(clamped, forKey: Self.volumeKey)
-      engine.setVolume(clamped / 100)
+      if case .track(let track) = status { lyrics.update(track) } else { lyrics.clear() }
     }
   }
-
-  private let defaults: UserDefaults
-  private let engine: any NativeAudioEngineBackend
-  private let uptime: () -> TimeInterval
-  private let automaticallyTick: Bool
-  private var baseElapsed: TimeInterval = 0
-  private var startedAt: TimeInterval?
-  private var timer: Task<Void, Never>?
+  let lyrics: NativeLyricsStore
+  private let client: any NativeNowPlayingReading
+  private let isRunning: () -> Bool
+  private let now: () -> Date
   private var lifecycle: [AnyCancellable] = []
+  private var observing = false
   private var sleeping = false
-  private var resumeAfterSleep = false
   private var terminated = false
+  private var watchdog: Task<Void, Never>?
+  private var receivedAt: Date?
 
-  init(defaults: UserDefaults = .standard, engine: (any NativeAudioEngineBackend)? = nil,
-       uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
-       observeLifecycle: Bool = true, automaticallyTick: Bool = true) {
-    self.defaults = defaults
-    self.engine = engine ?? NativeSynthAudioEngine()
-    self.uptime = uptime
-    self.automaticallyTick = automaticallyTick
-    let saved = defaults.object(forKey: Self.volumeKey) as? Double ?? 35
-    volume = saved.isFinite ? min(100, max(0, saved)) : 35
-    self.engine.setVolume(volume / 100)
-    self.engine.onConfigurationChange = { [weak self] in self?.handleAudioConfigurationChange() }
+  init(client: (any NativeNowPlayingReading)? = nil, lyrics: NativeLyricsStore? = nil,
+       isRunning: @escaping () -> Bool = {
+         !NSRunningApplication.runningApplications(withBundleIdentifier: NativeNowPlayingTrack.neteaseBundleIdentifier).isEmpty
+       }, now: @escaping () -> Date = Date.init, observeLifecycle: Bool = true) {
+    self.client = client ?? NativeNowPlayingClient()
+    self.lyrics = lyrics ?? NativeLyricsStore()
+    self.isRunning = isRunning
+    self.now = now
     if observeLifecycle {
-      NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.willSleepNotification)
+      let center = NSWorkspace.shared.notificationCenter
+      center.publisher(for: NSWorkspace.didTerminateApplicationNotification)
+        .merge(with: center.publisher(for: NSWorkspace.didLaunchApplicationNotification))
         .receive(on: RunLoop.main)
+        .sink { [weak self] notification in
+          guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                app.bundleIdentifier == NativeNowPlayingTrack.neteaseBundleIdentifier else { return }
+          if self?.observing == true { self?.refresh() }
+        }.store(in: &lifecycle)
+      center.publisher(for: NSWorkspace.willSleepNotification).receive(on: RunLoop.main)
         .sink { [weak self] _ in self?.setSleeping(true) }.store(in: &lifecycle)
-      NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)
-        .receive(on: RunLoop.main)
+      center.publisher(for: NSWorkspace.didWakeNotification).receive(on: RunLoop.main)
         .sink { [weak self] _ in self?.setSleeping(false) }.store(in: &lifecycle)
-      NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)
-        .receive(on: RunLoop.main)
-        .sink { [weak self] _ in self?.shutdown() }.store(in: &lifecycle)
     }
   }
 
-  func play() {
-    guard !terminated, !playing, !busy else { return }
-    if sleeping { resumeAfterSleep = true; return }
-    if elapsed >= duration { elapsed = 0 }
-    startPlayback()
+  func startObserving() {
+    guard !observing, !terminated else { return }
+    observing = true
+    refresh()
   }
 
-  func pause() {
-    resumeAfterSleep = false
-    pausePlayback()
-  }
-
-  func selectTrack(_ index: Int) {
-    guard Self.tracks.indices.contains(index) else { return }
-    let resume = playing
-    pausePlayback()
-    trackIndex = index
-    elapsed = 0
-    baseElapsed = 0
-    error = nil
-    if resume { play() }
-  }
-
-  func next() { selectTrack((trackIndex + 1) % Self.tracks.count) }
-  func previous() { selectTrack((trackIndex + Self.tracks.count - 1) % Self.tracks.count) }
-
-  /// The web simulator may offer its old setting once. Native edits and an
-  /// already persisted native preference always take precedence.
-  func importLegacyVolume(_ value: Any) {
-    guard defaults.object(forKey: Self.volumeKey) == nil,
-          let number = value as? NSNumber,
-          CFGetTypeID(number) != CFBooleanGetTypeID(), number.doubleValue.isFinite else { return }
-    volume = min(100, max(0, number.doubleValue))
-  }
-
-  func seek(_ seconds: Double) {
-    guard seconds.isFinite else { return }
-    let target = min(duration, max(0, seconds))
-    guard target != elapsed else { return }
-    elapsed = target
-    baseElapsed = elapsed
-    if playing {
-      if elapsed >= duration { finishPlayback() }
-      else { startPlayback() }
-    }
-  }
-
-  /// Monotonic time drives UI progress; wall-clock adjustments do not change it.
-  func tick() {
-    guard playing, let startedAt else { return }
-    elapsed = min(duration, max(elapsed, baseElapsed + max(0, uptime() - startedAt)))
-    if elapsed >= duration { finishPlayback() }
-  }
-
-  func setSleeping(_ value: Bool) {
-    guard sleeping != value, !terminated else { return }
-    sleeping = value
-    if value {
-      resumeAfterSleep = playing
-      pausePlayback()
-      engine.stop()
-    } else {
-      engine.reset()
-      let resume = resumeAfterSleep
-      resumeAfterSleep = false
-      if resume { play() }
-    }
-  }
-
-  func handleAudioConfigurationChange() {
-    guard !terminated else { return }
-    let resume = playing
-    pausePlayback()
-    engine.reset()
-    if resume, !sleeping { play() }
-  }
-
-  func shutdown() {
-    terminated = true
-    resumeAfterSleep = false
-    pausePlayback()
-    engine.stop()
-  }
-
-  private func startPlayback() {
-    busy = true
-    error = nil
-    defer { busy = false }
-    do {
-      try engine.play(trackIndex: trackIndex, from: elapsed)
-      baseElapsed = elapsed
-      startedAt = uptime()
-      playing = true
-      startTimerIfNeeded()
-    } catch {
-      playing = false
-      startedAt = nil
-      stopTimer()
-      engine.stop()
-      self.error = String(localized: "无法播放声音，请检查音频输出设备后重试。")
-    }
-  }
-
-  private func pausePlayback() {
-    if playing { tick() }
-    playing = false
-    busy = false
-    startedAt = nil
-    baseElapsed = elapsed
-    stopTimer()
-    engine.pause()
-  }
-
-  private func finishPlayback() {
-    elapsed = duration
-    baseElapsed = duration
-    startedAt = nil
-    playing = false
-    stopTimer()
-    engine.pause()
-  }
-
-  private func startTimerIfNeeded() {
-    guard automaticallyTick, timer == nil else { return }
-    timer = Task { [weak self] in
+  func refresh() {
+    guard !terminated, !sleeping else { return }
+    watchdog?.cancel()
+    client.stop()
+    receivedAt = nil
+    guard isRunning() else { status = .notRunning; return }
+    status = .loading
+    receivedAt = now()
+    client.start { [weak self] result in self?.receive(result) }
+    watchdog = Task { [weak self] in
       while !Task.isCancelled {
-        do { try await Task.sleep(for: .milliseconds(250)) }
-        catch { return }
-        self?.tick()
-        if self?.playing != true { return }
+        do { try await Task.sleep(for: .seconds(5)) } catch { return }
+        self?.checkFreshness()
       }
     }
   }
 
-  private func stopTimer() { timer?.cancel(); timer = nil }
-  deinit { timer?.cancel() }
+  private func receive(_ result: Result<NativeNowPlayingPayload, NativeNowPlayingError>) {
+    guard !terminated, !sleeping else { return }
+    receivedAt = now()
+    guard isRunning() else { status = .notRunning; return }
+    switch result {
+    case .success(let payload):
+      status = NativeNowPlayingTrack(payload: payload, receivedAt: now()).map(NativeAudioStatus.track) ?? .idle
+    case .failure: status = .unavailable
+    }
+  }
+
+  func checkFreshness() {
+    guard !terminated, !sleeping else { return }
+    guard isRunning() else { client.stop(); status = .notRunning; return }
+    if let receivedAt, now().timeIntervalSince(receivedAt) > 8 {
+      client.stop()
+      status = .unavailable
+    }
+  }
+
+  func setSleeping(_ value: Bool) {
+    sleeping = value
+    if value {
+      client.stop(); watchdog?.cancel(); status = .loading
+    } else if observing { refresh() }
+  }
+
+  func shutdown() {
+    terminated = true
+    client.stop(); watchdog?.cancel(); lifecycle.removeAll()
+    status = .idle
+  }
+
+  deinit { watchdog?.cancel() }
 }
