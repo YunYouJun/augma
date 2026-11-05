@@ -89,6 +89,8 @@ struct NoteComposer: View {
   @ObservedObject var store: WorkspaceStore
   @ObservedObject var commands: WorkspaceCommands
   @State private var showingConnections = false
+  var autofocus = false
+  @FocusState private var editorFocused: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
@@ -110,6 +112,16 @@ struct NoteComposer: View {
         .lineLimit(3...6).textFieldStyle(.roundedBorder)
         .multilineTextAlignment(.leading)
         .accessibilityLabel("记下想法、待办或一句话…")
+        .accessibilityIdentifier("quick-capture-draft")
+        .focused($editorFocused)
+        .onAppear {
+          if autofocus {
+            Task { @MainActor in
+              await Task.yield()
+              editorFocused = true
+            }
+          }
+        }
         .disabled(!store.writable)
       HStack(spacing: NativePageLayout.itemSpacing) {
         Text("草稿保存在此 Mac").font(.caption).foregroundStyle(.secondary)

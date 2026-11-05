@@ -5,7 +5,7 @@ struct WorkspaceMenuCommands: Commands {
   let appDelegate: HudAppDelegate
   var body: some Commands {
     CommandMenu("日常") {
-      Button("快速记录") { setup(); appDelegate.openModule(.notes) }
+      Button("快速记录") { setup(); appDelegate.showQuickCapture() }
         .keyboardShortcut("n", modifiers: [.command, .shift])
       Button("打开 Microsoft To Do") { appDelegate.captures.openDestination(.microsoftToDo) }
         .keyboardShortcut("t", modifiers: [.command, .option])

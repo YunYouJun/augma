@@ -13,6 +13,7 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
   let model = HudModel()
   let sessions = DemoSessionRegistry()
   let workspace = WorkspaceStore()
+  let craftHubCompanion = CraftHubCompanionStore()
   lazy var captures = QuickCaptureStore(workspace: workspace)
   let monitor = SystemMonitorStore()
   let market = ApplicationMarketStore()
@@ -30,6 +31,7 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
   lazy var commands = WorkspaceCommands(store: workspace, captures: captures)
   var openScene: ((String) -> Void)?
   private var panel: HudPanel?
+  private var capturePanel: HudPanel?
   private var terminationSignal: DispatchSourceSignal?
   private var pendingImmersiveReveal = false
   private lazy var immersiveOverlay = ImmersiveOverlayController(model: model, workspace: workspace, commands: commands,
@@ -108,6 +110,24 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
     panel.makeKeyAndOrderFront(nil)
     refreshShadowAfterEntrance(of: panel)
     logger.notice("HUD shown")
+  }
+
+  func showQuickCapture() {
+    if capturePanel == nil {
+      let panel = HudPanel(contentRect: NSRect(x: 0, y: 0, width: 500, height: 560),
+                           styleMask: [.titled, .closable, .fullSizeContentView], backing: .buffered, defer: false)
+      panel.title = String(localized: "快速记录")
+      panel.titlebarAppearsTransparent = true
+      panel.isReleasedWhenClosed = false
+      panel.hidesOnDeactivate = false
+      panel.level = .floating
+      panel.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
+      panel.contentView = NSHostingView(rootView: QuickCaptureUtilityView(store: workspace, commands: commands, companion: craftHubCompanion) { [weak panel] in panel?.close() })
+      panel.center()
+      capturePanel = panel
+    }
+    NSApp.activate(ignoringOtherApps: true)
+    capturePanel?.makeKeyAndOrderFront(nil)
   }
 
   func hideWindow() {
