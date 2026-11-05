@@ -6,6 +6,7 @@ struct SystemCleanupView: View {
   @ObservedObject var store: SystemCleanupStore
   @ObservedObject private var homebrew: HomebrewCleanupStore
   @ObservedObject private var simulator: SimulatorCleanupStore
+  @ObservedObject private var codex: CodexStorageStore
   @Environment(\.dismiss) private var dismiss
   @State private var observerID = "system-cleanup-" + UUID().uuidString
   @State private var confirmingTrash = false
@@ -20,6 +21,7 @@ struct SystemCleanupView: View {
     self.store = store
     self.homebrew = store.homebrew
     self.simulator = store.simulator
+    self.codex = store.codex
   }
 
   private var isBusy: Bool { store.isBusy || homebrew.isBusy }
@@ -38,6 +40,7 @@ struct SystemCleanupView: View {
       ScrollView {
         VStack(alignment: .leading, spacing: NativePageLayout.sectionSpacing) {
           diskSection
+          CodexStorageSection(store: codex, disabled: store.phase != .idle || homebrew.isBusy || simulator.isBusy)
           HomebrewCleanupSection(store: homebrew, disabled: store.isBusy)
           SimulatorCleanupSection(store: simulator, disabled: store.phase != .idle || homebrew.isBusy)
           ApplicationCleanupSection(monitor: monitor, disabled: isBusy)
@@ -60,6 +63,9 @@ struct SystemCleanupView: View {
     .onDisappear { monitor.stopObserving(observerID); store.cancel() }
     .onChange(of: homebrew.phase) { _, phase in
       if phase == .idle && homebrew.receipt != nil { Task { await monitor.refresh() } }
+    }
+    .onChange(of: codex.phase) { _, phase in
+      if phase == .idle && codex.receipt != nil { Task { await monitor.refresh() } }
     }
     .onChange(of: simulator.phase) { _, phase in
       if phase == .idle && simulator.receipt != nil { Task { await monitor.refresh() } }

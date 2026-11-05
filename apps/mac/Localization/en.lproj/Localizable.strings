@@ -1118,6 +1118,60 @@
 "不可用" = "Unavailable";
 "部分设备型号无法读取，已使用通用图标。" = "Some device models could not be read. Generic icons are used.";
 
+/* Codex storage analysis and preview. */
+"CODEX_HOME 必须是明确的绝对目录，且不能指向受保护的数据范围。" = "CODEX_HOME must be an explicit absolute directory outside protected data scopes.";
+"Codex 占用与清理预览" = "Codex storage and cleanup preview";
+"Codex 扫描已过期或文件发生变化，请重新扫描。" = "The Codex scan expired or files changed. Scan again.";
+"Codex 桌面缓存" = "Codex desktop caches";
+"Codex 诊断日志" = "Codex diagnostic logs";
+"Codex 路径不可读取或包含符号链接，已跳过此范围。" = "This Codex path is unreadable or contains symbolic links. This scope was skipped.";
+"Mole 占用复核（可选）" = "Mole storage analysis (optional)";
+"Mole 未完整读取此范围；未读取内容不视为空。" = "Mole could not fully read this scope. Unread content is not considered empty.";
+"仅列出至少 7 天未更新、无硬链接的普通缓存文件与 .log 诊断日志。默认不选中；目录名称不代表内容一定可以删除。" = "Lists regular cache files and .log diagnostics unchanged for at least 7 days, excluding hard links. Nothing is selected by default; directory names do not prove content is disposable.";
+"仅统计已知 Codex 缓存目录与诊断日志的文件信息。会话、历史数据库、工作树和生成成果不在本次扫描范围。" = "Reads metadata only in known Codex cache and diagnostic log directories. Sessions, history databases, worktrees and generated artifacts are outside this scan.";
+"使用 Mole 只读分析" = "Analyze with Mole (read-only)";
+"分析 Codex 占用" = "Analyze Codex storage";
+"原生分析无需安装 Mole。可在应用市场自行安装受支持版本，再只读复核一个已完整扫描的范围；结果不加入清理候选或容量合计。" = "Native analysis works without Mole. Optionally install a supported version from Market, then analyze one fully scanned scope. Its results never add cleanup candidates or increase the measured total.";
+"复核范围" = "Analysis scope";
+"已统计缓存与日志：%@" = "Measured caches and logs: %@";
+"已统计范围内没有符合预览条件的旧缓存或日志。" = "No old caches or logs in the measured scope meet the preview criteria.";
+"已跳过符号链接或受保护内容；这些内容未计入大小。" = "Symbolic links or protected content were excluded from the size.";
+"已重新核对所选文件的信息。此清单仅供审阅，不是删除授权，空间尚未释放。" = "Selected file metadata was rechecked. This list is for review only, does not authorize deletion, and has not freed any space.";
+"当前仅提供清理预览，不删除文件、不移入废纸篓，也不调用 Mole 清理命令。" = "Preview only: no files are deleted or moved to Trash, and no Mole cleanup commands are called.";
+"未发现受支持的 Codex 缓存或日志目录。" = "No supported Codex cache or log directories were found.";
+"未完整统计" = "Partially measured";
+"未统计" = "Not measured";
+"查看清理候选" = "Review cleanup candidates";
+"每个范围仅展示体积最大的 100 个候选；未展示的文件不会加入预览。" = "Shows the 100 largest candidates per scope. Hidden files are not added to the preview.";
+"清理预览：%lld 项 · 逻辑大小 %@" = "Cleanup preview: %lld items · logical size %@";
+"生成 Codex 清理预览" = "Create Codex cleanup preview";
+"统计文件逻辑大小，不是整个 Codex 的占用或预计可释放空间；硬链接重复文件仅计一次。" = "Logical file sizes, not total Codex usage or reclaimable space. Hard-link duplicates count once.";
+"达到扫描预算，未完整统计；此范围不生成清理候选。" = "The scan budget was reached. This scope is incomplete and produces no cleanup candidates.";
+"选择范围" = "Choose a scope";
+"部分范围无法读取或达到扫描预算；未完整检查的范围不会生成清理候选。" = "Some scopes were unreadable or reached the scan budget. Incomplete scopes produce no cleanup candidates.";
+"重新分析 Codex" = "Rescan Codex storage";
+
+/* Codex cleanup confirmation and receipts. */
+"Codex 占用与清理" = "Codex storage and cleanup";
+"请先退出 Codex 桌面应用和 CLI，再重新扫描并确认清理。" = "Quit the Codex desktop app and CLI, then scan and confirm again.";
+"Codex 清理正在执行，请等待结果回执。" = "Codex cleanup is running. Wait for the receipt.";
+"已移入废纸篓" = "Moved to Trash";
+"执行失败" = "Failed";
+"状态待核实" = "Needs verification";
+"未执行" = "Not executed";
+"操作中断时请在原目录及废纸篓核实；不会自动重试。" = "If interrupted, check the original folder and Trash. There is no automatic retry.";
+"可从废纸篓恢复；尚未保证释放磁盘空间。" = "Recoverable from Trash; disk space has not necessarily been freed.";
+"回执保存失败，已停止后续操作；请核对当前结果及废纸篓。" = "Receipt could not be saved. Further operations stopped. Check the results and Trash.";
+"上次操作未完成；请核实待确认项，不会自动重试。" = "The previous operation was interrupted. Verify uncertain items; there is no automatic retry.";
+"确认后仅将所选文件移入废纸篓，不自动清空；Mole 始终仅用于只读复核。" = "After confirmation, only selected files move to Trash. Trash is not emptied. Mole remains read-only.";
+"已重新核对所选文件的信息。请逐项审阅，再确认移入废纸篓；空间尚未释放。" = "Selected files were rechecked. Review each item before confirming the move to Trash. No space has been freed yet.";
+"审阅并清理所选项" = "Review selected cleanup";
+"确认 Codex 清理清单" = "Confirm Codex cleanup items";
+"请先退出 Codex 桌面应用和 CLI。执行前会再次核对文件；已变化的文件会跳过。仅移入废纸篓，可恢复，不自动清空。" = "Quit the Codex desktop app and CLI first. Files are rechecked before execution; changed files are skipped. Files move to Trash and can be restored. Trash is not emptied.";
+"确认移入废纸篓" = "Confirm move to Trash";
+"最近一次 Codex 清理回执" = "Latest Codex cleanup receipt";
+"移入废纸篓的逻辑大小：%@（不等于已释放空间）" = "Logical size moved to Trash: %@ (not space freed)";
+
 "正在播放" = "Now Playing";
 
 "正在读取网易云音乐…" = "Reading NetEase Cloud Music…";

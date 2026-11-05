@@ -6,6 +6,7 @@ import Foundation
 final class SystemCleanupStore: ObservableObject {
   let homebrew: HomebrewCleanupStore
   let simulator: SimulatorCleanupStore
+  let codex: CodexStorageStore
   enum Phase { case idle, scanning, cleaning, analyzing }
   @Published private(set) var phase: Phase = .idle
   @Published private(set) var scan: CleanupScan?
@@ -22,19 +23,25 @@ final class SystemCleanupStore: ObservableObject {
   init(scanner: SystemCleanupScanner = SystemCleanupScanner(),
        homebrew: HomebrewCleanupStore = HomebrewCleanupStore(),
        simulator: SimulatorCleanupStore = SimulatorCleanupStore(),
+       codex: CodexStorageStore = CodexStorageStore(),
        completion: NativeAssistantStore.Completion? = nil) {
     self.scanner = scanner
     self.homebrew = homebrew
     self.simulator = simulator
+    self.codex = codex
     self.completion = completion
     simulator.canStartOperation = { [weak self] in
       guard let self else { return false }
-      return self.phase == .idle && !self.homebrew.isBusy
+      return self.phase == .idle && !self.homebrew.isBusy && !self.codex.isBusy
+    }
+    codex.canStartOperation = { [weak self] in
+      guard let self else { return false }
+      return self.phase == .idle && !self.homebrew.isBusy && !self.simulator.isBusy
     }
   }
 
-  var isBusy: Bool { phase != .idle || simulator.isBusy }
-  var isCleaning: Bool { phase == .cleaning || homebrew.phase == .cleaning || simulator.isCleaning }
+  var isBusy: Bool { phase != .idle || simulator.isBusy || codex.isBusy }
+  var isCleaning: Bool { phase == .cleaning || homebrew.phase == .cleaning || simulator.isCleaning || codex.phase == .cleaning }
   var selectedCandidates: [CleanupCandidate] { (scan?.candidates ?? []).filter { selection.contains($0.id) } }
   var selectedBytes: UInt64 { selectedCandidates.reduce(0) { $0 + $1.bytes } }
 
@@ -113,6 +120,7 @@ final class SystemCleanupStore: ObservableObject {
     guard !isCleaning else { return }
     homebrew.cancelPreview()
     simulator.cancelReadOnly()
+    codex.cancelReadOnly()
     generation += 1
     if phase == .analyzing, completion == nil { NativeAssistantRuntime.shared.cancel(owner: runtimeOwner) }
     request?.cancel()
