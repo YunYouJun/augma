@@ -11,6 +11,7 @@ struct ImmersiveCanvasView: View {
   let audio: NativeAudioStore
   let maps: NativeMapStore
   let camera: NativeCameraStore
+  let playsLinkStart: Bool
   let onInteractiveRegionsChanged: ([CGRect]) -> Void
 
   private var panelVisible: Bool { session.selection != nil && preferences.value.showHud }
@@ -55,7 +56,9 @@ struct ImmersiveCanvasView: View {
           .offset(x: panel.minX, y: panel.minY)
           .shadow(radius: 12)
         }
-        LinkStartOverlay().frame(width: geometry.size.width, height: geometry.size.height)
+        if playsLinkStart {
+          LinkStartOverlay().frame(width: geometry.size.width, height: geometry.size.height)
+        }
       }
       .onAppear { reportRegions(panel, spaceCanvas) }
       .onChange(of: session.selection) { _, _ in reportRegions(panel, spaceCanvas) }
@@ -104,8 +107,7 @@ private struct ImmersiveNativePanel: View {
   }
 }
 
-/// One-shot entrance when the overlay takes over the desktop: a scan line crosses the
-/// screen and rings expand from its centre. Never intercepts input; skipped for reduced motion.
+/// A 700 ms entrance for the first presentation in this app run; skipped for reduced motion.
 private struct LinkStartOverlay: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @State private var line: CGFloat = 0
@@ -139,11 +141,11 @@ private struct LinkStartOverlay: View {
       .allowsHitTesting(false)
       .accessibilityHidden(true)
       .task {
-        withAnimation(.augma(duration: 0.4)) { line = 1 }
-        try? await Task.sleep(for: .seconds(0.25))
-        withAnimation(.easeOut(duration: 1.1)) { ripple = 1.4 }
-        withAnimation(.easeIn(duration: 0.5).delay(0.5)) { line = 0 }
-        try? await Task.sleep(for: .seconds(1.2))
+        withAnimation(.easeOut(duration: 0.18)) { line = 1 }
+        do { try await Task.sleep(for: .milliseconds(180)) } catch { return }
+        withAnimation(.easeOut(duration: 0.52)) { ripple = 1.4 }
+        withAnimation(.easeIn(duration: 0.22).delay(0.18)) { line = 0 }
+        do { try await Task.sleep(for: .milliseconds(520)) } catch { return }
         visible = false
       }
     }

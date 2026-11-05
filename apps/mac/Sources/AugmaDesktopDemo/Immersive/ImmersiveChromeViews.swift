@@ -99,19 +99,20 @@ struct ImmersiveDockView: View {
         .font(.system(size: 8)).foregroundStyle(.secondary).accessibilityHidden(true)
       HStack(spacing: 10) {
         NativeOrbButton(title: String(localized: "镜像视图"), symbol: "arrow.left.and.right.righttriangle.left.righttriangle.right",
-                        tint: .augmaCyan, selected: mirrored, identifier: "immersive-mirror") {
+                        tint: .augmaCyan, selected: mirrored, dockTooltip: true, identifier: "immersive-mirror") {
           if session.selection == .camera { camera.mirrored.toggle() }
           else { preferences.value.mirror.toggle() }
         }
         dockButton(.weather)
         NativeOrbButton(title: preferences.value.showHud ? String(localized: "隐藏 HUD") : String(localized: "显示 HUD"),
                         symbol: preferences.value.showHud ? "eye" : "eye.slash", tint: .blue,
-                        selected: preferences.value.showHud, identifier: "immersive-hud") { preferences.value.showHud.toggle() }
+                        selected: preferences.value.showHud, dockTooltip: true,
+                        identifier: "immersive-hud") { preferences.value.showHud.toggle() }
         ForEach([DemoModule.audio, .space, .camera, .navigation, .browser]) { module in dockButton(module) }
         NativeOrbButton(title: "GitHub", symbol: "chevron.left.forwardslash.chevron.right", tint: .secondary,
-                        identifier: "immersive-github") { openWeb("https://github.com/YunYouJun/augma") }
+                        dockTooltip: true, identifier: "immersive-github") { openWeb("https://github.com/YunYouJun/augma") }
         NativeOrbButton(title: String(localized: "Augma 文档"), symbol: "book", tint: .blue,
-                        identifier: "immersive-docs") { openWeb("https://augma.yyj.moe") }
+                        dockTooltip: true, identifier: "immersive-docs") { openWeb("https://augma.yyj.moe") }
       }
       .padding(.horizontal, 16).padding(.vertical, 8)
       .augmaGlass(cornerRadius: 34)
@@ -127,6 +128,7 @@ struct ImmersiveDockView: View {
   private func dockButton(_ module: DemoModule) -> some View {
     NativeOrbButton(title: module.title, symbol: module.symbol, tint: color(for: module),
                     selected: session.selection == module && preferences.value.showHud,
+                    dockTooltip: true,
                     identifier: "immersive-dock-" + module.rawValue) { select(module) }
   }
 

@@ -7,10 +7,20 @@ struct NativeOrbButton: View {
   var tint: Color = .augmaCyan
   var selected = false
   var badge = 0
+  var dockTooltip = false
   let identifier: String
   let action: () -> Void
 
+  @ViewBuilder
   var body: some View {
+    if dockTooltip {
+      button.modifier(DockTooltip(title: title))
+    } else {
+      button.help(title)
+    }
+  }
+
+  private var button: some View {
     Button(action: action) {
       NativeOrbLabel(symbol: symbol, tint: tint, selected: selected)
         .overlay(alignment: .topTrailing) {
@@ -26,7 +36,6 @@ struct NativeOrbButton: View {
         }
     }
     .buttonStyle(NativeOrbButtonStyle())
-    .help(title)
     .accessibilityLabel(title)
     .accessibilityValue(badge > 0 ? String(format: String(localized: "%lld 条未读通知"), badge) : selected ? String(localized: "已选中") : "")
     .accessibilityIdentifier(identifier)

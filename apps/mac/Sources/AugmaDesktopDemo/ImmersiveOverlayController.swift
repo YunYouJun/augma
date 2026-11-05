@@ -53,6 +53,7 @@ final class ImmersiveOverlayController: NSObject {
   private var globalMouseMonitor: Any?
   private var localMouseMonitor: Any?
   private var mouseTrackingTimer: Timer?
+  private let presentation = ImmersivePresentation()
 
   init(model: HudModel, workspace: WorkspaceStore, commands: WorkspaceCommands,
        monitor: SystemMonitorStore, weather: WeatherStore, preferences: NativePreferencesStore, audio: NativeAudioStore,
@@ -129,22 +130,25 @@ final class ImmersiveOverlayController: NSObject {
     if frontmost?.processIdentifier != ProcessInfo.processInfo.processIdentifier { previousApplication = frontmost }
     presentationScreen = NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) } ?? presentationScreen
     updateScreenFrames()
-    canvas.contentView = NSHostingView(rootView: ImmersiveCanvasView(
-      session: session, preferences: preferences, workspace: workspace, commands: commands,
-      monitor: monitor, weather: weather, audio: audio, maps: maps, camera: camera,
-      onInteractiveRegionsChanged: { [weak self] regions in
-        guard let self, self.interactiveRegions != regions else { return }
-        self.interactiveRegions = regions
-        self.updateMouseInterception()
-      }
-    ))
-    model.immersiveVisible = true
-    mouseTrackingTimer?.fireDate = .now
-    NSApp.unhide(nil)
-    NSApp.activate(ignoringOtherApps: true)
-    canvas.makeKeyAndOrderFront(nil)
-    showChrome()
-    updateMouseInterception()
+    presentation.show(windows: presentationWindows, reduceMotion: NSWorkspace.shared.accessibilityDisplayShouldReduceMotion) { playsLinkStart in
+      canvas.contentView = NSHostingView(rootView: ImmersiveCanvasView(
+        session: session, preferences: preferences, workspace: workspace, commands: commands,
+        monitor: monitor, weather: weather, audio: audio, maps: maps, camera: camera,
+        playsLinkStart: playsLinkStart,
+        onInteractiveRegionsChanged: { [weak self] regions in
+          guard let self, self.interactiveRegions != regions else { return }
+          self.interactiveRegions = regions
+          self.updateMouseInterception()
+        }
+      ))
+      model.immersiveVisible = true
+      mouseTrackingTimer?.fireDate = .now
+      NSApp.unhide(nil)
+      NSApp.activate(ignoringOtherApps: true)
+      canvas.makeKeyAndOrderFront(nil)
+      showChrome()
+      updateMouseInterception()
+    }
   }
 
   func hide(restoreFocus: Bool = true) {
@@ -154,12 +158,18 @@ final class ImmersiveOverlayController: NSObject {
     session?.assistant.cancel()
     session?.browser.suspendPlayback()
     mouseTrackingTimer?.fireDate = .distantFuture
-    canvasPanel?.orderOut(nil)
-    chromePanels.values.forEach { $0.orderOut(nil) }
-    // Unmount renderers and camera consumers while retaining their scene stores.
-    canvasPanel?.contentView = nil
-    interactiveRegions = []
-    if restoreFocus { previousApplication?.activate() }
+    presentationWindows.forEach { $0.ignoresMouseEvents = true }
+    // Tooltip child windows should disappear as soon as their Dock stops accepting input.
+    chromePanels.values.forEach { $0.childWindows?.forEach { $0.orderOut(nil) } }
+    presentation.hide(windows: presentationWindows, reduceMotion: NSWorkspace.shared.accessibilityDisplayShouldReduceMotion) { [weak self] in
+      guard let self else { return }
+      canvasPanel?.orderOut(nil)
+      chromePanels.values.forEach { $0.orderOut(nil) }
+      // Keep the final frame mounted for the fade, then release renderers and camera consumers.
+      canvasPanel?.contentView = nil
+      interactiveRegions = []
+      if restoreFocus { previousApplication?.activate() }
+    }
   }
 
   func hideAfterOpeningProject(_ id: UUID) {
@@ -176,6 +186,7 @@ final class ImmersiveOverlayController: NSObject {
 
   func stop() {
     guard model.immersiveActive else { return }
+    presentation.cancel()
     NotificationCenter.default.removeObserver(self, name: NSApplication.didChangeScreenParametersNotification, object: nil)
     if let globalMouseMonitor { NSEvent.removeMonitor(globalMouseMonitor) }
     if let localMouseMonitor { NSEvent.removeMonitor(localMouseMonitor) }
@@ -242,6 +253,7 @@ final class ImmersiveOverlayController: NSObject {
     panel.isFloatingPanel = true
     panel.level = level
     panel.hidesOnDeactivate = false
+    panel.animationBehavior = .none
     panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
   }
 
@@ -256,7 +268,14 @@ final class ImmersiveOverlayController: NSObject {
   }
 
   private func showChrome() {
-    for panel in chromePanels.values { panel.orderFrontRegardless() }
+    for (kind, panel) in chromePanels {
+      panel.ignoresMouseEvents = kind == .clock
+      panel.orderFrontRegardless()
+    }
+  }
+
+  private var presentationWindows: [NSWindow] {
+    (canvasPanel.map { [$0 as NSWindow] } ?? []) + Array(chromePanels.values)
   }
 
   /// Keep the separate floating controls reachable without a mouse.
