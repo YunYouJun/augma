@@ -2,9 +2,11 @@ import SwiftUI
 
 struct SystemMonitorView: View {
   @ObservedObject var store: SystemMonitorStore
+  var craftHub: CraftHubConnectionStore? = nil
   @State private var observerID = "system-detail-" + UUID().uuidString
   @State private var refreshing = false
   @State private var showingCleanup = false
+  @State private var showingDiskUsage = false
 
   var body: some View {
     GeometryReader { geometry in
@@ -62,6 +64,7 @@ struct SystemMonitorView: View {
     }
     .onDisappear { store.stopObserving(observerID) }
     .sheet(isPresented: $showingCleanup) { SystemCleanupView(monitor: store, store: store.cleanup) }
+    .sheet(isPresented: $showingDiskUsage) { DiskUsageView(hub: craftHub) }
   }
 
   private var controls: some View {
@@ -84,8 +87,12 @@ struct SystemMonitorView: View {
         DisclosureGroup("采集选项") {
           SystemMonitorFeatureControls(store: store).padding(.top, 8)
         }
-        Button("清理磁盘与内存", systemImage: "sparkles.rectangle.stack") { showingCleanup = true }
-          .nativeFloatingButton()
+        HStack {
+          Button("空间分析", systemImage: "square.grid.3x3.square") { showingDiskUsage = true }
+            .nativeFloatingButton().accessibilityIdentifier("disk-usage-open")
+          Button("清理磁盘与内存", systemImage: "sparkles.rectangle.stack") { showingCleanup = true }
+            .nativeFloatingButton()
+        }
       }
       .padding(NativePageLayout.itemSpacing)
       .frame(maxWidth: .infinity, alignment: .leading)

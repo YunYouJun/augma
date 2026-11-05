@@ -18,7 +18,7 @@ struct WorkspaceDetailView: View {
         case .notes: QuickNotesView(store: store, commands: commands)
         case .focus: FocusTimerView(store: store, commands: commands)
         case .actions: WorkspaceCommandView(commands: commands, store: store)
-        case .monitor: SystemMonitorView(store: monitor)
+        case .monitor: SystemMonitorView(store: monitor, craftHub: model.space.projects.craftHub)
         case .market: ApplicationMarketView(store: model.market)
         case .weather: NativeLiveWeatherView(store: weather)
         case .audio: NativeAudioView(store: audio)

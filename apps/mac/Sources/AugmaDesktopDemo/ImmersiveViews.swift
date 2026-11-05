@@ -90,7 +90,7 @@ private struct ImmersiveNativePanel: View {
     case .notes: QuickNotesView(store: workspace, commands: commands)
     case .focus: FocusTimerView(store: workspace, commands: commands)
     case .actions: WorkspaceCommandView(commands: commands, store: workspace, compact: true)
-    case .monitor: SystemMonitorView(store: monitor)
+    case .monitor: SystemMonitorView(store: monitor, craftHub: session.space.projects.craftHub)
     case .market: ApplicationMarketView(store: session.market)
     case .weather: NativeLiveWeatherView(store: weather)
     case .audio: NativeAudioView(store: audio)
