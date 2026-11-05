@@ -1,9 +1,12 @@
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { relative, resolve } from 'node:path'
 import { compileScript, parse } from '@vue/compiler-sfc'
+import { buildPluginCatalog } from './build-plugin-catalog.mjs'
 import { localizeComponents } from './catalog-i18n.mjs'
 import { components, effects, origin, version } from './catalog.mjs'
 import { extractProps } from './component-contract.mjs'
+
+await buildPluginCatalog()
 
 for (const path of ['package.json', 'packages/core/package.json', 'packages/augma/package.json']) {
   const pkg = JSON.parse(await readFile(path, 'utf8'))

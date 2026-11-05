@@ -22,3 +22,5 @@ release-artifacts/
 docs/media/
 # Promo video: rendered audio stays local; the composer script is the source.
 video/music/out/
+
+apps/site/public/plugins

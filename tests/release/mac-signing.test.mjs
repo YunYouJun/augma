@@ -1,7 +1,7 @@
 /* eslint test/no-import-node-test: off -- Maintainer tooling uses Node's standalone test runner. */
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -11,10 +11,13 @@ const script = fileURLToPath(new URL('../../script/sign_mac_dev.sh', import.meta
 const development = '1111111111111111111111111111111111111111'
 const other = '2222222222222222222222222222222222222222'
 const distribution = '3333333333333333333333333333333333333333'
+const macOnly = { skip: process.platform !== 'darwin' && 'Signing a bundle requires macOS PlistBuddy' }
 
 async function fixture(t) {
   const directory = await mkdtemp(join(tmpdir(), 'augma-signing-test-'))
   t.after(() => rm(directory, { recursive: true, force: true }))
+  await mkdir(join(directory, 'Augma.app/Contents'), { recursive: true })
+  await writeFile(join(directory, 'Augma.app/Contents/Info.plist'), '<?xml version="1.0"?><plist version="1.0"><dict><key>CFBundleIdentifier</key><string>cn.yunyoujun.augma.desktop-demo</string></dict></plist>')
   // These tests never touch the real Keychain or signing keys.
   await writeFile(join(directory, 'security'), '#!/bin/bash\nprintf "%s\\n" "$TEST_IDENTITIES"\n', { mode: 0o700 })
   await writeFile(join(directory, 'codesign'), '#!/bin/bash\nprintf "%s\\n" "$@" >> "$TEST_SIGN_LOG"\nexit "$TEST_SIGN_EXIT"\n', { mode: 0o700 })
@@ -37,7 +40,7 @@ async function fixture(t) {
   return { config, log, run }
 }
 
-test('local builds pin one development certificate and keep it when more identities appear', async (t) => {
+test('local builds pin one development certificate and keep it when more identities appear', macOnly, async (t) => {
   const f = await fixture(t)
   const identities = `1) ${development} "Apple Development: Local"\n2) ${distribution} "Developer ID Application: Company"`
   const first = f.run(identities)
@@ -71,7 +74,7 @@ test('missing, ambiguous, and stale certificates fail without silently changing 
   await assert.rejects(readFile(f.log), { code: 'ENOENT' })
 })
 
-test('an explicit certificate can rotate the pin, but ad-hoc and failed signing cannot', async (t) => {
+test('an explicit certificate can rotate the pin, but ad-hoc and failed signing cannot', macOnly, async (t) => {
   const f = await fixture(t)
   const identities = `1) ${development} "Apple Development: Local"\n2) ${other} "Augma Local Development"`
   const adhoc = f.run(identities, { AUGMA_CODESIGN_IDENTITY: '-' })

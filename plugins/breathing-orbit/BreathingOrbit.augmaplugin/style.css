@@ -1,0 +1,35 @@
+:root { color-scheme: light dark; font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #163c47; background: #f1f9fa; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 22px; text-align: center; }
+.eyebrow { font-size: 10px; font-weight: 650; letter-spacing: .18em; color: #45828c; }
+h1 { font-size: clamp(22px, 4vw, 32px); font-weight: 550; margin: 14px 0 8px; }
+.description { max-width: 440px; font-size: 13px; line-height: 1.7; color: #57737a; margin: 0; }
+.orbit { position: relative; width: min(260px, 67vw); aspect-ratio: 1; margin: 38px 0; display: grid; place-items: center; }
+.orbital-track { position: absolute; inset: 0; border: 1px dashed #68a9b64d; border-radius: 50%; }
+.orbital-track::after { content: ''; position: absolute; top: -4px; left: calc(50% - 4px); width: 8px; height: 8px; border-radius: 50%; background: #d6944d; box-shadow: 0 0 12px #d6944d66; }
+.ring { position: absolute; inset: 12%; border-radius: 50%; border: 1px solid #2193a8; box-shadow: 0 0 0 8px #2193a811, 0 0 55px #2193a82b, inset 0 0 50px #2193a811; animation: breathe 10s ease-in-out infinite; }
+.ring::after { content: ''; position: absolute; inset: 8px; border: 1px solid #2193a84d; border-radius: 50%; }
+.paused .ring { animation-play-state: paused; }
+.center { display: grid; gap: 10px; position: relative; }
+#phase { font-size: 13px; color: #4b747d; }
+#count { font-size: 30px; font-weight: 300; font-variant-numeric: tabular-nums; }
+.controls { display: flex; gap: 12px; }
+button { min-width: 92px; border: 1px solid #25899b; background: #25899b; color: white; border-radius: 24px; padding: 11px 20px; font: inherit; font-size: 13px; cursor: pointer; }
+button.secondary { background: transparent; color: #387683; border-color: #70a6af66; }
+button:focus-visible { outline: 3px solid #d6944d; outline-offset: 4px; }
+.rounds { font-size: 12px; color: #4b747d; margin-top: 20px; }
+.footnote { max-width: 340px; font-size: 11px; color: #748e95; line-height: 1.7; margin: 4px 0; }
+@keyframes breathe { 0%, 100% { transform: scale(.72); } 40% { transform: scale(1.15); } }
+@media (prefers-color-scheme: dark) {
+  :root { color: #d9f5f8; background: #132125; }
+  .eyebrow, #phase, .rounds { color: #84b4bd; }
+  .description, .footnote { color: #8aa4ab; }
+  button.secondary { color: #8bc8d2; }
+}
+@media (prefers-reduced-motion: reduce) { .ring { animation: none; } }
+@media (max-height: 620px) {
+  main { padding: 18px; }
+  .orbit { width: min(190px, 56vw); margin: 22px 0; }
+  h1 { margin-top: 8px; }
+}

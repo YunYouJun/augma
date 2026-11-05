@@ -19,6 +19,7 @@ packages:
   - apps/*
   - packages/core
   - packages/augma
+  - plugins/*
 
 allowBuilds:
   '@parcel/watcher': true
