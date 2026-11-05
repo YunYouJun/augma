@@ -84,8 +84,14 @@ struct NativeLiveWeatherView: View {
     addCityButton
   }
 
-  private var cityGrid: some View {
-    LazyVGrid(columns: [GridItem(.adaptive(minimum: 175), spacing: NativePageLayout.itemSpacing)], spacing: NativePageLayout.itemSpacing) { cityCards }
+  @ViewBuilder private var cityGrid: some View {
+    // Small grids participate in ViewThatFits and need an exact height. Keep
+    // virtualization available for unusually large saved-city collections.
+    if store.savedCities.count <= 20 {
+      NativeGridLayout(columns: .adaptive(minimum: 175)) { cityCards }
+    } else {
+      LazyVGrid(columns: [GridItem(.adaptive(minimum: 175), spacing: NativePageLayout.itemSpacing)], spacing: NativePageLayout.itemSpacing) { cityCards }
+    }
   }
 
   private var cityCards: some View {

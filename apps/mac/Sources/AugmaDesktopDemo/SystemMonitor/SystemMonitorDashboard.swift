@@ -94,8 +94,7 @@ struct SystemMonitorDashboard: View {
   var sampling = false
 
   var body: some View {
-    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: SystemMonitorDashboardLayout.spacing, alignment: .top),
-                             count: columns), spacing: SystemMonitorDashboardLayout.spacing) {
+    NativeGridLayout(columns: .fixed(columns), spacing: SystemMonitorDashboardLayout.spacing) {
       cpu
       memory
       if snapshot.disks.isEmpty {

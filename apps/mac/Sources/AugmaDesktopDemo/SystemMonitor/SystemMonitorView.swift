@@ -11,7 +11,9 @@ struct SystemMonitorView: View {
       let width = min(SystemMonitorDashboardLayout.maximumWidth,
                       max(0, geometry.size.width - NativePageLayout.pagePadding * 2))
       ScrollView {
-        LazyVStack(alignment: .leading, spacing: NativePageLayout.sectionSpacing) {
+        // There are only a few sections. Keep their heights resolved when the
+        // dashboard and live ranking scroll offscreen to avoid lazy-layout loops.
+        VStack(alignment: .leading, spacing: NativePageLayout.sectionSpacing) {
           controls
           if store.enabled {
             SystemMonitorDashboard(snapshot: store.snapshot,
@@ -123,7 +125,7 @@ struct SystemMonitorView: View {
 
   private var ranking: some View {
     GroupBox {
-      LazyVStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+      VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
         ApplicationMemoryRanking(snapshot: store.snapshot.applicationMemory, sampling: store.isSampling)
         DisclosureGroup("统计说明") {
           Text("汇总当前用户应用及可确认归属的辅助进程，条形以首位应用为基准。占用包含压缩内存，与系统已用内存的统计口径不同。无法确认归属的共享系统服务不计入；部分进程不可读取时，占用可能不完整。")

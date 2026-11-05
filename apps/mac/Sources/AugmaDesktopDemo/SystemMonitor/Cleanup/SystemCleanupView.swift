@@ -110,7 +110,9 @@ struct SystemCleanupView: View {
           if scan.candidates.isEmpty {
             Text("本次扫描未发现符合条件的项目。").foregroundStyle(.secondary)
           } else {
-            LazyVStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
+            // The scanner caps this preview at 100 candidates. Resolve the full
+            // section height before laying out the other cleanup sections.
+            VStack(alignment: .leading, spacing: NativePageLayout.itemSpacing) {
               ForEach(showingAllCandidates ? scan.candidates : Array(scan.candidates.prefix(10))) { candidate in
                 candidateRow(candidate)
               }

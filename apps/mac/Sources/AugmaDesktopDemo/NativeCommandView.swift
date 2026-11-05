@@ -32,7 +32,7 @@ struct NativeCommandView: View {
         }
       }
       section("指令示例") {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), alignment: .leading)], alignment: .leading, spacing: 10) {
+        NativeGridLayout(columns: .adaptive(minimum: 140), spacing: 10) {
           ForEach(examples, id: \.self) { command in
             exampleButton(command)
           }
