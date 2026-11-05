@@ -1,0 +1,7 @@
+/plugins/catalog.json
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Content-Type-Options: nosniff
+
+/plugins/packages/*
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff

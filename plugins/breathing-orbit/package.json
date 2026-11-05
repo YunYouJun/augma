@@ -1,0 +1,14 @@
+{
+  "name": "@augma/plugin-breathing-orbit",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Breathing Orbit, a standalone Augma Link web plugin",
+  "scripts": {
+    "build": "node ../../scripts/build-plugin-catalog.mjs",
+    "check": "node --check BreathingOrbit.augmaplugin/main.js"
+  },
+  "augmaPlugin": {
+    "source": "BreathingOrbit.augmaplugin"
+  }
+}

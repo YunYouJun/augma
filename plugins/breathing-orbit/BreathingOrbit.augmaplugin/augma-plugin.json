@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "org.augma.examples.breathing-orbit",
+  "name": "呼吸环 · Breathing Orbit",
+  "version": "1.0.0",
+  "author": "Augma Examples",
+  "summary": "跟随圆环吸气、呼气，留一点安静的时间。",
+  "entry": "index.html",
+  "symbol": "circle.dotted.circle",
+  "permissions": []
+}

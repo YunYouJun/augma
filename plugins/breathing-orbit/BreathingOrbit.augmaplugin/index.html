@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Breathing Orbit</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">AUGMA LINK / BREATHING ORBIT</p>
+    <h1 id="title">留一点安静的时间</h1>
+    <p id="description" class="description">吸气 4 秒，呼气 6 秒。跟随圆环，按自己的节奏来。</p>
+    <div class="orbit paused" id="orbit" role="img" aria-label="呼吸节奏圆环">
+      <div class="orbital-track"></div>
+      <div class="ring"></div>
+      <div class="center"><span id="phase">准备好了</span><strong id="count">4 : 6</strong></div>
+    </div>
+    <div class="controls">
+      <button id="toggle" type="button">开始</button>
+      <button id="reset" type="button" class="secondary">重置</button>
+    </div>
+    <p id="rounds" class="rounds" aria-live="polite">已完成 0 轮</p>
+    <p id="footnote" class="footnote">随时暂停。离开页面或停用插件后，本次练习结束。</p>
+  </main>
+</body>
+</html>
