@@ -59,6 +59,14 @@
     {
       "layers" : [
         {
+          "fill-specializations" : [
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "solid" : "srgb:0.60000,0.60000,0.60000,1.00000"
+              }
+            }
+          ],
           "image-name" : "ring.svg",
           "name" : "ring"
         }

@@ -1,3 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 64 64">
-  <path fill="#ffffff" fill-rule="evenodd" d="M17.81 45.53 29.89 18.47 34.11 18.47 46.19 45.53 40.41 45.53 37.27 38.49 26.73 38.49 23.59 45.53Z M32 26.69 35.48 34.48 28.52 34.48Z"/>
+  <!-- Outline the 3-unit strokes so Icon Composer can recolor the letter in Dark appearance. -->
+  <path fill="#ffffff" d="M16.293 44.065 30.693 18.465A1.5 1.5 0 0 1 33.307 18.465L47.707 44.065A1.5 1.5 0 0 1 45.093 45.535L32 22.26 18.907 45.535A1.5 1.5 0 0 1 16.293 44.065ZM24 33.7h16A1.5 1.5 0 0 1 40 36.7H24A1.5 1.5 0 0 1 24 33.7ZM27.2 43.3h9.6A1.5 1.5 0 0 1 36.8 46.3H27.2A1.5 1.5 0 0 1 27.2 43.3Z"/>
 </svg>
