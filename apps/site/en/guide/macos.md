@@ -2,13 +2,16 @@
 
 The macOS app puts the [AR demo](/en/guide/ar) in a native window: switch apps from the sidebar, and the interface works offline. Immersive mode lays a transparent overlay over your desktop, and you can also drive the demo with voice commands.
 
-<a class="agm-button agm-button--primary macos-download" href="https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS.zip">Download Augma for macOS</a>
+<div class="macos-downloads">
+  <a class="agm-button agm-button--primary macos-download" href="https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS-arm64.zip">Download for Apple silicon</a>
+  <a class="agm-button agm-button--outline macos-download" href="https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS-x86_64.zip">Download for Intel</a>
+</div>
 
-Requires macOS 26 or later, on Macs with Apple silicon or Intel processors. Earlier versions and SHA-256 checksums are on [GitHub Releases](https://github.com/YunYouJun/augma/releases).
+Requires macOS 26 or later. Check Apple menu → About This Mac: choose arm64 for Apple silicon or x86_64 for an Intel processor. Earlier versions and per-architecture SHA-256 checksums are on [GitHub Releases](https://github.com/YunYouJun/augma/releases).
 
 ## Install and first launch
 
-1. Unzip `Augma-macOS.zip` and drag `Augma.app` into the Applications folder.
+1. Unzip the matching `Augma-macOS-arm64.zip` or `Augma-macOS-x86_64.zip` and drag `Augma.app` into the Applications folder.
 2. Double-click to open it. The app is not yet signed with an Apple Developer certificate or notarized, so macOS says it cannot be verified; click Done.
 3. Open System Settings → Privacy & Security, click Open Anyway under Security and confirm. From then on it opens without the warning.
 
@@ -23,4 +26,4 @@ The camera and WebXR depend on WebKit's support for local pages; the simulated i
 
 ## Build from source
 
-You need Node.js 24, pnpm and Xcode 26 or later. From the repository root, run `pnpm mac:run` to build and launch; `pnpm mac:package` produces the same universal package as the release, `apps/mac/dist/Augma-macOS.zip`.
+You need Node.js 24, pnpm and Xcode 26 or later. From the repository root, `pnpm mac:run` builds and launches arm64 by default; Intel Mac developers can use `AUGMA_BUILD_ARCH=x86_64 pnpm mac:run`. `pnpm mac:package` produces both Release packages, `apps/mac/dist/Augma-macOS-arm64.zip` and `Augma-macOS-x86_64.zip`, each with a `.sha256` file. Run `pnpm mac:package arm64` or `pnpm mac:package x86_64` to package just one architecture.

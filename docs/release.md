@@ -85,9 +85,11 @@ npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运
 
 ## macOS 客户端
 
-发布工作流的 `mac` 任务在 `macos-26` runner 上运行 `swift test` 和 `pnpm mac:package`，生成 Apple 芯片与 Intel 通用的 `Augma-macOS.zip` 及其 `.sha256`，保存为 `augma-macos-…` artifact。推送 `v*` 标签（或在匹配标签上手动 `publish=true`）时，`github-release` 任务在准备任务与 `mac` 任务都通过后，把两个文件附加到同名 GitHub Release：Release 不存在就创建并生成说明，已存在则覆盖同名文件。它不依赖 npm 发布任务，首次发布时 npm 失败也会照常上传。
+发布工作流的 `mac` 任务在 `macos-26` runner 上运行 `swift test` 和 `pnpm mac:package`，分别构建 arm64 与 x86_64 的 Release 版本，生成 `Augma-macOS-arm64.zip`、`Augma-macOS-x86_64.zip` 及各自的 `.sha256`，将这四个文件保存为 `augma-macos-…` artifact。打包时同时校验主程序与 NowPlaying 动态库只含目标架构，并验证嵌套签名。推送 `v*` 标签（或在匹配标签上手动 `publish=true`）时，`github-release` 任务在准备任务与 `mac` 任务都通过后，把四个文件附加到同名 GitHub Release：Release 不存在就创建并生成说明，已存在则覆盖同名文件。它不依赖 npm 发布任务，首次发布时 npm 失败也会照常上传。
 
-站点 `/guide/macos` 与首页 AR 演示区链接 `releases/latest/download/Augma-macOS.zip`，因此文件名固定、不带版本号；第一个带安装包的 Release 发布之前，该链接返回 404。安装包只有 ad-hoc 签名，首次打开需要在「系统设置 → 隐私与安全性」中确认。改用 Developer ID 签名与公证需要 Apple Developer Program 账号，并把证书和 App Store Connect API 密钥配置为仓库 secrets。
+站点三种语言的 `/download` 与 `/guide/macos` 分别提供 Apple 芯片版和 Intel 版，链接固定为 `releases/latest/download/Augma-macOS-arm64.zip` 与 `Augma-macOS-x86_64.zip`，不带版本号；首页 AR 演示区进入下载页。下载页的每种架构都有独立的 SHA-256 校验链接。首次发布分架构安装包之前，新链接会返回 404；发布新版本并确认这四个附件后再上线对应下载页。最低系统为 macOS 26。安装包只有 ad-hoc 签名，首次打开需要在「系统设置 → 隐私与安全性」中确认。改用 Developer ID 签名与公证需要 Apple Developer Program 账号，并把证书和 App Store Connect API 密钥配置为仓库 secrets。
+
+本机 `pnpm mac:run`、`pnpm mac:verify` 和 `--build` 默认只构建 arm64；Intel Mac 开发者可用 `AUGMA_BUILD_ARCH=x86_64` 覆盖。`pnpm mac:package arm64` 或 `pnpm mac:package x86_64` 可单独出包；无参数则生成两份，全部成功后移除旧的通用 ZIP。发布构建在临时目录组装 App，不覆盖日用或开发版 App，也不留下可被启动器识别的重复副本。Intel 包可在 Apple 芯片 runner 上交叉编译；签名和架构校验不能代替 Intel 真机验收。
 
 ## 站点与域名
 

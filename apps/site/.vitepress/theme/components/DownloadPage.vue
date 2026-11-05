@@ -14,8 +14,11 @@ import UiIcon from './UiIcon.vue'
 const { t, link } = useI18n()
 const onLinkStart = useLinkStart()
 const repo = 'https://github.com/YunYouJun/augma'
-// The release workflow attaches the app under a fixed name, so "latest" always resolves.
-const macZip = `${repo}/releases/latest/download/Augma-macOS.zip`
+// Keep these names in sync with the two assets attached by the release workflow.
+const macPackages: { arch: string, label: MessageKey, href: string }[] = [
+  { arch: 'arm64', label: 'download.macArm', href: `${repo}/releases/latest/download/Augma-macOS-arm64.zip` },
+  { arch: 'x86_64', label: 'download.macIntel', href: `${repo}/releases/latest/download/Augma-macOS-x86_64.zip` },
+]
 const count = components.length
 
 const checks = computed(() => [
@@ -52,9 +55,9 @@ const features: { icon: 'layers' | 'motion' | 'scan' | 'monitor' | 'globe' | 'sp
             {{ t('download.lead') }}
           </p>
           <div class="download-actions" style="--i: 3">
-            <a class="agm-button agm-button--primary" :href="macZip">
+            <a v-for="pkg in macPackages" :key="pkg.arch" class="agm-button" :class="pkg.arch === 'arm64' ? 'agm-button--primary' : 'agm-button--outline'" :href="pkg.href">
               <UiIcon name="download" />
-              {{ t('download.mac') }}
+              {{ t(pkg.label) }}
             </a>
             <a class="agm-button agm-button--outline" href="#get" target="_self" @click="onLinkStart">
               {{ t('download.start') }}
@@ -103,15 +106,19 @@ const features: { icon: 'layers' | 'motion' | 'scan' | 'monitor' | 'globe' | 'sp
           <article class="download-card is-featured hud-brackets reveal">
             <h3><UiIcon name="monitor" />{{ t('download.macTitle') }}</h3>
             <p>{{ t('download.macLead') }}</p>
-            <a class="agm-button agm-button--primary" :href="macZip">
-              <UiIcon name="download" />
-              {{ t('download.mac') }}
-            </a>
+            <div class="mac-downloads">
+              <div v-for="pkg in macPackages" :key="pkg.arch" class="mac-download">
+                <a class="agm-button" :class="pkg.arch === 'arm64' ? 'agm-button--primary' : 'agm-button--outline'" :href="pkg.href">
+                  <UiIcon name="download" />
+                  {{ t(pkg.label) }}
+                </a>
+                <a class="mac-checksum" :href="`${pkg.href}.sha256`" :aria-label="`${t(pkg.label)} SHA-256`">{{ t('download.macChecksum') }}</a>
+              </div>
+            </div>
             <p class="download-meta">
               {{ t('download.macMeta', { version }) }}
             </p>
             <div class="download-links">
-              <a :href="`${macZip}.sha256`">{{ t('download.macChecksum') }}</a>
               <a :href="`${repo}/releases`">{{ t('download.macReleases') }}</a>
               <a :href="link('/guide/macos')">{{ t('download.macGuide') }}</a>
             </div>
@@ -346,6 +353,21 @@ const features: { icon: 'layers' | 'motion' | 'scan' | 'monitor' | 'globe' | 'sp
 .download-meta {
   font-size: 12px !important;
   font-variant-numeric: tabular-nums;
+}
+.mac-downloads {
+  display: grid;
+  gap: 12px;
+}
+.mac-download {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+.mac-checksum {
+  color: var(--agm-cyan);
+  font-size: 12px;
+  white-space: nowrap;
 }
 .download-links,
 .download-footer nav {

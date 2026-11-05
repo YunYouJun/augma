@@ -2,13 +2,16 @@
 
 macOS 客户端把 [AR 演示](/guide/ar) 放进原生窗口：侧栏切换应用，界面离线可用；沉浸模式以透明悬浮层覆盖桌面，还可以用语音指令操作演示。
 
-<a class="agm-button agm-button--primary macos-download" href="https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS.zip">下载 Augma for macOS</a>
+<div class="macos-downloads">
+  <a class="agm-button agm-button--primary macos-download" href="https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS-arm64.zip">下载 Apple 芯片版</a>
+  <a class="agm-button agm-button--outline macos-download" href="https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS-x86_64.zip">下载 Intel 版</a>
+</div>
 
-需要 macOS 26 或更高版本，Apple 芯片与 Intel 芯片的 Mac 均可使用。历史版本与 SHA-256 校验值见 [GitHub Releases](https://github.com/YunYouJun/augma/releases)。
+需要 macOS 26 或更高版本。请在「Apple 菜单 → 关于本机」查看芯片：Apple 芯片选择 arm64 版，Intel 处理器选择 x86_64 版。历史版本与各架构的 SHA-256 校验值见 [GitHub Releases](https://github.com/YunYouJun/augma/releases)。
 
 ## 安装与首次打开
 
-1. 解压 `Augma-macOS.zip`，把 `Augma.app` 拖到「应用程序」文件夹。
+1. 解压对应的 `Augma-macOS-arm64.zip` 或 `Augma-macOS-x86_64.zip`，把 `Augma.app` 拖到「应用程序」文件夹。
 2. 双击打开。客户端尚未使用 Apple 开发者证书签名和公证，macOS 会提示无法验证，点击「完成」。
 3. 打开「系统设置 → 隐私与安全性」，在「安全性」中点击「仍要打开」并确认。之后打开不再提示。
 
@@ -23,4 +26,4 @@ macOS 客户端把 [AR 演示](/guide/ar) 放进原生窗口：侧栏切换应�
 
 ## 从源码构建
 
-需要 Node.js 24、pnpm 与 Xcode 26 或更高版本。在仓库根目录运行 `pnpm mac:run` 构建并启动；`pnpm mac:package` 生成与发布相同的通用安装包 `apps/mac/dist/Augma-macOS.zip`。
+需要 Node.js 24、pnpm 与 Xcode 26 或更高版本。在仓库根目录运行 `pnpm mac:run` 默认构建并启动 arm64 版；Intel Mac 开发者使用 `AUGMA_BUILD_ARCH=x86_64 pnpm mac:run`。`pnpm mac:package` 生成与发布相同的两个 Release 安装包 `apps/mac/dist/Augma-macOS-arm64.zip` 和 `Augma-macOS-x86_64.zip`，每个包附带 `.sha256`。只打包一种架构可运行 `pnpm mac:package arm64` 或 `pnpm mac:package x86_64`。

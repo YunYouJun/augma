@@ -71,17 +71,21 @@ jobs:
       - uses: pnpm/action-setup@v6
       - run: pnpm install --frozen-lockfile
       - run: swift --version
+      - name: Verify packaging and macOS signing rules
+        run: pnpm test:release
       - run: swift test --package-path apps/mac
-      - name: Build the universal app and zip it
+      - name: Build separate Apple silicon and Intel archives
         run: pnpm mac:package
       - uses: actions/upload-artifact@v7
         with:
           name: augma-macos-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            apps/mac/dist/Augma-macOS.zip
-            apps/mac/dist/Augma-macOS.zip.sha256
+            apps/mac/dist/Augma-macOS-arm64.zip
+            apps/mac/dist/Augma-macOS-arm64.zip.sha256
+            apps/mac/dist/Augma-macOS-x86_64.zip
+            apps/mac/dist/Augma-macOS-x86_64.zip.sha256
           if-no-files-found: error
-  # The site links to releases/latest/download/Augma-macOS.zip, so the asset name stays fixed.
+  # Download links use fixed architecture-specific asset names under releases/latest/download/.
   github-release:
     needs: [prepare, mac]
     if: github.event_name == 'push' || inputs.publish

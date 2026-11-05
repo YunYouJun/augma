@@ -2,10 +2,29 @@
 set -euo pipefail
 
 MODE="${1:-run}"
+PACKAGE_ARCH="${2:-}"
 case "$MODE" in
   run|--debug|--logs|--telemetry|--verify|--build|--package) ;;
-  *) echo "usage: $0 [run|--debug|--logs|--telemetry|--verify|--build|--package]" >&2; exit 2 ;;
+  *) echo "usage: $0 [run|--debug|--logs|--telemetry|--verify|--build|--package [arm64|x86_64]]" >&2; exit 2 ;;
 esac
+if [[ $# -gt 2 || ( "$MODE" != "--package" && -n "$PACKAGE_ARCH" ) ]]; then
+  echo "Only --package accepts an architecture argument" >&2
+  exit 2
+fi
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PACKAGE_DIR="$ROOT_DIR/apps/mac"
+# A release contains two independent archives. Each child stages its app in a
+# temporary directory, leaving the local app and its signing identity intact.
+if [[ "$MODE" == "--package" && -z "$PACKAGE_ARCH" ]]; then
+  for arch in arm64 x86_64; do
+    bash "$ROOT_DIR/script/build_and_run.sh" --package "$arch"
+  done
+  rm -f "$PACKAGE_DIR/dist/Augma-macOS.zip" "$PACKAGE_DIR/dist/Augma-macOS.zip.sha256"
+  exit 0
+fi
+BUILD_ARCH="${PACKAGE_ARCH:-${AUGMA_BUILD_ARCH:-arm64}}"
+case "$BUILD_ARCH" in arm64|x86_64) ;; *) echo "Invalid build architecture: $BUILD_ARCH" >&2; exit 2 ;; esac
 
 APP_NAME="AugmaDesktopDemo"
 BUNDLE_ID="${AUGMA_BUNDLE_ID:-cn.yunyoujun.augma.desktop-demo}"
@@ -13,10 +32,12 @@ DISPLAY_NAME="${AUGMA_APP_DISPLAY_NAME:-Augma}"
 BUILD_CONFIGURATION="${AUGMA_BUILD_CONFIGURATION:-debug}"
 case "$BUILD_CONFIGURATION" in debug|release) ;; *) echo "Invalid build configuration" >&2; exit 2 ;; esac
 MIN_SYSTEM_VERSION="26.0"
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PACKAGE_DIR="$ROOT_DIR/apps/mac"
-APP_BUNDLE="${AUGMA_APP_BUNDLE:-$PACKAGE_DIR/dist/Augma.app}"
-ARCHIVE="$PACKAGE_DIR/dist/Augma-macOS.zip"
+WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/augma-build.XXXXXX")"
+trap 'rm -rf "$WORK_DIR"' EXIT
+DEFAULT_APP_BUNDLE="$PACKAGE_DIR/dist/Augma.app"
+if [[ "$MODE" == "--package" ]]; then DEFAULT_APP_BUNDLE="$WORK_DIR/Augma.app"; fi
+APP_BUNDLE="${AUGMA_APP_BUNDLE:-$DEFAULT_APP_BUNDLE}"
+ARCHIVE="$PACKAGE_DIR/dist/Augma-macOS-$BUILD_ARCH.zip"
 APP_CONTENTS="$APP_BUNDLE/Contents"
 APP_BINARY="$APP_CONTENTS/MacOS/$APP_NAME"
 VERSION="$(node -p "require('$ROOT_DIR/package.json').version")"
@@ -27,8 +48,6 @@ if [[ "$MODE" == "--package" ]]; then
 else
   MICROSOFT_CLIENT_ID="$(node "$ROOT_DIR/scripts/microsoft-todo.mjs" client-id --allow-missing)"
 fi
-WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/augma-build.XXXXXX")"
-trap 'rm -rf "$WORK_DIR"' EXIT
 
 # An installed Xcode can require license acceptance; Command Line Tools can
 # build this SwiftPM demo without modifying the user's Xcode installation.
@@ -40,16 +59,15 @@ fi
 # runs it with the pre-26 look instead of Liquid Glass. -isysroot records the real SDK.
 SDK_FLAGS=(-Xswiftc -Xclang-linker -Xswiftc -isysroot -Xswiftc -Xclang-linker -Xswiftc "$(xcrun --sdk macosx --show-sdk-path)")
 
-# A download package is a universal release build; local runs stay fast debug builds.
-BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c "$BUILD_CONFIGURATION" "${SDK_FLAGS[@]}")
+# Local builds default to arm64; distribution builds always use Release.
+if [[ "$MODE" == "--package" ]]; then BUILD_CONFIGURATION=release; fi
+BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c "$BUILD_CONFIGURATION" --arch "$BUILD_ARCH" "${SDK_FLAGS[@]}")
 app_pids() {
   while read -r pid command; do
     if [[ "$command" == "$APP_BINARY" ]]; then printf '%s\n' "$pid"; fi
   done < <(ps -axo pid=,comm=)
 }
-if [[ "$MODE" == "--package" ]]; then
-  BUILD_FLAGS=(--package-path "$PACKAGE_DIR" -c release --arch arm64 --arch x86_64 "${SDK_FLAGS[@]}")
-elif [[ "$MODE" != "--build" ]]; then
+if [[ "$MODE" != "--package" && "$MODE" != "--build" ]]; then
   while read -r pid; do
     if [[ -n "$pid" ]]; then kill -TERM "$pid"; fi
   done < <(app_pids)
@@ -76,8 +94,7 @@ chmod +x "$APP_BINARY"
 # Compile the small read-only media-session bridge for the same architectures as the app.
 NOW_PLAYING_DIR="$APP_CONTENTS/Resources/NowPlaying"
 mkdir -p "$NOW_PLAYING_DIR"
-NOW_PLAYING_ARCHS=(-arch "$(uname -m)")
-if [[ "$MODE" == "--package" ]]; then NOW_PLAYING_ARCHS=(-arch arm64 -arch x86_64); fi
+NOW_PLAYING_ARCHS=(-arch "$BUILD_ARCH")
 xcrun clang -dynamiclib -fobjc-arc -fblocks -framework Foundation \
   -mmacosx-version-min="$MIN_SYSTEM_VERSION" "${NOW_PLAYING_ARCHS[@]}" \
   "$PACKAGE_DIR/Support/NowPlaying/ReadNowPlaying.m" -o "$NOW_PLAYING_DIR/ReadNowPlaying.dylib"
@@ -177,10 +194,17 @@ case "$MODE" in
     # Ad-hoc signature only: macOS asks for confirmation on first open until the
     # app is signed with a Developer ID and notarized.
     codesign --force --sign - "$APP_BUNDLE"
-    codesign --verify --strict "$APP_BUNDLE"
+    codesign --verify --deep --strict "$APP_BUNDLE"
+    for binary in "$APP_BINARY" "$NOW_PLAYING_DIR/ReadNowPlaying.dylib"; do
+      if [[ "$(lipo -archs "$binary")" != "$BUILD_ARCH" ]]; then
+        echo "Unexpected architecture in $binary; expected only $BUILD_ARCH" >&2
+        exit 1
+      fi
+    done
+    mkdir -p "$(dirname "$ARCHIVE")"
     rm -f "$ARCHIVE" "$ARCHIVE.sha256"
     ditto -c -k --keepParent "$APP_BUNDLE" "$ARCHIVE"
     (cd "$(dirname "$ARCHIVE")" && shasum -a 256 "$(basename "$ARCHIVE")" >"$ARCHIVE.sha256")
-    echo "Packaged Augma $VERSION: $ARCHIVE"
+    echo "Packaged Augma $VERSION ($BUILD_ARCH): $ARCHIVE"
     ;;
 esac

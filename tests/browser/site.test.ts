@@ -317,7 +317,9 @@ test('hero HUD rings stay concentric while they spin', async ({ page }) => {
     expect(offset).toBeLessThan(1)
 })
 
-const macZip = 'https://github.com/YunYouJun/augma/releases/latest/download/Augma-macOS.zip'
+const macRelease = 'https://github.com/YunYouJun/augma/releases/latest/download'
+const macArmZip = `${macRelease}/Augma-macOS-arm64.zip`
+const macIntelZip = `${macRelease}/Augma-macOS-x86_64.zip`
 
 test('macOS client is downloadable from the home page and its guide', async ({ page }) => {
   await page.goto('/')
@@ -325,16 +327,18 @@ test('macOS client is downloadable from the home page and its guide', async ({ p
   await demo.getByRole('link', { name: 'macOS 客户端' }).click()
   await expect(page).toHaveURL(/\/download$/)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('下载 Augma')
-  await expect(page.getByRole('link', { name: '下载 Augma for macOS' }).first()).toHaveAttribute('href', macZip)
+  await expect(page.getByRole('link', { name: '下载 Apple 芯片版', exact: true }).first()).toHaveAttribute('href', macArmZip)
+  await expect(page.getByRole('link', { name: '下载 Intel 版', exact: true }).first()).toHaveAttribute('href', macIntelZip)
   await page.goto('/guide/macos')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/macOS 客户端/)
-  await expect(page.getByRole('link', { name: '下载 Augma for macOS' })).toHaveAttribute('href', macZip)
+  await expect(page.getByRole('link', { name: '下载 Apple 芯片版', exact: true })).toHaveAttribute('href', macArmZip)
+  await expect(page.getByRole('link', { name: '下载 Intel 版', exact: true })).toHaveAttribute('href', macIntelZip)
 })
 
-for (const [path, nav, heading, mac, ar] of [
-  ['/download', '下载', '下载 Augma', '下载 Augma for macOS', '打开 AR 演示'],
-  ['/en/download', 'Download', 'Get Augma', 'Download Augma for macOS', 'Open the AR demo'],
-  ['/ja/download', 'ダウンロード', 'Augma をダウンロード', 'Augma for macOS をダウンロード', 'AR デモを開く'],
+for (const [path, nav, heading, arm, intel, ar, guide] of [
+  ['/download', '下载', '下载 Augma', '下载 Apple 芯片版', '下载 Intel 版', '打开 AR 演示', '安装说明'],
+  ['/en/download', 'Download', 'Get Augma', 'Download for Apple silicon', 'Download for Intel', 'Open the AR demo', 'Install guide'],
+  ['/ja/download', 'ダウンロード', 'Augma をダウンロード', 'Apple シリコン版をダウンロード', 'Intel 版をダウンロード', 'AR デモを開く', 'インストール方法'],
 ]) {
   test(`${path} offers the components, the macOS app and the AR demo`, async ({ page }) => {
     const errors: string[] = []
@@ -342,14 +346,31 @@ for (const [path, nav, heading, mac, ar] of [
     await page.goto(path)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading)
     await expect(page.getByRole('navigation').getByRole('link', { name: nav, exact: true }).first()).toHaveAttribute('href', path)
-    const macLinks = page.getByRole('link', { name: mac })
-    await expect(macLinks).toHaveCount(2)
-    for (const link of await macLinks.all())
-      await expect(link).toHaveAttribute('href', macZip)
+    // Verify each click requests the right release asset without relying on
+    // browser-specific handling of a cross-origin, mocked ZIP download.
+    await page.route(`${macRelease}/*.zip`, route => route.fulfill({ status: 204 }))
+    for (const [label, href] of [[arm, macArmZip], [intel, macIntelZip]]) {
+      const macLinks = page.getByRole('link', { name: label, exact: true })
+      await expect(macLinks).toHaveCount(2)
+      for (const link of await macLinks.all())
+        await expect(link).toHaveAttribute('href', href)
+      await expect(page.getByRole('link', { name: `${label} SHA-256`, exact: true })).toHaveAttribute('href', `${href}.sha256`)
+      const request = page.waitForRequest(href)
+      await macLinks.first().click({ noWaitAfter: true })
+      expect((await request).url()).toBe(href)
+    }
+    await expect(page.locator('.download-meta').first()).toContainText('macOS 26+')
     await expect(page.getByRole('link', { name: ar })).toHaveAttribute('href', '/ar/')
     await expect(page.locator('.download-card code').first()).toHaveText('pnpm add augma')
     await expect(page.locator('.first-open-steps li')).toHaveCount(3)
     await expect(page.locator('.download-features li')).toHaveCount(6)
+    await page.setViewportSize({ width: 390, height: 844 })
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+    await page.getByRole('link', { name: guide, exact: true }).click()
+    await expect(page).toHaveURL(path.replace('/download', '/guide/macos'))
+    await expect(page.getByRole('link', { name: arm, exact: true })).toHaveAttribute('href', macArmZip)
+    await expect(page.getByRole('link', { name: intel, exact: true })).toHaveAttribute('href', macIntelZip)
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
     expect(errors).toEqual([])
   })
 }
