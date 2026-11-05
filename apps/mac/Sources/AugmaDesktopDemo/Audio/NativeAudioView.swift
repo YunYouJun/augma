@@ -4,10 +4,37 @@ struct NativeAudioView: View {
   @ObservedObject var store: NativeAudioStore
 
   var body: some View {
+    Group {
+      if case .track(let track) = store.status {
+        GeometryReader { geometry in
+          let wide = geometry.size.width >= 800
+          // One stable page fills the viewport and only overflows in short windows.
+          ScrollView {
+            playerPage(track, wide: wide)
+              .frame(minHeight: geometry.size.height, alignment: .top)
+          }
+          .scrollBounceBehavior(.basedOnSize)
+        }
+      } else {
+        statusPage
+      }
+    }
+    .controlSize(.regular)
+    .onAppear { store.startObserving() }
+  }
+
+  private func playerPage(_ track: NativeNowPlayingTrack, wide: Bool) -> some View {
+    NativePageSection("正在播放") {
+      NativeNowPlayingContent(track: track, lyrics: store.lyrics, wide: wide)
+    }
+    .nativePageContent(maxWidth: NativePageLayout.wideContentWidth)
+  }
+
+  private var statusPage: some View {
     NativePage {
       NativePageSection("正在播放") {
         switch store.status {
-        case .track(let track): NativeNowPlayingContent(track: track, lyrics: store.lyrics)
+        case .track: EmptyView()
         case .loading:
           ProgressView("正在读取网易云音乐…")
             .frame(maxWidth: .infinity, minHeight: 160)
@@ -30,20 +57,29 @@ struct NativeAudioView: View {
       Text("读取本机播放信息，联网获取歌词并缓存在本机。播放操作请在网易云音乐中完成。")
         .font(.caption).foregroundStyle(.secondary)
     }
-    .onAppear { store.startObserving() }
   }
 }
 
 private struct NativeNowPlayingContent: View {
   let track: NativeNowPlayingTrack
   let lyrics: NativeLyricsStore
+  let wide: Bool
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 24) {
-      ViewThatFits(in: .horizontal) {
-        HStack(alignment: .center, spacing: 24) { artwork; metadata }
-        VStack(alignment: .leading, spacing: 20) { artwork; metadata }
-      }
+    // Preserve the lyric view identity when the window changes width.
+    let layout = wide ? AnyLayout(HStackLayout(alignment: .top, spacing: 28))
+      : AnyLayout(VStackLayout(alignment: .leading, spacing: 20))
+    layout {
+      playback.frame(width: wide ? 320 : nil)
+      Divider()
+      detail
+    }
+    .textSelection(.enabled)
+  }
+
+  private var playback: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      NativeNowPlayingHeaderLayout { artwork; metadata }
       if track.elapsed != nil, let duration = track.duration {
         TimelineView(.animation(minimumInterval: 1, paused: !track.playing)) { context in
           let elapsed = track.elapsed(at: context.date) ?? 0
@@ -54,10 +90,13 @@ private struct NativeNowPlayingContent: View {
           }
         }
       }
-      Divider()
-      NativeLyricsView(store: lyrics, track: track)
     }
-    .textSelection(.enabled)
+    .fixedSize(horizontal: false, vertical: true)
+  }
+
+  private var detail: some View {
+    NativeLyricsView(store: lyrics, track: track)
+      .frame(minHeight: 240, maxHeight: .infinity, alignment: .top)
   }
 
   private var metadata: some View {
@@ -82,7 +121,7 @@ private struct NativeNowPlayingContent: View {
           .overlay { Image(systemName: "music.note").font(.system(size: 44)).foregroundStyle(.secondary) }
       }
     }
-    .frame(width: 128, height: 128)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
     .clipShape(.rect(cornerRadius: 16))
     .accessibilityLabel("专辑封面")
   }

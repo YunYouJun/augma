@@ -25,7 +25,9 @@ struct ImmersiveCanvasView: View {
         : CGRect(x: 20, y: available.minY, width: available.width, height: min(300, available.height * 0.45))
       let panel = session.selection == .browser ? available : session.selection == .space && !wide
         ? CGRect(x: 20, y: spaceCanvas.maxY + 16, width: available.width, height: max(150, available.maxY - spaceCanvas.maxY - 16))
-        : CGRect(x: 20, y: available.minY, width: min(400, available.width), height: min(660, available.height))
+        : CGRect(x: 20, y: available.minY,
+                 width: min(session.selection == .audio ? 520 : 400, available.width),
+                 height: min(session.selection == .audio ? 760 : 660, available.height))
       ZStack(alignment: .topLeading) {
         if session.selection == .space {
           NativeSpaceCanvas(store: session.space, preferences: preferences)

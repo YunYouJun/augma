@@ -30,9 +30,17 @@ struct NativeLyricsView: View {
           Text("纯音乐，无歌词。").font(.callout).foregroundStyle(.secondary)
         } else if !result.document.lines.isEmpty {
           SyncedLyricsView(document: result.document, track: track)
+            .id(LyricsTrackIdentity(track))
         } else if let plain = result.document.plainText {
-          ScrollView { Text(plain).frame(maxWidth: .infinity, alignment: .leading).textSelection(.enabled) }
-            .frame(maxHeight: 180)
+          GeometryReader { _ in
+            ScrollView {
+              Text(plain).frame(maxWidth: .infinity, alignment: .leading)
+                .font(.body).lineSpacing(10)
+                .textSelection(.enabled).padding(.vertical, 24)
+            }
+          }
+            .frame(minHeight: 160, maxHeight: .infinity)
+            .modifier(LyricsScrollStyle())
           Text("此歌词没有时间轴。").font(.caption).foregroundStyle(.secondary)
         }
       }
@@ -40,45 +48,18 @@ struct NativeLyricsView: View {
   }
 }
 
-private struct SyncedLyricsView: View {
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
-  let document: LyricsDocument
-  let track: NativeNowPlayingTrack
-
-  var body: some View {
-    TimelineView(.animation(minimumInterval: 0.25, paused: !track.playing)) { context in
-      let active = track.elapsed(at: context.date).flatMap { document.activeLine(at: $0) }
-      ScrollViewReader { proxy in
-        ScrollView {
-          LazyVStack(alignment: .leading, spacing: 16) {
-            ForEach(Array(document.lines.enumerated()), id: \.offset) { index, line in
-              VStack(alignment: .leading, spacing: 5) {
-                Text(line.text.isEmpty ? " " : line.text)
-                  .font(.body.weight(index == active ? .semibold : .regular))
-                if let translation = line.translation {
-                  Text(translation).font(.callout).foregroundStyle(.secondary)
-                }
-              }
-              .foregroundStyle(index == active ? Color.primary : Color.secondary)
-              .opacity(active == nil || index == active ? 1 : 0.65)
-              .frame(maxWidth: .infinity, alignment: .leading)
-              .padding(.horizontal, 12).padding(.vertical, 8)
-              .background(index == active ? Color.accentColor.opacity(0.1) : .clear, in: .rect(cornerRadius: 10))
-              .accessibilityElement(children: .combine)
-              .accessibilityAddTraits(index == active ? .isSelected : [])
-              .id(index)
-            }
-          }
-          .padding(.vertical, 8)
-        }
-        .frame(height: 180)
-        .accessibilityLabel("同步歌词")
-        .onAppear { if let active { proxy.scrollTo(active, anchor: .center) } }
-        .onChange(of: active) { _, index in
-          guard let index else { proxy.scrollTo(0, anchor: .top); return }
-          withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.25)) { proxy.scrollTo(index, anchor: .center) }
+struct LyricsScrollStyle: ViewModifier {
+  func body(content: Content) -> some View {
+    content
+      .scrollIndicators(.hidden)
+      .mask {
+        VStack(spacing: 0) {
+          LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
+            .frame(height: 18)
+          Rectangle().fill(.black)
+          LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
+            .frame(height: 18)
         }
       }
-    }
   }
 }

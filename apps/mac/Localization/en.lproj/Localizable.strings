@@ -1273,4 +1273,6 @@
 
 "同步歌词" = "Synced Lyrics";
 
+"回到当前歌词" = "Return to Current Lyric";
+
 "读取本机播放信息，联网获取歌词并缓存在本机。播放操作请在网易云音乐中完成。" = "Reads local playback information, fetches lyrics online and caches them on this Mac. Use NetEase Cloud Music to control playback.";
