@@ -15,6 +15,7 @@ apps/site/public/r
 apps/site/public/components.json
 apps/site/public/llms*.txt
 apps/site/public/markdown
+apps/site/public/plugins
 *.tgz
 release-artifacts/
 .claude/worktrees/
@@ -22,5 +23,3 @@ release-artifacts/
 docs/media/
 # Promo video: rendered audio stays local; the composer script is the source.
 video/music/out/
-
-apps/site/public/plugins
