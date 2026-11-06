@@ -1,3 +1,4 @@
+import AppKit
 import Combine
 import CoreFoundation
 import Foundation
@@ -13,7 +14,7 @@ struct NativeScenePreferences: Codable, Equatable, Sendable {
   var sceneBackdrop = true
   var curvedHud = false
   var speechFeedback = true
-  var locale = "zh-CN"
+  var locale = "system"
 
   fileprivate func normalized(fallback: NativeScenePreferences) -> NativeScenePreferences {
     var result = self
@@ -24,6 +25,7 @@ struct NativeScenePreferences: Codable, Equatable, Sendable {
 }
 
 enum NativeSceneLanguage: String, CaseIterable, Identifiable, Sendable {
+  case system
   case simplifiedChinese = "zh-CN"
   case english = "en-US"
   case japanese = "ja-JP"
@@ -32,6 +34,7 @@ enum NativeSceneLanguage: String, CaseIterable, Identifiable, Sendable {
 
   var displayName: String {
     switch self {
+    case .system: String(appLocalized: "跟随系统")
     case .simplifiedChinese: "简体中文"
     case .english: "English"
     case .japanese: "日本語"
@@ -44,6 +47,22 @@ enum NativeSceneLanguage: String, CaseIterable, Identifiable, Sendable {
 final class NativePreferencesStore: ObservableObject {
   static let preferencesKey = "augma.nativeScenePreferences.v1"
   static let migrationKey = "augma.nativeScenePreferences.migrated.v1"
+  static let showsClockKey = "augma.hud.clock-visible"
+  static let dockBottomInsetKey = "augma.hud.dock-bottom-inset"
+  static let dockBottomInsetRange: ClosedRange<Double> = 0...120
+
+  @Published var dockBottomInset: Double {
+    didSet {
+      let normalized = Self.normalizedDockBottomInset(dockBottomInset)
+      if dockBottomInset != normalized { dockBottomInset = normalized }
+      defaults.set(dockBottomInset, forKey: Self.dockBottomInsetKey)
+    }
+  }
+
+  // Keep native chrome preferences separate from the shared scene schema.
+  @Published var showsClock: Bool {
+    didSet { defaults.set(showsClock, forKey: Self.showsClockKey) }
+  }
 
   @Published var value: NativeScenePreferences {
     didSet {
@@ -54,13 +73,20 @@ final class NativePreferencesStore: ObservableObject {
         value = normalized
         isNormalizing = false
       }
+      if synchronizesAppLanguage { NativeLocalization.shared.select(locale) }
       save()
     }
   }
 
   var locale: String {
-    get { value.locale }
+    get { value.locale == NativeSceneLanguage.system.rawValue ? systemLocale : value.locale }
     set { set("locale", value: newValue) }
+  }
+
+  var localeChanges: AnyPublisher<String, Never> {
+    $value.map(\.locale).combineLatest($systemLocale)
+      .map { selection, system in selection == NativeSceneLanguage.system.rawValue ? system : selection }
+      .removeDuplicates().eraseToAnyPublisher()
   }
 
   var bridgeValues: [String: Any] {
@@ -74,7 +100,7 @@ final class NativePreferencesStore: ObservableObject {
       "sceneBackdrop": value.sceneBackdrop,
       "curvedHud": value.curvedHud,
       "speechFeedback": value.speechFeedback,
-      "locale": value.locale,
+      "locale": locale,
     ]
   }
 
@@ -83,15 +109,30 @@ final class NativePreferencesStore: ObservableObject {
     let value: NativeScenePreferences
   }
 
+  private let synchronizesAppLanguage: Bool
+  private let systemLanguages: () -> [String]
+  @Published private var systemLocale: String
+  private var languageObservers: [NSObjectProtocol] = []
   private let defaults: UserDefaults
   private let defaultValue: NativeScenePreferences
   private var hasNativeSource: Bool
   private var isNormalizing = false
 
-  init(defaults: UserDefaults = .standard, preferredLocalizations: [String] = Bundle.main.preferredLocalizations) {
+  init(defaults: UserDefaults = .standard, preferredLocalizations: [String]? = nil,
+       systemLanguages: (() -> [String])? = nil, synchronizesAppLanguage: Bool = false) {
     self.defaults = defaults
-    var initialValue = NativeScenePreferences()
-    initialValue.locale = Self.defaultLocale(for: preferredLocalizations)
+    showsClock = defaults.bool(forKey: Self.showsClockKey)
+    dockBottomInset = Self.normalizedDockBottomInset(
+      (defaults.object(forKey: Self.dockBottomInsetKey) as? NSNumber)?.doubleValue
+        ?? Double(ImmersiveLayout.defaultDockBottomInset))
+    self.synchronizesAppLanguage = synchronizesAppLanguage
+    let readLanguages: () -> [String]
+    if let systemLanguages { readLanguages = systemLanguages }
+    else if let preferredLocalizations { readLanguages = { preferredLocalizations } }
+    else { readLanguages = { Locale.preferredLanguages } }
+    self.systemLanguages = readLanguages
+    systemLocale = Self.defaultLocale(for: readLanguages())
+    let initialValue = NativeScenePreferences()
     defaultValue = initialValue
     let existing = defaults.object(forKey: Self.preferencesKey)
     hasNativeSource = existing != nil || defaults.bool(forKey: Self.migrationKey)
@@ -105,6 +146,27 @@ final class NativePreferencesStore: ObservableObject {
       value = initialValue
     }
     if hasNativeSource { defaults.set(true, forKey: Self.migrationKey) }
+    if synchronizesAppLanguage {
+      NativeLocalization.shared.select(locale)
+      for name in [NSLocale.currentLocaleDidChangeNotification, NSApplication.didBecomeActiveNotification] {
+        languageObservers.append(NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+          MainActor.assumeIsolated { self?.refreshSystemLanguage() }
+        })
+      }
+    }
+  }
+
+  func refreshSystemLanguage() {
+    let next = Self.defaultLocale(for: systemLanguages())
+    guard next != systemLocale else { return }
+    systemLocale = next
+    if synchronizesAppLanguage, value.locale == NativeSceneLanguage.system.rawValue {
+      NativeLocalization.shared.select(next)
+    }
+  }
+
+  isolated deinit {
+    for observer in languageObservers { NotificationCenter.default.removeObserver(observer) }
   }
 
   /// Accept only bridge fields and their actual JSON types. NSNumber's coercion
@@ -140,6 +202,13 @@ final class NativePreferencesStore: ObservableObject {
 
   func reset() {
     value = defaultValue
+    showsClock = false
+    dockBottomInset = Double(ImmersiveLayout.defaultDockBottomInset)
+  }
+
+  private static func normalizedDockBottomInset(_ value: Double) -> Double {
+    value.isFinite ? min(dockBottomInsetRange.upperBound, max(dockBottomInsetRange.lowerBound, value))
+      : Double(ImmersiveLayout.defaultDockBottomInset)
   }
 
   private static func defaultLocale(for localizations: [String]) -> String {

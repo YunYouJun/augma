@@ -12,13 +12,13 @@ struct NativeStartupSettingsView: View {
       }
       .accessibilityIdentifier("startup-mode")
       Picker("首页页面", selection: $store.homeModule) {
-        ForEach(DemoModule.allCases) { module in Text(module.title).tag(module) }
+        ForEach(DemoModule.allCases.filter { $0 != .plugin }) { module in Text(module.title).tag(module) }
       }
       .accessibilityIdentifier("home-module")
       if store.homeModule == .space {
         Picker("首页 3D 场景", selection: $store.homeSpaceScene) {
           ForEach(NativeSpaceScene.catalog) { scene in
-            Text(scene.title(locale: Locale.current.identifier)).tag(scene.id)
+            Text(scene.title(locale: NativeLocalization.locale.identifier)).tag(scene.id)
           }
         }
         .accessibilityIdentifier("home-space-scene")

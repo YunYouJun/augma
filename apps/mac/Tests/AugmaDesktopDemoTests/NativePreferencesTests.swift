@@ -11,6 +11,116 @@ final class NativePreferencesTests: XCTestCase {
       XCTAssertEqual(NativePreferencesStore(defaults: defaults, preferredLocalizations: ["zh-Hans"]).locale, "zh-CN")
       XCTAssertEqual(NativePreferencesStore(defaults: defaults, preferredLocalizations: ["fr"]).locale, "zh-CN")
       XCTAssertNil(defaults.object(forKey: NativePreferencesStore.preferencesKey))
+      XCTAssertEqual(NativePreferencesStore(defaults: defaults, preferredLocalizations: ["en"]).value.locale, "system")
+    }
+  }
+
+  func testClockIsOptInAndPersistsIndependentlyOfExistingScenePreferences() {
+    withDefaults { defaults in
+      let original = NativePreferencesStore(defaults: defaults)
+      original.value.dark = true
+      original.value.opacity = 75
+      let sceneData = defaults.data(forKey: NativePreferencesStore.preferencesKey)
+      let store = NativePreferencesStore(defaults: defaults)
+      XCTAssertFalse(store.showsClock)
+      XCTAssertNil(defaults.object(forKey: NativePreferencesStore.showsClockKey))
+
+      store.showsClock = true
+      let restored = NativePreferencesStore(defaults: defaults)
+      XCTAssertTrue(restored.showsClock)
+      XCTAssertEqual(restored.value, original.value)
+      XCTAssertEqual(defaults.data(forKey: NativePreferencesStore.preferencesKey), sceneData)
+
+      restored.showsClock = false
+      XCTAssertFalse(NativePreferencesStore(defaults: defaults).showsClock)
+      restored.showsClock = true
+      restored.reset()
+      XCTAssertFalse(NativePreferencesStore(defaults: defaults).showsClock)
+    }
+  }
+
+  func testDockBottomInsetDefaultsToTopSpacingAndPersistsWithoutChangingSceneData() {
+    withDefaults { defaults in
+      let store = NativePreferencesStore(defaults: defaults)
+      store.value.dark = true
+      let sceneData = defaults.data(forKey: NativePreferencesStore.preferencesKey)
+      XCTAssertEqual(store.dockBottomInset, Double(ImmersiveLayout.defaultDockBottomInset))
+      XCTAssertNil(defaults.object(forKey: NativePreferencesStore.dockBottomInsetKey))
+
+      store.dockBottomInset = 64
+      let restored = NativePreferencesStore(defaults: defaults)
+      XCTAssertEqual(restored.dockBottomInset, 64)
+      XCTAssertEqual(defaults.data(forKey: NativePreferencesStore.preferencesKey), sceneData)
+      restored.reset()
+      XCTAssertEqual(NativePreferencesStore(defaults: defaults).dockBottomInset,
+                     Double(ImmersiveLayout.defaultDockBottomInset))
+    }
+  }
+
+  func testDockBottomInsetNormalizesStoredAndEditedValues() {
+    withDefaults { defaults in
+      for (input, expected) in [(-10.0, 0.0), (500, 120), (Double.infinity, 17), (Double.nan, 17)] {
+        defaults.set(input, forKey: NativePreferencesStore.dockBottomInsetKey)
+        let store = NativePreferencesStore(defaults: defaults)
+        XCTAssertEqual(store.dockBottomInset, expected)
+        store.dockBottomInset = input
+        XCTAssertEqual(store.dockBottomInset, expected)
+        XCTAssertEqual(NativePreferencesStore(defaults: defaults).dockBottomInset, expected)
+      }
+    }
+  }
+
+  func testFollowSystemPersistsTheModeAndResolvesTheCurrentLanguageAfterRestart() {
+    withDefaults { defaults in
+      let store = NativePreferencesStore(defaults: defaults, preferredLocalizations: ["en"])
+      store.value.dark = true
+      XCTAssertEqual(store.value.locale, "system")
+      XCTAssertEqual(store.bridgeValues["locale"] as? String, "en-US")
+      let restored = NativePreferencesStore(defaults: defaults, preferredLocalizations: ["zh-Hans"])
+      XCTAssertEqual(restored.value.locale, "system")
+      XCTAssertEqual(restored.locale, "zh-CN")
+      XCTAssertTrue(restored.value.dark)
+    }
+  }
+
+  func testSystemChangesUpdateEffectiveLanguageAndRespectAManualOverride() {
+    let previousLanguage = NativeLocalization.shared.language
+    defer { NativeLocalization.shared.select(previousLanguage) }
+    withDefaults { defaults in
+      var languages = ["en-GB"]
+      let store = NativePreferencesStore(defaults: defaults, systemLanguages: { languages }, synchronizesAppLanguage: true)
+      var changes: [String] = []
+      let subscription = store.localeChanges.sink { changes.append($0) }
+      languages = ["ja-JP"]
+      NotificationCenter.default.post(name: NSLocale.currentLocaleDidChangeNotification, object: nil)
+      XCTAssertEqual(store.value.locale, "system")
+      XCTAssertEqual(store.locale, "ja-JP")
+      XCTAssertEqual(NativeLocalization.shared.language, "ja-JP")
+      store.locale = "en-US"
+      languages = ["zh-Hans"]
+      store.refreshSystemLanguage()
+      XCTAssertEqual(store.locale, "en-US")
+      XCTAssertEqual(NativeLocalization.shared.language, "en-US")
+      store.locale = "system"
+      XCTAssertEqual(store.locale, "zh-CN")
+      XCTAssertEqual(store.bridgeValues["locale"] as? String, "zh-CN")
+      XCTAssertEqual(NativeLocalization.shared.language, "zh-CN")
+      XCTAssertEqual(changes, ["en-US", "ja-JP", "en-US", "zh-CN"])
+      withExtendedLifetime(subscription) {}
+    }
+  }
+
+  func testResetReturnsToFollowingTheLatestSystemLanguage() {
+    withDefaults { defaults in
+      var languages = ["en"]
+      let store = NativePreferencesStore(defaults: defaults, systemLanguages: { languages })
+      store.locale = "zh-CN"
+      languages = ["ja"]
+      store.refreshSystemLanguage()
+      store.reset()
+      XCTAssertEqual(store.value.locale, "system")
+      XCTAssertEqual(store.locale, "ja-JP")
+      XCTAssertEqual(NativePreferencesStore(defaults: defaults, preferredLocalizations: ["en"]).locale, "en-US")
     }
   }
 
@@ -102,7 +212,7 @@ final class NativePreferencesTests: XCTestCase {
       let locale = store.binding(\.locale)
       locale.wrappedValue = locale.wrappedValue
       store.set("opacity", value: store.value.opacity)
-      store.set("locale", value: store.locale)
+      store.set("locale", value: store.value.locale)
       XCTAssertNil(defaults.object(forKey: NativePreferencesStore.preferencesKey))
       XCTAssertFalse(defaults.bool(forKey: NativePreferencesStore.migrationKey))
 
