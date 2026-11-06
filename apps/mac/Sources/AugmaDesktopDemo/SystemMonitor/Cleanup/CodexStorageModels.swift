@@ -4,8 +4,8 @@ enum CodexStorageCategory: String, Codable, Sendable {
   case cache, logs
   var title: String {
     switch self {
-    case .cache: String(localized: "Codex 桌面缓存")
-    case .logs: String(localized: "Codex 诊断日志")
+    case .cache: String(appLocalized: "Codex 桌面缓存")
+    case .logs: String(appLocalized: "Codex 诊断日志")
     }
   }
 }
@@ -68,12 +68,12 @@ enum CodexStorageError: LocalizedError, Equatable {
   case changed, invalidHome, unavailable, limit, running, busy
   var errorDescription: String? {
     switch self {
-    case .running: String(localized: "请先退出 Codex 桌面应用和 CLI，再重新扫描并确认清理。")
-    case .busy: String(localized: "Codex 清理正在执行，请等待结果回执。")
-    case .changed: String(localized: "Codex 扫描已过期或文件发生变化，请重新扫描。")
-    case .invalidHome: String(localized: "CODEX_HOME 必须是明确的绝对目录，且不能指向受保护的数据范围。")
-    case .unavailable: String(localized: "Codex 路径不可读取或包含符号链接，已跳过此范围。")
-    case .limit: String(localized: "达到扫描预算，未完整统计；此范围不生成清理候选。")
+    case .running: String(appLocalized: "请先退出 Codex 桌面应用和 CLI，再重新扫描并确认清理。")
+    case .busy: String(appLocalized: "Codex 清理正在执行，请等待结果回执。")
+    case .changed: String(appLocalized: "Codex 扫描已过期或文件发生变化，请重新扫描。")
+    case .invalidHome: String(appLocalized: "CODEX_HOME 必须是明确的绝对目录，且不能指向受保护的数据范围。")
+    case .unavailable: String(appLocalized: "Codex 路径不可读取或包含符号链接，已跳过此范围。")
+    case .limit: String(appLocalized: "达到扫描预算，未完整统计；此范围不生成清理候选。")
     }
   }
 }
@@ -83,10 +83,10 @@ struct CodexStorageReceipt: Identifiable, Codable, Sendable {
     case trashed, skipped, failed, uncertain
     var title: String {
       switch self {
-      case .trashed: String(localized: "已移入废纸篓")
-      case .skipped: String(localized: "已跳过")
-      case .failed: String(localized: "执行失败")
-      case .uncertain: String(localized: "状态待核实")
+      case .trashed: String(appLocalized: "已移入废纸篓")
+      case .skipped: String(appLocalized: "已跳过")
+      case .failed: String(appLocalized: "执行失败")
+      case .uncertain: String(appLocalized: "状态待核实")
       }
     }
   }
@@ -94,7 +94,7 @@ struct CodexStorageReceipt: Identifiable, Codable, Sendable {
     let candidate: CodexStorageCandidate
     let displayPath: String
     var status: Status = .skipped
-    var detail: String = String(localized: "未执行")
+    var detail: String = String(appLocalized: "未执行")
     var id: UUID { candidate.id }
   }
   let id: UUID

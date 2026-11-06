@@ -38,7 +38,7 @@ final class WeatherLocationClient: NSObject, @MainActor CLLocationManagerDelegat
     try Task.checkCancellation()
     return WeatherCity(
       id: WeatherCity.currentLocationID,
-      name: place?.locality ?? place?.subAdministrativeArea ?? String(localized: "当前位置"),
+      name: place?.locality ?? place?.subAdministrativeArea ?? String(appLocalized: "当前位置"),
       latitude: latitude,
       longitude: longitude,
       country: place?.country,
@@ -96,10 +96,10 @@ enum WeatherLocationFailure: Error, LocalizedError {
 
   var errorDescription: String? {
     switch self {
-    case .denied: String(localized: "定位权限未开启。请在系统设置的“隐私与安全性 → 定位服务”中允许 Augma，或手动添加城市。")
-    case .disabled: String(localized: "系统定位服务已关闭。请开启定位服务，或手动添加城市。")
-    case .unavailable: String(localized: "暂时无法获取当前位置，请重试或手动添加城市。")
-    case .timedOut: String(localized: "获取位置超时，请重试或手动添加城市。")
+    case .denied: String(appLocalized: "定位权限未开启。请在系统设置的“隐私与安全性 → 定位服务”中允许 Augma，或手动添加城市。")
+    case .disabled: String(appLocalized: "系统定位服务已关闭。请开启定位服务，或手动添加城市。")
+    case .unavailable: String(appLocalized: "暂时无法获取当前位置，请重试或手动添加城市。")
+    case .timedOut: String(appLocalized: "获取位置超时，请重试或手动添加城市。")
     }
   }
 }

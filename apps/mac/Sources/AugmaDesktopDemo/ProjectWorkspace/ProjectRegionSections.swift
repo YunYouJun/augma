@@ -34,14 +34,14 @@ struct ProjectRegionSections: View {
             Label {
               VStack(alignment: .leading, spacing: 3) {
                 Text(projects.displayName(region)).fontWeight(selected?.id == region.id ? .semibold : .regular)
-                Text(String(format: String(localized: "%lld 个工作网址"), region.websites.count)).font(.caption).foregroundStyle(.secondary)
+                Text(String(format: String(appLocalized: "%lld 个工作网址"), region.websites.count)).font(.caption).foregroundStyle(.secondary)
               }.frame(maxWidth: .infinity, alignment: .leading)
             } icon: { Image(systemName: selected?.id == region.id ? "folder.fill" : "folder") }
           }
           .buttonStyle(.plain)
           .accessibilityIdentifier("project-select-" + region.id.uuidString)
         }
-        Text(String(format: String(localized: "%lld / 6 个区域"), projects.regions.count)).font(.caption).foregroundStyle(.secondary)
+        Text(String(format: String(appLocalized: "%lld / 6 个区域"), projects.regions.count)).font(.caption).foregroundStyle(.secondary)
         if projects.canUndoRemoval {
           Button("撤销移除区域", action: projects.undoRemoval).disabled(!projects.editable || projects.regions.count >= ProjectRegion.capacity)
         }
@@ -160,7 +160,7 @@ private struct ProjectRegionEditor: View {
         }
         Picker("区域位置", selection: Binding(get: { region.slot }, set: { projects.move(regionID, to: $0) })) {
           ForEach(0..<ProjectRegion.capacity, id: \.self) { slot in
-            Text(String(format: String(localized: "第 %lld 行 · 第 %lld 列"), slot / 3 + 1, slot % 3 + 1)).tag(slot)
+            Text(String(format: String(appLocalized: "第 %lld 行 · 第 %lld 列"), slot / 3 + 1, slot % 3 + 1)).tag(slot)
           }
         }.accessibilityIdentifier("project-region-slot")
         Button("移除项目区域", role: .destructive) { projects.remove(regionID) }
@@ -194,7 +194,7 @@ private struct ProjectRegionEditor: View {
     VStack(alignment: .leading, spacing: 8) {
       Text(title).font(.callout.weight(.medium))
       HStack(alignment: .firstTextBaseline, spacing: NativePageLayout.itemSpacing) {
-        Text(app?.name ?? String(localized: "未选择应用"))
+        Text(app?.name ?? String(appLocalized: "未选择应用"))
           .foregroundStyle(.secondary)
           .fixedSize(horizontal: false, vertical: true)
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -222,11 +222,11 @@ private struct ProjectRegionEditor: View {
   }
   private func status(_ state: ProjectOpenState) -> String {
     switch state {
-    case .waiting: String(localized: "等待打开")
-    case .opening: String(localized: "正在打开…")
-    case .opened: String(localized: "已打开")
+    case .waiting: String(appLocalized: "等待打开")
+    case .opening: String(appLocalized: "正在打开…")
+    case .opened: String(appLocalized: "已打开")
     case .failed(let error): error
-    case .cancelled: String(localized: "已取消后续打开")
+    case .cancelled: String(appLocalized: "已取消后续打开")
     }
   }
 }
@@ -235,7 +235,7 @@ private struct ProjectRegionEditor: View {
 private enum ProjectWorkspacePanels {
   static func chooseFolder(_ completion: @escaping (URL) -> Void) {
     let panel = NSOpenPanel()
-    panel.title = String(localized: "选择项目文件夹")
+    panel.title = String(appLocalized: "选择项目文件夹")
     panel.canChooseDirectories = true; panel.canChooseFiles = false
     panel.allowsMultipleSelection = false; panel.canCreateDirectories = false
     panel.begin { if $0 == .OK, let url = panel.url { completion(url) } }

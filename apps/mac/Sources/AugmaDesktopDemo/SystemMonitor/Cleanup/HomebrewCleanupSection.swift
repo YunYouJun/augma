@@ -27,8 +27,8 @@ struct HomebrewCleanupSection: View {
             Spacer()
             Text(preview.createdAt, format: .dateTime.hour().minute()).font(.caption).foregroundStyle(.secondary)
           }
-          Text(String(format: String(localized: "预览 %lld 项 · Homebrew 估算 %@"), preview.itemCount,
-                      preview.estimatedBytes.map { SystemMetricFormat.bytes($0, style: .file) } ?? String(localized: "暂不可用")))
+          Text(String(format: String(appLocalized: "预览 %lld 项 · Homebrew 估算 %@"), preview.itemCount,
+                      preview.estimatedBytes.map { SystemMetricFormat.bytes($0, style: .file) } ?? String(appLocalized: "暂不可用")))
             .font(.callout).monospacedDigit()
           report(preview.report)
           if preview.canExecute {
@@ -51,7 +51,7 @@ struct HomebrewCleanupSection: View {
           Label(receipt.succeeded ? "Homebrew 清理已完成。" : "Homebrew 报告操作失败，部分项目可能已移除。",
                 systemImage: receipt.succeeded ? "checkmark.circle" : "exclamationmark.triangle")
           if let change = receipt.availableSpaceChange {
-            Text(String(format: String(localized: "卷可用空间变化：%@（包含其他应用的并发写入）"),
+            Text(String(format: String(appLocalized: "卷可用空间变化：%@（包含其他应用的并发写入）"),
                         (change >= 0 ? "+" : "−") + SystemMetricFormat.bytes(change.magnitude)))
               .font(.caption).monospacedDigit()
           } else {
@@ -94,7 +94,7 @@ struct HomebrewCleanupSection: View {
   private func report(_ text: String) -> some View {
     DisclosureGroup("查看 Homebrew 原始报告") {
       ScrollView {
-        Text(text.isEmpty ? String(localized: "本次预览未发现可清理项目。") : text)
+        Text(text.isEmpty ? String(appLocalized: "本次预览未发现可清理项目。") : text)
           .font(.system(.caption, design: .monospaced)).textSelection(.enabled)
           .frame(maxWidth: .infinity, alignment: .leading)
       }

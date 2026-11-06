@@ -16,7 +16,7 @@ struct NativeCameraView: View {
             ContentUnavailableView {
               Label("摄像头", systemImage: "camera")
             } description: {
-              Text(store.busy ? String(localized: "正在准备摄像头…") : String(localized: "点击开启摄像头以查看实时画面。"))
+              Text(store.busy ? String(appLocalized: "正在准备摄像头…") : String(appLocalized: "点击开启摄像头以查看实时画面。"))
             }
           }
         }
@@ -94,7 +94,7 @@ struct NativeCameraView: View {
   }
 
   @ViewBuilder private var cameraActions: some View {
-    Button(store.running || store.busy ? String(localized: "关闭摄像头") : String(localized: "开启摄像头")) {
+    Button(store.running || store.busy ? String(appLocalized: "关闭摄像头") : String(appLocalized: "开启摄像头")) {
       if store.running || store.busy { store.stop() } else { store.start() }
     }
     .buttonStyle(.borderedProminent)

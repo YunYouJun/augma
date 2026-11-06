@@ -98,17 +98,17 @@ enum ProjectWorkspaceError: LocalizedError {
   case folderUnavailable, wrongApplication, applicationUnavailable, editorFailed, editorTimedOut
   var errorDescription: String? {
     switch self {
-    case .full: String(localized: "最多可保存 6 个项目区域。")
-    case .invalidName: String(localized: "项目名称不能为空，最多 60 个字符，不能包含换行。")
-    case .invalidWebsite: String(localized: "请输入完整的 HTTP 或 HTTPS 网址，不含空格、用户名或密码。")
-    case .tooManyWebsites: String(localized: "每个区域最多绑定 10 个工作网址。")
-    case .invalidConfiguration: String(localized: "项目配置无效，原文件已保留。")
-    case .newerVersion: String(localized: "项目配置来自较新版本，原文件已保留。")
-    case .folderUnavailable: String(localized: "项目文件夹无法访问或书签已失效，请重新选择文件夹。")
-    case .wrongApplication: String(localized: "请选择对应的 VS Code 或 Google Chrome 应用。")
-    case .applicationUnavailable: String(localized: "绑定的应用不可用，请重新选择应用位置。")
-    case .editorFailed: String(localized: "VS Code 未能打开项目，请检查应用安装后重试。")
-    case .editorTimedOut: String(localized: "VS Code 打开请求超时，请检查编辑器后重试。")
+    case .full: String(appLocalized: "最多可保存 6 个项目区域。")
+    case .invalidName: String(appLocalized: "项目名称不能为空，最多 60 个字符，不能包含换行。")
+    case .invalidWebsite: String(appLocalized: "请输入完整的 HTTP 或 HTTPS 网址，不含空格、用户名或密码。")
+    case .tooManyWebsites: String(appLocalized: "每个区域最多绑定 10 个工作网址。")
+    case .invalidConfiguration: String(appLocalized: "项目配置无效，原文件已保留。")
+    case .newerVersion: String(appLocalized: "项目配置来自较新版本，原文件已保留。")
+    case .folderUnavailable: String(appLocalized: "项目文件夹无法访问或书签已失效，请重新选择文件夹。")
+    case .wrongApplication: String(appLocalized: "请选择对应的 VS Code 或 Google Chrome 应用。")
+    case .applicationUnavailable: String(appLocalized: "绑定的应用不可用，请重新选择应用位置。")
+    case .editorFailed: String(appLocalized: "VS Code 未能打开项目，请检查应用安装后重试。")
+    case .editorTimedOut: String(appLocalized: "VS Code 打开请求超时，请检查编辑器后重试。")
     }
   }
 }

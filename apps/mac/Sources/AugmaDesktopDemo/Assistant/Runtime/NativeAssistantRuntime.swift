@@ -105,7 +105,7 @@ final class NativeAssistantRuntime: ObservableObject {
     let task = Task { [weak self] in
       guard let self else { throw CancellationError() }
       let startedAt = Date()
-      self.status = String(localized: "正在连接 DSH…")
+      self.status = String(appLocalized: "正在连接 DSH…")
       do {
         let executable = try await DSHInstallation.resolve(path: self.defaults.string(forKey: AssistantRuntimeSettings.executableKey) ?? "")
         try Task.checkCancellation()
@@ -136,7 +136,7 @@ final class NativeAssistantRuntime: ObservableObject {
         self.configuration = AssistantRuntimeSettings.fingerprint(self.defaults)
         self.lastStartupSeconds = Date().timeIntervalSince(startedAt)
         self.connected = true
-        self.status = String(localized: "DSH 已连接")
+        self.status = String(appLocalized: "DSH 已连接")
       } catch {
         if self.startupGeneration == token {
           self.connection.stop(); self.connected = false
@@ -271,8 +271,8 @@ final class NativeAssistantRuntime: ObservableObject {
     case "agent_message_chunk":
       guard update["content"]["type"].string == "text", let text = update["content"]["text"].string else { return }
       guard session.text.utf8.count + text.utf8.count <= 16_384 else { connection.stop(error: AssistantRuntimeError.protocolViolation); return }
-      session.text += text; session.onEvent?(String(localized: "正在生成回答…"))
-    case "tool_call", "tool_call_update": session.onEvent?(String(localized: "正在读取原生工具结果…"))
+      session.text += text; session.onEvent?(String(appLocalized: "正在生成回答…"))
+    case "tool_call", "tool_call_update": session.onEvent?(String(appLocalized: "正在读取原生工具结果…"))
     case "config_option_update": options = AssistantConfigOption.parse(update["configOptions"])
     default: break
     }
@@ -288,7 +288,7 @@ final class NativeAssistantRuntime: ObservableObject {
     // The isolated profile only mounts our three tools. Do not show arbitrary provider text in confirmations.
     return await withCheckedContinuation { continuation in
       var resolved = false
-      permission = AssistantPermission(owner: pair.key, title: String(localized: "允许本次原生工具请求？")) { [weak self, weak scope] accepted in
+      permission = AssistantPermission(owner: pair.key, title: String(appLocalized: "允许本次原生工具请求？")) { [weak self, weak scope] accepted in
         guard !resolved else { return }; resolved = true
         let valid = accepted && scope?.active == true && self?.sessions[pair.key] === pair.value
         self?.permission = nil
@@ -327,7 +327,7 @@ final class NativeAssistantRuntime: ObservableObject {
     }
     sessions.removeAll(); taskTickets.removeAll()
     connection.stop(); connected = false
-    status = preserveIdle ? String(localized: "DSH 已暂停，将在下次请求时连接。") : ""
+    status = preserveIdle ? String(appLocalized: "DSH 已暂停，将在下次请求时连接。") : ""
     removeRuntimeHome()
   }
   func shutdownAndWait() async {

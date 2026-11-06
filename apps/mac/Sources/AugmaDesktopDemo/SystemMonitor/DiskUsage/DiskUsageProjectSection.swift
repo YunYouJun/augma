@@ -23,8 +23,8 @@ struct DiskUsageProjectSection: View {
           Button("在 Craft Hub 维护项目", systemImage: "arrow.up.forward.app") { open(project) }
             .disabled(opening || hub.busy)
         } else {
-          Text(hub.connection == nil ? String(localized: "可在项目区域连接 Craft Hub；空间分析可独立使用。")
-            : String(localized: "刷新共享项目后，进入匹配的项目目录即可打开维护入口。"))
+          Text(hub.connection == nil ? String(appLocalized: "可在项目区域连接 Craft Hub；空间分析可独立使用。")
+            : String(appLocalized: "刷新共享项目后，进入匹配的项目目录即可打开维护入口。"))
             .font(.caption).foregroundStyle(.secondary)
         }
         if opening || hub.busy { ProgressView().controlSize(.small) }
@@ -47,9 +47,9 @@ struct DiskUsageProjectSection: View {
         if let url = context.navigationURL(scheme: "craft-hub"),
           NSWorkspace.shared.urlForApplication(toOpen: url) != nil, NSWorkspace.shared.open(url) {
           if context.reference == nil {
-            feedback = String(localized: "已打开 Craft Hub，请在工作台中选择此本地项目。")
+            feedback = String(appLocalized: "已打开 Craft Hub，请在工作台中选择此本地项目。")
           }
-        } else { feedback = String(localized: "未找到 Craft Hub 桌面入口，请手动打开 Craft Hub 查看此项目。") }
+        } else { feedback = String(appLocalized: "未找到 Craft Hub 桌面入口，请手动打开 Craft Hub 查看此项目。") }
       } catch {
         guard !Task.isCancelled, self.generation == generation else { return }
         feedback = error.localizedDescription

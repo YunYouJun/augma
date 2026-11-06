@@ -20,7 +20,7 @@ struct NativeBrowserView: View {
           .disabled(!store.canGoForward)
           .accessibilityIdentifier("native-browser-forward")
         Button(action: store.reloadOrStop) {
-          Label(store.isLoading ? String(localized: "停止载入") : String(localized: "重新载入"),
+          Label(store.isLoading ? String(appLocalized: "停止载入") : String(appLocalized: "重新载入"),
                 systemImage: store.isLoading ? "xmark" : "arrow.clockwise")
             .frame(width: 28, height: 28)
         }

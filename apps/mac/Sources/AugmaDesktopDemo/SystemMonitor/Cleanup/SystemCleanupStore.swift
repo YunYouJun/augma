@@ -76,7 +76,7 @@ final class SystemCleanupStore: ObservableObject {
       guard let self else { return }
       self.scan?.candidates.removeAll { result.moved.contains($0.id) }
       self.selection = []
-      self.feedback = String(format: String(localized: "已移入废纸篓 %lld 项，跳过 %lld 项。"),
+      self.feedback = String(format: String(appLocalized: "已移入废纸篓 %lld 项，跳过 %lld 项。"),
                              result.moved.count, result.failures.count)
       if !result.failures.isEmpty { self.feedback += "\n" + result.failures.joined(separator: "\n") }
       self.phase = .idle
@@ -110,7 +110,7 @@ final class SystemCleanupStore: ObservableObject {
         self.phase = .idle
       } catch {
         guard let self, self.generation == token else { return }
-        self.feedback = String(localized: "AI 建议暂不可用，请检查网络、密钥或稍后重试。")
+        self.feedback = String(appLocalized: "AI 建议暂不可用，请检查网络、密钥或稍后重试。")
         self.phase = .idle
       }
     }

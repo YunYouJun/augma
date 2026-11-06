@@ -29,7 +29,7 @@ struct ApplicationDistrictRealityView: NSViewRepresentable {
     context.coordinator.builder = builder
     view.setAccessibilityElement(true)
     view.setAccessibilityRole(.image)
-    view.setAccessibilityLabel(String(localized: "应用街区；可使用旁边的应用列表打开应用和调整位置。"))
+    view.setAccessibilityLabel(String(appLocalized: "应用街区；可使用旁边的应用列表打开应用和调整位置。"))
     updateNSView(view, context: context)
     return view
   }

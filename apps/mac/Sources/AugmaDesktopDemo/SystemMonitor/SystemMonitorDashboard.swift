@@ -98,9 +98,9 @@ struct SystemMonitorDashboard: View {
       cpu
       memory
       if snapshot.disks.isEmpty {
-        SystemMonitorMetricCard(title: String(localized: "磁盘"), symbol: "internaldrive") {
+        SystemMonitorMetricCard(title: String(appLocalized: "磁盘"), symbol: "internaldrive") {
           DashboardMetric(title: "磁盘占用", symbol: "internaldrive", fraction: nil, value: "—",
-                          subtitle: String(localized: "暂不可用"), tint: .secondary)
+                          subtitle: String(appLocalized: "暂不可用"), tint: .secondary)
         } details: { SystemMetricUnavailable(sampling: sampling) }
       }
       ForEach(snapshot.disks) { disk in diskCard(disk) }
@@ -109,10 +109,10 @@ struct SystemMonitorDashboard: View {
   }
 
   private var cpu: some View {
-    SystemMonitorMetricCard(title: String(localized: "CPU"), symbol: "cpu") {
+    SystemMonitorMetricCard(title: String(appLocalized: "CPU"), symbol: "cpu") {
       DashboardMetric(title: "CPU 总占用", symbol: "cpu", fraction: snapshot.cpu?.total,
                       value: snapshot.cpu.map { SystemMetricFormat.percent($0.total) } ?? "—",
-                      subtitle: String(localized: "当前占用"), tint: snapshot.cpu == nil ? .secondary : .augmaCyan)
+                      subtitle: String(appLocalized: "当前占用"), tint: snapshot.cpu == nil ? .secondary : .augmaCyan)
     } details: {
       if let usage = snapshot.cpu {
         VStack(spacing: 12) {
@@ -124,12 +124,12 @@ struct SystemMonitorDashboard: View {
   }
 
   private var memory: some View {
-    SystemMonitorMetricCard(title: String(localized: "内存"), symbol: "memorychip") {
+    SystemMonitorMetricCard(title: String(appLocalized: "内存"), symbol: "memorychip") {
       DashboardMetric(title: "内存占用", symbol: "memorychip",
                       fraction: snapshot.memory.flatMap { SystemCapacityStyle.fraction(used: $0.used, total: $0.total) },
                       value: snapshot.memory.map { SystemMetricFormat.bytes($0.used) } ?? "—",
                       subtitle: snapshot.memory.map { SystemMetricFormat.percent(Double($0.used) / Double(max(1, $0.total))) }
-                        ?? String(localized: "暂不可用"),
+                        ?? String(appLocalized: "暂不可用"),
                       tint: SystemMetricFormat.pressureColor(snapshot.memory?.pressure ?? .unknown))
     } details: {
       if let usage = snapshot.memory {
@@ -148,7 +148,7 @@ struct SystemMonitorDashboard: View {
     return SystemMonitorMetricCard(title: disk.name, symbol: "internaldrive") {
       DashboardMetric(title: "磁盘占用", symbol: "internaldrive", fraction: fraction,
                       value: fraction.map { SystemMetricFormat.percent($0) } ?? "—",
-                      subtitle: String(localized: "已使用"), tint: SystemCapacityStyle.diskSeverity(disk).color)
+                      subtitle: String(appLocalized: "已使用"), tint: SystemCapacityStyle.diskSeverity(disk).color)
     } details: {
       VStack(spacing: 10) {
         DashboardFact(title: "已使用", value: SystemMetricFormat.bytes(disk.used, style: .file))
@@ -161,11 +161,11 @@ struct SystemMonitorDashboard: View {
   }
 
   private var battery: some View {
-    SystemMonitorMetricCard(title: String(localized: "电池"), symbol: snapshot.battery.map { SystemMetricFormat.batterySymbol($0) } ?? "powerplug") {
+    SystemMonitorMetricCard(title: String(appLocalized: "电池"), symbol: snapshot.battery.map { SystemMetricFormat.batterySymbol($0) } ?? "powerplug") {
       DashboardMetric(title: "电池电量", symbol: snapshot.battery.map { SystemMetricFormat.batterySymbol($0) } ?? "powerplug",
                       fraction: snapshot.battery.flatMap { SystemCapacityStyle.fraction($0.level) },
                       value: snapshot.battery.map { SystemMetricFormat.percent($0.level) } ?? "—",
-                      subtitle: snapshot.battery.map { SystemCapacityStyle.batterySubtitle($0) } ?? String(localized: "未检测到电池"),
+                      subtitle: snapshot.battery.map { SystemCapacityStyle.batterySubtitle($0) } ?? String(appLocalized: "未检测到电池"),
                       tint: SystemCapacityStyle.batteryColor(snapshot.battery))
     } details: {
       if let battery = snapshot.battery {
@@ -173,7 +173,7 @@ struct SystemMonitorDashboard: View {
           DashboardFact(title: "电源状态", value: SystemMetricFormat.batteryState(battery))
           if let minutes = battery.minutesRemaining, minutes > 0 {
             DashboardFact(title: battery.isCharging ? "预计充满时间" : "预计剩余时间",
-                          value: String(format: String(localized: "%lld 分钟"), minutes))
+                          value: String(format: String(appLocalized: "%lld 分钟"), minutes))
           }
         }
       } else {

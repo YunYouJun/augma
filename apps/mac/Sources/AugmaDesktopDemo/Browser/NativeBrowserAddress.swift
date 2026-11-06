@@ -5,10 +5,10 @@ enum NativeBrowserAddressError: Error, Equatable {
 
   var message: String {
     switch self {
-    case .empty: String(localized: "请输入网址或搜索内容。")
-    case .invalid: String(localized: "网址无效，请检查后重试。")
-    case .unsupportedScheme: String(localized: "仅支持 HTTP 和 HTTPS 网页。")
-    case .tooLong: String(localized: "网址或搜索内容过长。")
+    case .empty: String(appLocalized: "请输入网址或搜索内容。")
+    case .invalid: String(appLocalized: "网址无效，请检查后重试。")
+    case .unsupportedScheme: String(appLocalized: "仅支持 HTTP 和 HTTPS 网页。")
+    case .tooLong: String(appLocalized: "网址或搜索内容过长。")
     }
   }
 }

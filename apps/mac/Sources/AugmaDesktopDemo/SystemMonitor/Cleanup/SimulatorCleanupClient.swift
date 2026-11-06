@@ -8,10 +8,10 @@ actor SimulatorCleanupClient: SimulatorCleanupProviding {
     case command(String), invalidInventory, stale, protectedItem
     var errorDescription: String? {
       switch self {
-      case .command(let report): String(localized: "无法读取模拟器或完成操作，请检查 Xcode 命令行工具。") + "\n" + report
-      case .invalidInventory: String(localized: "无法验证模拟器清单，未启用删除。请更新 Xcode 后重新扫描。")
-      case .stale: String(localized: "模拟器扫描已过期或确认范围已变化，请重新扫描并确认。")
-      case .protectedItem: String(localized: "所选项目当前受到保护，请重新扫描并查看原因。")
+      case .command(let report): String(appLocalized: "无法读取模拟器或完成操作，请检查 Xcode 命令行工具。") + "\n" + report
+      case .invalidInventory: String(appLocalized: "无法验证模拟器清单，未启用删除。请更新 Xcode 后重新扫描。")
+      case .stale: String(appLocalized: "模拟器扫描已过期或确认范围已变化，请重新扫描并确认。")
+      case .protectedItem: String(appLocalized: "所选项目当前受到保护，请重新扫描并查看原因。")
       }
     }
   }
@@ -90,19 +90,19 @@ actor SimulatorCleanupClient: SimulatorCleanupProviding {
       do {
         guard validAge(expected.createdAt) else {
           results.append(.init(item: item, status: .skipped,
-                               message: String(localized: "确认已超过五分钟，请重新扫描。")))
+                               message: String(appLocalized: "确认已超过五分钟，请重新扫描。")))
           continue
         }
         try Task.checkCancellation()
         let fresh = try await inventory()
         guard let actual = fresh.items.first(where: { $0.id == item.id }), actual == item, actual.canDelete else {
           results.append(.init(item: item, status: .skipped,
-                               message: String(localized: "项目状态、占用或依赖已变化，请重新扫描。")))
+                               message: String(appLocalized: "项目状态、占用或依赖已变化，请重新扫描。")))
           continue
         }
         guard validAge(expected.createdAt) else {
           results.append(.init(item: item, status: .skipped,
-                               message: String(localized: "确认已超过五分钟，请重新扫描。")))
+                               message: String(appLocalized: "确认已超过五分钟，请重新扫描。")))
           continue
         }
         try Task.checkCancellation()
@@ -113,7 +113,7 @@ actor SimulatorCleanupClient: SimulatorCleanupProviding {
         let result = try await run(executable, arguments)
         guard result.status == 0 else {
           results.append(.init(item: item, status: .failed,
-                               message: String(localized: "工具未成功完成；请重新扫描确认当前状态。") + "\n" + Self.report(result)))
+                               message: String(appLocalized: "工具未成功完成；请重新扫描确认当前状态。") + "\n" + Self.report(result)))
           continue
         }
         // Runtime deletion can return before its asynchronous inventory entry disappears.
@@ -124,11 +124,11 @@ actor SimulatorCleanupClient: SimulatorCleanupProviding {
           if !check.items.contains(where: { $0.id == item.id }) { removed = true; break }
         }
         results.append(.init(item: item, status: removed ? .deleted : .pending,
-          message: removed ? String(localized: "已核对从模拟器清单移除。")
-            : String(localized: "工具已接受删除，尚未核对移除；请稍后重新扫描。")))
+          message: removed ? String(appLocalized: "已核对从模拟器清单移除。")
+            : String(appLocalized: "工具已接受删除，尚未核对移除；请稍后重新扫描。")))
       } catch {
         results.append(.init(item: item, status: .failed,
-          message: String(localized: "操作未完成或状态无法核对；可能已部分生效，请重新扫描。") + "\n" + error.localizedDescription))
+          message: String(appLocalized: "操作未完成或状态无法核对；可能已部分生效，请重新扫描。") + "\n" + error.localizedDescription))
       }
     }
     let after = await capacity()
@@ -185,13 +185,13 @@ actor SimulatorCleanupClient: SimulatorCleanupProviding {
         dependencies[runtimeID, default: 0] += 1
         let state = record.state ?? "Unknown"
         let restriction: String? = state != "Shutdown"
-          ? String(localized: "设备正在运行或状态未知，请先在模拟器中关闭设备。")
-          : record.isAvailable == nil ? String(localized: "无法验证设备可用状态，仅供查看。") : nil
+          ? String(appLocalized: "设备正在运行或状态未知，请先在模拟器中关闭设备。")
+          : record.isAvailable == nil ? String(appLocalized: "无法验证设备可用状态，仅供查看。") : nil
         let date = parseDate(record.lastUsedAt)
-        if record.lastUsedAt != nil && date == nil { warnings.insert(String(localized: "部分最后使用时间无法读取。")) }
-        if record.dataPathSize == nil { warnings.insert(String(localized: "部分设备占用未知，合计仅包含已知估算。")) }
+        if record.lastUsedAt != nil && date == nil { warnings.insert(String(appLocalized: "部分最后使用时间无法读取。")) }
+        if record.dataPathSize == nil { warnings.insert(String(appLocalized: "部分设备占用未知，合计仅包含已知估算。")) }
         let model = record.deviceTypeIdentifier.flatMap { deviceModels[$0] }
-        if model == nil { warnings.insert(String(localized: "部分设备型号无法读取，已使用通用图标。")) }
+        if model == nil { warnings.insert(String(appLocalized: "部分设备型号无法读取，已使用通用图标。")) }
         items.append(.init(kind: .device, identifier: uuid.uuidString, name: record.name, runtimeIdentifier: runtimeID,
           version: runtimeVersion(runtimeID), build: nil, state: state,
           bytes: record.dataPathSize, lastUsedAt: date, isAvailable: record.isAvailable,
@@ -205,14 +205,14 @@ actor SimulatorCleanupClient: SimulatorCleanupProviding {
             validRuntimeID(record.runtimeIdentifier) else { throw Failure.invalidInventory }
       let count = dependencies[record.runtimeIdentifier, default: 0]
       let restriction: String?
-      if count > 0 { restriction = String(localized: "默认设备集仍有关联设备；请先检查并删除不再需要的设备后重新扫描。") }
-      else if hasActiveDevices { restriction = String(localized: "删除运行时可能影响其他设备集；请先关闭默认设备集中的所有设备，并检查其他设备集。") }
+      if count > 0 { restriction = String(appLocalized: "默认设备集仍有关联设备；请先检查并删除不再需要的设备后重新扫描。") }
+      else if hasActiveDevices { restriction = String(appLocalized: "删除运行时可能影响其他设备集；请先关闭默认设备集中的所有设备，并检查其他设备集。") }
       else if record.deletable != true || record.state != "Ready" || record.version?.isEmpty != false || record.build?.isEmpty != false {
-        restriction = String(localized: "运行时状态或删除能力无法验证，仅供查看。")
+        restriction = String(appLocalized: "运行时状态或删除能力无法验证，仅供查看。")
       } else { restriction = nil }
       let date = parseDate(record.lastUsedAt)
-      if record.lastUsedAt != nil && date == nil { warnings.insert(String(localized: "部分最后使用时间无法读取。")) }
-      if record.sizeBytes == nil { warnings.insert(String(localized: "部分运行时占用未知，合计仅包含已知估算。")) }
+      if record.lastUsedAt != nil && date == nil { warnings.insert(String(appLocalized: "部分最后使用时间无法读取。")) }
+      if record.sizeBytes == nil { warnings.insert(String(appLocalized: "部分运行时占用未知，合计仅包含已知估算。")) }
       let platform = record.runtimeIdentifier.split(separator: ".").last?.split(separator: "-").first.map(String.init) ?? "Simulator"
       let name = platform + " " + (record.version ?? runtimeVersion(record.runtimeIdentifier) ?? "?")
       items.append(.init(kind: .runtime, identifier: uuid.uuidString, name: name, runtimeIdentifier: record.runtimeIdentifier,

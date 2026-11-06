@@ -16,7 +16,7 @@ struct SimulatorCleanupItemLabel: View {
           Text(item.name).font(.callout.weight(.medium)).foregroundStyle(.primary)
             .lineLimit(2).truncationMode(.middle).help(item.name)
           Spacer(minLength: 4)
-          Text(item.bytes.map { SystemMetricFormat.bytes($0, style: .file) } ?? String(localized: "大小未知"))
+          Text(item.bytes.map { SystemMetricFormat.bytes($0, style: .file) } ?? String(appLocalized: "大小未知"))
             .font(.callout.weight(.semibold)).monospacedDigit().foregroundStyle(.primary)
             .fixedSize(horizontal: true, vertical: false)
         }
@@ -53,22 +53,22 @@ struct SimulatorCleanupItemLabel: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .accessibilityElement(children: .combine)
-    .accessibilityLabel(Text((item.kind == .device ? String(localized: "模拟器设备") : String(localized: "共享运行时"))
+    .accessibilityLabel(Text((item.kind == .device ? String(appLocalized: "模拟器设备") : String(appLocalized: "共享运行时"))
                              + ": " + item.name))
     .accessibilityValue(Text(accessibilityDetails))
   }
 
   private var accessibilityDetails: String {
-    var details = [item.bytes.map { SystemMetricFormat.bytes($0, style: .file) } ?? String(localized: "大小未知"),
+    var details = [item.bytes.map { SystemMetricFormat.bytes($0, style: .file) } ?? String(appLocalized: "大小未知"),
                    systemTitle, stateTitle]
     if let date = item.lastUsedAt {
-      details.append(String(format: String(localized: "最后使用：%@"),
+      details.append(String(format: String(appLocalized: "最后使用：%@"),
                             date.formatted(.dateTime.year().month().day().hour().minute())))
     } else {
-      details.append(String(localized: "最后使用时间未知"))
+      details.append(String(appLocalized: "最后使用时间未知"))
     }
     if item.kind == .runtime {
-      details.append(String(format: String(localized: "默认设备集关联 %lld 台"), item.dependentDeviceCount))
+      details.append(String(format: String(appLocalized: "默认设备集关联 %lld 台"), item.dependentDeviceCount))
     }
     if let restriction = item.restriction { details.append(restriction) }
     return details.joined(separator: ", ")
@@ -80,7 +80,7 @@ struct SimulatorCleanupItemLabel: View {
         ? date.formatted(.dateTime.month().day().hour().minute())
         : date.formatted(.dateTime.year().month().day().hour().minute())
       Label {
-        Text(String(format: String(localized: "最后使用：%@"), displayDate))
+        Text(String(format: String(appLocalized: "最后使用：%@"), displayDate))
       } icon: {
         Image(systemName: "clock").accessibilityHidden(true)
       }
@@ -93,7 +93,7 @@ struct SimulatorCleanupItemLabel: View {
   @ViewBuilder private var dependencies: some View {
     if item.kind == .runtime {
       Label {
-        Text(String(format: String(localized: "默认设备集关联 %lld 台"), item.dependentDeviceCount))
+        Text(String(format: String(appLocalized: "默认设备集关联 %lld 台"), item.dependentDeviceCount))
       } icon: {
         Image(systemName: "link").accessibilityHidden(true)
       }
@@ -108,12 +108,12 @@ struct SimulatorCleanupItemLabel: View {
   }
 
   private var stateTitle: String {
-    if item.isAvailable == false { return String(localized: "不可用") }
+    if item.isAvailable == false { return String(appLocalized: "不可用") }
     if item.kind == .device {
-      if item.state == "Booted" { return String(localized: "运行中") }
-      if item.state == "Shutdown" { return String(localized: "已关闭") }
-    } else if item.state == "Ready" { return String(localized: "已安装") }
-    return String(localized: "状态未知")
+      if item.state == "Booted" { return String(appLocalized: "运行中") }
+      if item.state == "Shutdown" { return String(appLocalized: "已关闭") }
+    } else if item.state == "Ready" { return String(appLocalized: "已安装") }
+    return String(appLocalized: "状态未知")
   }
 
   private var stateSymbol: String {

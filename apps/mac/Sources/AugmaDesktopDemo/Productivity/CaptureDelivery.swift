@@ -5,7 +5,7 @@ enum CaptureDestination: String, Codable, CaseIterable, Sendable {
 
   var title: String {
     switch self {
-    case .appleNotes: String(localized: "macOS 备忘录")
+    case .appleNotes: String(appLocalized: "macOS 备忘录")
     case .microsoftToDo: "Microsoft To Do"
     }
   }
@@ -32,7 +32,7 @@ enum CaptureError: LocalizedError {
   var errorDescription: String? {
     switch self {
     case .message(let message): message
-    case .uncertain: String(localized: "发送结果未确认。请先在目标应用中检查，确认未创建后再重试。")
+    case .uncertain: String(appLocalized: "发送结果未确认。请先在目标应用中检查，确认未创建后再重试。")
     }
   }
 }

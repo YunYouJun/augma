@@ -46,7 +46,7 @@ final class HomebrewCleanupStore: ObservableObject {
         self.phase = .idle
       } catch {
         guard let self else { return }
-        self.error = String(localized: "操作未完成；若清理已经开始，部分项目可能已移除。请重新预览。") + "\n" + error.localizedDescription
+        self.error = String(appLocalized: "操作未完成；若清理已经开始，部分项目可能已移除。请重新预览。") + "\n" + error.localizedDescription
         self.preview = nil
         self.phase = .idle
       }

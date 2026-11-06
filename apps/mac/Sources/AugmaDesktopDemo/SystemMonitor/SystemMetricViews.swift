@@ -18,10 +18,10 @@ enum SystemMetricFormat {
 
   static func pressure(_ pressure: MemoryPressure) -> String {
     switch pressure {
-    case .normal: String(localized: "正常")
-    case .warning: String(localized: "偏高")
-    case .critical: String(localized: "紧张")
-    case .unknown: String(localized: "暂不可用")
+    case .normal: String(appLocalized: "正常")
+    case .warning: String(appLocalized: "偏高")
+    case .critical: String(appLocalized: "紧张")
+    case .unknown: String(appLocalized: "暂不可用")
     }
   }
 
@@ -35,8 +35,8 @@ enum SystemMetricFormat {
   }
 
   static func batteryState(_ battery: BatteryStatus) -> String {
-    if battery.isCharging { return String(localized: "正在充电") }
-    return battery.isPluggedIn ? String(localized: "已连接电源") : String(localized: "使用电池")
+    if battery.isCharging { return String(appLocalized: "正在充电") }
+    return battery.isPluggedIn ? String(appLocalized: "已连接电源") : String(appLocalized: "使用电池")
   }
 
   static func batterySymbol(_ battery: BatteryStatus) -> String {
@@ -55,7 +55,7 @@ struct SystemMetricUnavailable: View {
   var sampling = false
 
   var body: some View {
-    Text(sampling ? String(localized: "正在采样…") : String(localized: "暂不可用"))
+    Text(sampling ? String(appLocalized: "正在采样…") : String(appLocalized: "暂不可用"))
       .foregroundStyle(.secondary)
   }
 }
@@ -79,7 +79,7 @@ struct SystemNetworkRateSummary: View {
       .frame(maxWidth: .infinity)
     }
     .font(.caption).monospacedDigit()
-    .help(usage.map { String(localized: "当前网卡流量") + " · " + $0.interfaceDescription }
-      ?? String(localized: "当前网卡流量"))
+    .help(usage.map { String(appLocalized: "当前网卡流量") + " · " + $0.interfaceDescription }
+      ?? String(appLocalized: "当前网卡流量"))
   }
 }

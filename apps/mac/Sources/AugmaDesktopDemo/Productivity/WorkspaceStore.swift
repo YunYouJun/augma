@@ -29,7 +29,7 @@ final class WorkspaceStore: ObservableObject {
     catch {
       data = WorkspaceData()
       unreadable = true
-      saveError = String(localized: "无法读取本地数据。原文件未覆盖，可尝试恢复备份。")
+      saveError = String(appLocalized: "无法读取本地数据。原文件未覆盖，可尝试恢复备份。")
     }
     reconcile()
     scheduleCompletion()
@@ -236,7 +236,7 @@ final class WorkspaceStore: ObservableObject {
       canUndo = false
       reconcile()
       focusChanged()
-    } catch { saveError = String(localized: "备份恢复失败，原文件仍然保留。") }
+    } catch { saveError = String(appLocalized: "备份恢复失败，原文件仍然保留。") }
   }
 
   func flush() async -> Bool {
@@ -282,7 +282,7 @@ final class WorkspaceStore: ObservableObject {
       } catch {
         guard let self, revision == self.revision else { return }
         self.saving = false
-        self.saveError = String(localized: "保存失败。更改仍在内存中，请重试或导出记录。")
+        self.saveError = String(appLocalized: "保存失败。更改仍在内存中，请重试或导出记录。")
       }
     }
   }

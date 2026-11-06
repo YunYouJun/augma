@@ -14,10 +14,10 @@ enum SystemMetricSeverity {
 
   var title: String {
     switch self {
-    case .normal: String(localized: "正常")
-    case .warning: String(localized: "需关注")
-    case .critical: String(localized: "紧张")
-    case .unavailable: String(localized: "暂不可用")
+    case .normal: String(appLocalized: "正常")
+    case .warning: String(appLocalized: "需关注")
+    case .critical: String(appLocalized: "紧张")
+    case .unavailable: String(appLocalized: "暂不可用")
     }
   }
 }
@@ -60,9 +60,9 @@ enum SystemCapacityStyle {
 
   static func batterySubtitle(_ battery: BatteryStatus) -> String {
     switch batterySeverity(battery) {
-    case .warning: String(localized: "电量偏低")
-    case .critical: String(localized: "电量不足")
-    case .unavailable: String(localized: "暂不可用")
+    case .warning: String(appLocalized: "电量偏低")
+    case .critical: String(appLocalized: "电量不足")
+    case .unavailable: String(appLocalized: "暂不可用")
     case .normal: SystemMetricFormat.batteryState(battery)
     }
   }
@@ -83,7 +83,7 @@ struct SystemCapacityRing: View {
       Image(systemName: symbol).font(.system(size: size * 0.32, weight: .medium))
     }
     .gaugeStyle(CapacityRingStyle(tint: tint, size: size, available: SystemCapacityStyle.fraction(fraction) != nil))
-    .accessibilityValue(SystemCapacityStyle.fraction(fraction).map { SystemMetricFormat.percent($0) } ?? String(localized: "暂不可用"))
+    .accessibilityValue(SystemCapacityStyle.fraction(fraction).map { SystemMetricFormat.percent($0) } ?? String(appLocalized: "暂不可用"))
     // Keep inherited animations out of the labels and availability changes;
     // the progress arc opts into its own value-driven animation below.
     .transaction { $0.animation = nil }
@@ -154,7 +154,7 @@ struct SystemCapacitySummary: View {
       // CPU utilization alone is not evidence of a fault: healthy work can use every core.
       SystemCapacityTile(title: "CPU", fraction: snapshot.cpu?.total, symbol: "cpu",
                          value: snapshot.cpu.map { SystemMetricFormat.percent($0.total) } ?? "—",
-                         subtitle: String(localized: "当前占用"), tint: snapshot.cpu == nil ? .secondary : .augmaCyan, compact: compact)
+                         subtitle: String(appLocalized: "当前占用"), tint: snapshot.cpu == nil ? .secondary : .augmaCyan, compact: compact)
       SystemCapacityTile(title: "内存", fraction: snapshot.memory.flatMap { SystemCapacityStyle.fraction(used: $0.used, total: $0.total) },
                          symbol: "memorychip", value: snapshot.memory.map { SystemMetricFormat.bytes($0.used) } ?? "—",
                          subtitle: SystemMetricFormat.pressure(snapshot.memory?.pressure ?? .unknown),
@@ -163,8 +163,8 @@ struct SystemCapacitySummary: View {
       let diskFraction = disk.flatMap { SystemCapacityStyle.fraction(used: $0.used, total: $0.total) }
       SystemCapacityTile(title: "磁盘", fraction: diskFraction, symbol: "internaldrive",
                          value: diskFraction.map { SystemMetricFormat.percent($0) } ?? "—",
-                         subtitle: disk.map { String(format: String(localized: "可用 %@"), SystemMetricFormat.bytes($0.available, style: .file)) }
-                           ?? String(localized: "暂不可用"),
+                         subtitle: disk.map { String(format: String(appLocalized: "可用 %@"), SystemMetricFormat.bytes($0.available, style: .file)) }
+                           ?? String(appLocalized: "暂不可用"),
                          tint: SystemCapacityStyle.diskSeverity(disk).color, compact: compact)
       if includesBattery, let battery = snapshot.battery {
         SystemCapacityTile(title: "电池", fraction: SystemCapacityStyle.fraction(battery.level),

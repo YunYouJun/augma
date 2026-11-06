@@ -78,7 +78,7 @@ struct SystemCleanupView: View {
     .confirmationDialog("将所选项目移入废纸篓？", isPresented: $confirmingTrash, titleVisibility: .visible) {
       Button("移入废纸篓", role: .destructive) { store.moveToTrash(ids: Set(pendingTrash.map(\.id))) }
     } message: {
-      Text(String(format: String(localized: "共 %lld 项，约 %@。可从废纸篓恢复；清空废纸篓后才会释放磁盘空间。Xcode 缓存需要重新构建。"),
+      Text(String(format: String(appLocalized: "共 %lld 项，约 %@。可从废纸篓恢复；清空废纸篓后才会释放磁盘空间。Xcode 缓存需要重新构建。"),
                   pendingTrash.count, SystemMetricFormat.bytes(pendingTrash.reduce(0) { $0 + $1.bytes })))
     }
     .confirmationDialog("将匿名摘要发送给所选 AI 运行时？", isPresented: $confirmingAI, titleVisibility: .visible) {
@@ -149,7 +149,7 @@ struct SystemCleanupView: View {
   }
 
   private var selectionSummary: some View {
-    Text(String(format: String(localized: "已选 %lld 项 · %@"), store.selectedCandidates.count,
+    Text(String(format: String(appLocalized: "已选 %lld 项 · %@"), store.selectedCandidates.count,
                 SystemMetricFormat.bytes(store.selectedBytes))).font(.callout).monospacedDigit()
   }
 

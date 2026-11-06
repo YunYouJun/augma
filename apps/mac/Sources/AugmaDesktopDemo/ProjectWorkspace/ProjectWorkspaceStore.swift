@@ -127,7 +127,7 @@ final class ProjectWorkspaceStore: ObservableObject {
   func rebindFolder(_ id: UUID, url: URL) {
     guard regions.first(where: { $0.id == id })?.craftHub == nil else { return }
     edit(id) { $0.folder = try client.captureFolder(url) }
-    if error == nil { setResult(id, "editor", .failed(String(localized: "项目文件夹已变更，请重新打开。"))) }
+    if error == nil { setResult(id, "editor", .failed(String(appLocalized: "项目文件夹已变更，请重新打开。"))) }
   }
   func bindApplication(_ id: UUID, url: URL, editor: Bool) {
     edit(id) {
@@ -166,7 +166,7 @@ final class ProjectWorkspaceStore: ObservableObject {
   func open(_ id: UUID, failedOnly: Bool = false) {
     guard editable else { return }
     if failedOnly, let region = regions.first(where: { $0.id == id }), draft(for: region) != ProjectRegionDraft(region) {
-      error = String(localized: "配置已修改，请保存后重新打开工作区。")
+      error = String(appLocalized: "配置已修改，请保存后重新打开工作区。")
       return
     }
     guard saveDraft(id), saveError == nil, let region = regions.first(where: { $0.id == id }) else { return }

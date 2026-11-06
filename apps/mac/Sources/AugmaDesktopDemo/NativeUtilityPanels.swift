@@ -79,7 +79,7 @@ struct NativeDeviceView: View {
         DeviceStatusRow("当前地标", value: space.selected.title(locale: preferences.locale))
         DeviceStatusRow("摄像头", value: cameraStatus)
           .accessibilityIdentifier("native-device-camera")
-        DeviceStatusRow("模拟扫描", value: space.scanning ? String(localized: "扫描中") : "\(Int(space.scanProgress))%")
+        DeviceStatusRow("模拟扫描", value: space.scanning ? String(appLocalized: "扫描中") : "\(Int(space.scanProgress))%")
         Divider()
         Text("场景与摄像头状态和其他原生面板保持同步。")
           .font(.caption).foregroundStyle(.secondary)
@@ -98,7 +98,7 @@ struct NativeDeviceView: View {
         .buttonStyle(.bordered)
         .accessibilityIdentifier("native-device-disconnect")
     } else {
-      Button(store.connection == .sleeping ? String(localized: "唤醒模拟设备") : String(localized: "连接模拟设备"), action: store.connect)
+      Button(store.connection == .sleeping ? String(appLocalized: "唤醒模拟设备") : String(appLocalized: "连接模拟设备"), action: store.connect)
         .buttonStyle(.borderedProminent)
         .disabled(store.connection == .connecting)
         .accessibilityIdentifier("native-device-connect")
@@ -112,10 +112,10 @@ struct NativeDeviceView: View {
 
   private var cameraStatus: String {
     switch camera.phase {
-    case .idle: String(localized: "已关闭")
-    case .requestingPermission: String(localized: "等待摄像头授权")
-    case .starting: String(localized: "正在开启摄像头…")
-    case .running: String(localized: "正在使用摄像头")
+    case .idle: String(appLocalized: "已关闭")
+    case .requestingPermission: String(appLocalized: "等待摄像头授权")
+    case .starting: String(appLocalized: "正在开启摄像头…")
+    case .running: String(appLocalized: "正在使用摄像头")
     }
   }
 }

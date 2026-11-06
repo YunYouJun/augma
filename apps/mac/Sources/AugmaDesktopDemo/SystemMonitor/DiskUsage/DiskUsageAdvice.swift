@@ -8,10 +8,10 @@ struct DiskUsageAdvice: Identifiable {
 
   var message: String {
     switch kind {
-    case .project: String(localized: "此目录属于已共享项目。到 Craft Hub 审阅项目维护命令。")
-    case .build: String(localized: "目录名称提示可能包含依赖或构建产物。先核对用途与重建方式，再决定如何维护。")
-    case .installer: String(localized: "安装包或压缩文件值得检查。确认是否需要保留原件与离线副本。")
-    case .review: String(localized: "优先检查内容与用途；占用大小和文件年龄不能证明可以删除。")
+    case .project: String(appLocalized: "此目录属于已共享项目。到 Craft Hub 审阅项目维护命令。")
+    case .build: String(appLocalized: "目录名称提示可能包含依赖或构建产物。先核对用途与重建方式，再决定如何维护。")
+    case .installer: String(appLocalized: "安装包或压缩文件值得检查。确认是否需要保留原件与离线副本。")
+    case .review: String(appLocalized: "优先检查内容与用途；占用大小和文件年龄不能证明可以删除。")
     }
   }
 

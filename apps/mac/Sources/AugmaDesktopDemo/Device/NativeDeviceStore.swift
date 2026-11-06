@@ -6,10 +6,10 @@ enum NativeDeviceConnection: String, Equatable, Sendable {
 
   var title: String {
     switch self {
-    case .connected: String(localized: "模拟设备已连接")
-    case .connecting: String(localized: "正在建立模拟连接…")
-    case .disconnected: String(localized: "模拟设备已断开")
-    case .sleeping: String(localized: "模拟设备正在待机")
+    case .connected: String(appLocalized: "模拟设备已连接")
+    case .connecting: String(appLocalized: "正在建立模拟连接…")
+    case .disconnected: String(appLocalized: "模拟设备已断开")
+    case .sleeping: String(appLocalized: "模拟设备正在待机")
     }
   }
 }
@@ -64,8 +64,8 @@ final class NativeDeviceStore: ObservableObject {
     guard now.isFinite, now - startedAt >= 0.9 else { return }
     cancelConnection()
     connection = .connected
-    notifications.post(title: String(localized: "模拟设备已连接"),
-                       detail: String(localized: "模拟连接已就绪，可以继续浏览空间和使用应用。"),
+    notifications.post(title: String(appLocalized: "模拟设备已连接"),
+                       detail: String(appLocalized: "模拟连接已就绪，可以继续浏览空间和使用应用。"),
                        symbol: "checkmark.circle")
   }
 
@@ -78,7 +78,7 @@ final class NativeDeviceStore: ObservableObject {
     connection = next
     onSuspend?()
     notifications.post(title: next.title,
-                       detail: String(localized: "已停止本窗口的模拟扫描、路线和语音助手。其他原生功能仍可使用。"),
+                       detail: String(appLocalized: "已停止本窗口的模拟扫描、路线和语音助手。其他原生功能仍可使用。"),
                        symbol: next == .sleeping ? "moon" : "link")
   }
 

@@ -13,7 +13,7 @@ struct FocusTimerView: View {
         FocusTimerControls(store: store, commands: commands)
         if store.data.focus == nil || store.data.focus?.status == .completed {
           VStack(spacing: NativePageLayout.itemSpacing) {
-            Stepper(value: $minutes, in: 1...180) { Text(String(format: String(localized: "%lld 分钟"), minutes)).monospacedDigit() }
+            Stepper(value: $minutes, in: 1...180) { Text(String(format: String(appLocalized: "%lld 分钟"), minutes)).monospacedDigit() }
               .frame(maxWidth: 260)
             Button("开始专注", systemImage: "play.fill") { commands.execute(.startFocus(Double(minutes) * 60)) }
               .buttonStyle(.borderedProminent)
@@ -59,7 +59,7 @@ struct FocusTimerReadout: View {
         Text(FocusTime.label(remaining))
           .font(.system(size: large ? 56 : 28, weight: .light, design: .rounded)).monospacedDigit()
           .contentTransition(.identity)
-          .accessibilityLabel(String(localized: "剩余时间") + " " + FocusTime.label(remaining))
+          .accessibilityLabel(String(appLocalized: "剩余时间") + " " + FocusTime.label(remaining))
         if let session {
           ProgressView(value: min(1, max(0, 1 - remaining / session.duration)))
             .tint(.augmaAccent).accessibilityLabel("专注进度")
@@ -71,10 +71,10 @@ struct FocusTimerReadout: View {
 
   private var status: String {
     switch session?.status {
-    case .running: String(localized: "专注中")
-    case .paused: String(localized: "已暂停")
-    case .completed: String(localized: "专注完成")
-    case nil: String(localized: "准备开始")
+    case .running: String(appLocalized: "专注中")
+    case .paused: String(appLocalized: "已暂停")
+    case .completed: String(appLocalized: "专注完成")
+    case nil: String(appLocalized: "准备开始")
     }
   }
 }

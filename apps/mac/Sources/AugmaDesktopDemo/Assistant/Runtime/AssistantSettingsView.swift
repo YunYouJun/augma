@@ -159,7 +159,7 @@ struct AssistantSettingsView: View {
         try Task.checkCancellation()
         configOptions = options
         if model.isEmpty, let current = options.first(where: { $0.id == "model" })?.current { model = Self.modelID(current) }
-        feedback = String(localized: "已读取 DSH 会话的模型选项。可测试后启用。")
+        feedback = String(appLocalized: "已读取 DSH 会话的模型选项。可测试后启用。")
       } catch {
         if !Task.isCancelled { feedback = (error as? AssistantRuntimeError)?.localizedDescription ?? AssistantRuntimeError.launchFailed.localizedDescription }
       }
@@ -182,7 +182,7 @@ struct AssistantSettingsView: View {
           throw AssistantRuntimeError.taskFailed
         }
         tested = fingerprint
-        feedback = String(localized: "模型与两项只读工具测试通过。现在可以启用助手。")
+        feedback = String(appLocalized: "模型与两项只读工具测试通过。现在可以启用助手。")
       } catch {
         if !Task.isCancelled { feedback = (error as? AssistantRuntimeError)?.localizedDescription ?? AssistantRuntimeError.taskFailed.localizedDescription }
       }

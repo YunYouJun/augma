@@ -26,9 +26,9 @@ struct SimulatorCleanupSection: View {
               Label(warning, systemImage: "info.circle").font(.caption).foregroundStyle(.secondary)
             }
           }
-          itemGroup(String(localized: "模拟器设备"), systemImage: "iphone.gen3", tint: .augmaCyan,
+          itemGroup(String(appLocalized: "模拟器设备"), systemImage: "iphone.gen3", tint: .augmaCyan,
                     items: scan.items.filter { $0.kind == .device })
-          itemGroup(String(localized: "共享运行时"), systemImage: "square.stack.3d.up", tint: .augmaAccent,
+          itemGroup(String(appLocalized: "共享运行时"), systemImage: "square.stack.3d.up", tint: .augmaAccent,
                     items: scan.items.filter { $0.kind == .runtime })
           aiControls
           if let advice = store.advice {
@@ -85,7 +85,7 @@ struct SimulatorCleanupSection: View {
   }
 
   private var scanButton: some View {
-    Button(store.scan == nil ? String(localized: "扫描模拟器占用") : String(localized: "重新扫描模拟器"), systemImage: "magnifyingglass") { store.startScan() }
+    Button(store.scan == nil ? String(appLocalized: "扫描模拟器占用") : String(appLocalized: "重新扫描模拟器"), systemImage: "magnifyingglass") { store.startScan() }
       .disabled(isBusy).accessibilityIdentifier("cleanup-simulator-scan")
   }
 
@@ -101,8 +101,8 @@ struct SimulatorCleanupSection: View {
   private func scanSummary(_ scan: SimulatorCleanupScan) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       HStack(spacing: 8) {
-        occupancySummary(String(localized: "设备数据"), systemImage: "iphone.gen3", bytes: scan.deviceBytes, tint: .augmaCyan)
-        occupancySummary(String(localized: "运行时映像"), systemImage: "square.stack.3d.up", bytes: scan.runtimeBytes, tint: .augmaAccent)
+        occupancySummary(String(appLocalized: "设备数据"), systemImage: "iphone.gen3", bytes: scan.deviceBytes, tint: .augmaCyan)
+        occupancySummary(String(appLocalized: "运行时映像"), systemImage: "square.stack.3d.up", bytes: scan.runtimeBytes, tint: .augmaAccent)
       }
       Label {
         Text(scan.createdAt, format: .dateTime.month().day().hour().minute())
@@ -110,7 +110,7 @@ struct SimulatorCleanupSection: View {
         Image(systemName: "clock.arrow.circlepath").accessibilityHidden(true)
       }
       .font(.caption).foregroundStyle(.secondary)
-      .accessibilityLabel(Text(String(format: String(localized: "扫描时间：%@"),
+      .accessibilityLabel(Text(String(format: String(appLocalized: "扫描时间：%@"),
                                      scan.createdAt.formatted(.dateTime.month().day().hour().minute()))))
       Text("设备容量仅包含默认设备集，由系统报告数据目录大小，不包含共享运行时；未知容量不计入合计。映像大小与挂载卷展开后的大小可能不同。")
         .font(.caption).foregroundStyle(.secondary)
@@ -194,11 +194,11 @@ struct SimulatorCleanupSection: View {
 
   private var selectionSummary: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text(String(format: String(localized: "已选 %lld 项 · 已知估算 %@"), store.selectedItems.count,
+      Text(String(format: String(appLocalized: "已选 %lld 项 · 已知估算 %@"), store.selectedItems.count,
                   SystemMetricFormat.bytes(store.selectedBytes, style: .file))).font(.callout).monospacedDigit()
       let unknownCount = store.selectedItems.filter { $0.bytes == nil }.count
       if unknownCount > 0 {
-        Text(String(format: String(localized: "另有 %lld 项大小未知，未计入估算。"), unknownCount))
+        Text(String(format: String(appLocalized: "另有 %lld 项大小未知，未计入估算。"), unknownCount))
           .font(.caption).foregroundStyle(.secondary)
       }
     }
@@ -221,7 +221,7 @@ struct SimulatorCleanupSection: View {
         }
       }
       if let change = receipt.availableSpaceChange {
-        Text(String(format: String(localized: "卷可用空间变化：%@（包含其他应用的并发写入）"),
+        Text(String(format: String(appLocalized: "卷可用空间变化：%@（包含其他应用的并发写入）"),
                     (change >= 0 ? "+" : "−") + SystemMetricFormat.bytes(change.magnitude)))
           .font(.caption).monospacedDigit()
       } else {
@@ -233,10 +233,10 @@ struct SimulatorCleanupSection: View {
 
   private func statusTitle(_ status: SimulatorCleanupStatus) -> String {
     switch status {
-    case .deleted: String(localized: "已删除")
-    case .skipped: String(localized: "已跳过")
-    case .failed: String(localized: "失败")
-    case .pending: String(localized: "等待系统完成")
+    case .deleted: String(appLocalized: "已删除")
+    case .skipped: String(appLocalized: "已跳过")
+    case .failed: String(appLocalized: "失败")
+    case .pending: String(appLocalized: "等待系统完成")
     }
   }
 }

@@ -57,7 +57,7 @@ struct WorkspaceData: Codable, Equatable, Sendable {
 
 enum WorkspaceFileError: LocalizedError {
   case invalidData
-  var errorDescription: String? { String(localized: "本地数据格式无法识别，原文件已保留。") }
+  var errorDescription: String? { String(appLocalized: "本地数据格式无法识别，原文件已保留。") }
 }
 
 enum FocusTime {

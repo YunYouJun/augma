@@ -113,14 +113,14 @@ enum CraftHubError: LocalizedError {
   case invalidConnection, invalidResponse, credentialUnavailable, unauthorized, unavailable, disconnected, notShared, changed
   var errorDescription: String? {
     switch self {
-    case .invalidConnection: String(localized: "请粘贴 Craft Hub「设置 → Agent 连接」生成的 JSON 配置。")
-    case .invalidResponse: String(localized: "Craft Hub 返回了不兼容的项目资料，请更新应用后重试。")
-    case .credentialUnavailable: String(localized: "无法读取连接凭据。请在 Craft Hub 启用只读访问并重新复制连接配置。")
-    case .unauthorized: String(localized: "只读授权已撤销或项目未共享，请在 Craft Hub 检查授权。")
-    case .unavailable: String(localized: "无法连接 Craft Hub。请保持应用运行；端口改变后需重新复制连接配置。")
-    case .disconnected: String(localized: "尚未连接此项目所属的 Craft Hub。可重新连接，或解除绑定后独立使用。")
-    case .notShared: String(localized: "项目已移除或不再共享。可重新选择项目，或解除绑定后独立使用。")
-    case .changed: String(localized: "连接已变更，请重新选择项目。")
+    case .invalidConnection: String(appLocalized: "请粘贴 Craft Hub「设置 → Agent 连接」生成的 JSON 配置。")
+    case .invalidResponse: String(appLocalized: "Craft Hub 返回了不兼容的项目资料，请更新应用后重试。")
+    case .credentialUnavailable: String(appLocalized: "无法读取连接凭据。请在 Craft Hub 启用只读访问并重新复制连接配置。")
+    case .unauthorized: String(appLocalized: "只读授权已撤销或项目未共享，请在 Craft Hub 检查授权。")
+    case .unavailable: String(appLocalized: "无法连接 Craft Hub。请保持应用运行；端口改变后需重新复制连接配置。")
+    case .disconnected: String(appLocalized: "尚未连接此项目所属的 Craft Hub。可重新连接，或解除绑定后独立使用。")
+    case .notShared: String(appLocalized: "项目已移除或不再共享。可重新选择项目，或解除绑定后独立使用。")
+    case .changed: String(appLocalized: "连接已变更，请重新选择项目。")
     }
   }
 }

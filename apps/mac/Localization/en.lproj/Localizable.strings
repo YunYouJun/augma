@@ -1,5 +1,18 @@
 /* Keys are the Simplified Chinese source strings used in the Swift code. */
 
+/* Dock customization. */
+"底部间距" = "Bottom spacing";
+"与顶部间距一致" = "Match top spacing";
+"调整 Augma 布局和沉浸模式的底部 Dock 间距。沉浸模式以屏幕可用区域为准，避开系统 Dock；默认与顶部控件到菜单栏的间距一致。" = "Adjust the bottom Dock spacing in the Augma layout and immersive mode. Immersive mode uses the usable screen area above the system Dock. The default matches the gap between the top controls and the menu bar.";
+"选项" = "Options";
+"从 Dock 中移除" = "Remove from Dock";
+"在访达中显示" = "Show in Finder";
+"向左移动" = "Move Left";
+"向右移动" = "Move Right";
+"自定 Dock" = "Customize Dock";
+"添加到 Dock" = "Add to Dock";
+"恢复默认 Dock" = "Restore Default Dock";
+
 "App 缺少资源目录，请运行 ./script/build_and_run.sh 重新构建。" = "The app is missing its resources folder. Run ./script/build_and_run.sh to rebuild.";
 "找不到内置 demo 页面，请运行 ./script/build_and_run.sh 重新构建。" = "The built-in demo page is missing. Run ./script/build_and_run.sh to rebuild.";
 "语音" = "Voice";
@@ -68,6 +81,8 @@
 "暂时无法保存偏好，本次更改仍然有效。" = "Preferences could not be saved. Your changes still apply to this session.";
 
 /* Menu bar controls and native voice activity. */
+"菜单显示内容" = "Menu Contents";
+"选择在 Augma 菜单栏面板中显示的内容，修改立即生效并在重启后保留。隐藏快速记录会保留草稿；仍可从主窗口或快捷键打开各项功能。" = "Choose what appears in the Augma menu bar panel. Changes apply immediately and persist after relaunching. Hiding Quick Notes keeps your draft. Features remain available from the main window or keyboard shortcuts.";
 "打开主窗口" = "Open Main Window";
 "打开语音面板" = "Open Voice Panel";
 "播放声音" = "Play Sound";
@@ -163,6 +178,9 @@
 "最近使用" = "Recent";
 "没有匹配的操作" = "No Matching Actions";
 "↑↓ 选择 · Return 执行" = "↑↓ Select · Return to Run";
+"↑↓ 选择 · Return 执行 · Esc 关闭" = "↑↓ Select · Return to Run · Esc to Close";
+"收起操作列表" = "Collapse Actions";
+"展开操作列表" = "Expand Actions";
 "执行指令" = "Run Command";
 "例如：记下 明天买咖啡豆 · 专注二十五分钟 · 暂停计时 · 继续计时 · 撤销" = "Try: note buy coffee · focus 25 minutes · pause timer · resume timer · undo";
 "结束并执行" = "Finish and Run";
@@ -1276,3 +1294,298 @@
 "回到当前歌词" = "Return to Current Lyric";
 
 "读取本机播放信息，联网获取歌词并缓存在本机。播放操作请在网易云音乐中完成。" = "Reads local playback information, fetches lyrics online and caches them on this Mac. Use NetEase Cloud Music to control playback.";
+
+"读取本机播放信息，支持网易云音乐播放与暂停，联网获取歌词并缓存在本机。" = "Reads local playback information, supports play and pause in NetEase Cloud Music, and fetches and caches lyrics on this Mac.";
+"读取本机播放信息，支持网易云音乐播放、暂停和切歌，联网获取歌词并缓存在本机。" = "Reads local playback information, supports playback and track controls in NetEase Cloud Music, and fetches and caches lyrics on this Mac.";
+"上一曲" = "Previous Track";
+"下一曲" = "Next Track";
+"上一曲（⌥⌘←）" = "Previous track (⌥⌘←)";
+"下一曲（⌥⌘→）" = "Next track (⌥⌘→)";
+"播放控制" = "Playback Controls";
+"当前播放队列" = "Current Queue";
+"显示或隐藏当前播放队列" = "Show or hide the current queue";
+"正在读取播放队列…" = "Reading the queue…";
+"暂时无法读取播放队列" = "Queue Is Unavailable";
+"请在网易云音乐中打开播放列表后重试。" = "Open the queue in NetEase Cloud Music, then try again.";
+"%lld 首" = "%lld tracks";
+"定位当前曲" = "Show Current Track";
+"网易云音乐的播放队列为空。" = "The NetEase Cloud Music queue is empty.";
+"未能唯一匹配当前歌曲。" = "The current track could not be uniquely matched.";
+"队列仅供查看，播放顺序由网易云音乐管理。" = "This queue is read-only. NetEase Cloud Music manages playback order.";
+"播放或暂停网易云音乐（⌥⌘P）" = "Play or pause NetEase Cloud Music (⌥⌘P)";
+"正在更新播放状态…" = "Updating playback…";
+"播放操作未完成，请重试或在网易云音乐中操作。" = "Playback could not be confirmed. Try again or use NetEase Cloud Music.";
+
+/* Application library and App Store */
+"已安装应用" = "Installed Apps";
+"本地工具" = "Local Tools";
+"应用来源" = "Application Source";
+"搜索名称或 Bundle ID" = "Search by name or bundle ID";
+"刷新已安装应用" = "Refresh Installed Apps";
+"查看本机应用，打开应用或将其固定到 Augma Dock。" = "Browse apps on this Mac, open them or pin them to the Augma Dock.";
+"正在读取应用列表…" = "Loading installed apps…";
+"没有找到应用" = "No Apps Found";
+"试试其他名称，或安装应用后刷新列表。" = "Try another name, or refresh the list after installing an app.";
+"已加入 Dock" = "Added to Dock";
+"加入 Dock" = "Add to Dock";
+"搜索 Mac App Store" = "Search the Mac App Store";
+"在 App Store 完成购买和安装；返回后刷新，即可加入 Dock。" = "Complete purchases and installation in the App Store, then return and refresh to add apps to the Dock.";
+"正在查询 App Store…" = "Searching the App Store…";
+"发现 Mac 应用" = "Discover Mac Apps";
+"输入应用名称，搜索 Mac App Store。" = "Enter an app name to search the Mac App Store.";
+"在 App Store 查看" = "View in App Store";
+"浏览与添加应用…" = "Browse and Add Apps…";
+"无法读取应用列表，请刷新后重试。" = "Unable to load installed apps. Refresh to try again.";
+"App Store 查询失败，请检查网络后重试。" = "App Store search failed. Check your connection and try again.";
+"无法打开 App Store，请稍后重试。" = "Unable to open the App Store. Try again later.";
+"无法打开应用" = "Unable to Open App";
+
+/* Augma Link and App Library */
+"Augma Link · 扩展中心" = "Augma Link · Extension Center";
+"应用列表" = "App Library";
+"扩展中心" = "Extension Center";
+"扩展类型" = "Extension Type";
+"扩展目录" = "Extension Catalog";
+"探索 Augma 的功能，将常用入口固定到 Dock。" = "Explore Augma features and pin your favorites to the Dock.";
+"搜索 Augma 扩展" = "Search Augma extensions";
+"仅显示已加入 Dock" = "Only show items in Dock";
+"没有找到扩展" = "No Extensions Found";
+"试试其他关键词，或关闭 Dock 筛选。" = "Try another keyword or turn off the Dock filter.";
+"内置扩展随 Augma 提供。第三方扩展包安装尚未开放。" = "Built-in extensions are included with Augma. Third-party extension packages cannot be installed yet.";
+"内置" = "Built In";
+"快速捕获笔记和待办。" = "Quickly capture notes and tasks.";
+"专注计时、暂停和延长。" = "Start, pause and extend focus timers.";
+"用文字或快捷入口执行日常操作。" = "Run everyday actions with text or shortcuts.";
+"查看内存、CPU、磁盘和网络状态。" = "Check memory, CPU, disk and network activity.";
+"在空间中组织应用和项目入口。" = "Organize apps and projects in your workspace.";
+"查看天气和预报。" = "Check the weather and forecast.";
+"查看正在播放和同步歌词。" = "View now playing and synced lyrics.";
+"搜索地点并查看地图路线。" = "Find places and view routes on a map.";
+"预览摄像头并拍照。" = "Preview the camera and take photos.";
+"在 Augma 中浏览网站。" = "Browse websites in Augma.";
+"通过语音与 Augma 助手交互。" = "Talk to the Augma assistant.";
+"查看设备和连接状态。" = "Check devices and connection status.";
+"查看 Augma 通知。" = "View Augma notifications.";
+"调整 Augma 的显示和交互。" = "Customize Augma appearance and interactions.";
+"已打开 Augma Link 本地工具，按保留规则生成计划；执行前请核对并确认。" = "Opened Augma Link local tools to plan cleanup with your protection rules. Review and confirm before execution.";
+"请先在 Augma Link 的本地工具中安装 Mole CLI。" = "Install Mole CLI from Local Tools in Augma Link first.";
+"原生分析无需安装 Mole。可在 Augma Link 本地工具中安装受支持版本，再只读复核一个已完整扫描的范围；结果不加入清理候选或容量合计。" = "Native analysis works without Mole. Optionally install a supported version from Augma Link local tools, then analyze one fully scanned scope. Its results never add cleanup candidates or increase the measured total.";
+
+/* Local web plugins */
+"插件" = "Plugins";
+"内置功能" = "Built-in Features";
+"内置功能随 Augma 提供；第三方插件可在“插件”中管理。" = "Built-in features are included with Augma. Manage third-party packages in Plugins.";
+"插件清单无效，请检查标识、版本和入口。" = "Invalid plugin manifest. Check the identifier, version and entry point.";
+"此插件需要其他版本的 Augma Link。" = "This plugin requires a different version of Augma Link.";
+"此版本仅支持无原生权限的本地网页插件。" = "This version supports local web plugins without native permissions.";
+"插件包包含无效路径、链接或不支持的文件。" = "The plugin package contains invalid paths, links or unsupported files.";
+"插件包超过限制：最多 256 个文件、总计 8 MB，单个文件最多 2 MB。" = "Package limit exceeded: 256 files, 8 MB total, 2 MB per file.";
+"插件已安装。请先卸载，再安装其他版本。" = "The plugin is already installed. Uninstall it before installing another version.";
+"插件尚未安装。" = "The plugin is not installed.";
+"插件尚未启用或已不可用。" = "The plugin is disabled or unavailable.";
+"无法读取插件配置。原文件已保留，请重试。" = "Unable to read plugin settings. The original file is preserved. Try again.";
+"插件配置或安装文件无效。原文件已保留。" = "Plugin settings or installed files are invalid. The original files are preserved.";
+"安装本地网页插件，为 Augma 添加独立的小工具。" = "Install local web plugins to add independent tools to Augma.";
+"搜索已安装插件" = "Search installed plugins";
+"从文件夹安装…" = "Install from Folder…";
+"正在更新插件…" = "Updating plugins…";
+"卸载插件？" = "Uninstall Plugin?";
+"卸载" = "Uninstall";
+"将移除 %@ 的安装文件、运行页面和 Dock 入口。原始插件文件夹会保留。" = "Remove the installed copy of %@, its running pages and Dock entry. The original plugin folder is preserved.";
+"暂无已安装插件" = "No Installed Plugins";
+"安装呼吸环示例，或选择包含 augma-plugin.json 的插件文件夹。" = "Install Breathing Orbit, or choose a plugin folder containing augma-plugin.json.";
+"呼吸环 · Breathing Orbit" = "Breathing Orbit";
+"跟随圆环吸气、呼气。独立的本地 HTML / CSS / JavaScript 示例，无需账号。" = "Breathe with the orbit. A standalone local HTML, CSS and JavaScript example, with no account needed.";
+"安装后保持停用，由你选择启用。" = "Installed plugins remain disabled until you enable them.";
+"安装示例插件" = "Install Example Plugin";
+"已启用" = "Enabled";
+"已停用" = "Disabled";
+"启用" = "Enable";
+"停用" = "Disable";
+"卸载…" = "Uninstall…";
+"管理插件" = "Manage Plugins";
+"插件不可用" = "Plugin Unavailable";
+"选择包含 augma-plugin.json 的插件文件夹。" = "Choose a plugin folder containing augma-plugin.json.";
+
+/* Online plugin distribution */
+"从在线目录或本地文件夹安装插件，为 Augma 添加独立的小工具。" = "Install plugins from the online catalog or a local folder to add tools to Augma.";
+"正在下载插件：%@ / %@" = "Downloading plugin: %@ / %@";
+"取消下载" = "Cancel Download";
+"已安装插件" = "Installed Plugins";
+"离线示例" = "Offline Example";
+"在线插件目录" = "Online Plugin Catalog";
+"刷新目录" = "Refresh Catalog";
+"搜索在线插件" = "Search online plugins";
+"目录来源：%@" = "Catalog source: %@";
+"正在查询插件目录…" = "Loading plugin catalog…";
+"没有找到匹配的在线插件。可以更换关键词或刷新目录。" = "No matching online plugins. Try another keyword or refresh the catalog.";
+"下载并安装" = "Download and Install";
+"下载后校验完整性，安装完成后由你选择启用。" = "Downloads are verified before installation. Enable the plugin when you are ready.";
+"插件目录必须使用不含凭据的 HTTPS 地址。" = "The plugin catalog must use an HTTPS URL without credentials.";
+"远程插件目录无效，请刷新后重试。" = "The remote plugin catalog is invalid. Refresh to try again.";
+"下载的插件包无效，尚未安装。" = "The downloaded plugin package is invalid and has not been installed.";
+"插件包大小或 SHA-256 校验失败，尚未安装。" = "The package size or SHA-256 check failed. The plugin has not been installed.";
+"插件服务器未返回有效文件，请稍后重试。" = "The plugin server did not return a valid file. Try again later.";
+"远程插件目录或下载文件超过大小限制。" = "The remote catalog or download exceeds the size limit.";
+
+/* Optional menu bar shelf. */
+"菜单栏收纳" = "Menu Bar Shelf";
+"菜单栏" = "Menu Bar";
+"启用菜单栏收纳" = "Enable Menu Bar Shelf";
+"在刘海下方查看被遮挡的图标，点击打开原应用菜单，操作结束后恢复原来的顺序。默认关闭。" = "View obscured icons below the notch, open their original menus, and restore their order when finished. Off by default.";
+"展开收纳栏" = "Open Shelf";
+"全局快捷键：⌃⌥B" = "Global shortcut: ⌃⌥B";
+"快捷键 ⌃⌥B 不可用，请从这里或 Augma 菜单栏打开。" = "⌃⌥B is unavailable. Open the shelf here or from the Augma menu bar panel.";
+"第一版支持内建刘海屏，请连接并启用该显示器。" = "This version supports the built-in notched display. Connect and enable that display.";
+"权限" = "Permissions";
+"辅助功能" = "Accessibility";
+"已允许" = "Allowed";
+"未允许" = "Not Allowed";
+"允许辅助功能…" = "Allow Accessibility…";
+"用于识别菜单栏图标，并临时移动、打开和恢复图标。" = "Used to identify menu bar icons and temporarily move, open, and restore them.";
+"显示原始状态图标" = "Show Original Status Icons";
+"可选。通过屏幕录制权限截取图标窗口，仅在收纳栏展开时刷新，不保存截图；未开启时显示应用图标。" = "Optional. Screen Recording access captures only icon windows while the shelf is open. Images are not saved. Otherwise, app icons are shown.";
+"允许截取图标…" = "Allow Icon Capture…";
+"重新检查权限" = "Check Permissions Again";
+"图标位置" = "Icon Position";
+"请完成原应用菜单操作，结束后会自动恢复位置。" = "Finish using the original menu. Its icon will return automatically.";
+"恢复图标位置" = "Restore Icon Position";
+"原菜单操作结束后自动恢复位置。" = "The icon returns after the original menu closes.";
+"刷新图标" = "Refresh Icons";
+"关闭" = "Close";
+"允许辅助功能后，即可查看和打开被遮挡的图标。" = "Allow Accessibility to view and open obscured menu bar icons.";
+"正在查找被遮挡的图标…" = "Finding Obscured Icons…";
+"当前没有被刘海遮挡的图标。" = "No icons are currently obscured by the notch.";
+"点击打开原菜单，结束后自动归位。" = "Open the original menu; its icon returns when finished.";
+"以右键打开原菜单" = "Open Original Menu with Right Click";
+"菜单栏图标" = "Menu Bar Icon";
+"请先允许 Augma 使用辅助功能，再打开原应用菜单。" = "Allow Augma Accessibility access before opening the original menu.";
+"请连接并启用内建刘海屏后重试。" = "Connect and enable the built-in notched display, then try again.";
+"这个图标已发生变化，请刷新收纳栏后重试。" = "This icon has changed. Refresh the shelf and try again.";
+"菜单栏右侧空间不足，暂时无法展开这个图标。" = "There is not enough room on the right side of the menu bar to reveal this icon.";
+"系统未能移动这个图标，已尝试恢复原来的顺序。" = "macOS could not move this icon. Restoring the original order was attempted.";
+"请先关闭原应用菜单，再重试恢复图标位置。" = "Close the original menu before retrying icon restoration.";
+"图标位置尚未恢复，请点击“恢复图标位置”重试。" = "The icon has not returned yet. Click Restore Icon Position to retry.";
+"请先完成当前菜单操作。" = "Finish the current menu operation first.";
+"系统暂时无法操作菜单栏，请稍后重试。" = "macOS cannot operate the menu bar right now. Try again later.";
+
+"未能确认播放位置，请重试或在网易云音乐中拖动进度条。" = "The playback position could not be confirmed. Try again or seek in NetEase Cloud Music.";
+"拖动以调整播放位置，松开后跳转" = "Drag to preview a playback position; release to seek";
+"已播放 %@，总时长 %@" = "Elapsed %@, duration %@";
+
+"读取本机播放信息，支持网易云音乐播放、暂停、切歌和进度调整，联网获取歌词并缓存在本机。" = "Reads local playback information, supports playback, track and position controls in NetEase Cloud Music, and fetches and caches lyrics on this Mac.";
+"暂时无法识别所属应用，请刷新后重试。" = "The owning app could not be identified. Refresh and try again.";
+"多显示器下，读取图标窗口还需要屏幕录制权限。仅用于菜单栏识别和可选的图标截图。" = "With multiple displays, reading icon windows also requires Screen Recording access. It is used only to identify menu bar items and optionally capture their icons.";
+"允许读取图标…" = "Allow Reading Icons…";
+"正在处理图标位置…" = "Updating Icon Position…";
+
+/* Application language and localization coverage. */
+"快速记录浮窗" = "Quick Capture Window";
+"好" = "OK";
+"重试" = "Retry";
+"项目" = "Project";
+"返回" = "Back";
+"Craft Hub · 今日重点" = "Craft Hub · Today’s Focus";
+"打开主界面" = "Open Main App";
+"此次读取未发现待办事项。" = "No tasks were found in this summary.";
+"在 Craft Hub 的应用菜单选择“共享今日重点摘要…”，再选择该文件。" = "Choose Share Today’s Focus Summary… from the Craft Hub app menu, then select that file.";
+"选择摘要…" = "Choose Summary…";
+"断开" = "Disconnect";
+"选择主应用…" = "Choose Main App…";
+"摘要格式不兼容，请在 Craft Hub 重新共享今日重点。" = "This summary format is incompatible. Share Today’s Focus again in Craft Hub.";
+"请选择 Craft Hub 的 Electron 应用。原生候选版不会作为主界面启动。" = "Choose the Craft Hub Electron app. The native candidate is not launched as the main app.";
+"无法读取所选摘要。原有连接和缓存已保留，请重新选择。" = "Could not read the selected summary. Your connection and cache are preserved. Choose it again.";
+"摘要暂不可读。保留上次缓存；请在 Craft Hub 检查共享文件。" = "The summary is temporarily unavailable. The previous cache is preserved. Check the shared file in Craft Hub.";
+"无法打开 Craft Hub，请检查应用位置后重试。" = "Could not open Craft Hub. Check the app location and try again.";
+"缓存更新于 %@" = "Cache updated %@";
+"已读取 %lld/%lld 个来源 · %lld 项；打开 Craft Hub 查看最新内容。" = "Read %lld/%lld sources · %lld items. Open Craft Hub for the latest content.";
+"应用语言" = "App Language";
+"外观与语言" = "Appearance & Language";
+"语言即时应用到所有窗口、菜单及内置插件，并在重启后保留。" = "Language changes apply immediately to all windows, menus, and built-in plugins and are remembered after restart.";
+
+/* Standard macOS menus. */
+"文件" = "File";
+"编辑" = "Edit";
+"显示" = "View";
+"窗口" = "Window";
+"帮助" = "Help";
+"新建窗口" = "New Window";
+"关闭窗口" = "Close Window";
+"重做" = "Redo";
+"剪切" = "Cut";
+"粘贴" = "Paste";
+"全选" = "Select All";
+"最小化" = "Minimize";
+"缩放" = "Zoom";
+"前置全部窗口" = "Bring All to Front";
+"进入全屏幕" = "Enter Full Screen";
+"退出全屏幕" = "Exit Full Screen";
+"隐藏其他" = "Hide Others";
+"显示全部" = "Show All";
+"关于 Augma" = "About Augma";
+"隐藏 Augma" = "Hide Augma";
+
+/* Immersive accessibility window titles. */
+"Augma 沉浸模式" = "Augma Immersive";
+"Augma 沉浸语音" = "Augma Immersive Voice";
+"Augma 沉浸时钟" = "Augma Immersive Clock";
+"Augma 沉浸控制" = "Augma Immersive Controls";
+"Augma 沉浸 Dock" = "Augma Immersive Dock";
+
+/* Default language follows the system. */
+"跟随系统" = "Follow System";
+
+"微信语音输入" = "WeChat Voice Input";
+"默认 App 内快捷键" = "Default App Shortcut";
+"请在系统设置的“隐私与安全性 → 辅助功能”中允许 Augma 控制键盘，然后重试。" = "Allow Augma in System Settings → Privacy & Security → Accessibility, then try again.";
+"请先点击可编辑的输入框，再使用微信语音输入。" = "Click an editable text field before using WeChat voice input.";
+"请先确认或取消当前输入法候选文字，再使用微信语音输入。" = "Confirm or cancel the current input-method composition before using WeChat voice input.";
+"请松开快捷键后重试。" = "Release the shortcut keys and try again.";
+"无法发送微信语音输入快捷键，请重试。" = "Could not send the WeChat voice input shortcut. Try again.";
+"打开辅助功能设置" = "Open Accessibility Settings";
+"右 Control" = "Right Control";
+"微信中已设置的快捷键" = "Shortcut Set in WeChat";
+"请先打开并登录微信，启用语音输入并将控制范围设为所有窗口；Augma 中选择的微信快捷键需与微信设置一致。" = "Open WeChat and sign in. Enable voice input in all windows, and select the same WeChat shortcut in Augma settings.";
+"聚焦输入框后使用；没有输入焦点时打开快捷指令。微信需保持登录，控制范围设为所有窗口；上方选择需与微信的语音输入快捷键一致。" = "Use this with a text field focused; otherwise the command palette opens. Keep WeChat signed in with voice input enabled in all windows. Match the selection above to its voice input shortcut.";
+"唤起快捷键" = "Activation Shortcut";
+"恢复默认快捷键" = "Reset Shortcut";
+"录制微信语音输入快捷键" = "Record WeChat Voice Input Shortcut";
+"按下快捷键，Esc 取消" = "Press shortcut; Esc to cancel";
+"请包含 ⌘、⌥ 或 ⌃" = "Include ⌘, ⌥, or ⌃";
+"点击快捷键按钮录制新的组合键，Esc 取消。此入口触发微信语音输入，录音、转写和结束由微信处理。" = "Click the shortcut button to record a new combination; Esc cancels. This opens WeChat voice input. WeChat handles recording, transcription, and stopping.";
+"在刘海下方查看被遮挡的图标，点击直接打开原应用菜单。默认关闭。" = "View obscured icons below the notch and click to open their original menus directly. Off by default.";
+"用于识别菜单栏图标，并直接打开原应用菜单。" = "Used to identify menu bar icons and open their original menus directly.";
+"菜单操作" = "Menu Actions";
+"请完成原应用菜单操作。" = "Finish using the original application menu.";
+"原应用菜单已打开。" = "The original application menu is open.";
+"正在打开原应用菜单…" = "Opening the original application menu…";
+"点击直接打开原应用菜单。" = "Click to open the original application menu directly.";
+"请先关闭原应用菜单，再打开其他图标。" = "Close the original application menu before opening another icon.";
+"原应用未显示菜单，请稍后重试。" = "The application did not show a menu. Please try again.";
+"这个应用暂不支持直接打开该菜单。" = "This application does not support opening this menu directly.";
+"微信中“按下开始、再按结束”的快捷键" = "WeChat Start/Stop Shortcut";
+"此应用未提供可读取的菜单。" = "This application does not expose a readable menu.";
+"在刘海下方查看被遮挡的图标，点击在图标下方打开菜单。默认关闭。" = "View obscured icons below the notch and open menus below their icons. Off by default.";
+"用于识别菜单栏图标、读取菜单并执行选中的操作。" = "Used to identify menu bar icons, read their menus, and perform the selected actions.";
+"点击在对应图标下方打开菜单。" = "Click to open a menu below its icon.";
+"打开原应用菜单" = "Open Original Application Menu";
+"微信语音输入快捷键" = "WeChat Voice Input Shortcut";
+"按住自定义快捷键录音，松开后由微信完成转写并填入当前输入框。点击快捷键按钮可改绑，Esc 取消录制。" = "Hold the custom shortcut to record. Release it to finish transcription in WeChat and fill the current text field. Click the shortcut button to change it; Esc cancels shortcut recording.";
+
+"显示顶部时钟" = "Show top clock";
+
+"在 Augma 布局和沉浸模式中显示时间，默认关闭。" = "Show the time in the Augma layout and immersive mode. Off by default.";
+
+"Apple 原生识别" = "Apple Speech Recognition";
+"语音输入设置…" = "Dictation Settings…";
+"识别方式" = "Recognition provider";
+"使用 macOS 原生语音识别。首次启动需允许麦克风与语音识别权限。" = "Use native macOS speech recognition. Allow microphone and speech recognition access on first use.";
+"识别文字填入快捷指令输入框，确认后再执行；点击面板中的结束按钮可完成输入。" = "Recognized text fills the command field and waits for your confirmation. Click the stop button in the panel to finish dictation.";
+"微信需保持登录，控制范围设为所有窗口；上方选择需与微信的语音输入快捷键一致。" = "Keep WeChat signed in, set its shortcut scope to all windows, and match its voice input shortcut above.";
+"开始语音输入" = "Start dictation";
+"快捷键" = "Keyboard shortcut";
+"按住自定义快捷键开始输入，松开结束；点击快捷键按钮可改绑，Esc 取消录制。" = "Hold the custom shortcut to start dictation and release it to finish. Click the shortcut button to change it; Esc cancels shortcut recording.";
+"录制语音输入快捷键" = "Record Dictation Shortcut";
+"结束输入" = "Finish dictation";
+"开始或结束语音输入" = "Start or finish dictation";
+"正在聆听，再点一次结束输入" = "Listening. Click again to finish dictation.";

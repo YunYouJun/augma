@@ -122,7 +122,7 @@ struct NativeLiveWeatherView: View {
     } label: {
       HStack(spacing: 6) {
         if store.isLocating { ProgressView().controlSize(.small) }
-        Label(store.isLocating ? String(localized: "正在定位…") : String(localized: "使用当前位置"), systemImage: "location")
+        Label(store.isLocating ? String(appLocalized: "正在定位…") : String(appLocalized: "使用当前位置"), systemImage: "location")
       }
     }
     .disabled(store.isLocating)

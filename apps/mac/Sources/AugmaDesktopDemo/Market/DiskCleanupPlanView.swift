@@ -9,10 +9,10 @@ struct DiskCleanupPlanView: View {
     GroupBox {
       VStack(alignment: .leading, spacing: 12) {
         Text(plan.summary).textSelection(.enabled)
-        Text(String(format: String(localized: "计划候选约 %@ · 已按规则保留 %lld 项"),
+        Text(String(format: String(appLocalized: "计划候选约 %@ · 已按规则保留 %lld 项"),
                     SystemMetricFormat.bytes(plan.bytes, style: .file), plan.protectedCount)).font(.headline)
         if let target = plan.goal.targetBytes {
-          Text(String(format: String(localized: "目标 %@ · 候选差额 %@（估算，尚未释放）"),
+          Text(String(format: String(appLocalized: "目标 %@ · 候选差额 %@（估算，尚未释放）"),
                       SystemMetricFormat.bytes(target, style: .file), SystemMetricFormat.bytes(target > plan.bytes ? target - plan.bytes : 0, style: .file)))
             .font(.callout).monospacedDigit()
         }
@@ -46,7 +46,7 @@ struct DiskCleanupPlanView: View {
               .controlSize(.small)
           }
         }
-        Text(String(format: String(localized: "已选 %lld 项 · %@"), store.selectedCandidates.count,
+        Text(String(format: String(appLocalized: "已选 %lld 项 · %@"), store.selectedCandidates.count,
                     SystemMetricFormat.bytes(store.selectedCandidates.reduce(0) { $0 + $1.bytes }, style: .file))).font(.callout)
         if !plan.occupancy.entries.isEmpty {
           DisclosureGroup("磁盘占用（仅查看）") {

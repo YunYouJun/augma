@@ -6,8 +6,8 @@ enum CleanupCategory: String, CaseIterable, Sendable {
 
   var title: String {
     switch self {
-    case .installers: String(localized: "旧安装包")
-    case .xcode: String(localized: "Xcode 构建缓存")
+    case .installers: String(appLocalized: "旧安装包")
+    case .xcode: String(appLocalized: "Xcode 构建缓存")
     }
   }
 }
@@ -94,7 +94,7 @@ actor SystemCleanupScanner {
     var budget = Budget(remaining: maximumEntries, deadline: .now.advanced(by: .seconds(maximumDuration)))
     for id in ids.sorted(by: { $0.uuidString < $1.uuidString }) {
       guard let candidate = catalog[id] else {
-        outcome.failures.append(String(localized: "清理项已失效，请重新扫描。"))
+        outcome.failures.append(String(appLocalized: "清理项已失效，请重新扫描。"))
         continue
       }
       do {
@@ -197,9 +197,9 @@ actor SystemCleanupScanner {
     case changed, unreadable, limit
     var errorDescription: String? {
       switch self {
-      case .changed: String(localized: "文件已变化或路径不安全，请重新扫描。")
-      case .unreadable: String(localized: "无法完整读取，已跳过此项。")
-      case .limit: String(localized: "已达到扫描上限，请稍后重新扫描。")
+      case .changed: String(appLocalized: "文件已变化或路径不安全，请重新扫描。")
+      case .unreadable: String(appLocalized: "无法完整读取，已跳过此项。")
+      case .limit: String(appLocalized: "已达到扫描上限，请稍后重新扫描。")
       }
     }
   }

@@ -45,13 +45,13 @@ struct QuickNotesView: View {
                 Button("复制", systemImage: "doc.on.doc") {
                   NSPasteboard.general.clearContents()
                   NSPasteboard.general.setString(note.text, forType: .string)
-                  commands.feedback(String(localized: "已复制记录。"))
+                  commands.feedback(String(appLocalized: "已复制记录。"))
                 }
                 Button("导出记录", systemImage: "square.and.arrow.up") { export([note]) }
                 Divider()
                 Button("删除记录", role: .destructive) {
                   store.deleteNote(note.id)
-                  commands.feedback(String(localized: "记录已删除，可以撤销。"))
+                  commands.feedback(String(appLocalized: "记录已删除，可以撤销。"))
                 }
                 .disabled(note.delivery?.status == .sending)
               } label: { Image(systemName: "ellipsis") }
@@ -75,7 +75,7 @@ struct QuickNotesView: View {
     }
     .sheet(item: $editing) { note in NoteEditor(note: note, store: store) }
     .fileExporter(isPresented: $exporting, document: exportDocument, contentType: .plainText, defaultFilename: "Augma Notes.md") { result in
-      if case .failure = result { commands.feedback(String(localized: "导出失败，请选择其他保存位置重试。"), error: true) }
+      if case .failure = result { commands.feedback(String(appLocalized: "导出失败，请选择其他保存位置重试。"), error: true) }
     }
   }
 

@@ -58,7 +58,7 @@ final class DiskUsageStore: ObservableObject {
 
   func cancel() {
     generation = UUID(); request?.cancel(); request = nil
-    if scanning { feedback = String(localized: "扫描已取消，未生成完整结果。") }
+    if scanning { feedback = String(appLocalized: "扫描已取消，未生成完整结果。") }
     scanning = false
   }
 

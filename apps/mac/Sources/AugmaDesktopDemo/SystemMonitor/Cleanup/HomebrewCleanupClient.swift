@@ -27,10 +27,10 @@ actor HomebrewCleanupClient {
     case notInstalled, command(String), stale, unsupported
     var errorDescription: String? {
       switch self {
-      case .notInstalled: String(localized: "未找到 Homebrew；请自行安装后重试。")
-      case .command(let report): String(localized: "Homebrew 未完成操作：") + "\n" + report
-      case .stale: String(localized: "Homebrew 版本或预览已变化，请重新预览并确认。")
-      case .unsupported: String(localized: "此 Homebrew 版本或报告格式尚未验证，仅提供预览。")
+      case .notInstalled: String(appLocalized: "未找到 Homebrew；请自行安装后重试。")
+      case .command(let report): String(appLocalized: "Homebrew 未完成操作：") + "\n" + report
+      case .stale: String(appLocalized: "Homebrew 版本或预览已变化，请重新预览并确认。")
+      case .unsupported: String(appLocalized: "此 Homebrew 版本或报告格式尚未验证，仅提供预览。")
       }
     }
   }
@@ -141,9 +141,9 @@ actor HomebrewCleanupClient {
     let recognized = lines.allSatisfy { items.contains($0) || $0.hasPrefix("==> This operation would free approximately ") }
     let supported = version.range(of: #"^Homebrew 7\.\d+\.\d+$"#, options: .regularExpression) != nil
     let restriction: String? = !controlledEnvironment
-      ? String(localized: "检测到 Homebrew 环境配置，可能改变清理范围，仅提供预览。")
+      ? String(appLocalized: "检测到 Homebrew 环境配置，可能改变清理范围，仅提供预览。")
       : (!supported || !recognized || result.status != 0
-         ? String(localized: "此 Homebrew 版本或报告格式尚未验证，仅提供预览。") : nil)
+         ? String(appLocalized: "此 Homebrew 版本或报告格式尚未验证，仅提供预览。") : nil)
     let fingerprint = SHA256.hash(data: Data((version + "\n" + lines.sorted().joined(separator: "\n")
       + "\n" + result.diagnostics).utf8)).map { String(format: "%02x", $0) }.joined()
     return HomebrewCleanupPreview(id: UUID(), version: version, report: report(result), itemCount: items.count,

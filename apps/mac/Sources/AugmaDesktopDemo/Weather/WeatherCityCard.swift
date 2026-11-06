@@ -53,7 +53,7 @@ struct WeatherCityCard: View {
       }
       .buttonStyle(.plain)
       .onHover { isHovered = $0 }
-      .accessibilityValue(isSelected ? String(localized: "当前城市") : "")
+      .accessibilityValue(isSelected ? String(appLocalized: "当前城市") : "")
       .help(city.regionDescription)
       .accessibilityHint(city.regionDescription)
       .contextMenu { Button("删除城市", systemImage: "trash", role: .destructive, action: remove) }

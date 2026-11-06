@@ -57,31 +57,31 @@ struct WeatherCondition {
   init(code: Int, isDay: Bool) {
     switch code {
     case 0:
-      description = String(localized: "晴")
+      description = String(appLocalized: "晴")
       symbol = isDay ? "sun.max.fill" : "moon.stars.fill"
     case 1, 2:
-      description = String(localized: "局部多云")
+      description = String(appLocalized: "局部多云")
       symbol = isDay ? "cloud.sun.fill" : "cloud.moon.fill"
     case 3:
-      description = String(localized: "阴")
+      description = String(appLocalized: "阴")
       symbol = "cloud.fill"
     case 45, 48:
-      description = String(localized: "雾")
+      description = String(appLocalized: "雾")
       symbol = "cloud.fog.fill"
     case 51, 53, 55, 56, 57:
-      description = String(localized: "毛毛雨")
+      description = String(appLocalized: "毛毛雨")
       symbol = "cloud.drizzle.fill"
     case 61, 63, 65, 66, 67, 80, 81, 82:
-      description = String(localized: "雨")
+      description = String(appLocalized: "雨")
       symbol = "cloud.rain.fill"
     case 71, 73, 75, 77, 85, 86:
-      description = String(localized: "雪")
+      description = String(appLocalized: "雪")
       symbol = "cloud.snow.fill"
     case 95, 96, 99:
-      description = String(localized: "雷雨")
+      description = String(appLocalized: "雷雨")
       symbol = "cloud.bolt.rain.fill"
     default:
-      description = String(localized: "天气状况未知")
+      description = String(appLocalized: "天气状况未知")
       symbol = "cloud"
     }
   }

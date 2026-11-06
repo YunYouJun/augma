@@ -5,20 +5,20 @@ enum AssistantRuntimeError: LocalizedError, Equatable {
   case magpieUnavailable, noModels, notEnabled, modelUnavailable, authentication, quota, taskFailed, unsafeConfiguration
   var errorDescription: String? {
     switch self {
-    case .missingRuntime: String(localized: "未找到 DSH。请在 AI 助手设置中选择已安装的 DSH 可执行文件。")
-    case .launchFailed: String(localized: "DSH 无法启动。请检查路径、运行时依赖或失效的命令入口。")
-    case .unsupportedVersion: String(localized: "此 DSH 版本尚未通过兼容验证。当前支持 0.2.0-rc.2。")
-    case .protocolViolation: String(localized: "DSH 协议不兼容或输出超过限制。连接已结束。")
-    case .disconnected: String(localized: "DSH 连接已断开。请重试；未完成的操作不会自动重放。")
-    case .timeout: String(localized: "AI 请求超时，请稍后重试。")
-    case .magpieUnavailable: String(localized: "Magpie 未运行或本地网关不可用。请打开 Magpie 后重试。")
-    case .noModels: String(localized: "Magpie 没有可用模型。请在 Magpie 中配置模型来源。")
-    case .notEnabled: String(localized: "请先在 AI 助手设置中测试并启用所选运行时。")
-    case .modelUnavailable: String(localized: "所选模型已不可用。请刷新模型并重新选择，不会自动切换路由。")
-    case .authentication: String(localized: "模型鉴权失败。请在 Magpie 中检查登录状态。")
-    case .quota: String(localized: "模型额度不足或请求受限。请在 Magpie 中检查额度。")
-    case .taskFailed: String(localized: "模型未完成请求。请在 DSH 或 Magpie 中检查模型状态后重试。")
-    case .unsafeConfiguration: String(localized: "DSH 隔离配置已改变。为保护工具边界，连接未启动。")
+    case .missingRuntime: String(appLocalized: "未找到 DSH。请在 AI 助手设置中选择已安装的 DSH 可执行文件。")
+    case .launchFailed: String(appLocalized: "DSH 无法启动。请检查路径、运行时依赖或失效的命令入口。")
+    case .unsupportedVersion: String(appLocalized: "此 DSH 版本尚未通过兼容验证。当前支持 0.2.0-rc.2。")
+    case .protocolViolation: String(appLocalized: "DSH 协议不兼容或输出超过限制。连接已结束。")
+    case .disconnected: String(appLocalized: "DSH 连接已断开。请重试；未完成的操作不会自动重放。")
+    case .timeout: String(appLocalized: "AI 请求超时，请稍后重试。")
+    case .magpieUnavailable: String(appLocalized: "Magpie 未运行或本地网关不可用。请打开 Magpie 后重试。")
+    case .noModels: String(appLocalized: "Magpie 没有可用模型。请在 Magpie 中配置模型来源。")
+    case .notEnabled: String(appLocalized: "请先在 AI 助手设置中测试并启用所选运行时。")
+    case .modelUnavailable: String(appLocalized: "所选模型已不可用。请刷新模型并重新选择，不会自动切换路由。")
+    case .authentication: String(appLocalized: "模型鉴权失败。请在 Magpie 中检查登录状态。")
+    case .quota: String(appLocalized: "模型额度不足或请求受限。请在 Magpie 中检查额度。")
+    case .taskFailed: String(appLocalized: "模型未完成请求。请在 DSH 或 Magpie 中检查模型状态后重试。")
+    case .unsafeConfiguration: String(appLocalized: "DSH 隔离配置已改变。为保护工具边界，连接未启动。")
     }
   }
   static func remote(_ value: ACPValue) -> AssistantRuntimeError {

@@ -46,8 +46,8 @@ final class MicrosoftToDoStore: ObservableObject {
   }
 
   private var connectionRequiredMessage: String {
-    configured ? String(localized: "请先在快速记录的连接设置中登录 Microsoft To Do。")
-      : String(localized: "此版本尚未配置 Microsoft 登录，请联系 Augma 维护者或在连接设置中配置应用 ID。")
+    configured ? String(appLocalized: "请先在快速记录的连接设置中登录 Microsoft To Do。")
+      : String(appLocalized: "此版本尚未配置 Microsoft 登录，请联系 Augma 维护者或在连接设置中配置应用 ID。")
   }
 
   func deliveryTarget() -> CaptureDelivery {
@@ -57,7 +57,7 @@ final class MicrosoftToDoStore: ObservableObject {
 
   func configure(clientID input: String) {
     guard let value = Self.validClientID(input) else {
-      error = String(localized: "请输入有效的 Microsoft Application（Client）ID。")
+      error = String(appLocalized: "请输入有效的 Microsoft Application（Client）ID。")
       return
     }
     guard !busy, !connected else { return }
@@ -94,7 +94,7 @@ final class MicrosoftToDoStore: ObservableObject {
         ])
         try Task.checkCancellation()
         guard generation == revision, let refresh = tokens.refresh_token, !refresh.isEmpty else {
-          throw CaptureError.message(String(localized: "Microsoft 未返回持续登录授权，请重新连接。"))
+          throw CaptureError.message(String(appLocalized: "Microsoft 未返回持续登录授权，请重新连接。"))
         }
         let credentials = MicrosoftCredentials(refreshToken: refresh, connectionID: UUID())
         try vault.save(credentials, clientID: clientID)
@@ -175,12 +175,12 @@ final class MicrosoftToDoStore: ObservableObject {
       throw CaptureError.message(connectionRequiredMessage)
     }
     if let connection = delivery.connectionID, connection != credentials.connectionID {
-      throw CaptureError.message(String(localized: "登录账户已变更。请检查内容后选择“改用当前目标重试”。"))
+      throw CaptureError.message(String(appLocalized: "登录账户已变更。请检查内容后选择“改用当前目标重试”。"))
     }
     if lists.isEmpty { try await loadLists() }
     let id = delivery.listID ?? selectedListID
     guard lists.contains(where: { $0.id == id }) else {
-      throw CaptureError.message(String(localized: "目标清单不可用。请在连接设置中刷新并选择清单，然后改用当前目标重试。"))
+      throw CaptureError.message(String(appLocalized: "目标清单不可用。请在连接设置中刷新并选择清单，然后改用当前目标重试。"))
     }
     var result = delivery
     result.listID = id
@@ -191,7 +191,7 @@ final class MicrosoftToDoStore: ObservableObject {
   func createTask(_ note: QuickNote) async throws -> CaptureReceipt {
     try restoreConnectionIfNeeded()
     guard let list = note.delivery?.listID, note.delivery?.connectionID == credentials?.connectionID, connected else {
-      throw CaptureError.message(String(localized: "Microsoft 连接已变更，请检查目标后重试。"))
+      throw CaptureError.message(String(appLocalized: "Microsoft 连接已变更，请检查目标后重试。"))
     }
     do {
       let token = try await authorizedToken()
@@ -230,7 +230,7 @@ final class MicrosoftToDoStore: ObservableObject {
     do { return try await task.value }
     catch {
       if let failure = error as? MicrosoftHTTPError, failure.code == "invalid_grant" {
-        self.error = String(localized: "Microsoft 登录已过期，请断开后重新连接。")
+        self.error = String(appLocalized: "Microsoft 登录已过期，请断开后重新连接。")
       }
       throw error
     }
@@ -246,14 +246,14 @@ final class MicrosoftToDoStore: ObservableObject {
   static func message(for error: Error) -> String {
     if let failure = error as? MicrosoftHTTPError {
       if failure.code == "invalid_grant" || failure.code == "interaction_required" {
-        return String(localized: "Microsoft 登录已过期，请断开后重新连接。")
+        return String(appLocalized: "Microsoft 登录已过期，请断开后重新连接。")
       }
       switch failure.status {
-      case 401: return String(localized: "Microsoft 登录已过期，请重新连接或重试。")
-      case 403: return String(localized: "Microsoft 拒绝了待办访问，请检查账户授权或组织策略。")
-      case 404: return String(localized: "Microsoft 清单不存在，请刷新并重新选择清单。")
-      case 429: return String(localized: "Microsoft 请求过于频繁，请稍后重试。")
-      default: return String(format: String(localized: "Microsoft 请求失败（%@），请检查连接设置后重试。"), String(failure.status))
+      case 401: return String(appLocalized: "Microsoft 登录已过期，请重新连接或重试。")
+      case 403: return String(appLocalized: "Microsoft 拒绝了待办访问，请检查账户授权或组织策略。")
+      case 404: return String(appLocalized: "Microsoft 清单不存在，请刷新并重新选择清单。")
+      case 429: return String(appLocalized: "Microsoft 请求过于频繁，请稍后重试。")
+      default: return String(format: String(appLocalized: "Microsoft 请求失败（%@），请检查连接设置后重试。"), String(failure.status))
       }
     }
     return error.localizedDescription

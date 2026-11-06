@@ -9,11 +9,11 @@ struct NativeMapView: View {
       NativePageSection("地图与路线") {
         Map(position: $store.cameraPosition) {
           if let origin = store.origin {
-            Marker(String(localized: "起点") + " · " + origin.name, systemImage: "circle.fill", coordinate: origin.coordinate.location)
+            Marker(String(appLocalized: "起点") + " · " + origin.name, systemImage: "circle.fill", coordinate: origin.coordinate.location)
               .tint(.green)
           }
           if let destination = store.destination {
-            Marker(String(localized: "终点") + " · " + destination.name, systemImage: "mappin", coordinate: destination.coordinate.location)
+            Marker(String(appLocalized: "终点") + " · " + destination.name, systemImage: "mappin", coordinate: destination.coordinate.location)
               .tint(.red)
           }
           if let route = store.route {
@@ -65,7 +65,7 @@ struct NativeMapView: View {
             Button {
               store.showsSteps.toggle()
             } label: {
-              Label(store.showsSteps ? String(localized: "收起分步路线") : String(localized: "显示分步路线"),
+              Label(store.showsSteps ? String(appLocalized: "收起分步路线") : String(appLocalized: "显示分步路线"),
                     systemImage: store.showsSteps ? "chevron.up" : "chevron.down")
             }
             .accessibilityIdentifier("native-map-toggle-steps")
@@ -111,13 +111,13 @@ private struct NativeMapEndpointSearchView: View {
   var body: some View {
     NativePageSection(title: Text(endpoint.title)) {
       HStack(alignment: .firstTextBaseline, spacing: NativePageLayout.itemSpacing) {
-        TextField(String(localized: "搜索地点或地址"), text: Binding(
+        TextField(String(appLocalized: "搜索地点或地址"), text: Binding(
           get: { store.query(for: endpoint) },
           set: { if endpoint == .origin { store.originQuery = $0 } else { store.destinationQuery = $0 } }
         ))
         .textFieldStyle(.roundedBorder)
         .onSubmit(search)
-        .accessibilityLabel(endpoint.title + String(localized: "地点搜索"))
+        .accessibilityLabel(endpoint.title + String(appLocalized: "地点搜索"))
         Button("搜索", systemImage: "magnifyingglass", action: search)
           .fixedSize(horizontal: true, vertical: false)
           .disabled(store.searching.contains(endpoint) || store.query(for: endpoint).trimmingCharacters(in: .whitespacesAndNewlines).count < 2)

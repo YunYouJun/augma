@@ -168,7 +168,7 @@ final class WeatherStore: ObservableObject {
     searchErrorMessage = nil
     hasSearched = false
     guard (2...100).contains(query.count) else {
-      searchErrorMessage = String(localized: "请输入 2 至 100 个字符的城市名称。")
+      searchErrorMessage = String(appLocalized: "请输入 2 至 100 个字符的城市名称。")
       return
     }
     let language = language ?? Locale.current.language.languageCode?.identifier ?? "en"
@@ -179,7 +179,7 @@ final class WeatherStore: ObservableObject {
       return
     }
     if let lastSearchAttempt, now().timeIntervalSince(lastSearchAttempt) < 1 {
-      searchErrorMessage = String(localized: "搜索过于频繁，请稍后重试。")
+      searchErrorMessage = String(appLocalized: "搜索过于频繁，请稍后重试。")
       return
     }
     lastSearchAttempt = now()
@@ -223,7 +223,7 @@ final class WeatherStore: ObservableObject {
 
   private func fetchWeather(for city: WeatherCity) async {
     if let lastAttempt = lastWeatherAttempt[city.id], now().timeIntervalSince(lastAttempt) < Self.minimumRefreshInterval {
-      notice = String(localized: "每分钟最多刷新一次，请稍后重试。")
+      notice = String(appLocalized: "每分钟最多刷新一次，请稍后重试。")
       return
     }
     lastWeatherAttempt[city.id] = now()
@@ -273,8 +273,8 @@ final class WeatherStore: ObservableObject {
 
   private static func message(for error: Error) -> String {
     if let failure = error as? WeatherFailure { return failure.localizedDescription }
-    if (error as? URLError)?.code == .timedOut { return String(localized: "天气请求超时，请检查网络后重试。") }
-    return String(localized: "无法连接天气服务，请检查网络后重试。")
+    if (error as? URLError)?.code == .timedOut { return String(appLocalized: "天气请求超时，请检查网络后重试。") }
+    return String(appLocalized: "无法连接天气服务，请检查网络后重试。")
   }
 }
 

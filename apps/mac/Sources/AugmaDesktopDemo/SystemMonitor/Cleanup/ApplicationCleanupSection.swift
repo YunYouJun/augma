@@ -50,13 +50,13 @@ struct ApplicationCleanupSection: View {
       Button("请求退出", role: .destructive) {
         guard !disabled else { pendingQuit = nil; return }
         quitFeedback = ApplicationCleanup.requestQuit(identity)
-          ? String(localized: "已请求正常退出；应用可能等待保存或拒绝退出。请稍后刷新占用。")
-          : String(localized: "应用已退出、状态已变化或无法正常退出，请在活动监视器中检查。")
+          ? String(appLocalized: "已请求正常退出；应用可能等待保存或拒绝退出。请稍后刷新占用。")
+          : String(appLocalized: "应用已退出、状态已变化或无法正常退出，请在活动监视器中检查。")
         pendingQuit = nil
       }
       Button("取消", role: .cancel) { pendingQuit = nil }
     } message: { identity in
-      Text(String(format: String(localized: "将请求 %@ 正常退出，请先保存工作。释放的内存以系统后续读数为准。"), identity.name))
+      Text(String(format: String(appLocalized: "将请求 %@ 正常退出，请先保存工作。释放的内存以系统后续读数为准。"), identity.name))
     }
   }
 
@@ -75,7 +75,7 @@ struct ApplicationCleanupSection: View {
   private func quitButton(_ identity: ApplicationMemoryIdentity) -> some View {
     Button("请求退出…") { pendingQuit = identity }
       .controlSize(.small)
-      .accessibilityLabel(Text(String(format: String(localized: "请求退出 %@"), identity.name)))
+      .accessibilityLabel(Text(String(format: String(appLocalized: "请求退出 %@"), identity.name)))
       .disabled(disabled || !ApplicationCleanup.canRequestQuit(identity))
   }
 

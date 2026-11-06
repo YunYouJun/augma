@@ -22,7 +22,7 @@ struct ApplicationMemoryRanking: View {
           } label: {
             if showingAll { Label("收起排行", systemImage: "chevron.up") }
             else {
-              Label(String(format: String(localized: "查看全部 %lld 个应用"), snapshot.applications.count), systemImage: "chevron.down")
+              Label(String(format: String(appLocalized: "查看全部 %lld 个应用"), snapshot.applications.count), systemImage: "chevron.down")
             }
           }
           .controlSize(.small)
@@ -63,7 +63,7 @@ struct ApplicationMemoryRow: View {
         }
         if !compact {
           HStack {
-            Text(String(format: String(localized: "%lld 个进程"), usage.processCount))
+            Text(String(format: String(appLocalized: "%lld 个进程"), usage.processCount))
             if usage.unreadableProcessCount > 0 {
               Text("部分进程不可读取").foregroundStyle(Color.augmaAccent)
             }

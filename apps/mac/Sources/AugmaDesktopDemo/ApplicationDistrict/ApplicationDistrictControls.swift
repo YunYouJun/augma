@@ -63,7 +63,7 @@ struct ApplicationDistrictSections: View {
           .padding(.vertical, 4)
         }
         HStack(spacing: NativePageLayout.itemSpacing) {
-          Text(String(format: String(localized: "%lld / 12 座大楼"), district.buildings.count))
+          Text(String(format: String(appLocalized: "%lld / 12 座大楼"), district.buildings.count))
             .font(.caption).foregroundStyle(.secondary)
           Spacer()
           Button("刷新状态", systemImage: "arrow.clockwise", action: district.refresh)
@@ -99,7 +99,7 @@ struct ApplicationDistrictSections: View {
             .disabled(!district.writable)
           Picker("位置", selection: Binding(get: { selected.slot }, set: { district.move(selected.id, to: $0) })) {
             ForEach(0..<ApplicationBuilding.capacity, id: \.self) { slot in
-              Text(String(format: String(localized: "第 %lld 行 · 第 %lld 列"), slot / 4 + 1, slot % 4 + 1)).tag(slot)
+              Text(String(format: String(appLocalized: "第 %lld 行 · 第 %lld 列"), slot / 4 + 1, slot % 4 + 1)).tag(slot)
             }
           }
           .disabled(selected.fixed || !district.writable)
@@ -147,7 +147,7 @@ struct ApplicationDistrictSections: View {
 
   private func chooseApplications() {
     let panel = NSOpenPanel()
-    panel.title = String(localized: "选择要放入街区的应用")
+    panel.title = String(appLocalized: "选择要放入街区的应用")
     panel.allowedContentTypes = [.applicationBundle]
     panel.directoryURL = URL(fileURLWithPath: "/Applications", isDirectory: true)
     panel.canChooseDirectories = false

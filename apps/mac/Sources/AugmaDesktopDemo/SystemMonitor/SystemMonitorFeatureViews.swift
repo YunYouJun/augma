@@ -37,20 +37,20 @@ struct HardwareSensorMetrics: View {
     if let snapshot {
       LabeledContent("CPU 温度", value: snapshot.cpuTemperature.map {
         $0.formatted(.number.precision(.fractionLength(0))) + " °C"
-      } ?? String(localized: "暂不可用"))
+      } ?? String(appLocalized: "暂不可用"))
       if let fans = snapshot.fans {
         if fans.isEmpty { Label("无风扇", systemImage: "fan.slash").foregroundStyle(.secondary) }
         ForEach(fans) { fan in
-          LabeledContent(String(format: String(localized: "风扇 %lld"), fan.id + 1), value: fan.rpm.map {
+          LabeledContent(String(format: String(appLocalized: "风扇 %lld"), fan.id + 1), value: fan.rpm.map {
             $0.formatted(.number.precision(.fractionLength(0))) + " RPM"
-          } ?? String(localized: "暂不可用"))
+          } ?? String(appLocalized: "暂不可用"))
         }
       } else {
-        LabeledContent("风扇转速", value: String(localized: "暂不可用"))
+        LabeledContent("风扇转速", value: String(appLocalized: "暂不可用"))
       }
       if !compact {
         if snapshot.cpuSensorCount > 1 {
-          Text(String(format: String(localized: "来自 %lld 个有效 CPU 测点的平均值"), snapshot.cpuSensorCount))
+          Text(String(format: String(appLocalized: "来自 %lld 个有效 CPU 测点的平均值"), snapshot.cpuSensorCount))
             .font(.caption).foregroundStyle(.secondary)
         }
         LabeledContent("传感器更新") {

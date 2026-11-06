@@ -30,7 +30,7 @@ struct MicrosoftKeychain: MicrosoftCredentialStorage {
     let status = SecItemCopyMatching(query as CFDictionary, &result)
     if status == errSecItemNotFound { return nil }
     try check(status)
-    guard let data = result as? Data else { throw CaptureError.message(String(localized: "无法读取 Microsoft 登录信息，请重新连接。")) }
+    guard let data = result as? Data else { throw CaptureError.message(String(appLocalized: "无法读取 Microsoft 登录信息，请重新连接。")) }
     return try JSONDecoder().decode(MicrosoftCredentials.self, from: data)
   }
 
@@ -52,7 +52,7 @@ struct MicrosoftKeychain: MicrosoftCredentialStorage {
 
   private func check(_ status: OSStatus) throws {
     guard status == errSecSuccess else {
-      throw CaptureError.message(String(format: String(localized: "无法访问钥匙串（错误 %@）。"), String(status)))
+      throw CaptureError.message(String(format: String(appLocalized: "无法访问钥匙串（错误 %@）。"), String(status)))
     }
   }
 }
@@ -68,7 +68,7 @@ struct MicrosoftOAuthRequest: Sendable {
     func random() throws -> String {
       var bytes = [UInt8](repeating: 0, count: 32)
       guard SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes) == errSecSuccess else {
-        throw CaptureError.message(String(localized: "无法安全启动登录，请重试。"))
+        throw CaptureError.message(String(appLocalized: "无法安全启动登录，请重试。"))
       }
       return Self.base64URL(Data(bytes))
     }
@@ -99,12 +99,12 @@ struct MicrosoftOAuthRequest: Sendable {
           let items = URLComponents(url: callback, resolvingAgainstBaseURL: false)?.queryItems,
           items.filter({ $0.name == "state" }).count == 1,
           items.first(where: { $0.name == "state" })?.value == state else {
-      throw CaptureError.message(String(localized: "登录回调校验失败，请重新连接。"))
+      throw CaptureError.message(String(appLocalized: "登录回调校验失败，请重新连接。"))
     }
     guard !items.contains(where: { $0.name == "error" }),
           items.filter({ $0.name == "code" }).count == 1,
           let code = items.first(where: { $0.name == "code" })?.value, !code.isEmpty else {
-      throw CaptureError.message(String(localized: "Microsoft 登录未完成或未获授权。"))
+      throw CaptureError.message(String(appLocalized: "Microsoft 登录未完成或未获授权。"))
     }
     return code
   }
@@ -127,7 +127,7 @@ final class MicrosoftWebAuthentication: NSObject, ASWebAuthenticationPresentatio
       session.presentationContextProvider = self
       session.prefersEphemeralWebBrowserSession = true
       if !session.start() {
-        continuation.resume(throwing: CaptureError.message(String(localized: "无法打开登录窗口，请重试。")))
+        continuation.resume(throwing: CaptureError.message(String(appLocalized: "无法打开登录窗口，请重试。")))
       }
     }
     return try request.code(from: callback)
@@ -138,7 +138,7 @@ final class MicrosoftWebAuthentication: NSObject, ASWebAuthenticationPresentatio
   nonisolated static func completionHandler(_ continuation: CheckedContinuation<URL, Error>) -> @Sendable (URL?, (any Error)?) -> Void {
     { url, error in
       if let url { continuation.resume(returning: url) }
-      else { continuation.resume(throwing: error ?? CaptureError.message(String(localized: "Microsoft 登录未完成或未获授权。"))) }
+      else { continuation.resume(throwing: error ?? CaptureError.message(String(appLocalized: "Microsoft 登录未完成或未获授权。"))) }
     }
   }
 

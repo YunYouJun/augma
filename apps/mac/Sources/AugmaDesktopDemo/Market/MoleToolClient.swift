@@ -48,12 +48,12 @@ enum MoleToolError: LocalizedError {
   case missing, unsupported, homebrewMissing, environment, failed(String), invalidReport
   var errorDescription: String? {
     switch self {
-    case .missing: String(localized: "请先在应用市场安装 Mole CLI。")
-    case .unsupported: String(localized: "Mole 版本尚未适配，请保留当前版本并查看诊断。")
-    case .homebrewMissing: String(localized: "需要已安装的 Homebrew；Augma 不会自动安装包管理器。")
-    case .environment: String(localized: "检测到 Homebrew 环境配置，请在终端安装 Mole 后刷新。")
-    case .failed(let report): String(localized: "Mole 操作未完成：") + "\n" + String(report.prefix(4_000))
-    case .invalidReport: String(localized: "无法验证 Mole 的扫描报告，请查看版本或缩小扫描范围。")
+    case .missing: String(appLocalized: "请先在 Augma Link 的本地工具中安装 Mole CLI。")
+    case .unsupported: String(appLocalized: "Mole 版本尚未适配，请保留当前版本并查看诊断。")
+    case .homebrewMissing: String(appLocalized: "需要已安装的 Homebrew；Augma 不会自动安装包管理器。")
+    case .environment: String(appLocalized: "检测到 Homebrew 环境配置，请在终端安装 Mole 后刷新。")
+    case .failed(let report): String(appLocalized: "Mole 操作未完成：") + "\n" + String(report.prefix(4_000))
+    case .invalidReport: String(appLocalized: "无法验证 Mole 的扫描报告，请查看版本或缩小扫描范围。")
     }
   }
 }

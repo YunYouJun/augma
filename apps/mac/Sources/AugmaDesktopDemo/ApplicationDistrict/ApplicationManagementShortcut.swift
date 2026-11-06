@@ -32,9 +32,9 @@ struct ApplicationManagementShortcut: ApplicationManagementOpening {
     case unavailable, invalidApplication, openFailed
     var errorDescription: String? {
       switch self {
-      case .unavailable: String(localized: "未找到 Craft Hub。请安装支持卸载指引的版本后重试。")
-      case .invalidApplication: String(localized: "此应用的标识无法用于管理跳转。")
-      case .openFailed: String(localized: "无法打开 Craft Hub，请确认已安装支持卸载指引的版本。")
+      case .unavailable: String(appLocalized: "未找到 Craft Hub。请安装支持卸载指引的版本后重试。")
+      case .invalidApplication: String(appLocalized: "此应用的标识无法用于管理跳转。")
+      case .openFailed: String(appLocalized: "无法打开 Craft Hub，请确认已安装支持卸载指引的版本。")
       }
     }
   }

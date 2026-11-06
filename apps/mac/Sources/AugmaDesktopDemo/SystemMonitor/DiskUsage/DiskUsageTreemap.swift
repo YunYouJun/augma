@@ -51,7 +51,7 @@ struct DiskUsageTreemap: View {
     }
     var result: [Item] = nodes.prefix(23).map { Item(node: $0, title: $0.url.lastPathComponent, bytes: $0.bytes(metric)) }
     let remainder: UInt64 = nodes.dropFirst(23).reduce(UInt64(0)) { $0 + $1.bytes(metric) }
-    if remainder > 0 { result.append(Item(node: nil, title: String(localized: "其余项目"), bytes: remainder)) }
+    if remainder > 0 { result.append(Item(node: nil, title: String(appLocalized: "其余项目"), bytes: remainder)) }
     return result
   }
 

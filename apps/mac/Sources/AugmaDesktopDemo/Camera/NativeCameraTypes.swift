@@ -15,15 +15,15 @@ enum NativeCameraFailure: Error, Equatable, Sendable {
 
   var message: String {
     switch self {
-    case .denied: String(localized: "摄像头访问已关闭，请在系统设置中允许 Augma 使用摄像头。")
-    case .restricted: String(localized: "此 Mac 的摄像头访问受到系统限制。")
-    case .unavailable: String(localized: "未找到可用摄像头，请连接摄像头后重试。")
-    case .configuration: String(localized: "无法配置此摄像头，请选择其他设备或重试。")
-    case .disconnected: String(localized: "摄像头已断开连接，请重新连接或选择其他设备。")
-    case .interrupted: String(localized: "摄像头暂时不可用，请关闭占用摄像头的应用后重试。")
-    case .runtime: String(localized: "摄像头运行出错，请重试。")
-    case .photo: String(localized: "拍照失败，请重试。")
-    case .save: String(localized: "无法保存照片，请选择其他位置后重试。")
+    case .denied: String(appLocalized: "摄像头访问已关闭，请在系统设置中允许 Augma 使用摄像头。")
+    case .restricted: String(appLocalized: "此 Mac 的摄像头访问受到系统限制。")
+    case .unavailable: String(appLocalized: "未找到可用摄像头，请连接摄像头后重试。")
+    case .configuration: String(appLocalized: "无法配置此摄像头，请选择其他设备或重试。")
+    case .disconnected: String(appLocalized: "摄像头已断开连接，请重新连接或选择其他设备。")
+    case .interrupted: String(appLocalized: "摄像头暂时不可用，请关闭占用摄像头的应用后重试。")
+    case .runtime: String(appLocalized: "摄像头运行出错，请重试。")
+    case .photo: String(appLocalized: "拍照失败，请重试。")
+    case .save: String(appLocalized: "无法保存照片，请选择其他位置后重试。")
     }
   }
 }

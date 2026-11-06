@@ -5,8 +5,8 @@ enum DiskUsageMetric: String, CaseIterable {
 
   var title: String {
     switch self {
-    case .allocated: String(localized: "磁盘分配")
-    case .logical: String(localized: "逻辑大小")
+    case .allocated: String(appLocalized: "磁盘分配")
+    case .logical: String(appLocalized: "逻辑大小")
     }
   }
 }
@@ -54,12 +54,12 @@ struct DiskUsageIssue: Identifiable, Equatable, Sendable {
 
     var title: String {
       switch self {
-      case .unreadable: String(localized: "无法读取")
-      case .changed: String(localized: "扫描期间发生变化")
-      case .differentVolume: String(localized: "已跳过其他磁盘卷")
-      case .entryLimit: String(localized: "已达到条目上限")
-      case .timeLimit: String(localized: "已达到时间上限")
-      case .depthLimit: String(localized: "已达到目录深度上限")
+      case .unreadable: String(appLocalized: "无法读取")
+      case .changed: String(appLocalized: "扫描期间发生变化")
+      case .differentVolume: String(appLocalized: "已跳过其他磁盘卷")
+      case .entryLimit: String(appLocalized: "已达到条目上限")
+      case .timeLimit: String(appLocalized: "已达到时间上限")
+      case .depthLimit: String(appLocalized: "已达到目录深度上限")
       }
     }
   }
@@ -92,8 +92,8 @@ enum DiskUsageError: LocalizedError {
   case invalidRoot, unreadable
   var errorDescription: String? {
     switch self {
-    case .invalidRoot: String(localized: "请选择可直接访问的文件夹，符号链接不能作为扫描范围。")
-    case .unreadable: String(localized: "无法读取所选文件夹，请检查访问权限或重新选择。")
+    case .invalidRoot: String(appLocalized: "请选择可直接访问的文件夹，符号链接不能作为扫描范围。")
+    case .unreadable: String(appLocalized: "无法读取所选文件夹，请检查访问权限或重新选择。")
     }
   }
 }

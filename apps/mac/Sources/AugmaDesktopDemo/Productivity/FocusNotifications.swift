@@ -26,9 +26,9 @@ final class FocusNotifications: NSObject, ObservableObject, UNUserNotificationCe
     do {
       _ = try await center.requestAuthorization(options: [.alert, .sound])
       await refreshPermission()
-      if !allowed { message = String(localized: "通知未开启。可在系统设置中允许 Augma 通知，计时仍会继续。") }
+      if !allowed { message = String(appLocalized: "通知未开启。可在系统设置中允许 Augma 通知，计时仍会继续。") }
       sync(desired)
-    } catch { message = String(localized: "无法开启通知，请在系统设置中检查 Augma 的通知权限。") }
+    } catch { message = String(appLocalized: "无法开启通知，请在系统设置中检查 Augma 的通知权限。") }
   }
 
   func refreshPermission() async {
@@ -53,13 +53,13 @@ final class FocusNotifications: NSObject, ObservableObject, UNUserNotificationCe
             await self.refreshPermission()
             if self.allowed, revision == self.revision {
               let content = UNMutableNotificationContent()
-              content.title = String(localized: "专注完成")
-              content.body = String(localized: "这一段专注时间结束了，休息一下吧。")
+              content.title = String(appLocalized: "专注完成")
+              content.body = String(appLocalized: "这一段专注时间结束了，休息一下吧。")
               content.sound = .default
               let request = UNNotificationRequest(identifier: self.identifier, content: content,
                 trigger: UNTimeIntervalNotificationTrigger(timeInterval: max(1, deadline.timeIntervalSinceNow), repeats: false))
               do { try await self.center.add(request); self.message = nil }
-              catch { self.message = String(localized: "到时通知未能安排，计时仍会继续。") }
+              catch { self.message = String(appLocalized: "到时通知未能安排，计时仍会继续。") }
             }
           }
         }

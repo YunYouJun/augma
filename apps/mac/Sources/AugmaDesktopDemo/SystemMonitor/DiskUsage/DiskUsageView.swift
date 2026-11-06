@@ -53,7 +53,7 @@ struct DiskUsageView: View {
       if store.scanning {
         HStack {
           ProgressView().controlSize(.small)
-          Text(String(format: String(localized: "已检查 %lld 项 · 逻辑大小 %@"), store.progress.entries,
+          Text(String(format: String(appLocalized: "已检查 %lld 项 · 逻辑大小 %@"), store.progress.entries,
             SystemMetricFormat.bytes(store.progress.logicalBytes))).font(.caption).monospacedDigit()
           Button("取消") { store.cancel() }
         }.accessibilityElement(children: .contain)
@@ -86,7 +86,7 @@ struct DiskUsageView: View {
         Spacer()
         Text(scan.checkedAt, format: .dateTime.hour().minute().second()).font(.caption).foregroundStyle(.secondary)
       }
-      Text(String(format: String(localized: "%lld 个文件 · 逻辑大小 %@ · 磁盘分配 %@"), scan.root.fileCount,
+      Text(String(format: String(appLocalized: "%lld 个文件 · 逻辑大小 %@ · 磁盘分配 %@"), scan.root.fileCount,
         SystemMetricFormat.bytes(scan.root.logicalBytes), SystemMetricFormat.bytes(scan.root.allocatedBytes)))
         .font(.caption).foregroundStyle(.secondary)
       if scan.root.incomplete {
@@ -115,7 +115,7 @@ struct DiskUsageView: View {
           Text("点击目录区块下钻，点击文件在 Finder 中显示；小项目合并展示。")
             .font(.caption).foregroundStyle(.secondary)
         } else {
-          Text(node.incomplete ? String(localized: "此目录尚未完整读取。") : String(localized: "当前统计口径下没有已测得占用的项目。"))
+          Text(node.incomplete ? String(appLocalized: "此目录尚未完整读取。") : String(appLocalized: "当前统计口径下没有已测得占用的项目。"))
             .foregroundStyle(.secondary)
         }
         ForEach(Array(node.children.sorted {
@@ -147,20 +147,20 @@ struct DiskUsageView: View {
     DisclosureGroup("扫描范围与统计说明") {
       VStack(alignment: .leading, spacing: 8) {
         Text("不跟随符号链接，不跨磁盘卷；同一硬链接文件仅计入首次遇到的目录。云端文件仅读取元数据，不主动下载内容。")
-        Text(String(format: String(localized: "已跳过 %lld 个符号链接、%lld 个重复文件和 %lld 个特殊文件。"),
+        Text(String(format: String(appLocalized: "已跳过 %lld 个符号链接、%lld 个重复文件和 %lld 个特殊文件。"),
           scan.skippedSymlinks, scan.duplicateFiles, scan.skippedSpecialFiles))
         Text("每次最多检查 50,000 个条目、48 层目录，时间预算为 8 秒；单次系统调用可能延长等待。")
         ForEach(scan.issues) { issue in
           Text(issue.reason.title + " · " + issue.path).textSelection(.enabled)
         }
-        if scan.omittedIssues > 0 { Text(String(format: String(localized: "另有 %lld 条未显示的范围提示。"), scan.omittedIssues)) }
+        if scan.omittedIssues > 0 { Text(String(format: String(appLocalized: "另有 %lld 条未显示的范围提示。"), scan.omittedIssues)) }
       }.font(.caption).foregroundStyle(.secondary).padding(.top, 8)
     }
   }
 
   private func chooseFolder() {
     let panel = NSOpenPanel()
-    panel.title = String(localized: "选择空间分析目录")
+    panel.title = String(appLocalized: "选择空间分析目录")
     panel.canChooseDirectories = true; panel.canChooseFiles = false
     panel.allowsMultipleSelection = false; panel.canCreateDirectories = false
     panel.begin { response in

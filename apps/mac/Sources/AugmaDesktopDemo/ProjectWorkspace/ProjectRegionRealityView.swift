@@ -12,7 +12,7 @@ struct ProjectRegionRealityView: NSViewRepresentable {
     let builder = ProjectRegionSceneBuilder(); context.coordinator.builder = builder
     view.scene.addAnchor(builder.anchor)
     view.setAccessibilityElement(true); view.setAccessibilityRole(.image)
-    view.setAccessibilityLabel(String(localized: "项目区域；点击区域查看入口，使用旁边的打开工作区按钮启动。"))
+    view.setAccessibilityLabel(String(appLocalized: "项目区域；点击区域查看入口，使用旁边的打开工作区按钮启动。"))
     updateNSView(view, context: context)
     return view
   }

@@ -5,7 +5,7 @@ struct AppleNotesClient: Sendable {
   @MainActor
   func prepare() async throws {
     guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Notes") else {
-      throw CaptureError.message(String(localized: "找不到 macOS 备忘录，请确认应用已安装。"))
+      throw CaptureError.message(String(appLocalized: "找不到 macOS 备忘录，请确认应用已安装。"))
     }
     // A normal launch/reopen event initializes Notes before its first scripting request.
     let configuration = NSWorkspace.OpenConfiguration()
@@ -17,10 +17,10 @@ struct AppleNotesClient: Sendable {
       return AEDeterminePermissionToAutomateTarget(target.aeDesc, typeWildCard, typeWildCard, true)
     }.value
     if status == errAEEventNotPermitted || status == errAEEventWouldRequireUserConsent {
-      throw CaptureError.message(String(localized: "请在系统设置 → 隐私与安全性 → 自动化中允许 Augma 控制备忘录，然后重试。"))
+      throw CaptureError.message(String(appLocalized: "请在系统设置 → 隐私与安全性 → 自动化中允许 Augma 控制备忘录，然后重试。"))
     }
     guard status == noErr else {
-      throw CaptureError.message(String(format: String(localized: "备忘录尚未准备好（%@），请打开备忘录后重试。"), String(status)))
+      throw CaptureError.message(String(format: String(appLocalized: "备忘录尚未准备好（%@），请打开备忘录后重试。"), String(status)))
     }
   }
 
@@ -76,10 +76,10 @@ struct AppleNotesClient: Sendable {
       guard process.terminationStatus == 0 else {
         let message = String(decoding: errorData, as: UTF8.self)
         if message.contains("-1743") {
-          throw CaptureError.message(String(localized: "请在系统设置 → 隐私与安全性 → 自动化中允许 Augma 控制备忘录，然后重试。"))
+          throw CaptureError.message(String(appLocalized: "请在系统设置 → 隐私与安全性 → 自动化中允许 Augma 控制备忘录，然后重试。"))
         }
         if message.contains("-1728") {
-          throw CaptureError.message(String(localized: "未找到备忘录默认文件夹。请先打开备忘录并配置默认账户。"))
+          throw CaptureError.message(String(appLocalized: "未找到备忘录默认文件夹。请先打开备忘录并配置默认账户。"))
         }
         // Apple Events can time out after Notes has created the note.
         throw CaptureError.uncertain

@@ -39,12 +39,12 @@ final class NativeBrowserStore: NSObject, ObservableObject {
   func submitAddress() {
     do { navigate(to: try NativeBrowserAddress.resolve(addressInput)) }
     catch let failure as NativeBrowserAddressError { error = failure.message }
-    catch { self.error = String(localized: "网址无效，请检查后重试。") }
+    catch { self.error = String(appLocalized: "网址无效，请检查后重试。") }
   }
 
   func navigate(to url: URL) {
     guard NativeBrowserAddress.permits(url) else {
-      error = String(localized: "仅支持 HTTP 和 HTTPS 网页。")
+      error = String(appLocalized: "仅支持 HTTP 和 HTTPS 网页。")
       return
     }
     error = nil
@@ -81,7 +81,7 @@ final class NativeBrowserStore: NSObject, ObservableObject {
 
   func openInDefaultBrowser() {
     guard let currentURL, NativeBrowserAddress.permits(currentURL) else { return }
-    if !openExternal(currentURL) { error = String(localized: "无法在默认浏览器中打开网页。") }
+    if !openExternal(currentURL) { error = String(appLocalized: "无法在默认浏览器中打开网页。") }
   }
 
   func dismissError() { error = nil }
@@ -197,11 +197,11 @@ extension NativeBrowserStore: WKNavigationDelegate, WKUIDelegate {
       return NativeBrowserAddress.permits(url) ? .allow : .cancel
     }
     guard NativeBrowserAddress.permits(url) else {
-      error = String(localized: "仅支持 HTTP 和 HTTPS 网页。")
+      error = String(appLocalized: "仅支持 HTTP 和 HTTPS 网页。")
       return .cancel
     }
     if navigationAction.shouldPerformDownload {
-      error = String(localized: "请在默认浏览器中下载此文件。")
+      error = String(appLocalized: "请在默认浏览器中下载此文件。")
       return .cancel
     }
     if navigationAction.targetFrame == nil {
@@ -216,7 +216,7 @@ extension NativeBrowserStore: WKNavigationDelegate, WKUIDelegate {
   func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse) async -> WKNavigationResponsePolicy {
     guard self.webView === webView else { return .cancel }
     guard navigationResponse.canShowMIMEType else {
-      if navigationResponse.isForMainFrame { error = String(localized: "请在默认浏览器中下载此文件。") }
+      if navigationResponse.isForMainFrame { error = String(appLocalized: "请在默认浏览器中下载此文件。") }
       return .cancel
     }
     return .allow
@@ -230,7 +230,7 @@ extension NativeBrowserStore: WKNavigationDelegate, WKUIDelegate {
   func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
     guard self.webView === webView else { return }
     isLoading = false
-    error = String(localized: "网页进程已结束，请重新载入。")
+    error = String(appLocalized: "网页进程已结束，请重新载入。")
   }
 
   func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,

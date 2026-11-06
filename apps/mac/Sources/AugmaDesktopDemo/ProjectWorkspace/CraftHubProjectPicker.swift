@@ -28,7 +28,7 @@ struct CraftHubProjectPicker: View {
           Text("仅连接此 Mac 上明确共享的项目。绑定后复用项目资料，布局、工作网址和应用选择继续保存在 Augma。")
             .font(.callout).foregroundStyle(.secondary)
           HStack {
-            Label(hub.connected ? String(localized: "已连接 · 只读") : String(localized: "尚未连接"),
+            Label(hub.connected ? String(appLocalized: "已连接 · 只读") : String(appLocalized: "尚未连接"),
                   systemImage: hub.connected ? "checkmark.shield" : "link")
             Spacer()
             if hub.connection != nil {
@@ -67,7 +67,7 @@ struct CraftHubProjectPicker: View {
               }.frame(height: 180).accessibilityIdentifier("craft-hub-project-list")
             }
             if let selectedID, let context = hub.contexts[selectedID] {
-              Text(String(format: String(localized: "%lld 个命令 · %lld 个技能"),
+              Text(String(format: String(appLocalized: "%lld 个命令 · %lld 个技能"),
                           context.capabilities.filter { $0.kind == "command" }.count,
                           context.capabilities.filter { $0.kind == "skill" }.count)).font(.callout).foregroundStyle(.secondary)
             }
@@ -80,7 +80,7 @@ struct CraftHubProjectPicker: View {
         Text("连接不会运行项目命令，也不会授予项目信任。")
           .font(.caption).foregroundStyle(.secondary)
         Spacer()
-        Button(regionID == nil ? String(localized: "添加项目区域") : String(localized: "绑定所选项目"), action: selectProject)
+        Button(regionID == nil ? String(appLocalized: "添加项目区域") : String(appLocalized: "绑定所选项目"), action: selectProject)
           .buttonStyle(.borderedProminent)
           .fixedSize(horizontal: true, vertical: false)
           .disabled(!projects.editable || !hub.connected || selectedID.flatMap { hub.contexts[$0] } == nil)
@@ -137,13 +137,13 @@ struct CraftHubBindingSection: View {
             .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityIdentifier("craft-hub-project-path")
-          Label(context.project.trust == "trusted" ? String(localized: "已在 Craft Hub 信任") : String(localized: "尚未在 Craft Hub 信任"), systemImage: "shield")
+          Label(context.project.trust == "trusted" ? String(appLocalized: "已在 Craft Hub 信任") : String(appLocalized: "尚未在 Craft Hub 信任"), systemImage: "shield")
             .font(.caption).foregroundStyle(.secondary)
           ForEach(Array(context.capabilities.prefix(8).enumerated()), id: \.offset) { _, capability in
             Label(capability.name, systemImage: capability.kind == "skill" ? "sparkles" : "terminal")
               .font(.callout).lineLimit(2)
           }
-          Text(String(format: String(localized: "%lld 个命令 · %lld 个技能"),
+          Text(String(format: String(appLocalized: "%lld 个命令 · %lld 个技能"),
                       context.capabilities.filter { $0.kind == "command" }.count,
                       context.capabilities.filter { $0.kind == "skill" }.count)).font(.caption).foregroundStyle(.secondary)
           Button("在 Craft Hub 中查看", action: openCraftHub).accessibilityIdentifier("craft-hub-open")
@@ -187,6 +187,6 @@ struct CraftHubBindingSection: View {
       if let url = context.navigationURL(scheme: scheme), NSWorkspace.shared.urlForApplication(toOpen: url) != nil,
         NSWorkspace.shared.open(url) { navigationError = nil; return }
     }
-    navigationError = String(localized: "未找到 Craft Hub 桌面入口，请手动打开 Craft Hub 查看此项目。")
+    navigationError = String(appLocalized: "未找到 Craft Hub 桌面入口，请手动打开 Craft Hub 查看此项目。")
   }
 }

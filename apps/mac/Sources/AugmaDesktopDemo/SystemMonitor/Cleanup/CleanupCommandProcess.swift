@@ -14,8 +14,8 @@ final class CleanupCommandProcess {
     case timedOut, outputLimit
     var errorDescription: String? {
       switch self {
-      case .timedOut: String(localized: "工具操作超时，请缩小范围或稍后重试。")
-      case .outputLimit: String(localized: "工具输出超过上限，请缩小范围或在终端中检查。")
+      case .timedOut: String(appLocalized: "工具操作超时，请缩小范围或稍后重试。")
+      case .outputLimit: String(appLocalized: "工具输出超过上限，请缩小范围或在终端中检查。")
       }
     }
   }

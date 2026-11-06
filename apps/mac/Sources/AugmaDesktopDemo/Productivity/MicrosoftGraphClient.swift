@@ -72,7 +72,7 @@ struct MicrosoftGraphClient: Sendable {
       guard url.scheme == "https", url.host == "graph.microsoft.com", url.port == nil || url.port == 443,
             url.user == nil, url.password == nil, url.path == "/v1.0/me/todo/lists",
             visited.insert(url).inserted, visited.count <= 100 else {
-        throw CaptureError.message(String(localized: "Microsoft 返回了无效的清单分页地址。"))
+        throw CaptureError.message(String(appLocalized: "Microsoft 返回了无效的清单分页地址。"))
       }
       var request = URLRequest(url: url)
       request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")

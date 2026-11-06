@@ -75,7 +75,7 @@ private struct WeatherUpdateStatus: View {
       .help(timestamps)
       .accessibilityElement(children: .ignore)
       .accessibilityLabel(timestamps)
-      .accessibilityValue(snapshot.isStale(at: context.date) ? String(localized: "天气数据已过期，显示上次读数") : "")
+      .accessibilityValue(snapshot.isStale(at: context.date) ? String(appLocalized: "天气数据已过期，显示上次读数") : "")
     }
   }
 

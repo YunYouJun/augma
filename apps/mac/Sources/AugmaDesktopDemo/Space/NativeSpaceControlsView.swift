@@ -166,7 +166,7 @@ struct NativeSpaceControlSections: View {
   }
 
   @ViewBuilder private func routeActions(step: Int) -> some View {
-    Button(step >= 4 ? String(localized: "重新开始模拟路线") : String(localized: "前进一步"), systemImage: step >= 4 ? "arrow.clockwise" : "location") {
+    Button(step >= 4 ? String(appLocalized: "重新开始模拟路线") : String(appLocalized: "前进一步"), systemImage: step >= 4 ? "arrow.clockwise" : "location") {
       if step >= 4 { store.startRoute() } else { store.advanceRoute() }
     }
     .buttonStyle(.borderedProminent)
@@ -176,37 +176,37 @@ struct NativeSpaceControlSections: View {
   }
 
   private var scanStatus: String {
-    if store.scanning { return String(localized: "正在模拟扫描…") }
-    return store.scanProgress >= 100 ? String(localized: "模拟扫描已完成") : String(localized: "等待模拟扫描")
+    if store.scanning { return String(appLocalized: "正在模拟扫描…") }
+    return store.scanProgress >= 100 ? String(appLocalized: "模拟扫描已完成") : String(appLocalized: "等待模拟扫描")
   }
 
   private var scanActionTitle: String {
-    if store.scanning { return String(localized: "取消模拟扫描") }
-    return store.scanProgress >= 100 ? String(localized: "重新模拟扫描") : String(localized: "开始模拟扫描")
+    if store.scanning { return String(appLocalized: "取消模拟扫描") }
+    return store.scanProgress >= 100 ? String(appLocalized: "重新模拟扫描") : String(appLocalized: "开始模拟扫描")
   }
 
   private var pinActionTitle: String {
-    if store.pinnedLandmarkID == store.selectedID { return String(localized: "取消固定当前地标") }
-    return store.pinnedLandmarkID == nil ? String(localized: "固定当前地标") : String(localized: "将当前地标设为锚点")
+    if store.pinnedLandmarkID == store.selectedID { return String(appLocalized: "取消固定当前地标") }
+    return store.pinnedLandmarkID == nil ? String(appLocalized: "固定当前地标") : String(appLocalized: "将当前地标设为锚点")
   }
 
   private func routeStepTitle(_ step: Int) -> String {
     switch step {
-    case 0: String(localized: "当前位置")
-    case 1: String(localized: "前方步道")
-    case 2: String(localized: "转角路口")
-    case 3: String(localized: "目标锚点")
+    case 0: String(appLocalized: "当前位置")
+    case 1: String(appLocalized: "前方步道")
+    case 2: String(appLocalized: "转角路口")
+    case 3: String(appLocalized: "目标锚点")
     default: store.selected.title(locale: preferences.locale)
     }
   }
 
   private func routeInstruction(for step: Int) -> String {
     switch step {
-    case 0: String(localized: "沿前方步道出发")
-    case 1: String(localized: "继续前往转角路口")
-    case 2: String(localized: "转向目标锚点")
-    case 3: String(localized: "前往目的地")
-    default: String(localized: "已到达模拟目的地")
+    case 0: String(appLocalized: "沿前方步道出发")
+    case 1: String(appLocalized: "继续前往转角路口")
+    case 2: String(appLocalized: "转向目标锚点")
+    case 3: String(appLocalized: "前往目的地")
+    default: String(appLocalized: "已到达模拟目的地")
     }
   }
 

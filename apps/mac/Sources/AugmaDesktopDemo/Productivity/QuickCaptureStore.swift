@@ -46,7 +46,7 @@ final class QuickCaptureStore: ObservableObject {
     workspace.setDelivery(delivery, for: id)
     active.insert(id)
     receipt = nil
-    message = String(localized: "正在发送，内容已加入本地待发送列表。")
+    message = String(appLocalized: "正在发送，内容已加入本地待发送列表。")
     tasks[id] = Task { await deliver(id) }
   }
 
@@ -67,22 +67,22 @@ final class QuickCaptureStore: ObservableObject {
     defer { active.remove(id); tasks[id] = nil }
     do {
       guard await workspace.flush() else {
-        throw CaptureError.message(String(localized: "本地保存失败，尚未发送。请先重试保存或导出内容。"))
+        throw CaptureError.message(String(appLocalized: "本地保存失败，尚未发送。请先重试保存或导出内容。"))
       }
       guard var note = workspace.data.notes.first(where: { $0.id == id }), let delivery = note.delivery else { return }
       note.delivery = try await sender.prepare(delivery)
       workspace.setDelivery(note.delivery!, for: id)
       // Bind the target account/list durably before a remote write.
       guard await workspace.flush() else {
-        throw CaptureError.message(String(localized: "本地保存失败，尚未发送。请先重试保存或导出内容。"))
+        throw CaptureError.message(String(appLocalized: "本地保存失败，尚未发送。请先重试保存或导出内容。"))
       }
       let result = try await sender.send(note)
       workspace.finishDelivery(id)
       let saved = await workspace.flush()
       receipt = result
       message = saved
-        ? String(format: String(localized: "已保存到 %@。"), result.destination.title)
-        : String(localized: "目标应用已接收，但本地状态保存失败。请重试保存，不要重复发送。")
+        ? String(format: String(appLocalized: "已保存到 %@。"), result.destination.title)
+        : String(appLocalized: "目标应用已接收，但本地状态保存失败。请重试保存，不要重复发送。")
     } catch {
       guard var delivery = workspace.data.notes.first(where: { $0.id == id })?.delivery else { return }
       if case CaptureError.uncertain = error { delivery.status = .uncertain }
@@ -100,8 +100,8 @@ final class QuickCaptureStore: ObservableObject {
       do {
         let result = try await destinationOpener.open(destination)
         message = result == .website
-          ? String(localized: "已在浏览器中打开 Microsoft To Do。")
-          : String(format: String(localized: "已打开 %@。"), destination.title)
+          ? String(appLocalized: "已在浏览器中打开 Microsoft To Do。")
+          : String(format: String(appLocalized: "已打开 %@。"), destination.title)
       } catch {
         message = error.localizedDescription
       }

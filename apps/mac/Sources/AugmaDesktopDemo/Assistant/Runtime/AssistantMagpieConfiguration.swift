@@ -138,7 +138,7 @@ final class AssistantMagpieConfiguration: ObservableObject {
   }
 
   private func reject() {
-    failure = String(localized: "无法读取 Magpie 的 Augma 配置。请修复配置后重新检测；原文件未被覆盖。")
+    failure = String(appLocalized: "无法读取 Magpie 的 Augma 配置。请修复配置后重新检测；原文件未被覆盖。")
     invalidate()
   }
 

@@ -6,8 +6,8 @@ enum NativeMapEndpoint: String, CaseIterable, Sendable {
 
   var title: String {
     switch self {
-    case .origin: String(localized: "起点")
-    case .destination: String(localized: "终点")
+    case .origin: String(appLocalized: "起点")
+    case .destination: String(appLocalized: "终点")
     }
   }
 }
@@ -18,8 +18,8 @@ enum NativeMapTransport: String, CaseIterable, Identifiable, Sendable {
   var id: String { rawValue }
   var title: String {
     switch self {
-    case .driving: String(localized: "驾车")
-    case .walking: String(localized: "步行")
+    case .driving: String(appLocalized: "驾车")
+    case .walking: String(appLocalized: "步行")
     }
   }
   var mapKitType: MKDirectionsTransportType { self == .driving ? .automobile : .walking }

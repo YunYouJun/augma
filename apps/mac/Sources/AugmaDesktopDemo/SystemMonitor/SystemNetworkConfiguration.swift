@@ -7,7 +7,7 @@ enum SystemNetworkInterfaceKind: Sendable {
   var label: String? {
     switch self {
     case .wifi: "Wi-Fi"
-    case .ethernet: String(localized: "以太网")
+    case .ethernet: String(appLocalized: "以太网")
     case .unknown: nil
     }
   }

@@ -77,7 +77,7 @@ struct DiskCleanupPlan: Identifiable, Sendable {
     return Self(id: UUID(), goal: goal, scope: scope, createdAt: .now, candidates: selected,
                 occupancy: occupancy, scanIncomplete: scan.incomplete,
                 protectedCount: scan.candidates.count - allowed.count,
-                summary: String(localized: "已按保留规则生成本地计划，请核对具体项目。"))
+                summary: String(appLocalized: "已按保留规则生成本地计划，请核对具体项目。"))
   }
 
   static func permits(_ candidate: CleanupCandidate, goal: DiskCleanupGoal, scope: URL) -> Bool {

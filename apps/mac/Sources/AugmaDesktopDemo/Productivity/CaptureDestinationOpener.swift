@@ -22,6 +22,6 @@ struct CaptureDestinationOpener {
     if destination == .microsoftToDo, openWebsite(URL(string: "https://to-do.office.com/tasks/")!) {
       return .website
     }
-    throw CaptureError.message(String(format: String(localized: "无法打开 %@，请检查是否已安装。"), destination.title))
+    throw CaptureError.message(String(format: String(appLocalized: "无法打开 %@，请检查是否已安装。"), destination.title))
   }
 }

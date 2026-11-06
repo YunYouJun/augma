@@ -81,7 +81,7 @@ final class SimulatorCleanupStore: ObservableObject {
         self.request = nil
       } catch {
         guard let self, self.generation == token, !Task.isCancelled else { return }
-        self.error = String(localized: "AI 建议暂不可用；仍可手动查看和选择模拟器项目。")
+        self.error = String(appLocalized: "AI 建议暂不可用；仍可手动查看和选择模拟器项目。")
         self.phase = .idle
         self.request = nil
       }
@@ -92,7 +92,7 @@ final class SimulatorCleanupStore: ObservableObject {
     guard !isBusy, canStartOperation() else { return }
     guard let scan, scan.id == scanID, !ids.isEmpty,
           ids.isSubset(of: Set(scan.items.filter(\.canDelete).map(\.id))) else {
-      error = String(localized: "模拟器扫描已变化，请重新扫描并核对所选项目。")
+      error = String(appLocalized: "模拟器扫描已变化，请重新扫描并核对所选项目。")
       return
     }
     generation += 1
@@ -105,7 +105,7 @@ final class SimulatorCleanupStore: ObservableObject {
         receipt = try await client.delete(scanID: scanID, ids: ids,
                                           runtimeScopeAcknowledged: runtimeScopeAcknowledged)
       } catch {
-        self.error = String(localized: "模拟器清理未完成；部分项目可能已移除，请重新扫描核对。")
+        self.error = String(appLocalized: "模拟器清理未完成；部分项目可能已移除，请重新扫描核对。")
           + "\n" + error.localizedDescription
       }
       self.scan = nil

@@ -62,11 +62,11 @@ final class NativeMapStore: ObservableObject {
     setResults([], for: endpoint)
     let query = query(for: endpoint).trimmingCharacters(in: .whitespacesAndNewlines)
     guard (2...Self.maximumQueryLength).contains(query.count), !query.unicodeScalars.contains(where: CharacterSet.controlCharacters.contains) else {
-      searchErrors[endpoint] = String(localized: "请输入 2 至 120 个字符的地点名称。")
+      searchErrors[endpoint] = String(appLocalized: "请输入 2 至 120 个字符的地点名称。")
       return
     }
     if let last = lastSearch[endpoint], now().timeIntervalSince(last) < Self.minimumSearchInterval {
-      searchErrors[endpoint] = String(localized: "搜索过于频繁，请稍后重试。")
+      searchErrors[endpoint] = String(appLocalized: "搜索过于频繁，请稍后重试。")
       return
     }
     lastSearch[endpoint] = now()
@@ -89,7 +89,7 @@ final class NativeMapStore: ObservableObject {
         searched.insert(endpoint)
       } catch {
         guard !Task.isCancelled, searchIDs[endpoint] == id, !Self.isCancellation(error) else { return }
-        searchErrors[endpoint] = String(localized: "无法搜索地点，请检查网络后重试。")
+        searchErrors[endpoint] = String(appLocalized: "无法搜索地点，请检查网络后重试。")
       }
     }
     searchTasks[endpoint] = task
@@ -117,11 +117,11 @@ final class NativeMapStore: ObservableObject {
     if let routeTask, isRouting { await routeTask.value; return }
     invalidateRoute()
     guard let origin, let destination else {
-      routeError = String(localized: "请分别搜索并选择起点和终点。")
+      routeError = String(appLocalized: "请分别搜索并选择起点和终点。")
       return
     }
     guard origin.coordinate != destination.coordinate else {
-      routeError = String(localized: "起点和终点相同，请选择其他地点。")
+      routeError = String(appLocalized: "起点和终点相同，请选择其他地点。")
       return
     }
     let id = routeID
@@ -141,9 +141,9 @@ final class NativeMapStore: ObservableObject {
       } catch {
         guard !Task.isCancelled, routeID == id, !Self.isCancellation(error) else { return }
         if error as? NativeMapFailure == .noRoute || (error as? MKError)?.code == .directionsNotFound {
-          routeError = String(localized: "没有找到此出行方式的路线，请更换地点或出行方式。")
+          routeError = String(appLocalized: "没有找到此出行方式的路线，请更换地点或出行方式。")
         } else {
-          routeError = String(localized: "无法获取路线，请检查网络后重试。")
+          routeError = String(appLocalized: "无法获取路线，请检查网络后重试。")
         }
       }
     }
@@ -163,8 +163,8 @@ final class NativeMapStore: ObservableObject {
     guard mapsID == id else { return }
     isOpeningMaps = false
     mapsNotice = success
-      ? String(localized: "已在苹果地图中打开路线。")
-      : String(localized: "无法打开苹果地图，请稍后重试。")
+      ? String(appLocalized: "已在苹果地图中打开路线。")
+      : String(appLocalized: "无法打开苹果地图，请稍后重试。")
   }
 
   /// App lifecycle only; ordinary view disappearance must keep the shared work alive.

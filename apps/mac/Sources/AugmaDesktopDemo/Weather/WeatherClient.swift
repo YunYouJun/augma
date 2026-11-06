@@ -95,9 +95,9 @@ enum WeatherFailure: Error, Equatable, LocalizedError {
 
   var errorDescription: String? {
     switch self {
-    case .http(429): String(localized: "天气服务请求过于频繁，请稍后重试。")
-    case .http(let status): String(localized: "天气服务暂不可用（HTTP \(status)）。")
-    case .invalidResponse: String(localized: "天气服务返回了无法读取的数据。")
+    case .http(429): String(appLocalized: "天气服务请求过于频繁，请稍后重试。")
+    case .http(let status): String(appLocalized: "天气服务暂不可用（HTTP \(status)）。")
+    case .invalidResponse: String(appLocalized: "天气服务返回了无法读取的数据。")
     }
   }
 }
