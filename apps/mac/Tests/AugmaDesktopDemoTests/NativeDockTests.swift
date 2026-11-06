@@ -49,11 +49,25 @@ final class NativeDockTests: XCTestCase {
     withDefaults { defaults in
       defaults.set(["docs", "unknown", "mirror", "docs"], forKey: NativeDockStore.storageKey)
       let dock = NativeDockStore(defaults: defaults)
-      XCTAssertEqual(dock.items, [.docs, .mirror])
+      XCTAssertEqual(dock.items, [.docs, .mirror, .market, .library])
       XCTAssertTrue(dock.removedItems.contains(.weather))
       dock.beginDrag(.weather)
       XCTAssertNil(dock.draggedItem)
       XCTAssertFalse(dock.commitDrop())
+    }
+  }
+
+  func testLegacyLayoutReceivesDiscoveryEntriesOnlyOnce() {
+    withDefaults { defaults in
+      defaults.set(["mirror", "weather", "browser", "docs"], forKey: NativeDockStore.storageKey)
+      let dock = NativeDockStore(defaults: defaults)
+      XCTAssertEqual(dock.items, [.mirror, .weather, .market, .library, .browser, .docs])
+      XCTAssertEqual(defaults.integer(forKey: NativeDockStore.storageVersionKey), NativeDockStore.currentStorageVersion)
+
+      dock.remove(.market)
+      XCTAssertEqual(NativeDockStore(defaults: defaults).items,
+                     [.mirror, .weather, .library, .browser, .docs],
+                     "A migrated entry removed by the user must stay removed")
     }
   }
 
@@ -75,6 +89,7 @@ final class NativeDockTests: XCTestCase {
   func testApplicationsFeaturesAndPluginsCanGrowBeyondTwentyAndSurviveRestart() {
     withDefaults { defaults in
       defaults.set([], forKey: NativeDockStore.storageKey)
+      defaults.set(NativeDockStore.currentStorageVersion, forKey: NativeDockStore.storageVersionKey)
       let dock = NativeDockStore(defaults: defaults)
       for index in 0..<40 {
         dock.restore(.application(.init(id: "test.\(index)", name: "App \(index)", path: "/Applications/App\(index).app")))
@@ -108,6 +123,7 @@ final class NativeDockTests: XCTestCase {
         NativeDockItem.application(.init(id: "old.\(index)", name: "App", path: "/Applications/App.app"))
       }
       defaults.set(saved.map(\.rawValue), forKey: NativeDockStore.storageKey)
+      defaults.set(NativeDockStore.currentStorageVersion, forKey: NativeDockStore.storageVersionKey)
       let dock = NativeDockStore(defaults: defaults)
       XCTAssertEqual(dock.items, saved)
       dock.restore(.weather)

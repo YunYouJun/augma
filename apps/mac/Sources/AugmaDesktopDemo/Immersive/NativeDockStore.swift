@@ -104,6 +104,8 @@ enum NativeDockItem: RawRepresentable, CaseIterable, Hashable, Identifiable {
 @MainActor
 final class NativeDockStore: ObservableObject {
   static let storageKey = "augma.dock.items.v1"
+  static let storageVersionKey = "augma.dock.items.version"
+  static let currentStorageVersion = 2
   @Published private(set) var items: [NativeDockItem]
   @Published private(set) var draggedItem: NativeDockItem?
   @Published private(set) var previewItems: [NativeDockItem]?
@@ -118,9 +120,16 @@ final class NativeDockStore: ObservableObject {
     self.client = client
     if let saved = defaults.stringArray(forKey: Self.storageKey) {
       var seen = Set<String>()
-      items = saved.compactMap(NativeDockItem.init(rawValue:)).filter { seen.insert($0.id).inserted }
+      var restored = saved.compactMap(NativeDockItem.init(rawValue:)).filter { seen.insert($0.id).inserted }
+      if defaults.integer(forKey: Self.storageVersionKey) < Self.currentStorageVersion {
+        restored = Self.merging([.market, .library], into: restored)
+        defaults.set(restored.map(\.rawValue), forKey: Self.storageKey)
+        defaults.set(Self.currentStorageVersion, forKey: Self.storageVersionKey)
+      }
+      items = restored
     } else {
       items = NativeDockItem.allCases
+      defaults.set(Self.currentStorageVersion, forKey: Self.storageVersionKey)
     }
   }
 
@@ -203,5 +212,17 @@ final class NativeDockStore: ObservableObject {
     guard items != next else { return }
     items = next
     defaults.set(next.map(\.rawValue), forKey: Self.storageKey)
+    defaults.set(Self.currentStorageVersion, forKey: Self.storageVersionKey)
+  }
+
+  /// Insert new built-ins next to their canonical neighbors without reordering existing items.
+  private static func merging(_ additions: [NativeDockItem], into items: [NativeDockItem]) -> [NativeDockItem] {
+    var merged = items
+    for item in additions where !merged.contains(item) {
+      guard let order = NativeDockItem.allCases.firstIndex(of: item) else { continue }
+      let predecessor = NativeDockItem.allCases[..<order].reversed().compactMap { merged.firstIndex(of: $0) }.first
+      merged.insert(item, at: predecessor.map { $0 + 1 } ?? 0)
+    }
+    return merged
   }
 }
