@@ -15,6 +15,8 @@ pnpm preview
 
 `pnpm check` 覆盖生成校验、lint、类型、组件与资源生命周期、主站与 AR 构建、npm 消费、真实 Registry CLI 安装及三个浏览器。站点产物为 `apps/site/.vitepress/dist`，其中包含独立 AR 构建的 `/ar/`。
 
+日常 CI 先运行 `pnpm check:build`，一次完成上述浏览器套件以外的检查与构建（Registry 消费验证仍使用 Chromium），再把同一份站点 artifact 交给 Chromium、Firefox、WebKit 三个并行任务。每个任务只安装所需浏览器；Chromium 仅下载 headless shell。各任务缓存 pnpm store，浏览器套件固定使用两个 worker、禁用重试，失败时按浏览器分别保留 trace。本地与发布流程继续使用完整的 `pnpm check`。
+
 `pnpm-workspace.yaml` 保留 `trustPolicy: no-downgrade`。四个精确版本例外用于旧维护分支：semver 6.3.1、chokidar 4.0.3、undici-types 6.21.0 的 npm integrity 与重构前锁文件一致；Vite 5.4.21 是 VitePress 1 的兼容依赖，具有 provenance，但不同于新主版本的 OIDC 发布。升级时重新审查并删除失效例外。参考 [pnpm 跨维护分支的讨论](https://github.com/orgs/pnpm/discussions/11084)。
 
 ## 分支与发布顺序
