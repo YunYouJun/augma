@@ -1,0 +1,827 @@
+{
+  "schemaVersion": 1,
+  "generator": "scripts/generate-ax-contract.mjs",
+  "sourceRoot": "apps/mac/Sources",
+  "elements": [
+    {
+      "id": "app-language",
+      "source": "AugmaDesktopDemo/Preferences/NativeScenePreferencesView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "application-library-refresh",
+      "source": "AugmaDesktopDemo/Market/ApplicationLibraryView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "application-library-search",
+      "source": "AugmaDesktopDemo/Market/ApplicationLibraryView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "application-library-section",
+      "source": "AugmaDesktopDemo/Market/ApplicationLibraryPage.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "application-pin-{id}",
+      "source": "AugmaDesktopDemo/Market/ApplicationLibraryView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "application-store-search",
+      "source": "AugmaDesktopDemo/Market/ApplicationLibraryView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "assistant-dsh-detect",
+      "source": "AugmaDesktopDemo/Assistant/Runtime/AssistantSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "assistant-dsh-enabled",
+      "source": "AugmaDesktopDemo/Assistant/Runtime/AssistantSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "assistant-dsh-path",
+      "source": "AugmaDesktopDemo/Assistant/Runtime/AssistantSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "assistant-dsh-test",
+      "source": "AugmaDesktopDemo/Assistant/Runtime/AssistantSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "assistant-runtime-picker",
+      "source": "AugmaDesktopDemo/Assistant/Runtime/AssistantSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "augma-extension-{id}",
+      "source": "AugmaDesktopDemo/Market/AugmaExtensionCatalogView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "augma-link-search",
+      "source": "AugmaDesktopDemo/Market/AugmaExtensionCatalogView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "augma-link-section",
+      "source": "AugmaDesktopDemo/Market/ApplicationMarketView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "augma-plugin-catalog-refresh",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginOnlineCatalogView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "augma-plugin-catalog-search",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginOnlineCatalogView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "augma-plugin-confirm-uninstall",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "augma-plugin-disable-{id}",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "augma-plugin-download-cancel",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "augma-plugin-download-{id}",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginOnlineCatalogView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "augma-plugin-enable-{id}",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "augma-plugin-import",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "augma-plugin-install-example",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "augma-plugin-manage",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "augma-plugin-open-{id}",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "augma-plugin-pin-{id}",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "augma-plugin-search",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "augma-plugin-uninstall-{id}",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "augma-plugin-{id}",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "capture-connect-todo",
+      "source": "AugmaDesktopDemo/Productivity/MicrosoftCaptureControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "capture-open-todo",
+      "source": "AugmaDesktopDemo/Productivity/MicrosoftCaptureControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "capture-refresh-todo",
+      "source": "AugmaDesktopDemo/Productivity/MicrosoftCaptureControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "capture-todo-list",
+      "source": "AugmaDesktopDemo/Productivity/MicrosoftCaptureControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "cleanup-homebrew-execute",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/HomebrewCleanupSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "cleanup-homebrew-preview",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/HomebrewCleanupSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "cleanup-simulator-ai",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "cleanup-simulator-confirm",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupConfirmationView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "cleanup-simulator-execute",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "cleanup-simulator-item-{id}",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "cleanup-simulator-runtime-scope",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupConfirmationView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "cleanup-simulator-scan",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "codex-storage-cancel",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "codex-storage-candidate-{id}",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "codex-storage-confirm",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "codex-storage-error",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "codex-storage-mole",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "codex-storage-preview",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "codex-storage-preview-result",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "codex-storage-receipt",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "codex-storage-review",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "codex-storage-scan",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "codex-storage-section",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "codex-storage-summary",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "command-palette-close",
+      "source": "AugmaDesktopDemo/Productivity/WorkspaceCommandView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "command-palette-toggle-results",
+      "source": "AugmaDesktopDemo/Productivity/WorkspaceCommandView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "craft-hub-bind",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "craft-hub-choose",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "craft-hub-configuration",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "craft-hub-connect",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "craft-hub-disconnect",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "craft-hub-open",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "craft-hub-open-main",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubCompanionView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "craft-hub-project-list",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "craft-hub-project-path",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "craft-hub-summary-time",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubCompanionView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "craft-hub-unlink",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "disk-usage-choose",
+      "source": "AugmaDesktopDemo/SystemMonitor/DiskUsage/DiskUsageView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "disk-usage-open",
+      "source": "AugmaDesktopDemo/SystemMonitor/SystemMonitorView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "district-add-app",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "district-building-name",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "district-building-slot",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "district-manage-app",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "district-open-{id}",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "district-remove-app",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "district-select-{id}",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "district-suggestion-{id}",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "dock-bottom-inset",
+      "source": "AugmaDesktopDemo/Preferences/NativeScenePreferencesView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "dock-bottom-inset-reset",
+      "source": "AugmaDesktopDemo/Preferences/NativeScenePreferencesView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "dock-customize",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveDockView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "home-module",
+      "source": "AugmaDesktopDemo/Preferences/NativeStartupSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "home-space-scene",
+      "source": "AugmaDesktopDemo/Preferences/NativeStartupSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "hud-clock-enabled",
+      "source": "AugmaDesktopDemo/Preferences/NativeScenePreferencesView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "immersive-dock-{id}",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveDockView.swift",
+      "declaredVia": "ImmersiveDockView.identifier(for:)"
+    },
+    {
+      "id": "immersive-exit",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "declaredVia": "NativeOrbButton(identifier:)"
+    },
+    {
+      "id": "immersive-global-shortcut",
+      "source": "AugmaDesktopDemo/Shortcuts/ImmersiveShortcutSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "immersive-notifications",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "declaredVia": "NativeOrbButton(identifier:)"
+    },
+    {
+      "id": "immersive-settings",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "declaredVia": "NativeOrbButton(identifier:)"
+    },
+    {
+      "id": "immersive-system-menu",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "immersive-voice",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "declaredVia": "NativeOrbButton(identifier:)"
+    },
+    {
+      "pattern": "immersive-{id}",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveDockView.swift",
+      "declaredVia": "ImmersiveDockView.identifier(for:)"
+    },
+    {
+      "id": "main-enter-immersive",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "declaredVia": "NativeOrbButton(identifier:)"
+    },
+    {
+      "id": "main-go-home",
+      "source": "AugmaDesktopDemo/DemoContentView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "main-layout-toggle",
+      "source": "AugmaDesktopDemo/DemoContentView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "main-open-todo",
+      "source": "AugmaDesktopDemo/DemoContentView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "main-quick-capture",
+      "source": "AugmaDesktopDemo/DemoContentView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "menu-bar-shelf-enabled",
+      "source": "AugmaDesktopDemo/MenuBarShelf/MenuBarShelfViews.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "menu-bar-shelf-item-{id}",
+      "source": "AugmaDesktopDemo/MenuBarShelf/MenuBarShelfViews.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "menu-bar-shelf-menu-open",
+      "source": "AugmaDesktopDemo/MenuBarShelf/MenuBarShelfViews.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "menu-bar-shelf-panel",
+      "source": "AugmaDesktopDemo/MenuBarShelf/MenuBarShelfViews.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "menu-bar-shelf-show",
+      "source": "AugmaDesktopDemo/MenuBarShelf/MenuBarShelfViews.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-assistant",
+      "source": "AugmaDesktopDemo/NativeCommandView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-assistant-cancel",
+      "source": "AugmaDesktopDemo/NativeCommandView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-assistant-input",
+      "source": "AugmaDesktopDemo/NativeCommandView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-assistant-record",
+      "source": "AugmaDesktopDemo/NativeCommandView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-assistant-submit",
+      "source": "AugmaDesktopDemo/NativeCommandView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-browser-address",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-browser-back",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-browser-empty",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-browser-error",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-browser-forward",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-browser-go",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-browser-menu",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-browser-reload",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-browser-title",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-device",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-device-camera",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-device-cancel",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-device-connect",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-device-connection",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-device-disconnect",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-device-scene",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-device-sleep",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-map-toggle-steps",
+      "source": "AugmaDesktopDemo/Maps/NativeMapView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-notifications",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-notifications-clear",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-notifications-empty",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-playback-position",
+      "source": "AugmaDesktopDemo/Audio/NativePlaybackPositionView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-controls",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-hud",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-landmark",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-pin",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-pinned-anchor",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-preview",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-reset-view",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-route-advance",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-route-end",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-route-instruction",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-route-start",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-scan",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-scan-progress",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-scene",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-show-hud",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-zoom-in",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-space-zoom-out",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "open-voice-input-settings",
+      "source": "AugmaDesktopDemo/Preferences/NativeScenePreferencesView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "project-add-craft-hub",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "project-add-folder",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "project-choose-browser",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "project-choose-editor",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "project-folder-path",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "project-open-result-{id}",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "project-open-workspace",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "project-region-name",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "project-region-slot",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "project-remove",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "project-save",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "project-select-{id}",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "project-websites",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "quick-capture-draft",
+      "source": "AugmaDesktopDemo/Productivity/QuickNotesView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "startup-mode",
+      "source": "AugmaDesktopDemo/Preferences/NativeStartupSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "voice-input-provider",
+      "source": "AugmaDesktopDemo/Shortcuts/NativeVoiceSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "voice-input-start",
+      "source": "AugmaDesktopDemo/Shortcuts/NativeVoiceSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "wechat-voice-trigger",
+      "source": "AugmaDesktopDemo/Shortcuts/NativeVoiceSettingsView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "workspace-command-input",
+      "source": "AugmaDesktopDemo/Productivity/WorkspaceCommandView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    }
+  ]
+}

@@ -1,0 +1,3009 @@
+{
+  "schemaVersion": 1,
+  "app": "AugmaDesktopDemo",
+  "platform": "macOS 26+",
+  "identifierAttribute": "AXIdentifier",
+  "description": "Declared accessibility identifiers for the native macOS UI. Consumers must resolve an id or pattern before issuing an AX action.",
+  "reviewPolicy": "reviewed=true entries were checked against the Swift source and may be issued as actions. reviewed=false entries are derived from source: safe for lookup and readValue, but their role, preconditions and side effects must be verified in a running App before they become agent tools.",
+  "scenes": {
+    "main-window": "主窗口 Augma 布局与侧栏布局的入口控件",
+    "immersive": "沉浸助手的悬浮按钮、Dock 与系统菜单",
+    "panel:assistant": "文字 / 语音助手输入面板",
+    "settings:assistant": "设置 → AI 助手（运行时、DSH 路径与连接测试）",
+    "settings:startup": "设置 → 启动与主页",
+    "settings:shortcuts": "设置 → 全局快捷键",
+    "panel:browser": "内置浏览会话面板",
+    "panel:space": "空间扫描、锚点与模拟路线",
+    "panel:map": "地图与路线步骤",
+    "panel:notifications": "通知面板",
+    "panel:device": "设备面板（连接、场景、睡眠）",
+    "panel:quick-capture": "快速记录草稿",
+    "panel:todo": "Microsoft To Do 捕获入口",
+    "panel:project-regions": "空间 → 项目区域",
+    "panel:craft-hub": "Craft Hub 只读绑定与项目选择",
+    "panel:application-district": "空间 → 应用街区",
+    "panel:market": "软件中心与 Augma Link 分组",
+    "panel:application-library": "应用资料库与搜索",
+    "panel:plugins": "Augma Link 扩展中心",
+    "panel:system-monitor": "系统监控入口",
+    "panel:storage-analysis": "系统监控 → 存储分析",
+    "panel:cleanup": "系统监控 → 清理（Homebrew / 模拟器 / Codex 存储）",
+    "settings:menu-bar-shelf": "设置 → 菜单栏收纳与权限",
+    "panel:menu-bar-shelf": "刘海下方的菜单栏收纳面板",
+    "panel:audio": "声音 → 当前播放信息与进度控制",
+    "settings:appearance": "设置 → 外观与语言 → HUD"
+  },
+  "roles": [
+    "button",
+    "staticText",
+    "textField",
+    "checkBox",
+    "popUpButton",
+    "slider",
+    "progressIndicator",
+    "menuButton",
+    "group",
+    "list",
+    "unknown"
+  ],
+  "actions": [
+    "press",
+    "setValue",
+    "readValue",
+    "select",
+    "focus"
+  ],
+  "accessLevels": [
+    "read",
+    "write"
+  ],
+  "runtimeVerification": {
+    "axTreeOperatedInAcceptance": true,
+    "acceptanceEvidence": "apps/mac/docs/disk-usage-acceptance.md",
+    "requiresTrustedAccessibilityProcess": true,
+    "voiceOverAnnouncementVerified": false,
+    "unitTestReadsAXTree": false,
+    "note": "The running App was operated through the native accessibility tree during acceptance. Unit tests verify the contract and source declarations, not the live AX tree; VoiceOver announcement has not been recorded."
+  },
+  "elements": [
+    {
+      "id": "application-library-refresh",
+      "role": "button",
+      "label": null,
+      "scene": "panel:application-library",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "store.isLoading",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Market/ApplicationLibraryView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "application-library-search",
+      "role": "textField",
+      "label": null,
+      "scene": "panel:application-library",
+      "actions": [
+        "setValue",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Market/ApplicationLibraryView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "application-library-section",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:application-library",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Market/ApplicationLibraryPage.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "application-pin-{id}",
+      "role": "button",
+      "label": null,
+      "scene": "panel:application-library",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "dock.contains(application)",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Market/ApplicationLibraryView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "application-store-search",
+      "role": "textField",
+      "label": null,
+      "scene": "panel:application-library",
+      "actions": [
+        "setValue",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Market/ApplicationLibraryView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "assistant-dsh-detect",
+      "role": "button",
+      "label": "DSH 可执行文件",
+      "scene": "settings:assistant",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "busy",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Assistant/Runtime/AssistantSettingsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "assistant-dsh-enabled",
+      "role": "checkBox",
+      "label": null,
+      "scene": "settings:assistant",
+      "actions": [
+        "press",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!testedCurrent || busy",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Assistant/Runtime/AssistantSettingsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "assistant-dsh-path",
+      "role": "staticText",
+      "label": "DSH 可执行文件",
+      "scene": "settings:assistant",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Assistant/Runtime/AssistantSettingsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "assistant-dsh-test",
+      "role": "button",
+      "label": "测试模型与只读工具",
+      "scene": "settings:assistant",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "无进行中的测试",
+        "已选择模型"
+      ],
+      "disabledWhen": "busy || model.isEmpty",
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Assistant/Runtime/AssistantSettingsView.swift",
+      "notes": "发送真实系统摘要与应用占用，可能消耗模型额度；不执行清理。"
+    },
+    {
+      "id": "assistant-runtime-picker",
+      "role": "popUpButton",
+      "label": "AI 运行时",
+      "scene": "settings:assistant",
+      "actions": [
+        "select",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [
+        "运行时未被 Magpie 托管"
+      ],
+      "disabledWhen": "magpieConfiguration.isManaged",
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Assistant/Runtime/AssistantSettingsView.swift",
+      "notes": ""
+    },
+    {
+      "pattern": "augma-extension-{id}",
+      "role": "button",
+      "label": null,
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Market/AugmaExtensionCatalogView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "augma-link-search",
+      "role": "textField",
+      "label": null,
+      "scene": "panel:plugins",
+      "actions": [
+        "setValue",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Market/AugmaExtensionCatalogView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "augma-link-section",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:market",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Market/ApplicationMarketView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "augma-plugin-catalog-refresh",
+      "role": "button",
+      "label": "刷新目录",
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "Online catalog is visible."
+      ],
+      "disabledWhen": "catalog.refreshing",
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginOnlineCatalogView.swift",
+      "notes": "Verified in the Augma plugin preview on 2026-11-05 against https://augma.yyj.moe/plugins/catalog.json: search, refresh, HTTPS download, install disabled, enable, pin, open from Dock, disable and uninstall. Cloudflare production deployment d52579c2 uses commit 9bf732c. VoiceOver announcement was not tested."
+    },
+    {
+      "id": "augma-plugin-catalog-search",
+      "role": "textField",
+      "label": "搜索在线插件",
+      "scene": "panel:plugins",
+      "actions": [
+        "setValue",
+        "readValue",
+        "focus"
+      ],
+      "access": "write",
+      "preconditions": [
+        "Online catalog is visible."
+      ],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginOnlineCatalogView.swift",
+      "notes": "Verified in the Augma plugin preview on 2026-11-05 against https://augma.yyj.moe/plugins/catalog.json: search, refresh, HTTPS download, install disabled, enable, pin, open from Dock, disable and uninstall. Cloudflare production deployment d52579c2 uses commit 9bf732c. VoiceOver announcement was not tested."
+    },
+    {
+      "id": "augma-plugin-confirm-uninstall",
+      "role": "button",
+      "label": "卸载",
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "Uninstall confirmation dialog is showing for the selected plugin."
+      ],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Verified in the isolated Augma plugin preview on 2026-11-05: install disabled, enable, pin, open from Dock, manage, disable and confirm uninstall. Source folder preserved. VoiceOver announcement was not tested."
+    },
+    {
+      "pattern": "augma-plugin-disable-{id}",
+      "role": "button",
+      "label": "停用",
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "Plugin is installed and enabled."
+      ],
+      "disabledWhen": "plugins.busy",
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Verified in the isolated Augma plugin preview on 2026-11-05: install disabled, enable, pin, open from Dock, manage, disable and confirm uninstall. Source folder preserved. VoiceOver announcement was not tested."
+    },
+    {
+      "id": "augma-plugin-download-cancel",
+      "role": "button",
+      "label": null,
+      "scene": "panel:plugins",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Source declaration recorded for lookup only. Verify state and side effects before exposing write actions."
+    },
+    {
+      "pattern": "augma-plugin-download-{id}",
+      "role": "button",
+      "label": "下载并安装",
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "Catalog entry has been fetched. Plugin is not installed. Installs disabled after verified download."
+      ],
+      "disabledWhen": "!plugins.loaded || plugins.busy || plugin is already installed",
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginOnlineCatalogView.swift",
+      "notes": "Verified in the Augma plugin preview on 2026-11-05 against https://augma.yyj.moe/plugins/catalog.json: search, refresh, HTTPS download, install disabled, enable, pin, open from Dock, disable and uninstall. Cloudflare production deployment d52579c2 uses commit 9bf732c. VoiceOver announcement was not tested."
+    },
+    {
+      "pattern": "augma-plugin-enable-{id}",
+      "role": "button",
+      "label": "启用",
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "Plugin is installed, disabled and valid."
+      ],
+      "disabledWhen": "plugins.busy || plugin.problem != nil",
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Verified in the isolated Augma plugin preview on 2026-11-05: install disabled, enable, pin, open from Dock, manage, disable and confirm uninstall. Source folder preserved. VoiceOver announcement was not tested."
+    },
+    {
+      "id": "augma-plugin-import",
+      "role": "button",
+      "label": "从文件夹安装…",
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "Link has loaded its registry. Opens a folder chooser; installing requires selecting a package."
+      ],
+      "disabledWhen": "!plugins.loaded || plugins.busy",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "augma-plugin-install-example",
+      "role": "button",
+      "label": "安装示例插件",
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!plugins.loaded || plugins.busy || AugmaPluginStore.exampleURL == nil",
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Verified in the isolated Augma plugin preview on 2026-11-05: install disabled, enable, pin, open from Dock, manage, disable and confirm uninstall. Source folder preserved. VoiceOver announcement was not tested."
+    },
+    {
+      "id": "augma-plugin-manage",
+      "role": "button",
+      "label": "管理插件",
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "A plugin page is open."
+      ],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Verified in the isolated Augma plugin preview on 2026-11-05: install disabled, enable, pin, open from Dock, manage, disable and confirm uninstall. Source folder preserved. VoiceOver announcement was not tested."
+    },
+    {
+      "pattern": "augma-plugin-open-{id}",
+      "role": "button",
+      "label": "打开",
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "Plugin is enabled and its installed package is valid."
+      ],
+      "disabledWhen": "plugins.busy",
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "augma-plugin-pin-{id}",
+      "role": "button",
+      "label": "加入 Dock",
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "Plugin is enabled and valid."
+      ],
+      "disabledWhen": "plugins.busy || plugin is already in Dock",
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Verified in the isolated Augma plugin preview on 2026-11-05: install disabled, enable, pin, open from Dock, manage, disable and confirm uninstall. Source folder preserved. VoiceOver announcement was not tested."
+    },
+    {
+      "id": "augma-plugin-search",
+      "role": "textField",
+      "label": "搜索已安装插件",
+      "scene": "panel:plugins",
+      "actions": [
+        "setValue",
+        "readValue",
+        "focus"
+      ],
+      "access": "write",
+      "preconditions": [
+        "Plugin manager is visible."
+      ],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "augma-plugin-uninstall-{id}",
+      "role": "button",
+      "label": "卸载…",
+      "scene": "panel:plugins",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "Plugin is installed. Opens confirmation; it does not immediately uninstall."
+      ],
+      "disabledWhen": "plugins.busy",
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Verified in the isolated Augma plugin preview on 2026-11-05: install disabled, enable, pin, open from Dock, manage, disable and confirm uninstall. Source folder preserved. VoiceOver announcement was not tested."
+    },
+    {
+      "pattern": "augma-plugin-{id}",
+      "role": "group",
+      "label": null,
+      "scene": "panel:plugins",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Link/AugmaPluginManagerView.swift",
+      "notes": "Verified in the isolated Augma plugin preview on 2026-11-05: install disabled, enable, pin, open from Dock, manage, disable and confirm uninstall. Source folder preserved. VoiceOver announcement was not tested."
+    },
+    {
+      "id": "capture-connect-todo",
+      "role": "button",
+      "label": "待办清单",
+      "scene": "panel:todo",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!store.configured || store.busy",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Productivity/MicrosoftCaptureControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "capture-open-todo",
+      "role": "button",
+      "label": null,
+      "scene": "panel:todo",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Productivity/MicrosoftCaptureControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "capture-refresh-todo",
+      "role": "button",
+      "label": "待办清单",
+      "scene": "panel:todo",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "store.busy",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Productivity/MicrosoftCaptureControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "capture-todo-list",
+      "role": "staticText",
+      "label": "待办清单",
+      "scene": "panel:todo",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Productivity/MicrosoftCaptureControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "cleanup-homebrew-execute",
+      "role": "button",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "disabled || store.isBusy",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/HomebrewCleanupSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "cleanup-homebrew-preview",
+      "role": "button",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "disabled || store.isBusy",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/HomebrewCleanupSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "cleanup-simulator-ai",
+      "role": "button",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "isBusy",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "cleanup-simulator-confirm",
+      "role": "button",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "includesRuntime && !runtimeScopeAcknowledged",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupConfirmationView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "cleanup-simulator-execute",
+      "role": "button",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "isBusy || store.selectedItems.isEmpty",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "cleanup-simulator-item-{id}",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "cleanup-simulator-runtime-scope",
+      "role": "checkBox",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "press",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupConfirmationView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "cleanup-simulator-scan",
+      "role": "button",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "isBusy",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/SimulatorCleanupSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "codex-storage-cancel",
+      "role": "button",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "codex-storage-candidate-{id}",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "disabled || store.isBusy",
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "codex-storage-confirm",
+      "role": "button",
+      "label": "确认移入废纸篓",
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "已生成预览",
+        "用户在原生 UI 中确认"
+      ],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "写操作。批准由本地 UI 产生，模型不能自行生成批准；仅将所选文件移入废纸篓。"
+    },
+    {
+      "id": "codex-storage-error",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "codex-storage-mole",
+      "role": "button",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "disabled || store.isBusy || selectedMoleScope.isEmpty",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "codex-storage-preview",
+      "role": "button",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "disabled || store.isBusy || store.selection.isEmpty",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "codex-storage-preview-result",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "codex-storage-receipt",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "codex-storage-review",
+      "role": "button",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "disabled || store.isBusy",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "codex-storage-scan",
+      "role": "button",
+      "label": "分析 Codex 占用",
+      "scene": "panel:cleanup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "无进行中的扫描或清理"
+      ],
+      "disabledWhen": "disabled || store.isBusy",
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "只读扫描，不删除文件。"
+    },
+    {
+      "id": "codex-storage-section",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "codex-storage-summary",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:cleanup",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/Cleanup/CodexStorageSection.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "command-palette-close",
+      "role": "button",
+      "label": "关闭面板",
+      "scene": "panel:assistant",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "command palette is visible"
+      ],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Productivity/WorkspaceCommandView.swift",
+      "notes": "Collapses and dismisses the command palette, cancels speech, and restores prior focus when appropriate."
+    },
+    {
+      "id": "command-palette-toggle-results",
+      "role": "button",
+      "label": null,
+      "scene": "panel:assistant",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "command palette is visible and not dismissing"
+      ],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Productivity/WorkspaceCommandView.swift",
+      "notes": "Toggles the glass palette between the input capsule and expanded results, preserving the input field and draft."
+    },
+    {
+      "id": "craft-hub-bind",
+      "role": "button",
+      "label": null,
+      "scene": "panel:craft-hub",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!projects.editable || !hub.connected || selectedID.flatMap { hub.contexts[$0] } == nil",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "craft-hub-choose",
+      "role": "button",
+      "label": null,
+      "scene": "panel:craft-hub",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!projects.editable",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "craft-hub-configuration",
+      "role": "staticText",
+      "label": "Craft Hub JSON 连接配置",
+      "scene": "panel:craft-hub",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "craft-hub-connect",
+      "role": "button",
+      "label": "Craft Hub JSON 连接配置",
+      "scene": "panel:craft-hub",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "hub.busy || configuration.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "craft-hub-disconnect",
+      "role": "button",
+      "label": null,
+      "scene": "panel:craft-hub",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "craft-hub-open",
+      "role": "button",
+      "label": null,
+      "scene": "panel:craft-hub",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "craft-hub-open-main",
+      "role": "button",
+      "label": null,
+      "scene": "panel:craft-hub",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubCompanionView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "craft-hub-project-list",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:craft-hub",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "craft-hub-project-path",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:craft-hub",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "craft-hub-summary-time",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:craft-hub",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubCompanionView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "craft-hub-unlink",
+      "role": "button",
+      "label": null,
+      "scene": "panel:craft-hub",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!projects.editable",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/CraftHubProjectPicker.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "disk-usage-choose",
+      "role": "button",
+      "label": "选择目录",
+      "scene": "panel:storage-analysis",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/DiskUsage/DiskUsageView.swift",
+      "notes": "打开系统目录选择器；需要用户选择。"
+    },
+    {
+      "id": "disk-usage-open",
+      "role": "button",
+      "label": null,
+      "scene": "panel:system-monitor",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/SystemMonitor/SystemMonitorView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "district-add-app",
+      "role": "button",
+      "label": null,
+      "scene": "panel:application-district",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!district.writable",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "district-building-name",
+      "role": "staticText",
+      "label": "自定义名称（可留空）",
+      "scene": "panel:application-district",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "district-building-slot",
+      "role": "staticText",
+      "label": "自定义名称（可留空）",
+      "scene": "panel:application-district",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "selected.fixed || !district.writable",
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "district-manage-app",
+      "role": "button",
+      "label": null,
+      "scene": "panel:application-district",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "district-open-{id}",
+      "role": "staticText",
+      "label": "：",
+      "scene": "panel:application-district",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "district-remove-app",
+      "role": "button",
+      "label": null,
+      "scene": "panel:application-district",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!district.writable",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "district-select-{id}",
+      "role": "staticText",
+      "label": "，",
+      "scene": "panel:application-district",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "district-suggestion-{id}",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:application-district",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!district.writable",
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ApplicationDistrict/ApplicationDistrictControls.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "dock-customize",
+      "role": "staticText",
+      "label": null,
+      "scene": "immersive",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveDockView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "home-module",
+      "role": "staticText",
+      "label": null,
+      "scene": "settings:startup",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Preferences/NativeStartupSettingsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "home-space-scene",
+      "role": "staticText",
+      "label": null,
+      "scene": "settings:startup",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Preferences/NativeStartupSettingsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "immersive-dock-{id}",
+      "role": "button",
+      "label": "Dock 入口",
+      "scene": "immersive",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "ImmersiveDockView.identifier(for:)",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveDockView.swift",
+      "notes": "打开模块、应用或扩展；重复触发结果通常相同。"
+    },
+    {
+      "id": "immersive-exit",
+      "role": "button",
+      "label": "系统菜单",
+      "scene": "immersive",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "NativeOrbButton(identifier:)",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "immersive-global-shortcut",
+      "role": "staticText",
+      "label": null,
+      "scene": "settings:shortcuts",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Shortcuts/ImmersiveShortcutSettingsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "immersive-notifications",
+      "role": "button",
+      "label": null,
+      "scene": "immersive",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "NativeOrbButton(identifier:)",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "immersive-settings",
+      "role": "button",
+      "label": null,
+      "scene": "immersive",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "NativeOrbButton(identifier:)",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "immersive-system-menu",
+      "role": "menuButton",
+      "label": "系统菜单",
+      "scene": "immersive",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "notes": "展开模块与外观菜单。"
+    },
+    {
+      "id": "immersive-voice",
+      "role": "button",
+      "label": "语音助手",
+      "scene": "immersive",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "NativeOrbButton(identifier:)",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "notes": "打开语音助手面板。"
+    },
+    {
+      "pattern": "immersive-{id}",
+      "role": "unknown",
+      "label": null,
+      "scene": "immersive",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "ImmersiveDockView.identifier(for:)",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveDockView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "main-enter-immersive",
+      "role": "button",
+      "label": "系统菜单",
+      "scene": "immersive",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "NativeOrbButton(identifier:)",
+      "source": "AugmaDesktopDemo/Immersive/ImmersiveChromeViews.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "main-go-home",
+      "role": "button",
+      "label": "返回主页",
+      "scene": "main-window",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/DemoContentView.swift",
+      "notes": "切换到主页模块，重复触发结果相同。"
+    },
+    {
+      "id": "main-layout-toggle",
+      "role": "button",
+      "label": "切换布局",
+      "scene": "main-window",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/DemoContentView.swift",
+      "notes": "在 Augma 布局与 SwiftUI 侧栏布局间切换，重复触发会反转。"
+    },
+    {
+      "id": "main-open-todo",
+      "role": "button",
+      "label": null,
+      "scene": "main-window",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/DemoContentView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "main-quick-capture",
+      "role": "button",
+      "label": null,
+      "scene": "main-window",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/DemoContentView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "menu-bar-shelf-enabled",
+      "role": "checkBox",
+      "label": "启用菜单栏收纳",
+      "scene": "settings:menu-bar-shelf",
+      "actions": [
+        "setValue",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/MenuBarShelf/MenuBarShelfViews.swift",
+      "notes": "开启功能会注册 ⌃⌥B；关闭时停止扫描并关闭本次原生菜单。"
+    },
+    {
+      "pattern": "menu-bar-shelf-item-{id}",
+      "role": "button",
+      "label": null,
+      "scene": "panel:menu-bar-shelf",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled",
+        "icon ownership is identified"
+      ],
+      "disabledWhen": "!item.canOpenMenu",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/MenuBarShelf/MenuBarShelfViews.swift",
+      "notes": "在对应图标下方显示 Augma 原生菜单，读取原应用标准菜单结构，选中后按原控件身份调用操作。自绘面板通过显式原菜单入口打开；不移动系统图标或鼠标。"
+    },
+    {
+      "id": "menu-bar-shelf-menu-open",
+      "role": "button",
+      "label": "菜单栏收纳",
+      "scene": "panel:menu-bar-shelf",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "store.isBusy",
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/MenuBarShelf/MenuBarShelfViews.swift",
+      "notes": "从 Augma 菜单栏面板展开收纳栏。"
+    },
+    {
+      "id": "menu-bar-shelf-panel",
+      "role": "group",
+      "label": null,
+      "scene": "panel:menu-bar-shelf",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/MenuBarShelf/MenuBarShelfViews.swift",
+      "notes": "收纳面板根容器。"
+    },
+    {
+      "id": "menu-bar-shelf-show",
+      "role": "button",
+      "label": "展开收纳栏",
+      "scene": "settings:menu-bar-shelf",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "store.isBusy || !store.hasNotchedDisplay",
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/MenuBarShelf/MenuBarShelfViews.swift",
+      "notes": "仅显示收纳面板，不激活主窗口。"
+    },
+    {
+      "id": "native-assistant",
+      "role": "unknown",
+      "label": null,
+      "scene": "panel:assistant",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeCommandView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-assistant-cancel",
+      "role": "button",
+      "label": null,
+      "scene": "panel:assistant",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeCommandView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-assistant-input",
+      "role": "textField",
+      "label": "输入指令",
+      "scene": "panel:assistant",
+      "actions": [
+        "setValue",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [
+        "助手不忙"
+      ],
+      "disabledWhen": "store.isBusy",
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeCommandView.swift",
+      "notes": "本地指令优先；未匹配时提交给所选 AI 运行时。"
+    },
+    {
+      "id": "native-assistant-record",
+      "role": "button",
+      "label": null,
+      "scene": "panel:assistant",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "![\"idle\", \"listening\"].contains(store.phase)",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeCommandView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-assistant-submit",
+      "role": "button",
+      "label": "执行",
+      "scene": "panel:assistant",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "助手不忙",
+        "草稿非空"
+      ],
+      "disabledWhen": "store.isBusy || store.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty",
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeCommandView.swift",
+      "notes": "提交指令；AI 请求可能消耗模型额度。"
+    },
+    {
+      "id": "native-browser-address",
+      "role": "textField",
+      "label": "输入网址或搜索",
+      "scene": "panel:browser",
+      "actions": [
+        "setValue",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "提交后导航；页面加载结果由浏览器显示。"
+    },
+    {
+      "id": "native-browser-back",
+      "role": "button",
+      "label": null,
+      "scene": "panel:browser",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!store.canGoBack",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-browser-empty",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:browser",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-browser-error",
+      "role": "button",
+      "label": "网页载入进度",
+      "scene": "panel:browser",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-browser-forward",
+      "role": "button",
+      "label": null,
+      "scene": "panel:browser",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!store.canGoForward",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-browser-go",
+      "role": "button",
+      "label": "打开网页",
+      "scene": "panel:browser",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "地址栏非空"
+      ],
+      "disabledWhen": "store.addressInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty",
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "打开已输入的地址；不保证页面加载成功。"
+    },
+    {
+      "id": "native-browser-menu",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:browser",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-browser-reload",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:browser",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!store.hasPage",
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-browser-title",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:browser",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-device",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:device",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-device-camera",
+      "role": "group",
+      "label": null,
+      "scene": "panel:device",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-device-cancel",
+      "role": "button",
+      "label": null,
+      "scene": "panel:device",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-device-connect",
+      "role": "button",
+      "label": "连接设备",
+      "scene": "panel:device",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "notes": "切换模拟设备连接状态。"
+    },
+    {
+      "id": "native-device-connection",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:device",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-device-disconnect",
+      "role": "button",
+      "label": null,
+      "scene": "panel:device",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-device-scene",
+      "role": "group",
+      "label": null,
+      "scene": "panel:device",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-device-sleep",
+      "role": "button",
+      "label": null,
+      "scene": "panel:device",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-map-toggle-steps",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:map",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Maps/NativeMapView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-notifications",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:notifications",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-notifications-clear",
+      "role": "button",
+      "label": "清空通知",
+      "scene": "panel:notifications",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "notes": "清空当前通知列表，不可撤销。"
+    },
+    {
+      "id": "native-notifications-empty",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:notifications",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/NativeUtilityPanels.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-playback-position",
+      "role": "slider",
+      "label": "播放进度",
+      "scene": "panel:audio",
+      "actions": [
+        "readValue",
+        "focus"
+      ],
+      "access": "read",
+      "preconditions": [
+        "NetEase is the active player and reports a seekable song",
+        "control is enabled"
+      ],
+      "disabledWhen": "!store.canSeek",
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Audio/NativePlaybackPositionView.swift",
+      "notes": "Verified in the running release app: native slider with Increment and Decrement secondary actions; AXValue is not directly settable. Mouse click and both native adjustments sought NetEase successfully; paused seeking stayed paused. Drag preview/commit behavior is covered by unit tests. VoiceOver announcement was not recorded."
+    },
+    {
+      "id": "native-space-controls",
+      "role": "group",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "空间控制面板根容器，仅用于定位子元素。"
+    },
+    {
+      "id": "native-space-hud",
+      "role": "checkBox",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "press",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-landmark",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-pin",
+      "role": "button",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "store.scanning || store.scanProgress < 100",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-pinned-anchor",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-preview",
+      "role": "unknown",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-reset-view",
+      "role": "button",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-route-advance",
+      "role": "button",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-route-end",
+      "role": "button",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-route-instruction",
+      "role": "staticText",
+      "label": "模拟路线进度",
+      "scene": "panel:space",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-route-start",
+      "role": "button",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-scan",
+      "role": "button",
+      "label": "模拟扫描",
+      "scene": "panel:space",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "开始或取消模拟扫描；不使用摄像头，重复触发会反转状态。"
+    },
+    {
+      "id": "native-space-scan-progress",
+      "role": "staticText",
+      "label": "模拟扫描进度",
+      "scene": "panel:space",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-scene",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-show-hud",
+      "role": "button",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-zoom-in",
+      "role": "button",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "store.viewScale >= 1.6",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-space-zoom-out",
+      "role": "button",
+      "label": null,
+      "scene": "panel:space",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "store.viewScale <= 0.65",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Space/NativeSpaceControlsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "project-add-craft-hub",
+      "role": "button",
+      "label": null,
+      "scene": "panel:project-regions",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!projects.editable || projects.regions.count >= ProjectRegion.capacity",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "project-add-folder",
+      "role": "button",
+      "label": "添加项目文件夹…",
+      "scene": "panel:project-regions",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "配置可编辑",
+        "区域数未达 6 个上限"
+      ],
+      "disabledWhen": "!projects.editable || projects.regions.count >= ProjectRegion.capacity",
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "打开系统目录选择器；需要用户选择。"
+    },
+    {
+      "id": "project-choose-browser",
+      "role": "button",
+      "label": null,
+      "scene": "panel:project-regions",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "project-choose-editor",
+      "role": "button",
+      "label": null,
+      "scene": "panel:project-regions",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "project-folder-path",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:project-regions",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "project-open-result-{id}",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:project-regions",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "project-open-workspace",
+      "role": "button",
+      "label": null,
+      "scene": "panel:project-regions",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "!projects.editable",
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "project-region-name",
+      "role": "staticText",
+      "label": "区域名称",
+      "scene": "panel:project-regions",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [
+        "control is enabled"
+      ],
+      "disabledWhen": "region.craftHub != nil",
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "project-region-slot",
+      "role": "staticText",
+      "label": "工作网址（每行一个）",
+      "scene": "panel:project-regions",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "project-remove",
+      "role": "button",
+      "label": null,
+      "scene": "panel:project-regions",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "project-save",
+      "role": "button",
+      "label": "保存配置",
+      "scene": "panel:project-regions",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "写入项目区域配置；保存失败可重试。"
+    },
+    {
+      "pattern": "project-select-{id}",
+      "role": "button",
+      "label": "选择项目区域",
+      "scene": "panel:project-regions",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "选中区域后显示其编辑器；不打开工作区。"
+    },
+    {
+      "id": "project-websites",
+      "role": "staticText",
+      "label": "工作网址（每行一个）",
+      "scene": "panel:project-regions",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/ProjectWorkspace/ProjectRegionSections.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "quick-capture-draft",
+      "role": "staticText",
+      "label": "记下想法、待办或一句话…",
+      "scene": "panel:quick-capture",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Productivity/QuickNotesView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "startup-mode",
+      "role": "staticText",
+      "label": null,
+      "scene": "settings:startup",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Preferences/NativeStartupSettingsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "workspace-command-input",
+      "role": "textField",
+      "label": null,
+      "scene": "panel:assistant",
+      "actions": [
+        "setValue",
+        "readValue",
+        "focus"
+      ],
+      "access": "write",
+      "preconditions": [
+        "speech is idle or in error"
+      ],
+      "disabledWhen": "speechPhase is requesting, listening or processing",
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Productivity/WorkspaceCommandView.swift",
+      "notes": "Command input shared by the page and floating glass palette. Editing only updates the draft; Return executes the selected command."
+    },
+    {
+      "id": "app-language",
+      "role": "staticText",
+      "label": null,
+      "scene": "settings:startup",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Preferences/NativeScenePreferencesView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "wechat-voice-trigger",
+      "role": "staticText",
+      "label": null,
+      "scene": "settings:shortcuts",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Shortcuts/NativeVoiceSettingsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "hud-clock-enabled",
+      "role": "checkBox",
+      "label": null,
+      "scene": "settings:appearance",
+      "actions": [
+        "press",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [
+        "appearance settings are visible"
+      ],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Preferences/NativeScenePreferencesView.swift",
+      "notes": "Toggles the optional top clock in both the Augma window layout and immersive mode. The preference persists independently of scene data. Live AX role and value still require verification in Settings before exposing as an agent action."
+    },
+    {
+      "id": "dock-bottom-inset",
+      "role": "slider",
+      "label": "底部间距",
+      "scene": "settings:startup",
+      "actions": [
+        "setValue",
+        "readValue"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Preferences/NativeScenePreferencesView.swift",
+      "notes": "设置 Augma 布局与沉浸模式底部 Dock 的可见间距，范围 0–120 pt，重启后保留。"
+    },
+    {
+      "id": "dock-bottom-inset-reset",
+      "role": "button",
+      "label": "与顶部间距一致",
+      "scene": "settings:startup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": true,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Preferences/NativeScenePreferencesView.swift",
+      "notes": "将底部 Dock 间距恢复为 17 pt，与顶部控件到菜单栏的可见间距一致。"
+    },
+    {
+      "id": "open-voice-input-settings",
+      "role": "button",
+      "label": null,
+      "scene": "settings:startup",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Preferences/NativeScenePreferencesView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "voice-input-provider",
+      "role": "staticText",
+      "label": null,
+      "scene": "settings:shortcuts",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Shortcuts/NativeVoiceSettingsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "voice-input-start",
+      "role": "button",
+      "label": null,
+      "scene": "settings:shortcuts",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Shortcuts/NativeVoiceSettingsView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    }
+  ]
+}
