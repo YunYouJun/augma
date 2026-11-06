@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NativeAudioView: View {
   @ObservedObject var store: NativeAudioStore
+  @State private var queuePresented = false
 
   var body: some View {
     Group {
@@ -25,7 +26,7 @@ struct NativeAudioView: View {
 
   private func playerPage(_ track: NativeNowPlayingTrack, wide: Bool) -> some View {
     NativePageSection("正在播放") {
-      NativeNowPlayingContent(track: track, lyrics: store.lyrics, wide: wide)
+      NativeNowPlayingContent(track: track, lyrics: store.lyrics, store: store, queuePresented: $queuePresented, wide: wide)
     }
     .nativePageContent(maxWidth: NativePageLayout.wideContentWidth)
   }
@@ -54,7 +55,7 @@ struct NativeAudioView: View {
           }
         }
       }
-      Text("读取本机播放信息，联网获取歌词并缓存在本机。播放操作请在网易云音乐中完成。")
+      Text("读取本机播放信息，支持网易云音乐播放、暂停、切歌和进度调整，联网获取歌词并缓存在本机。")
         .font(.caption).foregroundStyle(.secondary)
     }
   }
@@ -63,10 +64,12 @@ struct NativeAudioView: View {
 private struct NativeNowPlayingContent: View {
   let track: NativeNowPlayingTrack
   let lyrics: NativeLyricsStore
+  @ObservedObject var store: NativeAudioStore
+  @Binding var queuePresented: Bool
   let wide: Bool
 
   var body: some View {
-    // Preserve the lyric view identity when the window changes width.
+    // Preserve the lyric/queue view identity when the window changes width.
     let layout = wide ? AnyLayout(HStackLayout(alignment: .top, spacing: 28))
       : AnyLayout(VStackLayout(alignment: .leading, spacing: 20))
     layout {
@@ -80,34 +83,33 @@ private struct NativeNowPlayingContent: View {
   private var playback: some View {
     VStack(alignment: .leading, spacing: 16) {
       NativeNowPlayingHeaderLayout { artwork; metadata }
-      if track.elapsed != nil, let duration = track.duration {
-        TimelineView(.animation(minimumInterval: 1, paused: !track.playing)) { context in
-          let elapsed = track.elapsed(at: context.date) ?? 0
-          VStack(spacing: 8) {
-            ProgressView(value: elapsed, total: duration).accessibilityLabel("播放进度")
-            HStack { Text(time(elapsed)); Spacer(); Text(time(duration)) }
-              .font(.caption).monospacedDigit().foregroundStyle(.secondary)
-          }
-        }
+      if let error = store.playbackError {
+        Label(error, systemImage: "exclamationmark.circle")
+          .font(.caption).foregroundStyle(.secondary)
       }
+      NativePlaybackPositionView(track: track, store: store)
     }
     .fixedSize(horizontal: false, vertical: true)
   }
 
   private var detail: some View {
-    NativeLyricsView(store: lyrics, track: track)
-      .frame(minHeight: 240, maxHeight: .infinity, alignment: .top)
+    Group {
+      if queuePresented {
+        // Bound the inner scroll view so its queue cannot grow the whole page.
+        GeometryReader { _ in NativePlaybackQueueView(store: store.queue) }
+      }
+      else { NativeLyricsView(store: lyrics, track: track) }
+    }
+    .frame(minHeight: 240, maxHeight: .infinity, alignment: .top)
   }
 
   private var metadata: some View {
     VStack(alignment: .leading, spacing: 10) {
-      Label("网易云音乐", systemImage: "music.note").font(.caption).foregroundStyle(.secondary)
+      NativePlayerSourceLabel()
       Text(track.title).font(.title2.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
       if let artist = track.artist { Text(artist).font(.title3).foregroundStyle(.secondary) }
       if let album = track.album { Text(album).font(.callout).foregroundStyle(.secondary) }
-      Label(track.playing ? String(localized: "正在播放") : String(localized: "已暂停"),
-            systemImage: track.playing ? "waveform" : "pause.fill")
-        .font(.caption).foregroundStyle(.secondary).padding(.top, 4)
+      NativePlaybackControls(store: store, playing: track.playing, queuePresented: $queuePresented).padding(.top, 4)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
   }
@@ -126,8 +128,4 @@ private struct NativeNowPlayingContent: View {
     .accessibilityLabel("专辑封面")
   }
 
-  private func time(_ value: TimeInterval) -> String {
-    let seconds = Int(max(0, value))
-    return String(format: "%d:%02d", seconds / 60, seconds % 60)
-  }
 }

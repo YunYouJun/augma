@@ -30,20 +30,25 @@ struct NeteaseSongIDResolver: Sendable {
   }
 
   static func match(_ identity: LyricsTrackIdentity, entries: [Entry]) -> String? {
-    guard let artist = identity.artist, !LyricsTrackIdentity.normalize(artist).isEmpty else { return nil }
     let matches = entries.compactMap { entry -> String? in
-      guard let track = entry.track,
-            LyricsTrackIdentity.normalize(track.name) == LyricsTrackIdentity.normalize(identity.title),
-            artistsMatch(artist, track.artists.map(\.name)) else { return nil }
-      if let album = identity.album, !album.isEmpty,
-         LyricsTrackIdentity.normalize(track.album?.name ?? "") != LyricsTrackIdentity.normalize(album) { return nil }
-      if let duration = identity.duration {
-        guard let milliseconds = track.duration, milliseconds.isFinite, abs(milliseconds / 1000 - Double(duration)) <= 2 else { return nil }
-      }
+      guard let track = entry.track, Self.matches(identity, track: track) else { return nil }
       return track.id?.value
     }
     let ids = Set(matches)
     return ids.count == 1 ? ids.first : nil
+  }
+
+  static func matches(_ identity: LyricsTrackIdentity, track: Track) -> Bool {
+    guard let artist = identity.artist, !LyricsTrackIdentity.normalize(artist).isEmpty,
+          LyricsTrackIdentity.normalize(track.name) == LyricsTrackIdentity.normalize(identity.title),
+          artistsMatch(artist, track.artists.map(\.name)) else { return false }
+    if let album = identity.album, !album.isEmpty,
+       LyricsTrackIdentity.normalize(track.album?.name ?? "") != LyricsTrackIdentity.normalize(album) { return false }
+    if let duration = identity.duration {
+      guard let milliseconds = track.duration, milliseconds.isFinite,
+            abs(milliseconds / 1000 - Double(duration)) <= 2 else { return false }
+    }
+    return true
   }
 
   static func artistsMatch(_ text: String, _ names: [String]) -> Bool {
@@ -59,16 +64,16 @@ struct NeteaseSongIDResolver: Sendable {
 
   struct Queue: Decodable { let list: [Entry] }
   struct Entry: Decodable { let track: Track? }
-  struct Track: Decodable {
+  struct Track: Decodable, Equatable, Sendable {
     let id: SongID?
     let name: String
     let artists: [Artist]
     let album: Album?
     let duration: Double?
   }
-  struct Artist: Decodable { let name: String }
-  struct Album: Decodable { let name: String }
-  struct SongID: Decodable {
+  struct Artist: Decodable, Equatable, Sendable { let name: String }
+  struct Album: Decodable, Equatable, Sendable { let name: String }
+  struct SongID: Decodable, Equatable, Sendable {
     let value: String
     init(from decoder: any Decoder) throws {
       let container = try decoder.singleValueContainer()

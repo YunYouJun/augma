@@ -33,9 +33,9 @@ enum LyricsSource: String, Codable, Sendable {
   case netease, lrclib, metadata
   var title: String {
     switch self {
-    case .netease: String(localized: "网易云音乐")
+    case .netease: String(appLocalized: "网易云音乐")
     case .lrclib: "LRCLIB"
-    case .metadata: String(localized: "播放元数据")
+    case .metadata: String(appLocalized: "播放元数据")
     }
   }
 }

@@ -14,6 +14,8 @@ struct NativeNowPlayingPayload: Decodable, Sendable {
   var artwork: Data?
   var lyrics: String?
   var error: String?
+  var trackIdentifier: String?
+  var canSeek: Bool?
 }
 
 struct NativeNowPlayingTrack: Equatable, Sendable {
@@ -28,6 +30,8 @@ struct NativeNowPlayingTrack: Equatable, Sendable {
   let sampledAt: Date
   let artwork: Data?
   let lyrics: String?
+  let trackIdentifier: String?
+  let canSeek: Bool
 
   init?(payload: NativeNowPlayingPayload, receivedAt: Date) {
     guard payload.bundleIdentifier == Self.neteaseBundleIdentifier,
@@ -36,7 +40,7 @@ struct NativeNowPlayingTrack: Equatable, Sendable {
     artist = Self.nonempty(payload.artist)
     album = Self.nonempty(payload.album)
     playing = payload.playing == true
-    duration = payload.duration.flatMap { $0.isFinite && $0 > 0 ? $0 : nil }
+    duration = payload.duration.flatMap { $0.isFinite && $0 > 0 && $0 <= 604_800 ? $0 : nil }
     let speed = payload.rate ?? 1
     rate = speed.isFinite && speed >= 0 && speed <= 16 ? speed : 1
     sampledAt = receivedAt
@@ -47,6 +51,8 @@ struct NativeNowPlayingTrack: Equatable, Sendable {
     } else { elapsed = nil }
     artwork = payload.artwork.flatMap { $0.count <= 4_194_304 ? $0 : nil }
     lyrics = Self.nonempty(payload.lyrics)
+    trackIdentifier = Self.nonempty(payload.trackIdentifier).flatMap { $0.utf8.count <= 4096 ? $0 : nil }
+    canSeek = payload.canSeek == true && trackIdentifier != nil && duration != nil && elapsed != nil
   }
 
   func elapsed(at date: Date) -> TimeInterval? {
