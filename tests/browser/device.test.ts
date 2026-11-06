@@ -487,6 +487,7 @@ test('mobile anchors, route controls and HUD recovery remain usable', async ({ p
 })
 
 test('depth and curves are independent, persist and stop for reduced motion', async ({ page }) => {
+  test.slow()
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto('/ar/')
   const view = page.locator('.ar-app')
@@ -525,8 +526,12 @@ test('depth and curves are independent, persist and stop for reduced motion', as
   await page.getByRole('switch', { name: '景深动画' }).click()
   await expect(view).not.toHaveClass(/has-depth/)
   await expect(page.locator('.system-arc')).toBeVisible()
+  // Avoid waiting on the dialog's exit animation in resource-constrained CI browsers.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.getByRole('button', { name: '恢复默认设置', exact: true }).click()
-  await page.getByRole('button', { name: '确认恢复' }).click()
+  const resetDialog = page.getByRole('dialog', { name: '恢复默认设置' })
+  await resetDialog.getByRole('button', { name: '确认恢复' }).click()
+  await expect(resetDialog).toHaveCount(0)
   await expect(page.getByRole('switch', { name: '弧线视界' })).not.toBeChecked()
   await expect(page.locator('.system-rule')).toBeVisible()
   await expect(edge).toHaveCSS('translate', 'none')
