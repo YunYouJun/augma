@@ -2043,23 +2043,6 @@
       "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
     },
     {
-      "id": "native-browser-title",
-      "role": "staticText",
-      "label": null,
-      "scene": "panel:browser",
-      "actions": [
-        "readValue"
-      ],
-      "access": "read",
-      "preconditions": [],
-      "disabledWhen": null,
-      "idempotent": true,
-      "reviewed": false,
-      "declaredVia": "accessibilityIdentifier",
-      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
-      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
-    },
-    {
       "id": "native-device",
       "role": "staticText",
       "label": null,
@@ -3004,6 +2987,74 @@
       "declaredVia": "accessibilityIdentifier",
       "source": "AugmaDesktopDemo/Shortcuts/NativeVoiceSettingsView.swift",
       "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-browser-new-tab",
+      "role": "staticText",
+      "label": "新建标签页",
+      "scene": "panel:browser",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "native-browser-tab-{id}",
+      "role": "staticText",
+      "label": null,
+      "scene": "panel:browser",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "pattern": "native-browser-tab-close-{id}",
+      "role": "staticText",
+      "label": "关闭标签页",
+      "scene": "panel:browser",
+      "actions": [
+        "readValue"
+      ],
+      "access": "read",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": true,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "Derived from source. Verify role, state and side effects in a running App before exposing as an agent action."
+    },
+    {
+      "id": "native-browser-open-external",
+      "role": "popUpButton",
+      "label": "在默认浏览器中打开",
+      "scene": "panel:browser",
+      "actions": [
+        "press"
+      ],
+      "access": "write",
+      "preconditions": [],
+      "disabledWhen": null,
+      "idempotent": false,
+      "reviewed": false,
+      "declaredVia": "accessibilityIdentifier",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "notes": "主按钮使用系统默认浏览器打开当前页；下拉菜单选择 Safari 或 Google Chrome。"
     }
   ]
 }

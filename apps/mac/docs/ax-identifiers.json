@@ -564,12 +564,27 @@
       "declaredVia": "accessibilityIdentifier"
     },
     {
+      "id": "native-browser-new-tab",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "id": "native-browser-open-external",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
       "id": "native-browser-reload",
       "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
       "declaredVia": "accessibilityIdentifier"
     },
     {
-      "id": "native-browser-title",
+      "pattern": "native-browser-tab-close-{id}",
+      "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
+      "declaredVia": "accessibilityIdentifier"
+    },
+    {
+      "pattern": "native-browser-tab-{id}",
       "source": "AugmaDesktopDemo/Browser/NativeBrowserView.swift",
       "declaredVia": "accessibilityIdentifier"
     },

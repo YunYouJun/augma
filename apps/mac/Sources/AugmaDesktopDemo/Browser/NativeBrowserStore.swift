@@ -6,87 +6,117 @@ enum NativeBrowserPresentation {
   case main, immersive
 }
 
-/// One user-initiated browsing session, shared by the main window and immersive presentation.
-/// This WebKit instance has no Augma script messages, local resource scheme, or injected app state.
+/// Window-level tab collection shared by the main window and immersive presentation.
+/// Each tab owns its own WebKit instance; this store only mounts the active tab.
 @MainActor
 final class NativeBrowserStore: NSObject, ObservableObject {
-  @Published var addressInput = ""
-  @Published private(set) var currentURL: URL?
-  @Published private(set) var title = ""
-  @Published private(set) var hasPage = false
-  @Published private(set) var isLoading = false
-  @Published private(set) var progress = 0.0
-  @Published private(set) var canGoBack = false
-  @Published private(set) var canGoForward = false
-  @Published private(set) var error: String?
+  @Published private(set) var tabs: [NativeBrowserTab]
+  @Published private(set) var activeTabID: UUID
   @Published private(set) var addressFocusRequest = 0
   @Published private(set) var presentation: NativeBrowserPresentation = .main
 
-  private(set) var webView: WKWebView?
-  private var observations: [NSKeyValueObservation] = []
-  private let openExternal: (URL) -> Bool
+  private let openExternal: (URL, NativeBrowserExternalTarget) -> Bool
   private let createWebView: (WKWebViewConfiguration) -> WKWebView
   private var nextHostSequence: UInt64 = 0
   private var activeHostSequence: UInt64 = 0
 
-  init(openExternal: @escaping (URL) -> Bool = { NSWorkspace.shared.open($0) },
+  init(openExternal: @escaping (URL, NativeBrowserExternalTarget) -> Bool = NativeBrowserExternalTarget.open,
        createWebView: @escaping (WKWebViewConfiguration) -> WKWebView = { WKWebView(frame: .zero, configuration: $0) }) {
     self.openExternal = openExternal
     self.createWebView = createWebView
+    let tab = NativeBrowserTab(openExternal: openExternal, createWebView: createWebView)
+    tabs = [tab]
+    activeTabID = tab.id
     super.init()
+    tab.owner = self
   }
 
-  func submitAddress() {
-    do { navigate(to: try NativeBrowserAddress.resolve(addressInput)) }
-    catch let failure as NativeBrowserAddressError { error = failure.message }
-    catch { self.error = String(appLocalized: "网址无效，请检查后重试。") }
+  var activeTab: NativeBrowserTab {
+    tabs.first { $0.id == activeTabID } ?? tabs[0]
   }
 
-  func navigate(to url: URL) {
-    guard NativeBrowserAddress.permits(url) else {
-      error = String(appLocalized: "仅支持 HTTP 和 HTTPS 网页。")
+  var addressInput: String {
+    get { activeTab.addressInput }
+    set { activeTab.addressInput = newValue }
+  }
+  var currentURL: URL? { activeTab.currentURL }
+  var title: String { activeTab.title }
+  var hasPage: Bool { activeTab.hasPage }
+  var isLoading: Bool { activeTab.isLoading }
+  var progress: Double { activeTab.progress }
+  var canGoBack: Bool { activeTab.canGoBack }
+  var canGoForward: Bool { activeTab.canGoForward }
+  var error: String? { activeTab.error }
+  var webView: WKWebView? { activeTab.webView }
+  var canCloseTab: Bool { tabs.count > 1 || activeTab.hasPage }
+
+  func submitAddress() { activeTab.submitAddress() }
+  func navigate(to url: URL) { activeTab.navigate(to: url) }
+  func goBack() { activeTab.goBack() }
+  func goForward() { activeTab.goForward() }
+  func reloadOrStop() { activeTab.reloadOrStop() }
+  func openInDefaultBrowser() { activeTab.openInDefaultBrowser() }
+  func openExternally(in target: NativeBrowserExternalTarget) { activeTab.openExternally(in: target) }
+  func dismissError() { activeTab.dismissError() }
+
+  func suspendPlayback() {
+    for tab in tabs { tab.suspendPlayback() }
+  }
+
+  func focusAddress() { addressFocusRequest &+= 1 }
+
+  @discardableResult
+  func newTab() -> NativeBrowserTab {
+    let tab = makeTab()
+    tabs.append(tab)
+    activeTabID = tab.id
+    addressFocusRequest &+= 1
+    return tab
+  }
+
+  @discardableResult
+  func openTab(with request: URLRequest) -> NativeBrowserTab? {
+    guard let url = request.url, NativeBrowserAddress.permits(url) else { return nil }
+    let tab = makeTab()
+    tabs.append(tab)
+    activeTabID = tab.id
+    tab.load(request)
+    return tab
+  }
+
+  func selectTab(_ id: UUID) {
+    guard tabs.contains(where: { $0.id == id }) else { return }
+    activeTabID = id
+  }
+
+  func selectNextTab() {
+    guard tabs.count > 1, let index = tabs.firstIndex(where: { $0.id == activeTabID }) else { return }
+    selectTab(tabs[(index + 1) % tabs.count].id)
+  }
+
+  func selectPreviousTab() {
+    guard tabs.count > 1, let index = tabs.firstIndex(where: { $0.id == activeTabID }) else { return }
+    selectTab(tabs[(index + tabs.count - 1) % tabs.count].id)
+  }
+
+  func closeTab(_ id: UUID) {
+    guard let index = tabs.firstIndex(where: { $0.id == id }) else { return }
+    guard tabs.count > 1 else {
+      tabs[0].reset()
+      activeTabID = tabs[0].id
+      addressFocusRequest &+= 1
       return
     }
-    error = nil
-    addressInput = url.absoluteString
-    currentURL = url
-    let view = makeWebViewIfNeeded()
-    hasPage = true
-    view.load(URLRequest(url: url))
-  }
-
-  func goBack() {
-    guard let webView, webView.canGoBack else { return }
-    error = nil
-    webView.goBack()
-  }
-
-  func goForward() {
-    guard let webView, webView.canGoForward else { return }
-    error = nil
-    webView.goForward()
-  }
-
-  func reloadOrStop() {
-    guard let webView else { return }
-    if webView.isLoading {
-      webView.stopLoading()
-      isLoading = false
-    } else {
-      error = nil
-      if webView.url != nil { webView.reload() }
-      else if let currentURL { webView.load(URLRequest(url: currentURL)) }
+    let closingActive = activeTabID == id
+    let tab = tabs.remove(at: index)
+    tab.teardown()
+    if closingActive {
+      activeTabID = tabs[min(index, tabs.count - 1)].id
     }
   }
 
-  func openInDefaultBrowser() {
-    guard let currentURL, NativeBrowserAddress.permits(currentURL) else { return }
-    if !openExternal(currentURL) { error = String(appLocalized: "无法在默认浏览器中打开网页。") }
-  }
-
-  func dismissError() { error = nil }
-  func suspendPlayback() { webView?.pauseAllMediaPlayback() }
-  func focusAddress() { addressFocusRequest &+= 1 }
+  func closeActiveTab() { closeTab(activeTabID) }
+  func closePage() { closeActiveTab() }
 
   func setPresentation(_ presentation: NativeBrowserPresentation) {
     guard self.presentation != presentation else { return }
@@ -99,151 +129,19 @@ final class NativeBrowserStore: NSObject, ObservableObject {
     return nextHostSequence
   }
 
-  func claimHost(sequence: UInt64, presentation: NativeBrowserPresentation) -> Bool {
-    guard self.presentation == presentation, sequence >= activeHostSequence else { return false }
+  func claimHost(sequence: UInt64, tabID: UUID, presentation: NativeBrowserPresentation) -> Bool {
+    guard self.presentation == presentation, tabID == activeTabID, sequence >= activeHostSequence else { return false }
     activeHostSequence = sequence
     return true
   }
 
-  func closePage() {
-    shutdown()
-    addressInput = ""
-    currentURL = nil
-    title = ""
-    hasPage = false
-    isLoading = false
-    progress = 0
-    canGoBack = false
-    canGoForward = false
-    error = nil
-  }
-
   func shutdown() {
-    observations.removeAll()
-    webView?.navigationDelegate = nil
-    webView?.uiDelegate = nil
-    webView?.stopLoading()
-    webView?.pauseAllMediaPlayback()
-    webView?.removeFromSuperview()
-    webView = nil
+    for tab in tabs { tab.teardown() }
   }
 
-  private func makeWebViewIfNeeded() -> WKWebView {
-    if let webView { return webView }
-    let configuration = WKWebViewConfiguration()
-    configuration.websiteDataStore = .default()
-    configuration.preferences.javaScriptCanOpenWindowsAutomatically = false
-    configuration.mediaTypesRequiringUserActionForPlayback = .all
-    let view = createWebView(configuration)
-    view.navigationDelegate = self
-    view.uiDelegate = self
-    view.allowsBackForwardNavigationGestures = true
-    view.setAccessibilityIdentifier("native-browser-page")
-    webView = view
-
-    func observe<Value>(_ keyPath: KeyPath<WKWebView, Value>) {
-      observations.append(view.observe(keyPath, options: [.new]) { [weak self, weak view] _, _ in
-        Task { @MainActor [weak self, weak view] in
-          guard let self, let view, self.webView === view else { return }
-          self.refresh(from: view)
-        }
-      })
-    }
-    observe(\.title)
-    observations.append(view.observe(\.url, options: [.new]) { [weak self, weak view] _, _ in
-      Task { @MainActor [weak self, weak view] in
-        guard let self, let view, self.webView === view else { return }
-        self.updateAddress(from: view)
-      }
-    })
-    observe(\.isLoading)
-    observe(\.estimatedProgress)
-    observe(\.canGoBack)
-    observe(\.canGoForward)
-    return view
-  }
-
-  private func refresh(from view: WKWebView) {
-    title = view.title ?? ""
-    isLoading = view.isLoading
-    progress = view.estimatedProgress
-    canGoBack = view.canGoBack
-    canGoForward = view.canGoForward
-  }
-
-  private func updateAddress(from view: WKWebView) {
-    guard webView === view else { return }
-    if let url = view.url, NativeBrowserAddress.permits(url) {
-      currentURL = url
-      addressInput = url.absoluteString
-    }
-    refresh(from: view)
-  }
-
-  private func navigationFailed(_ failure: Error, view: WKWebView) {
-    guard webView === view, (failure as NSError).code != NSURLErrorCancelled else { return }
-    isLoading = false
-    error = failure.localizedDescription
-    refresh(from: view)
-  }
-}
-
-extension NativeBrowserStore: WKNavigationDelegate, WKUIDelegate {
-  func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
-    guard self.webView === webView, let url = navigationAction.request.url else { return .cancel }
-    if navigationAction.targetFrame?.isMainFrame == false {
-      // A page's blank frames are internal WebKit content, never an app bridge.
-      if url.absoluteString == "about:blank" { return .allow }
-      return NativeBrowserAddress.permits(url) ? .allow : .cancel
-    }
-    guard NativeBrowserAddress.permits(url) else {
-      error = String(appLocalized: "仅支持 HTTP 和 HTTPS 网页。")
-      return .cancel
-    }
-    if navigationAction.shouldPerformDownload {
-      error = String(appLocalized: "请在默认浏览器中下载此文件。")
-      return .cancel
-    }
-    if navigationAction.targetFrame == nil {
-      // A user-clicked new-window link reuses this session instead of spawning hidden windows.
-      webView.load(navigationAction.request)
-      return .cancel
-    }
-    error = nil
-    return .allow
-  }
-
-  func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse) async -> WKNavigationResponsePolicy {
-    guard self.webView === webView else { return .cancel }
-    guard navigationResponse.canShowMIMEType else {
-      if navigationResponse.isForMainFrame { error = String(appLocalized: "请在默认浏览器中下载此文件。") }
-      return .cancel
-    }
-    return .allow
-  }
-
-  func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) { updateAddress(from: webView) }
-  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) { updateAddress(from: webView) }
-  func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) { navigationFailed(error, view: webView) }
-  func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) { navigationFailed(error, view: webView) }
-
-  func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-    guard self.webView === webView else { return }
-    isLoading = false
-    error = String(appLocalized: "网页进程已结束，请重新载入。")
-  }
-
-  func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
-               for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-    if navigationAction.targetFrame == nil, let url = navigationAction.request.url, NativeBrowserAddress.permits(url) {
-      webView.load(navigationAction.request)
-    }
-    return nil
-  }
-
-  func webView(_ webView: WKWebView, decideMediaCapturePermissionsFor origin: WKSecurityOrigin,
-               initiatedBy frame: WKFrameInfo, type: WKMediaCaptureType) async -> WKPermissionDecision {
-    // Browsing does not inherit permission granted to Augma's native camera or voice assistant.
-    .deny
+  private func makeTab() -> NativeBrowserTab {
+    let tab = NativeBrowserTab(openExternal: openExternal, createWebView: createWebView)
+    tab.owner = self
+    return tab
   }
 }

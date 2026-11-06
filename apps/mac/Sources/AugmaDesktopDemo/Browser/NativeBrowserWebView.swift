@@ -3,7 +3,8 @@ import SwiftUI
 import WebKit
 
 struct NativeBrowserWebView: NSViewRepresentable {
-  @ObservedObject var store: NativeBrowserStore
+  let store: NativeBrowserStore
+  @ObservedObject var tab: NativeBrowserTab
   let presentation: NativeBrowserPresentation
 
   func makeNSView(context: Context) -> NativeBrowserWebHost {
@@ -13,13 +14,13 @@ struct NativeBrowserWebView: NSViewRepresentable {
   }
 
   func updateNSView(_ host: NativeBrowserWebHost, context: Context) {
-    guard let webView = store.webView else { host.detach(); return }
-    host.attach(webView, presentation: presentation)
+    guard let webView = tab.webView else { host.detach(); return }
+    host.attach(webView, tabID: tab.id, presentation: presentation)
   }
   static func dismantleNSView(_ host: NativeBrowserWebHost, coordinator: ()) { host.detach() }
 }
 
-/// Each presentation owns a host, while the store owns the sole page and navigation history.
+/// Each presentation owns a host, while the store owns tabs and each tab owns its page.
 @MainActor
 final class NativeBrowserWebHost: NSView {
   private weak var store: NativeBrowserStore?
@@ -35,10 +36,10 @@ final class NativeBrowserWebHost: NSView {
 
   required init?(coder: NSCoder) { nil }
 
-  func attach(_ webView: WKWebView, presentation: NativeBrowserPresentation) {
+  func attach(_ webView: WKWebView, tabID: UUID, presentation: NativeBrowserPresentation) {
     // A delayed update from the old presentation must never reclaim the shared page.
-    // Sequence ordering also covers leaving and reopening the browser in the same mode.
-    guard store?.claimHost(sequence: sequence, presentation: presentation) == true else {
+    // Sequence and tab identity also cover leaving, reopening or switching tabs in the same mode.
+    guard store?.claimHost(sequence: sequence, tabID: tabID, presentation: presentation) == true else {
       detach()
       return
     }

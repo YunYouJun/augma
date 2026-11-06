@@ -205,6 +205,18 @@ struct NativeDemoCommands: Commands {
       }
     }
     CommandMenu(String(appLocalized: "网页")) {
+      Button(String(appLocalized: "新建标签页")) { model?.browser.newTab() }
+        .keyboardShortcut("t", modifiers: .command)
+        .disabled(model?.selection != .browser)
+      Button(String(appLocalized: "关闭标签页")) { model?.browser.closeActiveTab() }
+        .disabled(model?.selection != .browser || model?.browser.canCloseTab != true)
+      Button(String(appLocalized: "下一个标签页")) { model?.browser.selectNextTab() }
+        .keyboardShortcut("]", modifiers: [.command, .shift])
+        .disabled(model?.selection != .browser || (model?.browser.tabs.count ?? 0) < 2)
+      Button(String(appLocalized: "上一个标签页")) { model?.browser.selectPreviousTab() }
+        .keyboardShortcut("[", modifiers: [.command, .shift])
+        .disabled(model?.selection != .browser || (model?.browser.tabs.count ?? 0) < 2)
+      Divider()
       Button(String(appLocalized: "输入网址或搜索")) { model?.browser.focusAddress() }
         .keyboardShortcut("l", modifiers: .command)
         .disabled(model?.selection != .browser)
