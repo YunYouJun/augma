@@ -374,6 +374,9 @@ final class CodexStorageTests: XCTestCase {
     let restored = try await fixture.executionClient().lastReceipt()
     XCTAssertEqual(restored?.id, receipt.id)
     XCTAssertEqual(restored?.items.first?.status, .trashed)
+    let receiptAttributes = try FileManager.default.attributesOfItem(
+      atPath: fixture.url("Library/Application Support/Augma/Cleanup/codex-last-receipt.json").path)
+    XCTAssertEqual((receiptAttributes[.posixPermissions] as? NSNumber)?.intValue, 0o600)
     do {
       _ = try await client.execute(
         previewID: preview.id, confirmedIDs: Set(preview.items.map(\.id)))
@@ -404,6 +407,27 @@ final class CodexStorageTests: XCTestCase {
     XCTAssertEqual(try Data(contentsOf: fixture.url(".codex/log/changed.log")).count, 31)
   }
 
+  func testUnavailableDataProtectionStopsCleanupBeforeMovingAnyFiles() async throws {
+    let fixture = try CodexStorageFixture()
+    defer { fixture.remove() }
+    try fixture.file(".codex/log/old.log", bytes: 30)
+    let client = fixture.executionClient(receiptWriter: ProtectedFileWriter { _, _, options in
+      XCTAssertEqual(options, [.atomic, .completeFileProtectionUnlessOpen])
+      throw POSIXError(.EPERM)
+    })
+    let scan = try await client.scan()
+    let ids = Set(scan.candidates.map(\.id))
+    let preview = try await client.preview(scanID: scan.id, ids: ids)
+    do {
+      _ = try await client.execute(previewID: preview.id, confirmedIDs: ids)
+      XCTFail("Unavailable protected storage must prevent cleanup")
+    } catch { XCTAssertEqual((error as? POSIXError)?.code, .EPERM) }
+    XCTAssertTrue(fixture.exists(".codex/log/old.log"))
+    XCTAssertFalse(fixture.exists("test-trash/old.log"))
+    let receipt = try await client.lastReceipt()
+    XCTAssertNil(receipt)
+  }
+
   func testExecutionRefusesExpiredOrReplacedRootReviews() async throws {
     let fixture = try CodexStorageFixture()
     defer { fixture.remove() }
@@ -411,7 +435,7 @@ final class CodexStorageTests: XCTestCase {
     let clock = CodexStorageClock(fixture.now)
     let client = CodexStorageScanner(
       home: fixture.home, environmentHome: nil, now: { clock.date },
-      ensureStopped: {})
+      ensureStopped: {}, receiptWriter: .temporaryFixture)
     let scan = try await client.scan()
     let ids = Set(scan.candidates.map(\.id))
     let preview = try await client.preview(scanID: scan.id, ids: ids)
@@ -460,7 +484,7 @@ final class CodexStorageTests: XCTestCase {
     try fixture.file("blocked", bytes: 1)
     let client = CodexStorageScanner(
       home: fixture.home, environmentHome: nil, now: { fixture.now },
-      ensureStopped: {}, receiptURL: fixture.url("blocked/receipt.json"))
+      ensureStopped: {}, receiptURL: fixture.url("blocked/receipt.json"), receiptWriter: .temporaryFixture)
     let scan = try await client.scan()
     let ids = Set(scan.candidates.map(\.id))
     let preview = try await client.preview(scanID: scan.id, ids: ids)
@@ -469,7 +493,7 @@ final class CodexStorageTests: XCTestCase {
       XCTFail("No mutation without a durable intent")
     } catch {}
     XCTAssertTrue(fixture.exists(".codex/log/old.log"))
-    let journal = CodexStorageJournal(url: fixture.url("journal/receipt.json"))
+    let journal = CodexStorageJournal(url: fixture.url("journal/receipt.json"), writer: .temporaryFixture)
     var item = CodexStorageReceipt.Item(
       candidate: try XCTUnwrap(preview.items.first), displayPath: "fixture/old.log")
     item.status = .uncertain
@@ -604,7 +628,8 @@ private struct CodexStorageFixture: Sendable {
   }
   func executionClient(
     ensureStopped: @escaping @Sendable () async throws -> Void = {},
-    trash: (@Sendable (URL) throws -> Void)? = nil
+    trash: (@Sendable (URL) throws -> Void)? = nil,
+    receiptWriter: ProtectedFileWriter = .temporaryFixture
   ) -> CodexStorageScanner {
     CodexStorageScanner(
       home: home, environmentHome: nil, now: { self.now },
@@ -613,7 +638,7 @@ private struct CodexStorageFixture: Sendable {
         try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
         try FileManager.default.moveItem(
           at: url, to: destination.appendingPathComponent(url.lastPathComponent))
-      }, ensureStopped: ensureStopped)
+      }, ensureStopped: ensureStopped, receiptWriter: receiptWriter)
   }
   func remove() { try? FileManager.default.removeItem(at: home) }
 }

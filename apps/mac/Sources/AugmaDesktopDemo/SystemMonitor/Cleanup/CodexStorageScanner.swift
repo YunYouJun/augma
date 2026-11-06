@@ -67,7 +67,8 @@ actor CodexStorageScanner: CodexStorageProviding {
     ensureStopped: @escaping @Sendable () async throws -> Void = {
       try await CodexStorageActivity.ensureStopped()
     },
-    receiptURL: URL? = nil
+    receiptURL: URL? = nil,
+    receiptWriter: ProtectedFileWriter = ProtectedFileWriter()
   ) {
     let canonicalHome = home.standardizedFileURL.resolvingSymlinksInPath()
     self.home = canonicalHome
@@ -85,7 +86,8 @@ actor CodexStorageScanner: CodexStorageProviding {
     self.journal = CodexStorageJournal(
       url: receiptURL
         ?? canonicalHome.appendingPathComponent(
-          "Library/Application Support/Augma/Cleanup/codex-last-receipt.json"))
+          "Library/Application Support/Augma/Cleanup/codex-last-receipt.json"),
+      writer: receiptWriter)
   }
 
   private func rules() throws -> [Rule] {
@@ -346,7 +348,7 @@ actor CodexStorageScanner: CodexStorageProviding {
           try identity(attributes) == record.identity
         else { throw CodexStorageError.changed }
         receipt.items[index].status = .uncertain
-        receipt.items[index].detail = String(localized: "操作中断时请在原目录及废纸篓核实；不会自动重试。")
+        receipt.items[index].detail = String(appLocalized: "操作中断时请在原目录及废纸篓核实；不会自动重试。")
         try journal.save(receipt)
         // Revalidate after journaling, immediately before the path-based Trash operation.
         try validateRoot(rule)
@@ -358,7 +360,7 @@ actor CodexStorageScanner: CodexStorageProviding {
         do {
           try trash(record.url)
           receipt.items[index].status = .trashed
-          receipt.items[index].detail = String(localized: "可从废纸篓恢复；尚未保证释放磁盘空间。")
+          receipt.items[index].detail = String(appLocalized: "可从废纸篓恢复；尚未保证释放磁盘空间。")
         } catch {
           // A failed Trash call may have moved the file before reporting an error.
           let current = try? identity(files.attributesOfItem(atPath: record.url.path))
@@ -377,13 +379,13 @@ actor CodexStorageScanner: CodexStorageProviding {
         }
       }
       do { try journal.save(receipt) } catch {
-        receipt.warning = String(localized: "回执保存失败，已停止后续操作；请核对当前结果及废纸篓。")
+        receipt.warning = String(appLocalized: "回执保存失败，已停止后续操作；请核对当前结果及废纸篓。")
         break
       }
     }
     receipt.finishedAt = now()
     do { try journal.save(receipt) } catch {
-      receipt.warning = String(localized: "回执保存失败，已停止后续操作；请核对当前结果及废纸篓。")
+      receipt.warning = String(appLocalized: "回执保存失败，已停止后续操作；请核对当前结果及废纸篓。")
     }
     return receipt
   }

@@ -31,6 +31,12 @@ enum CodexStorageActivity {
 /// Last local receipt only. A persisted in-flight item remains uncertain after restart.
 struct CodexStorageJournal: Sendable {
   let url: URL
+  private let writer: ProtectedFileWriter
+
+  init(url: URL, writer: ProtectedFileWriter = ProtectedFileWriter()) {
+    self.url = url
+    self.writer = writer
+  }
 
   func save(_ receipt: CodexStorageReceipt) throws {
     let files = FileManager.default
@@ -40,7 +46,7 @@ struct CodexStorageJournal: Sendable {
       attributes: [.posixPermissions: 0o700])
     try validatePath()
     let data = try JSONEncoder().encode(receipt)
-    try data.write(to: url, options: [.atomic, .completeFileProtectionUnlessOpen])
+    try writer.write(data, to: url)
     try files.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
   }
 
@@ -53,7 +59,7 @@ struct CodexStorageJournal: Sendable {
     }
     var receipt = try JSONDecoder().decode(CodexStorageReceipt.self, from: Data(contentsOf: url))
     if receipt.finishedAt == nil {
-      receipt.warning = String(localized: "上次操作未完成；请核实待确认项，不会自动重试。")
+      receipt.warning = String(appLocalized: "上次操作未完成；请核实待确认项，不会自动重试。")
     }
     return receipt
   }
