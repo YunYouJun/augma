@@ -7,7 +7,7 @@ import SwiftUI
 /// so the page reads the key from the menu item instead of assuming the default.
 enum VoiceShortcut {
   /// The menu item title, which App Shortcuts matches.
-  static var title: String { String(localized: "开始或结束语音指令") }
+  static var title: String { String(appLocalized: "开始或结束语音指令") }
 
   // ⌥⌘V: ⇧⌘V is the Paste and Pastebot clipboard managers' default global hotkey, which takes the key before
   // Augma sees it, while ⌥⌘V is only Finder's Move Item Here and a menu key fires only while Augma is frontmost.

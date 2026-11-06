@@ -1,5 +1,4 @@
 import AppKit
-import AVFoundation
 import Combine
 import Foundation
 
@@ -37,7 +36,8 @@ final class NativeAssistantStore: ObservableObject {
   private let completion: Completion
   private let keyProvider: () -> String?
   private let feedbackSpeaker: ((String, String) -> Void)?
-  private let synthesizer = AVSpeechSynthesizer()
+  private let feedbackFactory: () -> any NativeFeedbackSpeaking
+  private var systemFeedback: (any NativeFeedbackSpeaking)?
   private var request: Task<Void, Never>?
   private var recordingStart: Task<Void, Never>?
   private var generation = 0
@@ -53,13 +53,15 @@ final class NativeAssistantStore: ObservableObject {
     preferences: NativePreferencesStore,
     keyProvider: (() -> String?)? = nil,
     completion: Completion? = nil,
-    feedbackSpeaker: ((String, String) -> Void)? = nil
+    feedbackSpeaker: ((String, String) -> Void)? = nil,
+    feedbackFactory: @escaping () -> any NativeFeedbackSpeaking = { SystemNativeFeedbackSpeaker() }
   ) {
     self.preferences = preferences
     usesRuntime = keyProvider == nil && completion == nil
     self.keyProvider = keyProvider ?? { DeepSeekSettings.isReady ? DeepSeekKeychain.load() : nil }
     self.completion = completion ?? { try await DeepSeekClient.complete($0, apiKey: $1) }
     self.feedbackSpeaker = feedbackSpeaker
+    self.feedbackFactory = feedbackFactory
     assistantReady = usesRuntime ? AssistantRuntimeSettings.isReady : self.keyProvider() != nil
     if usesRuntime {
       NativeAssistantRuntime.shared.$permission.sink { [weak self] value in
@@ -77,7 +79,7 @@ final class NativeAssistantStore: ObservableObject {
       .merge(with: NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.screensDidSleepNotification))
       .receive(on: RunLoop.main)
       .sink { [weak self] _ in self?.cancel() }.store(in: &observers)
-    preferences.$value.map(\.locale).removeDuplicates().dropFirst()
+    preferences.localeChanges.dropFirst()
       .sink { [weak self] _ in
         self?.cancel()
         self?.history = []
@@ -85,15 +87,13 @@ final class NativeAssistantStore: ObservableObject {
       }.store(in: &observers)
     preferences.$value.map(\.speechFeedback).removeDuplicates().dropFirst()
       .sink { [weak self] enabled in
-        if !enabled { self?.synthesizer.stopSpeaking(at: .immediate) }
+        if !enabled { self?.systemFeedback?.stop() }
       }.store(in: &observers)
   }
 
   /// Resolve the selected UI language without depending on JavaScript labels.
   func text(_ key: String) -> String {
-    let language = preferences.locale.hasPrefix("en") ? "en" : preferences.locale.hasPrefix("ja") ? "ja" : "zh-Hans"
-    let bundle = Bundle.main.path(forResource: language, ofType: "lproj").flatMap(Bundle.init(path:)) ?? .main
-    return bundle.localizedString(forKey: key, value: key, table: nil)
+    NativeLocalization.string(key, language: preferences.locale)
   }
 
   func submit(_ suppliedText: String? = nil) {
@@ -186,7 +186,7 @@ final class NativeAssistantStore: ObservableObject {
     recordingStart?.cancel()
     recordingStart = nil
     recognizer.cancel()
-    synthesizer.stopSpeaking(at: .immediate)
+    systemFeedback?.stop()
     setPhase("idle")
   }
 
@@ -308,10 +308,8 @@ final class NativeAssistantStore: ObservableObject {
   private func speak(_ message: String) {
     guard preferences.value.speechFeedback, !message.isEmpty else { return }
     if let feedbackSpeaker { feedbackSpeaker(message, preferences.locale); return }
-    synthesizer.stopSpeaking(at: .immediate)
-    let utterance = AVSpeechUtterance(string: String(message.prefix(NativeAssistantConversation.maxReplyLength)))
-    utterance.voice = AVSpeechSynthesisVoice(language: preferences.locale)
-    synthesizer.speak(utterance)
+    if systemFeedback == nil { systemFeedback = feedbackFactory() }
+    systemFeedback?.speak(message, locale: preferences.locale)
   }
 
   // Late audio cannot execute a command after cancellation or a module change.
