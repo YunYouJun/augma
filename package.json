@@ -18,6 +18,8 @@
     "icons:sync": "node scripts/sync-app-icon.mjs",
     "icons:check": "node scripts/sync-app-icon.mjs --check",
     "generate": "node scripts/generate.mjs",
+    "plugins:build": "node scripts/build-plugin-catalog.mjs",
+    "test:plugins": "node --test tests/plugins/*.test.mjs",
     "build:lib": "pnpm --filter @augma/core build && pnpm --filter augma build",
     "build:ar": "pnpm --filter @augma/ar build",
     "docs:dev": "pnpm dev",
@@ -37,8 +39,7 @@
     "release:pack": "node scripts/check-release.mjs --prepare && node scripts/release-artifacts.mjs pack",
     "release:verify": "node scripts/release-artifacts.mjs verify",
     "release:check-published": "node scripts/check-published.mjs",
-    "plugins:build": "node scripts/build-plugin-catalog.mjs",
-    "test:plugins": "node --test tests/plugins/*.test.mjs"
+    "i18n:check": "node scripts/check-mac-localizations.mjs"
   },
   "devDependencies": {
     "@antfu/eslint-config": "9.5.1",
