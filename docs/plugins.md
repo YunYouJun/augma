@@ -72,6 +72,7 @@ Example.augmaplugin/
 | `entry` | 包内 HTML 相对路径，例如 `index.html` |
 | `symbol` | SF Symbols 图标名称 |
 | `permissions` | 当前必须为 `[]`，其他值拒绝安装 |
+| `localizations` | 可选；以 `zh-CN`、`en-US`、`ja-JP` 为键，每项包含 `name` 与 `summary`，长度上限分别为 60 与 240 字符。省略当前语言时使用顶层名称与简介 |
 
 最多 256 个文件、总计 8 MiB、单个文件最多 2 MiB；目录深度最多 8 层。只接受 HTML、CSS、JS、JSON、TXT、SVG、PNG、JPEG、GIF、WebP、WOFF 和 WOFF2。包内不允许软链接、硬链接或特殊文件；路径不允许绝对路径、`..`、空段、反斜线、控制字符、`%`、`:`、`?` 或 `#`。清单最多 32 KiB。请提供干净的发布文件夹，不包含 `.git`、`node_modules` 或 Finder 元数据。
 
@@ -88,6 +89,8 @@ Example.augmaplugin/
 ## 网页运行接口
 
 插件以 `augma-plugin://<id>/<entry>` 加载。资源处理器只返回经过校验的文件清单中的资源，不提供其他插件、宿主文件或系统文件。所有 HTML 在作者标记之前加入宿主 CSP：脚本、样式、字体、媒体和 `fetch` 只允许本包资源；图片额外允许 `data:`。使用独立 JS/CSS 文件，不使用内联脚本、内联样式或 `eval`。
+
+宿主在文档脚本执行前提供 `window.augmaLocale`（例如 `en-US`）。应用语言改变时更新该值，并发送 `augma:locale-change` 事件，`event.detail.locale` 为新语言。页面可据此更新文案、`document.documentElement.lang` 与无障碍标签，不必重载或丢失状态。这只传递语言元数据，不提供宿主调用权限。旧版插件可以忽略它；未提供翻译的第三方内容保留作者原文。
 
 外部导航、弹窗、嵌入框架、worker、表单提交和远程请求被禁用。没有原生消息桥、shell、文件系统或系统状态接口；摄像头、麦克风、位置和剪贴板能力不会授予插件。网页使用非持久数据存储，与 Augma 的普通浏览器会话分离。关闭、停用或卸载会替换运行文档并释放页面。首版不提供持久化插件设置；主窗口与沉浸模式之间切换会重建页面。
 

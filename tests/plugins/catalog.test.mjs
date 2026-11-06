@@ -27,7 +27,7 @@ test('catalog and portable plugin packages are reproducible and content addresse
   const archive = await readFile(join(f.output, entry.packageURL))
   assert.equal(entry.size, archive.length)
   assert.equal(entry.sha256, createHash('sha256').update(archive).digest('hex'))
-  assert.match(entry.packageURL, new RegExp(`/1\\.0\\.0/${entry.sha256}\\.augmaplugin\\.json$`))
+  assert.match(entry.packageURL, new RegExp(`/${entry.manifest.version.replaceAll('.', '\\.')}/${entry.sha256}\\.augmaplugin\\.json$`))
   const decoded = JSON.parse(archive)
   assert.equal(decoded.format, 'augma-web-plugin')
   assert.equal(decoded.schemaVersion, 1)
@@ -45,6 +45,17 @@ test('workspace and manifest versions must agree and native permissions are reje
   await assert.rejects(packPlugin(f.project), /versions must agree/)
   await writeFile(manifestPath, JSON.stringify({ ...original, permissions: ['shell'] }))
   await assert.rejects(packPlugin(f.project), /permissions/)
+})
+
+test('localized catalog metadata is bounded and validates display text', async (t) => {
+  const f = await fixture(t)
+  const path = join(f.project, 'BreathingOrbit.augmaplugin/augma-plugin.json')
+  const original = JSON.parse(await readFile(path))
+  assert.equal((await packPlugin(f.project)).manifest.localizations['en-US'].name, 'Breathing Orbit')
+  await writeFile(path, JSON.stringify({ ...original, localizations: { 'en-US': { name: '', summary: 'Summary' } } }))
+  await assert.rejects(packPlugin(f.project), /localized name/)
+  await writeFile(path, JSON.stringify({ ...original, localizations: { fr: { name: 'Example', summary: '' } } }))
+  await assert.rejects(packPlugin(f.project), /Unsupported metadata language/)
 })
 
 test('links and paths that escape a package are rejected', async (t) => {

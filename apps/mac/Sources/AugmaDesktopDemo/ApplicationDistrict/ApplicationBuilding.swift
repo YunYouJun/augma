@@ -1,6 +1,6 @@
 import Foundation
 
-struct InstalledApplication: Identifiable, Equatable, Sendable {
+struct InstalledApplication: Identifiable, Codable, Hashable, Sendable {
   let id: String // Bundle identifier, never the display name.
   let name: String
   let path: String
@@ -24,10 +24,10 @@ enum ApplicationRunState: Equatable {
   case missing, stopped, running, frontmost
   var title: String {
     switch self {
-    case .missing: String(localized: "找不到应用")
-    case .stopped: String(localized: "未运行")
-    case .running: String(localized: "运行中")
-    case .frontmost: String(localized: "当前应用")
+    case .missing: String(appLocalized: "找不到应用")
+    case .stopped: String(appLocalized: "未运行")
+    case .running: String(appLocalized: "运行中")
+    case .frontmost: String(appLocalized: "当前应用")
     }
   }
 }
@@ -56,14 +56,14 @@ enum ApplicationDistrictError: LocalizedError {
   case unsupportedVersion, invalidLayout, notApplication, missingApplication, activationFailed, full, fixedPosition, invalidName
   var errorDescription: String? {
     switch self {
-    case .unsupportedVersion: String(localized: "此布局来自较新版本，原文件已保留。")
-    case .invalidLayout: String(localized: "布局文件无效，原文件已保留。")
-    case .notApplication: String(localized: "请选择具有有效标识的 macOS 应用。")
-    case .missingApplication: String(localized: "找不到这个应用，请重新选择应用位置。")
-    case .activationFailed: String(localized: "无法切换到应用，请稍后重试。")
-    case .full: String(localized: "应用街区最多容纳 12 座大楼。")
-    case .fixedPosition: String(localized: "此位置已固定，请先取消固定。")
-    case .invalidName: String(localized: "名称最多 40 个字符，不能包含换行或控制字符。")
+    case .unsupportedVersion: String(appLocalized: "此布局来自较新版本，原文件已保留。")
+    case .invalidLayout: String(appLocalized: "布局文件无效，原文件已保留。")
+    case .notApplication: String(appLocalized: "请选择具有有效标识的 macOS 应用。")
+    case .missingApplication: String(appLocalized: "找不到这个应用，请重新选择应用位置。")
+    case .activationFailed: String(appLocalized: "无法切换到应用，请稍后重试。")
+    case .full: String(appLocalized: "应用街区最多容纳 12 座大楼。")
+    case .fixedPosition: String(appLocalized: "此位置已固定，请先取消固定。")
+    case .invalidName: String(appLocalized: "名称最多 40 个字符，不能包含换行或控制字符。")
     }
   }
 }

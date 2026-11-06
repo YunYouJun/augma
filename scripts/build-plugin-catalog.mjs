@@ -62,6 +62,18 @@ export async function packPlugin(project) {
     assert(typeof manifest[key] === 'string' && (key === 'summary' || manifest[key].length > 0)
       && [...manifest[key]].length <= limit && !/[\u0000-\u001F\u007F]/.test(manifest[key]), `Invalid ${key}`)
   }
+  if (manifest.localizations !== undefined) {
+    assert(manifest.localizations && typeof manifest.localizations === 'object' && !Array.isArray(manifest.localizations), 'Invalid localized metadata')
+    const values = Object.entries(manifest.localizations)
+    assert(values.length <= 3, 'Too many metadata languages')
+    for (const [language, value] of values) {
+      assert(['zh-CN', 'en-US', 'ja-JP'].includes(language), 'Unsupported metadata language')
+      for (const [key, limit] of [['name', 60], ['summary', 240]]) {
+        assert(typeof value?.[key] === 'string' && (key === 'summary' || value[key].length > 0)
+          && [...value[key]].length <= limit && !/[\u0000-\u001F\u007F]/.test(value[key]), `Invalid localized ${key}`)
+      }
+    }
+  }
   assert(Array.isArray(manifest.permissions) && manifest.permissions.length === 0, 'Native permissions are not supported')
   assert(validPluginPath(manifest.entry) && manifest.entry.endsWith('.html') && files.some(file => file.path === manifest.entry), 'Missing or invalid entry')
   const archive = Buffer.from(`${JSON.stringify({ format: 'augma-web-plugin', schemaVersion: 1, files })}\n`)

@@ -2,10 +2,24 @@
   "schemaVersion": 1,
   "id": "org.augma.examples.breathing-orbit",
   "name": "呼吸环 · Breathing Orbit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Augma Examples",
   "summary": "跟随圆环吸气、呼气，留一点安静的时间。",
   "entry": "index.html",
   "symbol": "circle.dotted.circle",
-  "permissions": []
+  "permissions": [],
+  "localizations": {
+    "zh-CN": {
+      "name": "呼吸环",
+      "summary": "跟随圆环吸气、呼气，留一点安静的时间。"
+    },
+    "en-US": {
+      "name": "Breathing Orbit",
+      "summary": "Breathe with the orbit and make a little room for quiet."
+    },
+    "ja-JP": {
+      "name": "呼吸のオービット",
+      "summary": "円に合わせて呼吸し、静かなひとときを。"
+    }
+  }
 }

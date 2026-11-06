@@ -14,6 +14,8 @@ Augma Link 的独立网页插件示例。吸气 4 秒、呼气 6 秒的圆环动
 
 启用状态在重启后恢复；插件只在打开页面时运行。首版每次打开、关闭或切换主窗口／沉浸模式都会创建新的网页会话，不保留上一次练习。
 
-本目录是 `@augma/plugin-breathing-orbit` pnpm workspace 包，独立版本为 `1.0.0`，不发布到 npm。在仓库根目录运行 `pnpm plugins:build` 生成静态远程目录和带 SHA-256 的下载文件，`pnpm build` 会将它们纳入站点发布。
+本目录是 `@augma/plugin-breathing-orbit` pnpm workspace 包，独立版本为 `1.0.1`，不发布到 npm。在仓库根目录运行 `pnpm plugins:build` 生成静态远程目录和带 SHA-256 的下载文件，`pnpm build` 会将它们纳入站点发布。
+
+清单提供中英日展示名称与简介。页面优先读取宿主的 `window.augmaLocale`，普通浏览器中跟随 `navigator.language`；监听 `augma:locale-change` 即时更新正文、文档语言和无障碍标签，保留当前练习进度。
 
 插件包格式、资源限制、分发协议与本地联调见[插件开发说明](../../docs/plugins.md)。
