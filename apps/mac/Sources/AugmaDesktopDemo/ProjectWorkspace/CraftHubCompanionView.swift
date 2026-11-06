@@ -1,6 +1,5 @@
 import AppKit
 import SwiftUI
-import UniformTypeIdentifiers
 
 struct CraftHubCompanionSection: View {
   @ObservedObject var store: CraftHubCompanionStore
@@ -21,10 +20,10 @@ struct CraftHubCompanionSection: View {
         }
         if summary.items.isEmpty { Text("此次读取未发现待办事项。").font(.callout).foregroundStyle(.secondary) }
         if let date = summary.date {
-          Text("缓存更新于 \(date.formatted(date: .abbreviated, time: .shortened))")
+          Text(String(format: String(appLocalized: "缓存更新于 %@"), date.formatted(.dateTime.locale(NativeLocalization.locale))))
             .font(.caption).foregroundStyle(.secondary).accessibilityIdentifier("craft-hub-summary-time")
         }
-        Text("已读取 \(summary.loadedSourceCount)/\(summary.sourceCount) 个来源 · \(summary.total) 项；打开 Craft Hub 查看最新内容。")
+        Text(String(format: String(appLocalized: "已读取 %lld/%lld 个来源 · %lld 项；打开 Craft Hub 查看最新内容。"), summary.loadedSourceCount, summary.sourceCount, summary.total))
           .font(.caption).foregroundStyle(.secondary)
       } else {
         Text("在 Craft Hub 的应用菜单选择“共享今日重点摘要…”，再选择该文件。")
@@ -32,32 +31,16 @@ struct CraftHubCompanionSection: View {
       }
       if let error = store.error { Text(error).font(.caption).foregroundStyle(.orange).textSelection(.enabled) }
       HStack {
-        Button("选择摘要…", action: chooseSummary)
+        Button("选择摘要…", action: store.chooseSummary)
         if store.summaryPath != nil {
           Button("重新读取", action: store.refresh)
           Button("断开", action: store.disconnect)
         }
         Spacer()
-        Button("选择主应用…", action: chooseApplication)
+        Button("选择主应用…", action: store.chooseApplication)
       }.font(.caption)
     }
     .task { store.refresh() }
-  }
-
-  private func chooseSummary() {
-    let panel = NSOpenPanel()
-    panel.allowedContentTypes = [.json]
-    panel.allowsMultipleSelection = false
-    panel.canChooseDirectories = false
-    if panel.runModal() == .OK, let url = panel.url { store.selectSummary(url) }
-  }
-
-  private func chooseApplication() {
-    let panel = NSOpenPanel()
-    panel.allowedContentTypes = [.applicationBundle]
-    panel.allowsMultipleSelection = false
-    panel.canChooseDirectories = false
-    if panel.runModal() == .OK, let url = panel.url { store.selectApplication(url) }
   }
 }
 

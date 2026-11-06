@@ -10,6 +10,10 @@ protocol CraftHubConnectionPersisting {
 struct CraftHubConnectionFile: CraftHubConnectionPersisting {
   static var defaultURL: URL { URL.applicationSupportDirectory.appending(path: "Augma/craft-hub-connection.json") }
   let url: URL
+  private let writer: ProtectedFileWriter
+  init(url: URL, writer: ProtectedFileWriter = ProtectedFileWriter()) {
+    self.url = url; self.writer = writer
+  }
   func load() throws -> CraftHubConnection? {
     guard FileManager.default.fileExists(atPath: url.path) else { return nil }
     guard try (url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0) <= 64 * 1024 else { throw CraftHubError.invalidConnection }
@@ -22,7 +26,7 @@ struct CraftHubConnectionFile: CraftHubConnectionPersisting {
     }
     _ = try connection.validated()
     try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-    try JSONEncoder().encode(connection).write(to: url, options: [.atomic, .completeFileProtectionUnlessOpen])
+    try writer.write(JSONEncoder().encode(connection), to: url)
   }
 }
 
@@ -44,7 +48,7 @@ final class CraftHubConnectionStore: ObservableObject {
   init(client: CraftHubReading? = nil, persistence: CraftHubConnectionPersisting? = nil) {
     self.client = client ?? CraftHubClient(); self.persistence = persistence
     do { connection = try persistence?.load() }
-    catch { self.error = String(localized: "无法读取 Craft Hub 连接配置，请重新连接或断开连接。") }
+    catch { self.error = String(appLocalized: "无法读取 Craft Hub 连接配置，请重新连接或断开连接。") }
   }
 
   @discardableResult func connect(json: String) async -> Bool {
@@ -113,11 +117,11 @@ final class CraftHubConnectionStore: ObservableObject {
   func disconnect() {
     generation = UUID(); contextRequests = [:]; busy = false; connected = false; projects = []; contexts = [:]; connection = nil
     do { try persistence?.save(nil); error = nil }
-    catch { self.error = String(localized: "连接已断开，但清除保存配置失败，请重试。") }
+    catch { self.error = String(appLocalized: "连接已断开，但清除保存配置失败，请重试。") }
   }
   func shutdown() { closed = true; generation = UUID(); connected = false; busy = false; projects = []; contexts = [:] }
 
   private func safeError(_ error: Error) -> String {
-    (error as? CraftHubError)?.localizedDescription ?? String(localized: "无法保存或读取 Craft Hub 连接，请重试。")
+    (error as? CraftHubError)?.localizedDescription ?? String(appLocalized: "无法保存或读取 Craft Hub 连接，请重试。")
   }
 }

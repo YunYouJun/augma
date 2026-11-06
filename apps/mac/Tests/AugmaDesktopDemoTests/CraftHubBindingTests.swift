@@ -151,12 +151,24 @@ final class CraftHubBindingTests: XCTestCase {
     f.store.bind(original[0].id, to: binding)
     try file.save(ProjectWorkspaceDocument(regions: f.store.regions))
     XCTAssertEqual(try file.load().regions, f.store.regions)
-    let connectionFile = CraftHubConnectionFile(url: root.appending(path: "connection.json"))
+    let connectionFile = CraftHubConnectionFile(url: root.appending(path: "connection.json"), writer: .temporaryFixture)
     try connectionFile.save(f.hub.connection)
     XCTAssertEqual(try connectionFile.load(), f.hub.connection)
     let text = try String(contentsOf: connectionFile.url, encoding: .utf8)
     XCTAssertFalse(text.contains("token"))
     try connectionFile.save(nil); XCTAssertNil(try connectionFile.load())
+  }
+
+  func testUnavailableDataProtectionReportsConnectionSaveFailure() throws {
+    let root = FileManager.default.temporaryDirectory.appending(path: "augma-binding-protection-\(UUID())")
+    defer { try? FileManager.default.removeItem(at: root) }
+    let file = CraftHubConnectionFile(url: root.appending(path: "connection.json"), writer: ProtectedFileWriter { _, _, options in
+      XCTAssertEqual(options, [.atomic, .completeFileProtectionUnlessOpen])
+      throw POSIXError(.EPERM)
+    })
+    let connection = try CraftHubConnection.parse(config())
+    XCTAssertThrowsError(try file.save(connection)) { XCTAssertEqual(($0 as? POSIXError)?.code, .EPERM) }
+    XCTAssertNil(try file.load())
   }
 
   func testNavigationContainsOnlyProjectReferenceAndNeverAnExecutionAction() throws {

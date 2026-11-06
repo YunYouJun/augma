@@ -51,8 +51,8 @@ enum CompanionError: LocalizedError {
   case invalidSummary, missingApplication
   var errorDescription: String? {
     switch self {
-    case .invalidSummary: String(localized: "摘要格式不兼容，请在 Craft Hub 重新共享今日重点。")
-    case .missingApplication: String(localized: "请选择 Craft Hub 的 Electron 应用。原生候选版不会作为主界面启动。")
+    case .invalidSummary: String(appLocalized: "摘要格式不兼容，请在 Craft Hub 重新共享今日重点。")
+    case .missingApplication: String(appLocalized: "请选择 Craft Hub 的 Electron 应用。原生候选版不会作为主界面启动。")
     }
   }
 }
@@ -67,14 +67,17 @@ final class CraftHubCompanionStore: ObservableObject {
   private let defaults: UserDefaults
   private let reader: (URL) throws -> CraftHubTodaySummary
   private let open: (URL) async throws -> Void
+  private let filePicker: CraftHubCompanionFilePicker
 
   init(
     defaults: UserDefaults = .standard,
     reader: @escaping (URL) throws -> CraftHubTodaySummary = CraftHubTodaySummary.read,
-    open: ((URL) async throws -> Void)? = nil
+    open: ((URL) async throws -> Void)? = nil,
+    filePicker: CraftHubCompanionFilePicker? = nil
   ) {
     self.defaults = defaults
     self.reader = reader
+    self.filePicker = filePicker ?? CraftHubCompanionFilePicker()
     self.open =
       open ?? { url in
         let configuration = NSWorkspace.OpenConfiguration()
@@ -86,6 +89,14 @@ final class CraftHubCompanionStore: ObservableObject {
     refresh()
   }
 
+  func chooseSummary() {
+    filePicker.present(.summary) { [weak self] in self?.selectSummary($0) }
+  }
+
+  func chooseApplication() {
+    filePicker.present(.application) { [weak self] in self?.selectApplication($0) }
+  }
+
   func selectSummary(_ url: URL) {
     do {
       let value = try reader(url)
@@ -93,7 +104,7 @@ final class CraftHubCompanionStore: ObservableObject {
       summaryPath = url.path
       defaults.set(url.path, forKey: "craftHub.companion.summaryPath.v1")
       error = nil
-    } catch { self.error = String(localized: "无法读取所选摘要。原有连接和缓存已保留，请重新选择。") }
+    } catch { self.error = String(appLocalized: "无法读取所选摘要。原有连接和缓存已保留，请重新选择。") }
   }
 
   func refresh() {
@@ -101,7 +112,7 @@ final class CraftHubCompanionStore: ObservableObject {
     do {
       summary = try reader(URL(fileURLWithPath: summaryPath))
       error = nil
-    } catch { self.error = String(localized: "摘要暂不可读。保留上次缓存；请在 Craft Hub 检查共享文件。") }
+    } catch { self.error = String(appLocalized: "摘要暂不可读。保留上次缓存；请在 Craft Hub 检查共享文件。") }
   }
 
   func disconnect() {
@@ -132,7 +143,7 @@ final class CraftHubCompanionStore: ObservableObject {
     do {
       try await open(url)
       error = nil
-    } catch { self.error = String(localized: "无法打开 Craft Hub，请检查应用位置后重试。") }
+    } catch { self.error = String(appLocalized: "无法打开 Craft Hub，请检查应用位置后重试。") }
   }
 
   private static func isElectronApplication(_ url: URL) -> Bool {
