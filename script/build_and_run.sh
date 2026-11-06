@@ -27,6 +27,11 @@ BUILD_ARCH="${PACKAGE_ARCH:-${AUGMA_BUILD_ARCH:-arm64}}"
 case "$BUILD_ARCH" in arm64|x86_64) ;; *) echo "Invalid build architecture: $BUILD_ARCH" >&2; exit 2 ;; esac
 
 APP_NAME="AugmaDesktopDemo"
+EXECUTABLE_NAME="${AUGMA_EXECUTABLE_NAME:-$APP_NAME}"
+if [[ -z "$EXECUTABLE_NAME" || "$EXECUTABLE_NAME" == "." || "$EXECUTABLE_NAME" == ".." || "$EXECUTABLE_NAME" == *[!A-Za-z0-9._-]* ]]; then
+  echo "Invalid executable name" >&2
+  exit 2
+fi
 BUNDLE_ID="${AUGMA_BUNDLE_ID:-cn.yunyoujun.augma.desktop-demo}"
 DISPLAY_NAME="${AUGMA_APP_DISPLAY_NAME:-Augma}"
 BUILD_CONFIGURATION="${AUGMA_BUILD_CONFIGURATION:-debug}"
@@ -39,7 +44,7 @@ if [[ "$MODE" == "--package" ]]; then DEFAULT_APP_BUNDLE="$WORK_DIR/Augma.app"; 
 APP_BUNDLE="${AUGMA_APP_BUNDLE:-$DEFAULT_APP_BUNDLE}"
 ARCHIVE="$PACKAGE_DIR/dist/Augma-macOS-$BUILD_ARCH.zip"
 APP_CONTENTS="$APP_BUNDLE/Contents"
-APP_BINARY="$APP_CONTENTS/MacOS/$APP_NAME"
+APP_BINARY="$APP_CONTENTS/MacOS/$EXECUTABLE_NAME"
 VERSION="$(node -p "require('$ROOT_DIR/package.json').version")"
 # Published packages must let users sign in without registering their own app.
 # Local development can still run Notes before the maintainer completes setup.
@@ -90,8 +95,10 @@ mkdir -p "$APP_CONTENTS/MacOS" "$APP_CONTENTS/Resources"
 cp "$BUILD_DIR/$APP_NAME" "$APP_BINARY"
 # String tables live outside the SwiftPM target so SwiftUI finds them in the main bundle.
 cp -R "$PACKAGE_DIR/Localization/." "$APP_CONTENTS/Resources/"
+mkdir -p "$APP_CONTENTS/Resources/LinkCatalog"
+cp -R "$ROOT_DIR/plugins/breathing-orbit/BreathingOrbit.augmaplugin" "$APP_CONTENTS/Resources/LinkCatalog/"
 chmod +x "$APP_BINARY"
-# Compile the small read-only media-session bridge for the same architectures as the app.
+# Compile the media-session bridge for the same architectures as the app.
 NOW_PLAYING_DIR="$APP_CONTENTS/Resources/NowPlaying"
 mkdir -p "$NOW_PLAYING_DIR"
 NOW_PLAYING_ARCHS=(-arch "$BUILD_ARCH")
@@ -127,7 +134,7 @@ cat >"$APP_CONTENTS/Info.plist" <<PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleExecutable</key><string>$APP_NAME</string>
+  <key>CFBundleExecutable</key><string>$EXECUTABLE_NAME</string>
   <key>CFBundleIdentifier</key><string>$BUNDLE_ID</string>
   <key>CFBundleName</key><string>$DISPLAY_NAME</string>
   <key>CFBundleDisplayName</key><string>$DISPLAY_NAME</string>
@@ -178,7 +185,7 @@ case "$MODE" in
   --debug) lldb -- "$APP_BINARY" ;;
   --logs)
     open_app
-    /usr/bin/log stream --info --style compact --predicate "process == \"$APP_NAME\""
+    /usr/bin/log stream --info --style compact --predicate "process == \"$EXECUTABLE_NAME\""
     ;;
   --telemetry)
     open_app

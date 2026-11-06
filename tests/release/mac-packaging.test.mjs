@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { copyFile, mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
+import { copyFile, cp, mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -75,6 +75,7 @@ async function fixture(t) {
     await mkdir(join(directory, path), { recursive: true })
   const script = join(directory, 'script/build_and_run.sh')
   await copyFile(new URL('../../script/build_and_run.sh', import.meta.url), script)
+  await cp(new URL('../../plugins/breathing-orbit/BreathingOrbit.augmaplugin', import.meta.url), join(directory, 'plugins/breathing-orbit/BreathingOrbit.augmaplugin'), { recursive: true })
   await writeFile(join(directory, 'script/sign_mac_dev.sh'), '#!/bin/bash\nprintf "local-sign %s\\n" "$1" >> "$TEST_TOOL_LOG"\n')
   await writeFile(join(directory, 'apps/mac/Support/NowPlaying/read-now-playing.pl'), '# fixture media reader\n')
   await writeFile(join(directory, 'bin/tool'), tool, { mode: 0o700 })
@@ -142,6 +143,9 @@ test('local builds default to arm64 for both the executable and the media bridge
   assert.equal(result.status, 0, result.stderr)
   assert.equal(await readFile(join(f.dist, 'Augma.app/Contents/MacOS/AugmaDesktopDemo'), 'utf8'), 'arm64\ndebug\n')
   assert.equal(await readFile(join(f.dist, 'Augma.app/Contents/Resources/NowPlaying/ReadNowPlaying.dylib'), 'utf8'), 'arm64\n')
+  const pluginRoot = join(f.dist, 'Augma.app/Contents/Resources/LinkCatalog/BreathingOrbit.augmaplugin')
+  assert.equal(JSON.parse(await readFile(join(pluginRoot, 'augma-plugin.json'), 'utf8')).id, 'org.augma.examples.breathing-orbit')
+  assert.match(await readFile(join(pluginRoot, 'main.js'), 'utf8'), /requestAnimationFrame/)
   assert.match(await readFile(f.log, 'utf8'), /local-sign/)
 })
 
