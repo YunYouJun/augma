@@ -12,6 +12,7 @@ struct NativeDockRow<Icon: View, Empty: View>: View {
   @State private var frames: [String: CGRect] = [:]
   @State private var rowFrame = CGRect.zero
   @State private var dragPosition: CGPoint?
+  @StateObject private var tooltips = DockTooltipSession()
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   private var metrics: NativeDockMetrics {
     NativeDockMetrics(itemCount: store.displayedItems.count, availableWidth: availableWidth)
@@ -30,6 +31,8 @@ struct NativeDockRow<Icon: View, Empty: View>: View {
     }
     .padding(.horizontal, metrics.horizontalPadding).padding(.vertical, metrics.verticalPadding)
     .coordinateSpace(name: space)
+    .onHover { if !$0 { tooltips.dismiss() } }
+    .onDisappear { tooltips.dismiss() }
     .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { rowFrame = $0 }
     .overlay(alignment: .topLeading) {
       if let dragPosition, let item = store.draggedItem {
@@ -40,6 +43,7 @@ struct NativeDockRow<Icon: View, Empty: View>: View {
       }
     }
     .onChange(of: store.draggedItem) { _, item in
+      tooltips.dismiss()
       if item == nil { dragPosition = nil }
     }
     .onChange(of: availableWidth) { _, _ in
@@ -51,6 +55,7 @@ struct NativeDockRow<Icon: View, Empty: View>: View {
       dragPosition = nil
       return true
     })
+    .environmentObject(tooltips)
   }
 
   private var visibleBounds: CGRect {

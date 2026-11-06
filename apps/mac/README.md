@@ -332,6 +332,8 @@ Codex 清理回执和 Craft Hub 连接的持久化测试使用真实临时文件
 
 沉浸 Dock 在四周为 Liquid Glass 阴影保留透明绘制空间，避免阴影被浮窗矩形边界截断。这部分不计入可见底部间距，也不会拦截下方窗口的点击。原生截图回归使用 `AUGMA_RENDER_DOCK_DIR=/tmp/augma-dock swift test --package-path apps/mac --filter NativeDockLayoutTests`，验证浅色、深色及缩小后的 Dock 边缘透明度和点击穿透。
 
+Dock 名称提示使用系统 Liquid Glass 圆角气泡，随窗口切换浅深色，并在屏幕边缘限制长标题宽度。首次悬停等待 200 ms；提示出现后，在同一 Dock 内切换图标立即更新，跨越图标间隙不会重复等待。移出 Dock、点击、拖拽或窗口隐藏时收起提示。`AUGMA_RENDER_DOCK_DIR=/tmp/augma-dock swift test --package-path apps/mac --filter DockTooltipTests` 验证提示切换、取消、独立 Dock 隔离和真实窗口的气泡边缘。
+
 Dock 随图标数量扩展，直到达到当前窗口或屏幕的可用宽度；沉浸模式左右各保留 20 pt。宽度用满后，图标、间距和留白按比例缩小，不出现横向滚动条。图标数量不设固定上限，应用、内置功能和插件均可继续添加；较少图标保持紧凑显示。排列在不同宽度和重启后保留。
 
 主窗口与沉浸模式的底部 Dock 支持拖拽排序：移动时预览位置，松手后保存；按 Escape 或拖到 Dock 外松手会取消。右键图标的「选项」包含「从 Dock 中移除」「在访达中显示」及向左／向右移动。内置功能和网页入口在访达中定位到 Augma.app；本机应用入口定位到对应的应用安装包。右键 Dock 可通过「添加到 Dock」恢复移除的入口，或「恢复默认 Dock」重置；全部移除后仍保留「自定 Dock」按钮。排序和显隐在多个主窗口、沉浸模式间共享，并在重启后恢复。
