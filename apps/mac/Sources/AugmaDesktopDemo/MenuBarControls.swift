@@ -5,6 +5,8 @@ struct MenuBarControls: View {
   @AppStorage("demoWindowAlwaysOnTop") private var alwaysOnTop = false
   @Environment(\.openWindow) private var openWindow
   @Environment(\.openSettings) private var openSettings
+  @State private var contentHeight: CGFloat = 720
+  private var preferences = NativeMenuBarPreferences()
   @ObservedObject var hud: HudModel
   @ObservedObject var sessions: DemoSessionRegistry
   let appDelegate: HudAppDelegate
@@ -15,15 +17,27 @@ struct MenuBarControls: View {
         HStack {
           Text("Augma").font(.headline)
           Spacer()
-          Button("快捷指令", systemImage: "command") { appDelegate.showCommands() }
-          Button("语音输入", systemImage: "mic") { appDelegate.showCommands(voice: true) }
+          if preferences.commands {
+            Button("快捷指令", systemImage: "command") { appDelegate.showCommands() }
+          }
+          if preferences.voiceInput {
+            Button("语音输入", systemImage: "mic") { appDelegate.showCommands(voice: true) }
+          }
         }
-        WorkspaceMenuContent(store: appDelegate.workspace, commands: appDelegate.commands)
-        Divider()
-        CraftHubCompanionSection(store: appDelegate.craftHubCompanion)
-        Divider()
-        SystemMonitorMenuSection(store: appDelegate.monitor) { appDelegate.openModule(.monitor) }
-        Divider()
+        MenuBarShelfMenuControl(store: appDelegate.menuBarShelf)
+        if preferences.quickCapture || preferences.focusTimer {
+          WorkspaceMenuContent(store: appDelegate.workspace, commands: appDelegate.commands,
+                               showQuickCapture: preferences.quickCapture, showFocusTimer: preferences.focusTimer)
+          Divider()
+        }
+        if preferences.craftHub {
+          CraftHubCompanionSection(store: appDelegate.craftHubCompanion)
+          Divider()
+        }
+        if preferences.systemMonitor {
+          SystemMonitorMenuSection(store: appDelegate.monitor) { appDelegate.openModule(.monitor) }
+          Divider()
+        }
         HStack {
           Button("打开主窗口", systemImage: "macwindow") { appDelegate.openModule() }
           Spacer()
@@ -60,8 +74,9 @@ struct MenuBarControls: View {
         }
       }
       .padding(16)
+      .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { contentHeight = $0 }
     }
-    .frame(width: 400, height: min(720, (NSScreen.main?.visibleFrame.height ?? 810) - 90))
+    .frame(width: 400, height: min(contentHeight, 720, (NSScreen.main?.visibleFrame.height ?? 810) - 90))
     .onAppear {
       appDelegate.openScene = { openWindow(id: $0) }
       appDelegate.workspace.reconcile()
@@ -72,19 +87,26 @@ struct MenuBarControls: View {
 private struct WorkspaceMenuContent: View {
   @ObservedObject var store: WorkspaceStore
   @ObservedObject var commands: WorkspaceCommands
+  let showQuickCapture: Bool
+  let showFocusTimer: Bool
+
   var body: some View {
-    NoteComposer(store: store, commands: commands)
-    Divider()
-    if store.data.focus != nil {
-      FocusTimerReadout(session: store.data.focus)
-      FocusTimerControls(store: store, commands: commands)
+    if showQuickCapture {
+      NoteComposer(store: store, commands: commands)
     }
-    if store.data.focus == nil || store.data.focus?.status == .completed {
-      HStack {
-        Button("专注 25 分钟") { commands.execute(.startFocus(1500), actionID: "focus25") }
-        Button("休息 5 分钟") { commands.execute(.startFocus(300), actionID: "focus5") }
+    if showQuickCapture && showFocusTimer { Divider() }
+    if showFocusTimer {
+      if store.data.focus != nil {
+        FocusTimerReadout(session: store.data.focus)
+        FocusTimerControls(store: store, commands: commands)
       }
-      .disabled(!store.writable)
+      if store.data.focus == nil || store.data.focus?.status == .completed {
+        HStack {
+          Button("专注 25 分钟") { commands.execute(.startFocus(1500), actionID: "focus25") }
+          Button("休息 5 分钟") { commands.execute(.startFocus(300), actionID: "focus5") }
+        }
+        .disabled(!store.writable)
+      }
     }
     WorkspaceSaveStatus(store: store)
     WorkspaceResultView(commands: commands, store: store)
