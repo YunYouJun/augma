@@ -4,6 +4,7 @@ import SwiftUI
 struct ImmersiveCanvasView: View {
   @ObservedObject var session: NativeDemoModel
   @ObservedObject var preferences: NativePreferencesStore
+  @ObservedObject var menuBarShelf: MenuBarShelfStore
   let workspace: WorkspaceStore
   let commands: WorkspaceCommands
   let monitor: SystemMonitorStore
@@ -18,13 +19,15 @@ struct ImmersiveCanvasView: View {
 
   var body: some View {
     GeometryReader { geometry in
-      let available = ImmersiveLayout.content(in: geometry.size)
+      let available = ImmersiveLayout.content(in: geometry.size, menuBarShelfVisible: menuBarShelf.isPresentedInImmersive,
+                                              clockVisible: preferences.showsClock,
+                                              dockBottomInset: preferences.dockBottomInset)
       let wide = geometry.size.width >= 900
       let spaceCanvas = !preferences.value.showHud ? available
         : wide ? CGRect(x: 440, y: available.minY, width: max(200, geometry.size.width - 460), height: min(660, available.height))
         : CGRect(x: 20, y: available.minY, width: available.width, height: min(300, available.height * 0.45))
       let panel = session.selection == .browser ? available : session.selection == .space && !wide
-        ? CGRect(x: 20, y: spaceCanvas.maxY + 16, width: available.width, height: max(150, available.maxY - spaceCanvas.maxY - 16))
+        ? CGRect(x: 20, y: spaceCanvas.maxY + 16, width: available.width, height: max(0, available.maxY - spaceCanvas.maxY - 16))
         : CGRect(x: 20, y: available.minY,
                  width: min(session.selection == .audio ? 520 : 400, available.width),
                  height: min(session.selection == .audio ? 760 : 660, available.height))
@@ -40,7 +43,7 @@ struct ImmersiveCanvasView: View {
         if panelVisible {
           VStack(spacing: 0) {
             HStack {
-              Label(session.selection?.title ?? String(localized: "选择应用"), systemImage: session.selection?.symbol ?? "square.grid.2x2")
+              Label(session.pageTitle, systemImage: session.selection?.symbol ?? "square.grid.2x2")
                 .font(.headline)
               Spacer()
               Button("关闭面板", systemImage: "xmark") { session.selection = nil }
@@ -65,7 +68,10 @@ struct ImmersiveCanvasView: View {
       .onAppear { reportRegions(panel, spaceCanvas) }
       .onChange(of: session.selection) { _, _ in reportRegions(panel, spaceCanvas) }
       .onChange(of: preferences.value.showHud) { _, _ in reportRegions(panel, spaceCanvas) }
+      .onChange(of: preferences.showsClock) { _, _ in reportRegions(panel, spaceCanvas) }
+      .onChange(of: preferences.dockBottomInset) { _, _ in reportRegions(panel, spaceCanvas) }
       .onChange(of: geometry.size) { _, _ in reportRegions(panel, spaceCanvas) }
+      .onChange(of: menuBarShelf.isPresentedInImmersive) { _, _ in reportRegions(panel, spaceCanvas) }
     }
     .background(Color.clear)
     .focusedSceneValue(\.nativeDemo, session)
@@ -93,7 +99,11 @@ private struct ImmersiveNativePanel: View {
     case .focus: FocusTimerView(store: workspace, commands: commands)
     case .actions: WorkspaceCommandView(commands: commands, store: workspace, compact: true)
     case .monitor: SystemMonitorView(store: monitor, craftHub: session.space.projects.craftHub)
-    case .market: ApplicationMarketView(store: session.market)
+    case .market: ApplicationMarketView(store: session.market, dock: session.dock, plugins: session.plugins, select: {
+      session.selection = $0; preferences.value.showHud = true
+    }, openPlugin: session.openPlugin)
+    case .plugin: AugmaPluginPanel(plugins: session.plugins, id: session.activePluginID, showLink: session.showPlugins)
+    case .library: ApplicationLibraryPage(store: session.market.library, dock: session.dock)
     case .weather: NativeLiveWeatherView(store: weather)
     case .audio: NativeAudioView(store: audio)
     case .navigation: NativeMapView(store: maps)

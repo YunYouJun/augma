@@ -5,10 +5,10 @@ struct ImmersiveAssistantCommands: Commands {
   let toggle: () -> Void
 
   var body: some Commands {
-    CommandMenu("沉浸助手") {
-      Button("唤起／隐藏沉浸助手", action: toggle)
+    CommandMenu(String(appLocalized: "沉浸助手")) {
+      Button(String(appLocalized: "唤起／隐藏沉浸助手"), action: toggle)
         .keyboardShortcut(menuShortcut)
-      SettingsLink { Text("配置全局快捷键…") }
+      SettingsLink { Text(String(appLocalized: "配置全局快捷键…")) }
     }
   }
 
@@ -32,10 +32,10 @@ struct ImmersiveShortcutSettingsView: View {
       NativeStartupSettingsView(store: navigation, sessions: sessions)
       Section("主窗口布局") {
         Picker("窗口布局", selection: $layout) {
-          Text("Augma 布局").tag(NativeWindowLayout.augma)
-          Text("侧栏布局").tag(NativeWindowLayout.sidebar)
+          Text(String(appLocalized: "Augma 布局")).tag(NativeWindowLayout.augma)
+          Text(String(appLocalized: "侧栏布局")).tag(NativeWindowLayout.sidebar)
         }
-        Text("两种布局共享应用状态；也可按 ⌥⌘0 切换。")
+        Text(String(appLocalized: "两种布局共享应用状态；也可按 ⌥⌘0 切换。"))
           .font(.caption).foregroundStyle(.secondary)
       }
       Section("沉浸助手") {
@@ -43,13 +43,13 @@ struct ImmersiveShortcutSettingsView: View {
           ForEach(ImmersiveShortcut.allCases) { shortcut in Text(shortcut.title).tag(shortcut) }
         }
         .accessibilityIdentifier("immersive-global-shortcut")
-        Text("Augma 运行时，在其他应用中也可使用。再次按下隐藏助手，保留当前面板和内容；Esc 或右上退出按钮返回主窗口。")
+        Text(String(appLocalized: "Augma 运行时，在其他应用中也可使用。再次按下隐藏助手，保留当前面板和内容；Esc 或右上退出按钮返回主窗口。"))
           .font(.caption).foregroundStyle(.secondary)
         if let error = store.registrationError {
-          Label("快捷键注册失败，可能已被其他应用占用。请更换组合或重试。", systemImage: "exclamationmark.triangle")
+          Label(String(appLocalized: "快捷键注册失败，可能已被其他应用占用。请更换组合或重试。"), systemImage: "exclamationmark.triangle")
             .foregroundStyle(.orange)
-          Text(String(format: String(localized: "系统错误码：%d"), error)).font(.caption)
-          Button("重新注册快捷键", action: store.refresh)
+          Text(String(format: String(appLocalized: "系统错误码：%d"), error)).font(.caption)
+          Button(String(appLocalized: "重新注册快捷键"), action: store.refresh)
         }
       }
     }

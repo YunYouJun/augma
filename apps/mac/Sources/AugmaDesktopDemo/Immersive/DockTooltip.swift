@@ -92,7 +92,7 @@ private final class DockTooltipAnchorView: NSView {
     let panel = panel ?? DockTooltipPanel()
     self.panel = panel
     panel.appearance = window.effectiveAppearance
-    let hosting = NSHostingView(rootView: DockTooltipLabel(title: title))
+    let hosting = NSHostingView(rootView: DockTooltipLabel(title: title).appLocalized())
     let size = hosting.fittingSize
     panel.contentView = hosting
     let anchor = window.convertToScreen(convert(bounds, to: nil))

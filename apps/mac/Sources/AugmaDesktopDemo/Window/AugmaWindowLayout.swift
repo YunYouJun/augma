@@ -28,16 +28,20 @@ struct AugmaWindowLayout<Content: View>: View {
     // Clipping the content pane here would cut off the system's blurred transition.
     .safeAreaBar(edge: .top, spacing: 12) { header }
     .safeAreaBar(edge: .bottom, spacing: 12) {
-      ImmersiveDockView(session: model, preferences: preferences, camera: appDelegate.camera, select: select)
+      ImmersiveDockView(session: model, preferences: preferences, camera: appDelegate.camera, dock: appDelegate.dock, select: select)
         .frame(height: 82)
     }
     .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
-    .padding(16)
+    .padding(.horizontal, 16)
+    .padding(.top, ImmersiveLayout.topInset)
+    .padding(.bottom, preferences.dockBottomInset)
   }
 
   private var header: some View {
     ZStack {
-      ImmersiveClockView().frame(width: 180)
+      if preferences.showsClock {
+        ImmersiveClockView().frame(width: 180)
+      }
       HStack {
         ImmersiveVoiceCorner(select: select)
         Spacer()

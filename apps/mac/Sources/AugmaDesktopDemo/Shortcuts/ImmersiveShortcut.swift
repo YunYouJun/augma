@@ -9,7 +9,7 @@ enum ImmersiveShortcut: String, CaseIterable, Identifiable {
     switch self {
     case .controlOptionA: "⌃⌥A"
     case .controlOptionCommandSpace: "⌃⌥⌘Space"
-    case .disabled: String(localized: "关闭")
+    case .disabled: String(appLocalized: "关闭")
     }
   }
   var keyCode: UInt32 { UInt32(self == .controlOptionA ? kVK_ANSI_A : kVK_Space) }
