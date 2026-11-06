@@ -16,6 +16,7 @@ final class WorkspaceTests: XCTestCase {
     XCTAssertEqual(WorkspaceCommand.parse("记下：明天暂停计时，买咖啡！"), .note("明天暂停计时，买咖啡！"))
     XCTAssertEqual(WorkspaceCommand.parse("note buy milk\nand coffee"), .note("buy milk\nand coffee"))
     XCTAssertEqual(WorkspaceCommand.parse("notes"), .open(.notes))
+    XCTAssertEqual(WorkspaceCommand.parse("打开快捷指令。"), .open(.actions))
     XCTAssertNil(WorkspaceCommand.parse("notebook"))
     XCTAssertEqual(WorkspaceCommand.parse("开始专注二十五分钟。"), .startFocus(1500))
     XCTAssertEqual(WorkspaceCommand.parse("专注半小时"), .startFocus(1800))
