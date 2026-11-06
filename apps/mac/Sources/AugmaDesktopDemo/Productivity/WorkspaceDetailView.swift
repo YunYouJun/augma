@@ -19,7 +19,11 @@ struct WorkspaceDetailView: View {
         case .focus: FocusTimerView(store: store, commands: commands)
         case .actions: WorkspaceCommandView(commands: commands, store: store)
         case .monitor: SystemMonitorView(store: monitor, craftHub: model.space.projects.craftHub)
-        case .market: ApplicationMarketView(store: model.market)
+        case .market: ApplicationMarketView(store: model.market, dock: model.dock, plugins: model.plugins, select: {
+          model.selection = $0; preferences.value.showHud = true
+        }, openPlugin: model.openPlugin)
+        case .plugin: AugmaPluginPanel(plugins: model.plugins, id: model.activePluginID, showLink: model.showPlugins)
+        case .library: ApplicationLibraryPage(store: model.market.library, dock: model.dock)
         case .weather: NativeLiveWeatherView(store: weather)
         case .audio: NativeAudioView(store: audio)
         case .navigation: NativeMapView(store: maps)

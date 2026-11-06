@@ -8,14 +8,16 @@ struct DemoContentView: View {
   @AppStorage("demoWindowAlwaysOnTop") private var alwaysOnTop = false
   @StateObject private var model: NativeDemoModel
   @ObservedObject private var preferences: NativePreferencesStore
+  @ObservedObject private var dock: NativeDockStore
 
   init(appDelegate: HudAppDelegate) {
     self.appDelegate = appDelegate
     _model = StateObject(wrappedValue: NativeDemoModel(preferences: appDelegate.preferences, audio: appDelegate.audio,
                                                     commands: appDelegate.commands, applications: appDelegate.applicationDistrict,
                                                     projects: appDelegate.projectWorkspaces, navigation: appDelegate.navigation,
-                                                    market: appDelegate.market))
+                                                    market: appDelegate.market, dock: appDelegate.dock, plugins: appDelegate.plugins))
     preferences = appDelegate.preferences
+    dock = appDelegate.dock
   }
 
   var body: some View {
@@ -27,9 +29,13 @@ struct DemoContentView: View {
       }
     }
     .navigationTitle("Augma")
-    .navigationSubtitle(model.selection?.title ?? "")
+    .navigationSubtitle(model.pageTitle)
     .frame(minWidth: 840, minHeight: 580)
     .focusedSceneValue(\.nativeDemo, model)
+    .alert("无法打开应用", isPresented: Binding(get: { !model.isImmersive && !dock.launchError.isEmpty },
+      set: { if !$0 { dock.launchError = "" } })) {
+      Button("好") { dock.launchError = "" }
+    } message: { Text(dock.launchError) }
     .onAppear {
       sessions.register(model)
       appDelegate.openScene = { openWindow(id: $0) }
@@ -96,6 +102,7 @@ struct DemoContentView: View {
           Label("始终置顶", systemImage: "pin")
         }
         .toggleStyle(.button)
+        .accessibilityLabel(String(appLocalized: "始终置顶"))
         .help("让演示窗口始终显示在其他普通窗口上方")
       }
       if layout == .sidebar {
@@ -146,7 +153,7 @@ struct DemoContentView: View {
     } detail: {
       detail
         .navigationTitle("Augma")
-        .navigationSubtitle(model.selection?.title ?? "")
+        .navigationSubtitle(model.pageTitle)
     }
     .navigationSplitViewStyle(.balanced)
   }
