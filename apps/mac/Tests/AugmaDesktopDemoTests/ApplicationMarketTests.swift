@@ -251,11 +251,17 @@ final class ApplicationMarketTests: XCTestCase {
   @MainActor func testMarketRendersNarrowAndWideWithoutStartingInstallation() async throws {
     let fixture = try MarketFixture()
     defer { fixture.remove() }
+    let dockSuite = "augma.market.render.\(UUID().uuidString)"
+    let dockDefaults = UserDefaults(suiteName: dockSuite)!
+    defer { dockDefaults.removePersistentDomain(forName: dockSuite) }
+    let dock = NativeDockStore(defaults: dockDefaults)
     let mole = MarketMoleFixture(scope: fixture.home)
     let store = ApplicationMarketStore(mole: mole, scanner: fixture.scanner(), scope: fixture.home)
+    store.section = .tools
     for width in [380, 760] {
       for dark in [false, true] {
-        let content = ApplicationMarketView(store: store).frame(width: CGFloat(width), height: 820)
+        let content = ApplicationMarketView(store: store, dock: dock, plugins: AugmaPluginStore(dock: dock),
+          select: { _ in }, openPlugin: { _ in }).frame(width: CGFloat(width), height: 820)
           .background(Color(nsColor: .windowBackgroundColor)).environment(\.colorScheme, dark ? .dark : .light)
         let host = NSHostingView(rootView: content)
         host.appearance = NSAppearance(named: dark ? .darkAqua : .aqua)

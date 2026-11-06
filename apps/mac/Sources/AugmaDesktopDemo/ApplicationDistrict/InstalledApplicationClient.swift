@@ -20,6 +20,10 @@ final class SystemInstalledApplicationClient: InstalledApplicationClient {
   private var observations: [AnyCancellable] = []
 
   func inspect(_ url: URL) throws -> InstalledApplication {
+    try Self.inspectApplication(url)
+  }
+
+  nonisolated static func inspectApplication(_ url: URL) throws -> InstalledApplication {
     let url = url.resolvingSymlinksInPath().standardizedFileURL
     let manifest = url.appending(path: "Contents/Info.plist")
     guard url.isFileURL, url.pathExtension.lowercased() == "app",

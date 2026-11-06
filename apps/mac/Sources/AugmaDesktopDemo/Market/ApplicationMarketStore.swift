@@ -5,12 +5,14 @@ import Foundation
 @MainActor
 final class ApplicationMarketStore: ObservableObject {
   enum Phase { case idle, checking, installing, scanning, analyzing, cleaning }
+  @Published var section: AugmaLinkSection = .plugins
+  let library = ApplicationLibraryStore()
   @Published private(set) var phase: Phase = .idle
   @Published private(set) var installation: MoleInstallation?
   @Published private(set) var plan: DiskCleanupPlan?
   @Published private(set) var feedback = ""
   @Published private(set) var error = ""
-  @Published var draft = String(localized: "帮我尽量腾出 20 GB，保留模型和最近项目。")
+  @Published var draft = String(appLocalized: "帮我尽量腾出 20 GB，保留模型和最近项目。")
   @Published var scope: URL
   @Published var selection: Set<UUID> = []
   private let mole: any MoleToolProviding
@@ -64,20 +66,20 @@ final class ApplicationMarketStore: ObservableObject {
   }
 
   func showInvalidRequest() {
-    error = String(localized: "请输入清理磁盘的目标，例如：帮我尽量腾出 20 GB，保留模型和最近项目。")
+    error = String(appLocalized: "请输入清理磁盘的目标，例如：帮我尽量腾出 20 GB，保留模型和最近项目。")
   }
 
   func installMole() {
     guard !isBusy else { return }
     phase = .installing; error = ""
-    feedback = String(localized: "正在通过 Homebrew 安装 Mole CLI，可能需要几分钟。安装不会执行清理。")
+    feedback = String(appLocalized: "正在通过 Homebrew 安装 Mole CLI，可能需要几分钟。安装不会执行清理。")
     let token = generation
     request = Task { [weak self, mole] in
       do {
         let result = try await mole.install()
         guard let self, self.generation == token else { return }
         self.installation = result; self.phase = .idle
-        self.feedback = String(localized: "Mole CLI 已安装，可以生成清理计划。")
+        self.feedback = String(appLocalized: "Mole CLI 已安装，可以生成清理计划。")
         if self.pendingGoal != nil && self.visible { self.beginPlan() }
       } catch { self?.fail(error, token: token) }
     }
@@ -85,6 +87,7 @@ final class ApplicationMarketStore: ObservableObject {
 
   @discardableResult func requestCleanup(_ text: String) -> Bool {
     guard let goal = DiskCleanupGoal.parse(text), !isMutating else { return false }
+    section = .tools
     if isBusy { cancel() }
     draft = text; pendingGoal = goal; plan = nil; selection = []; error = ""; feedback = ""
     if visible { beginPlan() }
@@ -94,8 +97,8 @@ final class ApplicationMarketStore: ObservableObject {
   private func beginPlan() {
     guard !isBusy, let goal = pendingGoal else { return }
     guard installation?.supported == true else {
-      feedback = installation?.version == nil ? String(localized: "先安装 Mole CLI，安装完成后可继续本次分析。")
-        : String(localized: "Mole 版本尚未适配，请保留当前版本并查看诊断。")
+      feedback = installation?.version == nil ? String(appLocalized: "先安装 Mole CLI，安装完成后可继续本次分析。")
+        : String(appLocalized: "Mole 版本尚未适配，请保留当前版本并查看诊断。")
       return
     }
     pendingGoal = nil; phase = .scanning; error = ""; feedback = ""; plan = nil; selection = []
@@ -108,7 +111,7 @@ final class ApplicationMarketStore: ObservableObject {
         catch {
           try Task.checkCancellation()
           report = .init(entries: [], incomplete: true, measuredBytes: nil)
-          warning = String(localized: "Mole 占用分析暂不可用，已回退到本地候选计划。可缩小目录后重新扫描。") + "\n" + error.localizedDescription
+          warning = String(appLocalized: "Mole 占用分析暂不可用，已回退到本地候选计划。可缩小目录后重新扫描。") + "\n" + error.localizedDescription
         }
         try Task.checkCancellation()
         let scan = try await scanner.scan()
@@ -143,7 +146,7 @@ final class ApplicationMarketStore: ObservableObject {
 
   func moveToTrash(planID: UUID, ids: Set<UUID>) {
     guard !isBusy, let plan, plan.acceptsApproval(planID: planID, ids: ids, scope: scope) else {
-      error = String(localized: "计划已变化或过期，请重新扫描并确认。")
+      error = String(appLocalized: "计划已变化或过期，请重新扫描并确认。")
       return
     }
     phase = .cleaning; error = ""
@@ -153,10 +156,10 @@ final class ApplicationMarketStore: ObservableObject {
       let after = Self.availableSpace(at: plan.scope)
       guard let self else { return }
       self.plan = nil; self.selection = []; self.phase = .idle
-      self.feedback = String(format: String(localized: "已移入废纸篓 %lld 项，跳过 %lld 项。确认后清空废纸篓才会释放空间。"),
+      self.feedback = String(format: String(appLocalized: "已移入废纸篓 %lld 项，跳过 %lld 项。确认后清空废纸篓才会释放空间。"),
                              result.moved.count, result.failures.count)
       if let before, let after {
-        self.feedback += "\n" + String(format: String(localized: "磁盘可用空间：操作前 %@，操作后 %@。读数也受其他应用影响。"),
+        self.feedback += "\n" + String(format: String(appLocalized: "磁盘可用空间：操作前 %@，操作后 %@。读数也受其他应用影响。"),
           SystemMetricFormat.bytes(before, style: .file), SystemMetricFormat.bytes(after, style: .file))
       }
       if !result.failures.isEmpty { self.error = result.failures.joined(separator: "\n") }

@@ -59,7 +59,7 @@ struct CodexStorageSection: View {
       HStack {
         Text(
           String(
-            format: String(localized: "已统计缓存与日志：%@"), SystemMetricFormat.bytes(scan.measuredBytes))
+            format: String(appLocalized: "已统计缓存与日志：%@"), SystemMetricFormat.bytes(scan.measuredBytes))
         )
         .font(.callout).monospacedDigit()
         Spacer()
@@ -83,7 +83,7 @@ struct CodexStorageSection: View {
             Spacer()
             Text(
               scope.status == .unavailable
-                ? String(localized: "未统计") : SystemMetricFormat.bytes(scope.bytes)
+                ? String(appLocalized: "未统计") : SystemMetricFormat.bytes(scope.bytes)
             )
             .font(.callout).monospacedDigit()
           }
@@ -145,7 +145,7 @@ struct CodexStorageSection: View {
         if let preview = store.preview {
           Text(
             String(
-              format: String(localized: "清理预览：%lld 项 · 逻辑大小 %@"), preview.items.count,
+              format: String(appLocalized: "清理预览：%lld 项 · 逻辑大小 %@"), preview.items.count,
               SystemMetricFormat.bytes(preview.bytes))
           ).font(.callout).monospacedDigit()
             .accessibilityIdentifier("codex-storage-preview-result")
@@ -180,7 +180,7 @@ struct CodexStorageSection: View {
       }.frame(maxHeight: 300)
       Text(
         String(
-          format: String(localized: "清理预览：%lld 项 · 逻辑大小 %@"), review.items.count,
+          format: String(appLocalized: "清理预览：%lld 项 · 逻辑大小 %@"), review.items.count,
           SystemMetricFormat.bytes(review.bytes))
       ).font(.callout)
       HStack {
@@ -202,7 +202,7 @@ struct CodexStorageSection: View {
         .font(.caption).foregroundStyle(.secondary)
       Text(
         String(
-          format: String(localized: "移入废纸篓的逻辑大小：%@（不等于已释放空间）"),
+          format: String(appLocalized: "移入废纸篓的逻辑大小：%@（不等于已释放空间）"),
           SystemMetricFormat.bytes(receipt.trashedBytes))
       ).font(.callout)
       if let warning = receipt.warning { Text(warning).font(.caption).foregroundStyle(.orange) }
@@ -224,7 +224,7 @@ struct CodexStorageSection: View {
   private func optionalMole(_ scan: CodexStorageScan) -> some View {
     DisclosureGroup("Mole 占用复核（可选）") {
       VStack(alignment: .leading, spacing: 8) {
-        Text("原生分析无需安装 Mole。可在应用市场自行安装受支持版本，再只读复核一个已完整扫描的范围；结果不加入清理候选或容量合计。")
+        Text("原生分析无需安装 Mole。可在 Augma Link 本地工具中安装受支持版本，再只读复核一个已完整扫描的范围；结果不加入清理候选或容量合计。")
           .font(.caption).foregroundStyle(.secondary)
         let scopes = scan.scopes.filter(\.canAnalyzeWithMole)
         if !scopes.isEmpty {
@@ -256,7 +256,7 @@ struct CodexStorageSection: View {
               Text(entry.name).lineLimit(1).truncationMode(.middle)
               Spacer()
               Text(
-                entry.complete ? SystemMetricFormat.bytes(entry.size) : String(localized: "未完整统计")
+                entry.complete ? SystemMetricFormat.bytes(entry.size) : String(appLocalized: "未完整统计")
               )
               .monospacedDigit()
             }
