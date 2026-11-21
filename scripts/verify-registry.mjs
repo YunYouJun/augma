@@ -30,13 +30,7 @@ let server
 let consumerServer
 let browser
 try {
-  await run('pnpm', [
-    '--dir',
-    resolve('packages/core'),
-    'pack',
-    '--pack-destination',
-    temp,
-  ])
+  await run('pnpm', ['pack', '--pack-destination', temp], resolve('packages/core'))
   const archive = (await readdir(temp)).find(f => f.endsWith('.tgz'))
   const tarball = await readFile(join(temp, archive))
   const manifest = JSON.parse(

@@ -5,7 +5,7 @@
   "private": true,
   "packageManager": "pnpm@12.5.1",
   "engines": {
-    "node": ">=24"
+    "node": "26.x"
   },
   "scripts": {
     "dev": "pnpm --filter @augma/site dev",
@@ -46,7 +46,7 @@
     "@antfu/eslint-config": "9.5.1",
     "@augma/core": "workspace:*",
     "@playwright/test": "1.63.0",
-    "@types/node": "^24.0.0",
+    "@types/node": "^26.0.0",
     "@types/webxr": "^0.5.21",
     "@vitejs/plugin-vue": "6.0.9",
     "@vue/compiler-sfc": "3.5.43",

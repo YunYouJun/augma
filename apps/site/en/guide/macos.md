@@ -26,4 +26,4 @@ The camera and WebXR depend on WebKit's support for local pages; the simulated i
 
 ## Build from source
 
-You need Node.js 24, pnpm and Xcode 26 or later. From the repository root, `pnpm mac:run` builds and launches arm64 by default; Intel Mac developers can use `AUGMA_BUILD_ARCH=x86_64 pnpm mac:run`. `pnpm mac:package` produces both Release packages, `apps/mac/dist/Augma-macOS-arm64.zip` and `Augma-macOS-x86_64.zip`, each with a `.sha256` file. Run `pnpm mac:package arm64` or `pnpm mac:package x86_64` to package just one architecture.
+You need Node.js 26 LTS, pnpm and Xcode 26 or later. From the repository root, `pnpm mac:run` builds and launches arm64 by default; Intel Mac developers can use `AUGMA_BUILD_ARCH=x86_64 pnpm mac:run`. `pnpm mac:package` produces both Release packages, `apps/mac/dist/Augma-macOS-arm64.zip` and `Augma-macOS-x86_64.zip`, each with a `.sha256` file. Run `pnpm mac:package arm64` or `pnpm mac:package x86_64` to package just one architecture.

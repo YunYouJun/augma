@@ -26,4 +26,4 @@ macOS 客户端把 [AR 演示](/guide/ar) 放进原生窗口：侧栏切换应�
 
 ## 从源码构建
 
-需要 Node.js 24、pnpm 与 Xcode 26 或更高版本。在仓库根目录运行 `pnpm mac:run` 默认构建并启动 arm64 版；Intel Mac 开发者使用 `AUGMA_BUILD_ARCH=x86_64 pnpm mac:run`。`pnpm mac:package` 生成与发布相同的两个 Release 安装包 `apps/mac/dist/Augma-macOS-arm64.zip` 和 `Augma-macOS-x86_64.zip`，每个包附带 `.sha256`。只打包一种架构可运行 `pnpm mac:package arm64` 或 `pnpm mac:package x86_64`。
+需要 Node.js 26 LTS、pnpm 与 Xcode 26 或更高版本。在仓库根目录运行 `pnpm mac:run` 默认构建并启动 arm64 版；Intel Mac 开发者使用 `AUGMA_BUILD_ARCH=x86_64 pnpm mac:run`。`pnpm mac:package` 生成与发布相同的两个 Release 安装包 `apps/mac/dist/Augma-macOS-arm64.zip` 和 `Augma-macOS-x86_64.zip`，每个包附带 `.sha256`。只打包一种架构可运行 `pnpm mac:package arm64` 或 `pnpm mac:package x86_64`。

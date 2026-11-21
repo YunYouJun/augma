@@ -26,4 +26,4 @@ macOS 26 以降が必要です。「Apple メニュー → この Mac につい�
 
 ## ソースからビルドする
 
-Node.js 24、pnpm、Xcode 26 以降が必要です。リポジトリのルートで `pnpm mac:run` を実行すると、既定で arm64 版をビルドして起動します。Intel Mac では `AUGMA_BUILD_ARCH=x86_64 pnpm mac:run` を使用してください。`pnpm mac:package` は、リリースと同じ 2 つの Release パッケージ `apps/mac/dist/Augma-macOS-arm64.zip` と `Augma-macOS-x86_64.zip`、それぞれの `.sha256` を生成します。片方だけ作成する場合は `pnpm mac:package arm64` または `pnpm mac:package x86_64` を実行してください。
+Node.js 26 LTS、pnpm、Xcode 26 以降が必要です。リポジトリのルートで `pnpm mac:run` を実行すると、既定で arm64 版をビルドして起動します。Intel Mac では `AUGMA_BUILD_ARCH=x86_64 pnpm mac:run` を使用してください。`pnpm mac:package` は、リリースと同じ 2 つの Release パッケージ `apps/mac/dist/Augma-macOS-arm64.zip` と `Augma-macOS-x86_64.zip`、それぞれの `.sha256` を生成します。片方だけ作成する場合は `pnpm mac:package arm64` または `pnpm mac:package x86_64` を実行してください。

@@ -4,7 +4,7 @@
 
 ## 本地与 CI
 
-使用 Node 24、package.json 固定的 pnpm 版本，执行：
+使用 Node.js 26 LTS 和 `package.json` 固定的 pnpm 版本执行以下命令。
 
 ```sh
 pnpm install --frozen-lockfile
@@ -97,7 +97,7 @@ npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运
 
 站点只部署在 Cloudflare Pages，主站是 `https://augma.yyj.moe`，文档、展示、AI 静态入口和 `/ar/` 一起部署。canonical、sitemap、Skill、npm 包 README、macOS 客户端和生成索引都使用这个域名，来源是 `scripts/catalog.mjs` 的 `origin`。
 
-- Pages 项目 `augma`（`augma.pages.dev`）连接 GitHub `YunYouJun/augma` 的 `main` 分支，使用 Node 24 和 pnpm 12.5.1；构建命令为 `pnpm build`，输出目录为 `apps/site/.vitepress/dist`。推送 `main` 即部署生产环境，PR 生成预览部署。推送后检查 Pages 构建与部署状态。
+- Pages 项目 `augma`（`augma.pages.dev`）连接 GitHub `YunYouJun/augma` 的 `main` 分支。生产和预览构建通过仓库根目录的 `.node-version` 选择 Node.js 26 LTS。若控制台设置了 `NODE_VERSION`，清除该项即可跟随仓库版本。Pages 使用 pnpm 12.5.1，运行 `pnpm build`，输出目录为 `apps/site/.vitepress/dist`。推送 `main` 即部署生产环境，PR 生成预览部署。推送后在日志中核对 Node 版本与构建状态。[Cloudflare Pages 构建镜像](https://developers.cloudflare.com/pages/configuration/build-image/)
 - `augma.yyj.moe` 是 Pages 项目的 Custom Domain，`yyj.moe` zone 中的 `augma` CNAME 指向 `augma.pages.dev`。
 - 2026-10-20 起不再使用 EdgeOne Pages：Augma 是业余项目，一处托管、推送即部署比国内加速更重要。代价是中国大陆访问 Cloudflare 免费计划较慢，偶尔不稳定；`*.pages.dev` 在大陆通常无法访问，对外只使用 `augma.yyj.moe`。CI 与发布工作流仍保存站点 artifact，仅用于排查。
 

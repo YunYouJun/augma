@@ -45,7 +45,7 @@ npx skills add YunYouJun/augma --skill augma
 
 ## 开发
 
-需要 Node 24，packageManager 固定 pnpm 12.5.1。
+开发和 CI 使用 Node.js 26 LTS，pnpm 版本固定为 12.5.1。
 
 ```sh
 pnpm install --frozen-lockfile
@@ -54,6 +54,8 @@ pnpm build:lib
 pnpm dev          # 主站 http://127.0.0.1:3002
 pnpm dev:ar       # AR http://127.0.0.1:3003/ar/
 ```
+
+如果 Codex 会话优先使用内置 Node，可在命令前加上 `fnm exec`，例如 `fnm exec pnpm install --frozen-lockfile`，以使用 `.node-version` 指定的本机 Node。
 
 ```sh
 pnpm build       # CSS / Vue + 主站 + AR，组合到 apps/site/.vitepress/dist
