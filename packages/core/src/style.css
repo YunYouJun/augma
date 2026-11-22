@@ -192,7 +192,7 @@
   }
   .agm-button--glass:hover:not(:disabled) {
     background: var(--agm-glass-strong);
-    border-color: color-mix(in srgb, var(--agm-glass-border) 55%, var(--agm-light));
+    border-color: color-mix(in srgb, var(--agm-border) 85%, transparent);
     box-shadow:
       var(--agm-glass-shadow),
       0 6px 22px rgb(31 54 74 / 14%),

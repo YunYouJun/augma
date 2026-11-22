@@ -32,7 +32,7 @@ White and ice gray form the main surfaces. Transparency and hairline borders bui
 | `--agm-danger` | `#bc394a` | `#ff95a4` | Errors and destructive actions |
 | `--agm-glass-bg` | `rgb(255 255 255 / 72%)` | `rgb(24 38 52 / 72%)` | Floating glass surfaces and `glass` buttons |
 | `--agm-glass-strong` | `rgb(255 255 255 / 86%)` | `rgb(22 35 48 / 88%)` | Frosted overlay surfaces |
-| `--agm-glass-border` | `rgb(255 255 255 / 62%)` | `rgb(255 255 255 / 16%)` | Specular glass rim |
+| `--agm-glass-border` | `rgb(38 52 66 / 14%)` | `rgb(255 255 255 / 16%)` | Specular glass rim |
 
 Override the variables at your app root to customize the theme. When you change the accent color, check the text contrast of `--agm-on-accent` too. A status must always include text, never color alone.
 
