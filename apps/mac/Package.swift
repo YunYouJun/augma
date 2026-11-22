@@ -8,10 +8,23 @@ let package = Package(
     .executable(name: "AugmaDesktopDemo", targets: ["AugmaDesktopDemo"]),
   ],
   dependencies: [
+    .package(path: "../../packages/augma-ui"),
     .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", exact: "0.12.1"),
   ],
   targets: [
-    .executableTarget(name: "AugmaDesktopDemo", dependencies: [.product(name: "MCP", package: "swift-sdk")]),
-    .testTarget(name: "AugmaDesktopDemoTests", dependencies: ["AugmaDesktopDemo"]),
+    .executableTarget(
+      name: "AugmaDesktopDemo",
+      dependencies: [
+        .product(name: "AugmaUI", package: "augma-ui"),
+        .product(name: "MCP", package: "swift-sdk"),
+      ]
+    ),
+    .testTarget(
+      name: "AugmaDesktopDemoTests",
+      dependencies: [
+        "AugmaDesktopDemo",
+        .product(name: "AugmaUI", package: "augma-ui"),
+      ]
+    ),
   ]
 )

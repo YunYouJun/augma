@@ -181,6 +181,6 @@ private struct CommandPaletteRoot: View {
     .padding(20)
     .frame(width: size.width)
     .frame(maxHeight: .infinity, alignment: .top)
-    .tint(.augmaCyan)
+    .tint(.augmaAccent)
   }
 }

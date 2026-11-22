@@ -26,7 +26,7 @@ struct ApplicationMemoryRanking: View {
             }
           }
           .controlSize(.small)
-          .nativeFloatingButton()
+          .augmaButton(.secondary)
         }
       }
     } else {

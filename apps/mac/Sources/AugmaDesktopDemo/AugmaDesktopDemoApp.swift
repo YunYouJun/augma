@@ -8,7 +8,7 @@ struct AugmaDesktopDemoApp: App {
 
   var body: some Scene {
     WindowGroup("Augma Demo", id: "demo") {
-      DemoContentView(appDelegate: appDelegate).appLocalized()
+      DemoContentView(appDelegate: appDelegate).tint(.augmaAccent).appLocalized()
         .environmentObject(appDelegate.sessions)
     }
     .defaultSize(width: 1100, height: 720)
@@ -32,7 +32,7 @@ struct AugmaDesktopDemoApp: App {
     }
 
     Window(String(appLocalized: "专注计时"), id: "focus-timer") {
-      FloatingFocusView(store: appDelegate.workspace, commands: appDelegate.commands).appLocalized()
+      FloatingFocusView(store: appDelegate.workspace, commands: appDelegate.commands).tint(.augmaAccent).appLocalized()
     }
     .windowResizability(.contentSize)
     .defaultLaunchBehavior(.suppressed)
@@ -42,13 +42,13 @@ struct AugmaDesktopDemoApp: App {
                             immersiveShortcut: appDelegate.immersiveShortcut, menuBarShelf: appDelegate.menuBarShelf,
                             captures: appDelegate.captures,
                             navigation: appDelegate.navigation, sessions: appDelegate.sessions,
-                            startVoiceInput: appDelegate.startVoiceInput).appLocalized()
+                            startVoiceInput: appDelegate.startVoiceInput).tint(.augmaAccent).appLocalized()
     }
 
     // Keep the status item static: custom observed labels can loop while macOS
     // rasterizes them. The popup owns the live countdown and editable controls.
     MenuBarExtra("Augma", systemImage: "viewfinder") {
-      MenuBarControls(hud: appDelegate.model, sessions: appDelegate.sessions, appDelegate: appDelegate).appLocalized()
+      MenuBarControls(hud: appDelegate.model, sessions: appDelegate.sessions, appDelegate: appDelegate).tint(.augmaAccent).appLocalized()
     }
     .menuBarExtraStyle(.window)
   }

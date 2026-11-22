@@ -1,4 +1,7 @@
+import AugmaUI
 import SwiftUI
+
+typealias NativeOrbLabel = AugmaOrbLabel
 
 /// Native button semantics with Augma's colored concentric rings.
 struct NativeOrbButton: View {
@@ -48,25 +51,6 @@ struct NativeOrbButton: View {
     .accessibilityLabel(title)
     .accessibilityValue(badge > 0 ? String(format: String(appLocalized: "%lld 条未读通知"), badge) : selected ? String(appLocalized: "已选中") : "")
     .accessibilityIdentifier(identifier)
-  }
-}
-
-struct NativeOrbLabel: View {
-  let symbol: String
-  let tint: Color
-  var selected = false
-  var diameter: CGFloat = 44
-  private var scale: CGFloat { diameter / 44 }
-
-  var body: some View {
-    Image(systemName: symbol)
-      .font(.system(size: 19 * scale, weight: .medium))
-      .foregroundStyle(selected ? Color.white : tint)
-      .frame(width: diameter, height: diameter)
-      .background(selected ? tint.opacity(0.9) : tint.opacity(0.14), in: Circle())
-      .overlay { Circle().strokeBorder(tint.opacity(selected ? 1 : 0.65), lineWidth: 1.5 * scale) }
-      .overlay { Circle().inset(by: 4 * scale).strokeBorder(tint.opacity(selected ? 0.15 : 0.25), lineWidth: scale) }
-      .contentShape(Circle())
   }
 }
 

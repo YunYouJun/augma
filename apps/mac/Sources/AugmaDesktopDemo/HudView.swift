@@ -8,91 +8,97 @@ struct HudView: View {
   @State private var monitorVisible = false
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 14) {
-      HStack(alignment: .center, spacing: 12) {
-        AugmaRing(size: 34, spinning: model.windowVisible && model.rendersDemoScene)
-        VStack(alignment: .leading, spacing: 2) {
-          Text("AUGMA")
-            .font(.system(size: 11, weight: .semibold, design: .monospaced))
-            .tracking(3)
-            .foregroundStyle(.secondary)
-          Text(monitor.hudPinned ? "系统监控" : "桌面辅助视界")
-            .font(.system(size: 20, weight: .light))
-        }
-        Spacer()
-        HStack(spacing: 2) {
-          StatusPing(color: monitor.hudPinned || model.rendersDemoScene ? .augmaCyan : .secondary,
-                     active: model.windowVisible && model.rendersDemoScene)
-          Text(monitor.hudPinned ? "SYSTEM" : model.rendersDemoScene ? "DEMO SPACE" : "STANDBY")
-            .font(.system(size: 10, weight: .medium, design: .monospaced))
-            .foregroundStyle(.secondary)
-        }
-      }
+    GlassEffectContainer(spacing: 10) {
+      VStack(spacing: 10) {
+        // Keep reading metrics inside the glass surface and floating actions in a sibling row
+        // so native glass buttons never stack on top of another glass container.
+        VStack(alignment: .leading, spacing: 14) {
+          HStack(alignment: .center, spacing: 12) {
+            AugmaRing(size: 34, spinning: model.windowVisible && model.rendersDemoScene)
+            VStack(alignment: .leading, spacing: 2) {
+              Text("AUGMA")
+                .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                .tracking(3)
+                .foregroundStyle(.secondary)
+              Text(monitor.hudPinned ? "系统监控" : "桌面辅助视界")
+                .font(.system(size: 20, weight: .light))
+            }
+            Spacer()
+            HStack(spacing: 2) {
+              StatusPing(color: monitor.hudPinned || model.rendersDemoScene ? .augmaCyan : .secondary,
+                         active: model.windowVisible && model.rendersDemoScene)
+              Text(monitor.hudPinned ? "SYSTEM" : model.rendersDemoScene ? "DEMO SPACE" : "STANDBY")
+                .font(.system(size: 10, weight: .medium, design: .monospaced))
+                .foregroundStyle(.secondary)
+            }
+          }
 
-      Group {
-        if monitor.hudPinned {
-          SystemMonitorHUD(store: monitor)
-        } else if model.rendersDemoScene {
-          DemoSceneView()
-        } else {
-          ZStack {
-            Color.primary.opacity(0.04)
-            HStack(spacing: 18) {
+          Group {
+            if monitor.hudPinned {
+              SystemMonitorHUD(store: monitor)
+            } else if model.rendersDemoScene {
+              DemoSceneView()
+            } else {
               ZStack {
-                AugmaRing(size: 96, spinning: false)
-                Image(systemName: "viewfinder")
-                  .font(.system(size: 22, weight: .ultraLight))
-              }
-              VStack(alignment: .leading, spacing: 6) {
-                Text("演示空间待命")
-                  .font(.system(size: 14, weight: .medium))
-                Text("默认状态不创建 3D 场景")
-                  .font(.system(size: 12))
-                  .foregroundStyle(.secondary)
+                Color.primary.opacity(0.04)
+                HStack(spacing: 18) {
+                  ZStack {
+                    AugmaRing(size: 96, spinning: false)
+                    Image(systemName: "viewfinder")
+                      .font(.system(size: 22, weight: .ultraLight))
+                  }
+                  VStack(alignment: .leading, spacing: 6) {
+                    Text("演示空间待命")
+                      .font(.system(size: 14, weight: .medium))
+                    Text("默认状态不创建 3D 场景")
+                      .font(.system(size: 12))
+                      .foregroundStyle(.secondary)
+                  }
+                }
+                .foregroundStyle(.primary)
               }
             }
-            .foregroundStyle(.primary)
           }
+          .frame(maxWidth: .infinity)
+          .frame(height: 162)
+          .clipShape(RoundedRectangle(cornerRadius: 3))
+          .overlay {
+            HudBrackets()
+              .stroke(Color.augmaHighlight.opacity(0.85), lineWidth: 1.5)
+              .padding(-4)
+              .allowsHitTesting(false)
+          }
+          .animation(.augma(), value: model.rendersDemoScene)
         }
-      }
-      .frame(maxWidth: .infinity)
-      .frame(height: 162)
-      .clipShape(RoundedRectangle(cornerRadius: 3))
-      .overlay {
-        HudBrackets()
-          .stroke(Color.augmaHighlight.opacity(0.85), lineWidth: 1.5)
-          .padding(-4)
-          .allowsHitTesting(false)
-      }
-      .animation(.augma(), value: model.rendersDemoScene)
+        .padding(18)
+        .frame(maxWidth: .infinity)
+        .augmaGlass(cornerRadius: 20)
 
-      HStack(spacing: 10) {
-        if monitor.hudPinned {
-          Button("查看详情", action: openMonitor)
-            .nativeFloatingButton(prominent: true)
-          Button("取消固定监控") { monitor.hudPinned = false }
-            .nativeFloatingButton()
-        } else {
-          Button(model.wantsDemoScene ? "退出演示空间" : "进入演示空间") {
-            if model.wantsDemoScene { model.leaveDemoScene() }
-            else { model.wantsDemoScene = true }
+        HStack(spacing: 10) {
+          if monitor.hudPinned {
+            Button("查看详情", action: openMonitor)
+              .augmaButton(.floatingProminent)
+            Button("取消固定监控") { monitor.hudPinned = false }
+              .augmaButton(.floating)
+          } else {
+            Button(model.wantsDemoScene ? "退出演示空间" : "进入演示空间") {
+              if model.wantsDemoScene { model.leaveDemoScene() }
+              else { model.wantsDemoScene = true }
+            }
+            .augmaButton(.floatingProminent)
+            Button("固定系统监控") { monitor.hudPinned = true }
+              .augmaButton(.floating)
           }
-          .nativeFloatingButton(prominent: true)
-          Button("固定系统监控") { monitor.hudPinned = true }
-            .nativeFloatingButton()
+          Spacer()
+          Button("隐藏窗口", action: hideWindow)
+            .augmaButton(.floating)
         }
-        Spacer()
-        Button("隐藏窗口", action: hideWindow)
-          .nativeFloatingButton()
       }
+      .frame(width: 430, height: 320)
+      .foregroundStyle(.primary)
+      .padding(20)
     }
-    .padding(20)
-    .frame(width: 430, height: 320)
-    .foregroundStyle(.primary)
-
-    // Desktop text can sit directly behind this panel; clear glass doesn't blur
-    // it enough to keep monitoring values and actions legible.
-    .augmaGlass()
+    .tint(.augmaAccent)
     .augmaMaterialize(active: model.windowVisible)
     .background {
       SystemMonitorVisibilityView { visible in

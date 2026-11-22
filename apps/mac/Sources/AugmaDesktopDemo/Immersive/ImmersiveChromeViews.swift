@@ -7,7 +7,7 @@ struct ImmersiveVoiceCorner: View {
     NativeOrbButton(title: String(appLocalized: "语音助手"), symbol: "mic.fill", tint: .green,
                     identifier: "immersive-voice") { select(.commands) }
       .padding(7)
-      .augmaGlass(cornerRadius: 30)
+      .augmaGlass(cornerRadius: 30, interactive: true)
       .padding(1)
   }
 }
@@ -23,7 +23,7 @@ struct ImmersiveClockView: View {
       }
       .frame(maxWidth: .infinity)
       .padding(.vertical, 7)
-      .background(.regularMaterial, in: Capsule())
+      .augmaGlassCapsule()
     }
     .padding(3)
     .accessibilityElement(children: .combine)
@@ -68,13 +68,14 @@ struct ImmersiveSystemCorner: View {
         Button(immersive ? String(appLocalized: "退出沉浸模式") : String(appLocalized: "沉浸模式"),
                systemImage: immersive ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right", action: exit)
       } label: {
-        Image(systemName: model.immersiveClickThrough ? "cursorarrow.click" : "line.3.horizontal")
+        NativeOrbLabel(
+          symbol: model.immersiveClickThrough ? "cursorarrow.click" : "line.3.horizontal",
+          tint: .augmaCyan,
+          selected: model.immersiveClickThrough
+        )
       }
       .menuStyle(.borderlessButton).menuIndicator(.hidden)
       .frame(width: 44, height: 44)
-      .background(Color.augmaCyan.opacity(model.immersiveClickThrough ? 0.9 : 0.14), in: Circle())
-      .overlay { Circle().strokeBorder(Color.augmaCyan.opacity(0.65), lineWidth: 1.5).allowsHitTesting(false) }
-      .overlay { Circle().inset(by: 4).strokeBorder(Color.augmaCyan.opacity(0.25), lineWidth: 1).allowsHitTesting(false) }
       .help("系统菜单").accessibilityLabel("系统菜单")
       .accessibilityIdentifier("immersive-system-menu")
       NativeOrbButton(title: immersive ? String(appLocalized: "退出沉浸模式") : String(appLocalized: "沉浸模式"),

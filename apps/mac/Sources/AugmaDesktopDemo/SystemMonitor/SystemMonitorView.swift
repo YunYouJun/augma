@@ -89,9 +89,9 @@ struct SystemMonitorView: View {
         }
         HStack {
           Button("空间分析", systemImage: "square.grid.3x3.square") { showingDiskUsage = true }
-            .nativeFloatingButton().accessibilityIdentifier("disk-usage-open")
+            .augmaButton(.secondary).accessibilityIdentifier("disk-usage-open")
           Button("清理磁盘与内存", systemImage: "sparkles.rectangle.stack") { showingCleanup = true }
-            .nativeFloatingButton()
+            .augmaButton(.secondary)
         }
       }
       .padding(NativePageLayout.itemSpacing)
@@ -126,7 +126,7 @@ struct SystemMonitorView: View {
       }
     }
     .fixedSize(horizontal: true, vertical: false)
-    .nativeFloatingButton()
+    .augmaButton(.secondary)
     .disabled(!store.enabled || refreshing || store.isSampling)
   }
 

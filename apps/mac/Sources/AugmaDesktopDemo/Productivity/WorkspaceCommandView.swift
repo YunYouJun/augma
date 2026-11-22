@@ -280,7 +280,7 @@ struct WorkspaceResultView: View {
     if let result = commands.result {
       HStack(alignment: .top, spacing: 10) {
         Image(systemName: commands.resultIsError ? "exclamationmark.circle" : "checkmark.circle")
-          .foregroundStyle(commands.resultIsError ? Color.red : Color.accentColor)
+          .foregroundStyle(commands.resultIsError ? Color.augmaCritical : Color.augmaHealthy)
         Text(result).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
         ViewThatFits(in: .horizontal) {
           HStack(spacing: 8) { resultActions }

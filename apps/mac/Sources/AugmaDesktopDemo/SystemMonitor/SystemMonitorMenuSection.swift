@@ -19,7 +19,7 @@ struct SystemMonitorMenuSection: View {
         Button("查看详情", action: openMonitor)
       }
       if !store.enabled {
-        Button("开启系统监控") { store.enabled = true }.nativeFloatingButton()
+        Button("开启系统监控") { store.enabled = true }.augmaButton(.primary)
       } else if store.menuBarSummaryEnabled {
         SystemMonitorSummary(store: store)
         if store.applicationMemoryEnabled {

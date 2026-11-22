@@ -47,7 +47,7 @@ struct NativeSpaceView: View {
             .foregroundStyle(.secondary)
         }
         .padding(10)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 9))
+        .augmaGlass(cornerRadius: 12)
         .padding(12)
         .allowsHitTesting(false)
       }
@@ -56,7 +56,7 @@ struct NativeSpaceView: View {
           .font(.caption)
           .padding(.horizontal, 10)
           .padding(.vertical, 7)
-          .background(.regularMaterial, in: Capsule())
+          .augmaGlassCapsule()
           .padding(12)
           .allowsHitTesting(false)
       }
@@ -65,7 +65,7 @@ struct NativeSpaceView: View {
           Button("显示 HUD", systemImage: "eye") {
             preferences.set("showHud", value: true)
           }
-          .buttonStyle(.borderedProminent)
+          .augmaButton(.floatingProminent)
           .accessibilityIdentifier("native-space-show-hud")
           .padding(12)
         }

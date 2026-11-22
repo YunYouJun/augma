@@ -95,7 +95,7 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
     self.terminationSignal = terminationSignal
 
     let panel = HudPanel(
-      contentRect: NSRect(x: 0, y: 0, width: 430, height: 320),
+      contentRect: NSRect(x: 0, y: 0, width: 470, height: 360),
       styleMask: [.borderless],
       backing: .buffered,
       defer: false
@@ -103,7 +103,7 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
     panel.isOpaque = false
     panel.title = "Augma HUD"
     panel.backgroundColor = .clear
-    panel.hasShadow = true
+    panel.hasShadow = false
     panel.level = .normal
     panel.isFloatingPanel = false
     panel.hidesOnDeactivate = false
@@ -114,7 +114,7 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
       monitor: monitor,
       openMonitor: { [weak self] in self?.openModule(.monitor) },
       hideWindow: { [weak self] in self?.hideWindow() }
-    ).appLocalized())
+    ).tint(.augmaAccent).appLocalized())
     panel.center()
     self.panel = panel
     monitor.onHUDPinnedChanged = { [weak self] pinned in
@@ -144,7 +144,7 @@ final class HudAppDelegate: NSObject, NSApplicationDelegate {
       panel.hidesOnDeactivate = false
       panel.level = .floating
       panel.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
-      panel.contentView = NSHostingView(rootView: QuickCaptureUtilityView(store: workspace, commands: commands, companion: craftHubCompanion) { [weak panel] in panel?.close() }.appLocalized(windowTitle: "快速记录"))
+      panel.contentView = NSHostingView(rootView: QuickCaptureUtilityView(store: workspace, commands: commands, companion: craftHubCompanion) { [weak panel] in panel?.close() }.tint(.augmaAccent).appLocalized(windowTitle: "快速记录"))
       panel.center()
       capturePanel = panel
     }
