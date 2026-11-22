@@ -55,6 +55,7 @@ final class AugmaUITests: XCTestCase {
   func testViewsAndModifiersConstructCleanly() {
     let orb = AugmaGlassOrbButton(title: "Settings", symbol: "gearshape", badge: 3) {}
     let label = AugmaOrbLabel(symbol: "command", tint: .augmaCyan, selected: true)
+    let menuOrb = Image(systemName: "line.3.horizontal").augmaOrbChrome(tint: .augmaCyan, selected: true)
     let ring = AugmaRing(size: 64, spinning: false)
     let ping = StatusPing(color: .augmaHealthy, active: false)
     let bar = AugmaGlassActionBar {
@@ -66,6 +67,7 @@ final class AugmaUITests: XCTestCase {
     let materialized = VStack {
       orb
       label
+      menuOrb
       ring
       ping
       bar

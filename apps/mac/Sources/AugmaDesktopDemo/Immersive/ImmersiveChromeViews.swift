@@ -68,14 +68,12 @@ struct ImmersiveSystemCorner: View {
         Button(immersive ? String(appLocalized: "退出沉浸模式") : String(appLocalized: "沉浸模式"),
                systemImage: immersive ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right", action: exit)
       } label: {
-        NativeOrbLabel(
-          symbol: model.immersiveClickThrough ? "cursorarrow.click" : "line.3.horizontal",
-          tint: .augmaCyan,
-          selected: model.immersiveClickThrough
-        )
+        Image(systemName: model.immersiveClickThrough ? "cursorarrow.click" : "line.3.horizontal")
+          .font(.system(size: 19, weight: .medium))
+          .foregroundStyle(model.immersiveClickThrough ? Color.white : Color.augmaCyan)
       }
       .menuStyle(.borderlessButton).menuIndicator(.hidden)
-      .frame(width: 44, height: 44)
+      .augmaOrbChrome(tint: .augmaCyan, selected: model.immersiveClickThrough)
       .help("系统菜单").accessibilityLabel("系统菜单")
       .accessibilityIdentifier("immersive-system-menu")
       NativeOrbButton(title: immersive ? String(appLocalized: "退出沉浸模式") : String(appLocalized: "沉浸模式"),

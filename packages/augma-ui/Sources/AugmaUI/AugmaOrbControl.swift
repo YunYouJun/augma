@@ -1,5 +1,29 @@
 import SwiftUI
 
+public extension View {
+  /// Applies Augma's circular orb background and concentric rings outside a control (such as a
+  /// macOS borderless `Menu`, whose `label:` can otherwise flatten custom background/overlay shapes).
+  func augmaOrbChrome(tint: Color = .augmaCyan, selected: Bool = false, diameter: CGFloat = 44) -> some View {
+    let scale = diameter / 44
+    return frame(width: diameter, height: diameter)
+      .background(selected ? tint.opacity(0.9) : tint.opacity(0.14), in: Circle())
+      .overlay {
+        Circle()
+          .strokeBorder(tint.opacity(selected ? 1 : 0.65), lineWidth: 1.5 * scale)
+          .allowsHitTesting(false)
+          .accessibilityHidden(true)
+      }
+      .overlay {
+        Circle()
+          .inset(by: 4 * scale)
+          .strokeBorder(tint.opacity(selected ? 0.15 : 0.25), lineWidth: scale)
+          .allowsHitTesting(false)
+          .accessibilityHidden(true)
+      }
+      .contentShape(Circle())
+  }
+}
+
 /// Concentric Augma circular icon label for use inside an outer glass container (such as a Dock).
 public struct AugmaOrbLabel: View {
   public let symbol: String
@@ -20,11 +44,7 @@ public struct AugmaOrbLabel: View {
     Image(systemName: symbol)
       .font(.system(size: 19 * scale, weight: .medium))
       .foregroundStyle(selected ? Color.white : tint)
-      .frame(width: diameter, height: diameter)
-      .background(selected ? tint.opacity(0.9) : tint.opacity(0.14), in: Circle())
-      .overlay { Circle().strokeBorder(tint.opacity(selected ? 1 : 0.65), lineWidth: 1.5 * scale) }
-      .overlay { Circle().inset(by: 4 * scale).strokeBorder(tint.opacity(selected ? 0.15 : 0.25), lineWidth: scale) }
-      .contentShape(Circle())
+      .augmaOrbChrome(tint: tint, selected: selected, diameter: diameter)
   }
 }
 
