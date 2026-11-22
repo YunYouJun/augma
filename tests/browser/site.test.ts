@@ -368,6 +368,7 @@ for (const [path, nav, heading, arm, intel, ar, guide] of [
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
     await page.getByRole('link', { name: guide, exact: true }).click()
     await expect(page).toHaveURL(path.replace('/download', '/guide/macos'))
+    await expect(page.locator('.augma-download')).toHaveCount(0)
     await expect(page.getByRole('link', { name: arm, exact: true })).toHaveAttribute('href', macArmZip)
     await expect(page.getByRole('link', { name: intel, exact: true })).toHaveAttribute('href', macIntelZip)
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
