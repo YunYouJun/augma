@@ -1,5 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { ToastProvider, ToastViewport } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
+import { h } from 'vue'
 import {
   AgmButton,
   AgmDialog,
@@ -22,6 +24,20 @@ describe('component contracts', () => {
     expect(wrapper.attributes('aria-busy')).toBe('true')
     await wrapper.trigger('click')
     expect(wrapper.emitted('click')).toBeUndefined()
+  })
+  it('applies variant and size classes cleanly on AgmButton', async () => {
+    const wrapper = mount(AgmButton, { slots: { default: 'Action' } })
+    expect(wrapper.classes()).toContain('agm-button')
+    expect(wrapper.classes()).toContain('agm-button--primary')
+    expect(wrapper.classes()).not.toContain('agm-button--md')
+
+    await wrapper.setProps({ variant: 'glass', size: 'sm' })
+    expect(wrapper.classes()).toContain('agm-button--glass')
+    expect(wrapper.classes()).toContain('agm-button--sm')
+
+    await wrapper.setProps({ variant: 'danger', size: 'lg' })
+    expect(wrapper.classes()).toContain('agm-button--danger')
+    expect(wrapper.classes()).toContain('agm-button--lg')
   })
   it('labels the input and associates validation text', async () => {
     const wrapper = mount(AgmInput, {
@@ -152,6 +168,22 @@ describe('component contracts', () => {
     expect(toastClose().getAttribute('aria-label')).toBe('Close notification')
     expect(region().getAttribute('aria-label')).toBe('Notifications (F8)')
     toast.unmount()
+  })
+  it('stacks multiple AgmToast instances cleanly under a shared ToastProvider', async () => {
+    const wrapper = mount({
+      render: () => h(ToastProvider, null, () => [
+        h(AgmToast, { open: true, title: 'First notice', duration: Number.POSITIVE_INFINITY }),
+        h(AgmToast, { open: true, title: 'Second notice', tone: 'warning', duration: Number.POSITIVE_INFINITY }),
+        h(ToastViewport, { class: 'agm-toast-viewport', label: 'Shared notifications (F8)' }),
+      ]),
+    }, { attachTo: document.body })
+    await flushPromises()
+    expect(document.querySelectorAll('.agm-toast-viewport')).toHaveLength(1)
+    expect(document.querySelectorAll('[role="region"]')).toHaveLength(1)
+    expect(document.querySelectorAll('[role="region"] .agm-toast')).toHaveLength(2)
+    expect(document.querySelector('[role="region"]')?.textContent).toContain('First notice')
+    expect(document.querySelector('[role="region"]')?.textContent).toContain('Second notice')
+    wrapper.unmount()
   })
   it('clamps gauge values and derives tone from the remaining share', async () => {
     const wrapper = mount(AgmHudGauge, { props: { label: '电量', value: 86 } })

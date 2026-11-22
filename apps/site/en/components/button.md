@@ -11,7 +11,8 @@ A light touch, an instant response. Triggers actions and state changes.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `variant` | 'primary' \| 'outline' \| 'ghost' | 'primary' | Visual emphasis |
+| `variant` | 'primary' \| 'outline' \| 'ghost' \| 'glass' \| 'danger' | 'primary' | Visual emphasis (primary / outline / ghost / glass / danger) |
+| `size` | 'sm' \| 'md' \| 'lg' | 'md' | Button size |
 | `disabled` | boolean | false | Blocks interaction |
 | `loading` | boolean | false | Shows work in progress and blocks repeated actions |
 | `type` | 'button' \| 'submit' \| 'reset' | 'button' | Native button type |

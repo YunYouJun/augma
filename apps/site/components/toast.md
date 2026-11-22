@@ -25,7 +25,7 @@
 
 ## 键盘操作与使用边界
 
-F8 聚焦通知区域，Escape 或关闭按钮关闭。悬停或聚焦时暂停倒计时。每个应用建议放置一个 AgmToast。
+F8 聚焦通知区域，Escape 或关闭按钮关闭。悬停或聚焦时暂停倒计时。独立使用自带视口；若用 reka-ui 的 ToastProvider 与 ToastViewport（class="agm-toast-viewport"）包裹多个 AgmToast，可自动堆叠显示。
 
 ## 安装
 

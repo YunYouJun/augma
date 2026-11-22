@@ -17,7 +17,8 @@ const translations = {
       title: 'Button',
       description: 'A light touch, an instant response. Triggers actions and state changes.',
       props: {
-        variant: 'Visual emphasis',
+        variant: 'Visual emphasis (primary / outline / ghost / glass / danger)',
+        size: 'Button size',
         disabled: 'Blocks interaction',
         loading: 'Shows work in progress and blocks repeated actions',
         type: 'Native button type',
@@ -126,7 +127,7 @@ const translations = {
         closeLabel: 'Accessible name of the close button',
         regionLabel: 'Accessible name of the notification region; mention the F8 shortcut',
       },
-      keyboard: 'F8 focuses the notification region; Escape or the close button dismisses it. The countdown pauses on hover or focus. Use one AgmToast per app.',
+      keyboard: 'F8 focuses the notification region; Escape or the close button dismisses it. The countdown pauses on hover or focus. Standalone usage renders its own viewport; wrap multiple AgmToast instances in a shared reka-ui ToastProvider and ToastViewport (class="agm-toast-viewport") to stack them cleanly.',
     },
     'panel': {
       title: 'Panel',
@@ -175,7 +176,8 @@ const translations = {
       title: 'Button ボタン',
       description: '軽く触れて、すぐに応答。操作の実行や状態の切り替えに使います。',
       props: {
-        variant: '視覚的な強調度',
+        variant: '視覚的な強調度（primary / outline / ghost / glass / danger）',
+        size: 'ボタンのサイズ',
         disabled: '操作を無効にする',
         loading: '処理中を示し、重複操作を防ぐ',
         type: 'ネイティブのボタン種別',
@@ -284,7 +286,7 @@ const translations = {
         closeLabel: '閉じるボタンのアクセシブルネーム',
         regionLabel: '通知領域のアクセシブルネーム。F8 ショートカットにも触れてください',
       },
-      keyboard: 'F8 で通知領域にフォーカスし、Escape または閉じるボタンで閉じます。ホバーやフォーカス中はカウントダウンが止まります。AgmToast はアプリごとに 1 つ置くことを推奨します。',
+      keyboard: 'F8 で通知領域にフォーカスし、Escape または閉じるボタンで閉じます。ホバーやフォーカス中はカウントダウンが止まります。単体では独自のビューポートを描画します。複数の AgmToast を重ねて表示したい場合は、reka-ui の ToastProvider と ToastViewport（class="agm-toast-viewport"）で囲んでください。',
     },
     'panel': {
       title: 'Panel パネル',

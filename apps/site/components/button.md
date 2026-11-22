@@ -11,7 +11,8 @@
 
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `variant` | 'primary' \| 'outline' \| 'ghost' | 'primary' | 视觉层级 |
+| `variant` | 'primary' \| 'outline' \| 'ghost' \| 'glass' \| 'danger' | 'primary' | 视觉层级，包含 primary / outline / ghost / glass / danger |
+| `size` | 'sm' \| 'md' \| 'lg' | 'md' | 按钮尺寸 |
 | `disabled` | boolean | false | 禁止操作 |
 | `loading` | boolean | false | 处理中，同时禁止重复操作 |
 | `type` | 'button' \| 'submit' \| 'reset' | 'button' | 原生按钮类型 |

@@ -25,7 +25,7 @@ Light, dismissible feedback for results and reminders.
 
 ## Keyboard and usage notes
 
-F8 focuses the notification region; Escape or the close button dismisses it. The countdown pauses on hover or focus. Use one AgmToast per app.
+F8 focuses the notification region; Escape or the close button dismisses it. The countdown pauses on hover or focus. Standalone usage renders its own viewport; wrap multiple AgmToast instances in a shared reka-ui ToastProvider and ToastViewport (class="agm-toast-viewport") to stack them cleanly.
 
 ## Installation
 

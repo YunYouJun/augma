@@ -14,6 +14,9 @@
 
 白色与冰灰构成主要表面。透明度与细线边框建立层次，切角只用于可操作入口，环形元素用于状态和进度。阅读区域保持安静，复杂背景上的面板应有足够实色背景，保证文字对比。
 
+- **Web 玻璃与浮层**：`--agm-panel` 与 `--agm-glass-bg` 用于次级磨砂面和 `variant="glass"` 悬浮胶囊按钮，`--agm-glass-strong` 与 `--agm-glass-border`、`--agm-glass-blur`（`18px`）用于 `Dialog`、`Select`、`Tooltip`、`Toast` 等浮层。系统开启「降低透明度」（`prefers-reduced-transparency: reduce`）时自动退回实色背景，高对比度模式（`forced-colors: active`）下自动恢复可见原生边框。
+- **Apple 原生端（`AugmaUI`，支持 iOS 26 / macOS 26）**：遵循 Liquid Glass 的「内容层 / 悬浮层」分离规则——悬浮控制与 HUD 动作（`AugmaGlassOrbButton`、`AugmaGlassActionBar`、`.augmaButton(.floating)` / `.augmaButton(.floatingProminent)`）使用原生 `.glass` / `.glassProminent` 并编组在 `GlassEffectContainer` 中；滚动表单、卡片与菜单内容内的操作（`.augmaButton(.primary)` / `.augmaButton(.secondary)`）使用 `.borderedProminent` / `.bordered`，禁止在玻璃容器内部再嵌套玻璃按钮。
+
 ## 颜色
 
 | Token | 浅色值 | 深色值 | 用途 |
@@ -26,7 +29,10 @@
 | `--agm-highlight` | `#f28c12` | `#f28c12` | 装饰性高亮、HUD 图形与计量条警示 |
 | `--agm-cyan` | `#258ca4` | `#67c8da` | 连续控制 |
 | `--agm-success` | `#287947` | `#7cdaa0` | 成功 |
-| `--agm-danger` | `#bc394a` | `#ff95a4` | 错误 |
+| `--agm-danger` | `#bc394a` | `#ff95a4` | 错误与危险操作 |
+| `--agm-glass-bg` | `rgb(255 255 255 / 72%)` | `rgb(24 38 52 / 72%)` | 悬浮玻璃表面与 `glass` 按钮 |
+| `--agm-glass-strong` | `rgb(255 255 255 / 86%)` | `rgb(22 35 48 / 88%)` | 浮层磨砂背景 |
+| `--agm-glass-border` | `rgb(255 255 255 / 62%)` | `rgb(255 255 255 / 16%)` | 玻璃高光描边 |
 
 在应用根部覆盖变量即可定制主题。改变强调色时同时检查 `--agm-on-accent` 的文字对比。状态必须包含文字，不能仅用颜色表达。
 
@@ -49,7 +55,7 @@
 
 ## 操作与动效
 
-按钮、浮层关闭入口至少提供 44px 的触控高度；小尺寸开关和滑块通过扩展命中区域保持轻盈的外观。布局时保留空间，避免相邻命中区域重叠。焦点环保持完整，不被切角裁剪。动效用于解释状态变化，尊重 `prefers-reduced-motion`。
+按钮、浮层关闭入口至少提供 44px 的触控高度（`size="sm"` 在粗指针触控设备上自动扩展至 44px，`size="lg"` 提供 52px 主入口；`glass` 与 `danger` 分别承载悬浮半透明和破坏性操作）；小尺寸开关和滑块通过扩展命中区域保持轻盈的外观。悬停光扫仅在支持真实悬停的指针设备（`@media (hover: hover)`）上触发，触屏点击保留即时按压反馈。布局时保留空间，避免相邻命中区域重叠。焦点环保持完整，不被切角裁剪。动效用于解释状态变化，尊重 `prefers-reduced-motion`。
 
 动效取自 Augma 界面“浮现”于现实的方式：快速出现，柔和落定，离开时更短。
 

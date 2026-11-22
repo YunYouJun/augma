@@ -9,7 +9,11 @@ export const components = [
     props: [
       {
         name: 'variant',
-        description: '视觉层级',
+        description: '视觉层级，包含 primary / outline / ghost / glass / danger',
+      },
+      {
+        name: 'size',
+        description: '按钮尺寸',
       },
       {
         name: 'disabled',
@@ -283,7 +287,7 @@ export const components = [
     ],
     events: ['update:open(boolean)'],
     keyboard:
-      'F8 聚焦通知区域，Escape 或关闭按钮关闭。悬停或聚焦时暂停倒计时。每个应用建议放置一个 AgmToast。',
+      'F8 聚焦通知区域，Escape 或关闭按钮关闭。悬停或聚焦时暂停倒计时。独立使用自带视口；若用 reka-ui 的 ToastProvider 与 ToastViewport（class="agm-toast-viewport"）包裹多个 AgmToast，可自动堆叠显示。',
     registry: true,
   },
   {

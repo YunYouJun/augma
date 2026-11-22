@@ -11,7 +11,8 @@
 
 | プロパティ | 型 | デフォルト | 説明 |
 | --- | --- | --- | --- |
-| `variant` | 'primary' \| 'outline' \| 'ghost' | 'primary' | 視覚的な強調度 |
+| `variant` | 'primary' \| 'outline' \| 'ghost' \| 'glass' \| 'danger' | 'primary' | 視覚的な強調度（primary / outline / ghost / glass / danger） |
+| `size` | 'sm' \| 'md' \| 'lg' | 'md' | ボタンのサイズ |
 | `disabled` | boolean | false | 操作を無効にする |
 | `loading` | boolean | false | 処理中を示し、重複操作を防ぐ |
 | `type` | 'button' \| 'submit' \| 'reset' | 'button' | ネイティブのボタン種別 |

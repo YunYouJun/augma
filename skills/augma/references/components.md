@@ -28,7 +28,8 @@ Button: A light touch, an instant response. Triggers actions and state changes.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `variant` | 'primary' \| 'outline' \| 'ghost' | 'primary' | Visual emphasis |
+| `variant` | 'primary' \| 'outline' \| 'ghost' \| 'glass' \| 'danger' | 'primary' | Visual emphasis (primary / outline / ghost / glass / danger) |
+| `size` | 'sm' \| 'md' \| 'lg' | 'md' | Button size |
 | `disabled` | boolean | false | Blocks interaction |
 | `loading` | boolean | false | Shows work in progress and blocks repeated actions |
 | `type` | 'button' \| 'submit' \| 'reset' | 'button' | Native button type |
@@ -57,6 +58,8 @@ const count = shallowRef(0)
       <AgmButton @click="count++">Connect device</AgmButton>
       <AgmButton variant="outline" @click="count++">Secondary action</AgmButton>
       <AgmButton variant="ghost" @click="count++">Subtle action</AgmButton>
+      <AgmButton variant="glass" @click="count++">Glass action</AgmButton>
+      <AgmButton variant="danger" @click="count++">Danger action</AgmButton>
       <AgmButton loading>Loading</AgmButton>
       <AgmButton disabled>Unavailable</AgmButton>
     </div>
@@ -514,7 +517,7 @@ Toast: Light, dismissible feedback for results and reminders.
 
 Events: `update:open(boolean)`
 
-Usage notes: F8 focuses the notification region; Escape or the close button dismisses it. The countdown pauses on hover or focus. Use one AgmToast per app.
+Usage notes: F8 focuses the notification region; Escape or the close button dismisses it. The countdown pauses on hover or focus. Standalone usage renders its own viewport; wrap multiple AgmToast instances in a shared reka-ui ToastProvider and ToastViewport (class="agm-toast-viewport") to stack them cleanly.
 
 Editable source: `pnpm dlx shadcn-vue@2.8.2 add https://augma.yyj.moe/r/toast.json`
 

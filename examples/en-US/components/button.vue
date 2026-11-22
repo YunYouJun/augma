@@ -11,6 +11,8 @@ const count = shallowRef(0)
       <AgmButton @click="count++">Connect device</AgmButton>
       <AgmButton variant="outline" @click="count++">Secondary action</AgmButton>
       <AgmButton variant="ghost" @click="count++">Subtle action</AgmButton>
+      <AgmButton variant="glass" @click="count++">Glass action</AgmButton>
+      <AgmButton variant="danger" @click="count++">Danger action</AgmButton>
       <AgmButton loading>Loading</AgmButton>
       <AgmButton disabled>Unavailable</AgmButton>
     </div>

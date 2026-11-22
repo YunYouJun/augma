@@ -33,7 +33,7 @@
   outline-offset: 4px;
 }
 
-/* Button: clipped plate, a light sweep on hover and a short press. */
+/* Button: clipped plate or floating glass capsule, with a light sweep and crisp press. */
 .agm-button {
   position: relative;
   display: inline-flex;
@@ -51,8 +51,28 @@
   white-space: nowrap;
   transition:
     color var(--agm-duration),
+    background-color var(--agm-duration),
+    border-color var(--agm-duration),
+    box-shadow var(--agm-duration-slow) var(--agm-ease),
     scale var(--agm-duration) var(--agm-ease),
     filter var(--agm-duration-slow) var(--agm-ease);
+}
+.agm-button--sm {
+  min-height: 36px;
+  padding: 6px 16px;
+  font-size: 13px;
+  --agm-cut: 8px;
+}
+.agm-button--lg {
+  min-height: 52px;
+  padding: 14px 30px;
+  font-size: 15px;
+  --agm-cut: 12px;
+}
+@media (pointer: coarse) {
+  .agm-button--sm {
+    min-height: 44px;
+  }
 }
 .agm-button::before,
 .agm-button::after {
@@ -87,15 +107,9 @@
   background-size: 300% 100%;
   background-position: 100% 0;
 }
-/* The sweep only plays on the way in; leaving snaps it back off-plate. */
-.agm-button:hover:not(:disabled)::after {
-  background-position: 0 0;
-  transition:
-    background-color var(--agm-duration),
-    background-position 720ms var(--agm-ease);
-}
 .agm-button:active:not(:disabled) {
   scale: 0.97;
+  filter: brightness(1.04);
 }
 .agm-button--primary {
   color: var(--agm-on-accent);
@@ -104,23 +118,86 @@
 .agm-button--primary::after {
   background-color: var(--agm-accent);
 }
-.agm-button--primary:hover:not(:disabled)::before,
-.agm-button--primary:hover:not(:disabled)::after {
-  background-color: var(--agm-accent-hover);
-}
-.agm-button--primary:hover:not(:disabled),
 .agm-button--primary:focus-visible {
   filter: drop-shadow(0 4px 14px var(--agm-glow));
+}
+.agm-button--danger {
+  color: var(--agm-on-danger);
+}
+.agm-button--danger::before,
+.agm-button--danger::after {
+  background-color: var(--agm-danger);
+}
+.agm-button--danger:focus-visible {
+  filter: drop-shadow(0 4px 14px color-mix(in srgb, var(--agm-danger) 35%, transparent));
 }
 .agm-button--ghost::before,
 .agm-button--ghost::after {
   background-color: transparent;
 }
-.agm-button--outline:hover:not(:disabled)::before {
-  background-color: var(--agm-accent);
+.agm-button--glass {
+  border-radius: 999px;
+  border: 1px solid var(--agm-glass-border);
+  background: var(--agm-glass-bg);
+  -webkit-backdrop-filter: blur(var(--agm-glass-blur)) saturate(1.6);
+  backdrop-filter: blur(var(--agm-glass-blur)) saturate(1.6);
+  box-shadow:
+    var(--agm-glass-shadow),
+    inset 0 1px 0 var(--agm-light),
+    inset 0 -1px 0 rgb(0 0 0 / 5%);
+  color: var(--agm-text);
 }
-.agm-button--ghost:hover:not(:disabled)::after {
-  background-color: var(--agm-surface);
+.agm-button--glass::before {
+  display: none;
+}
+.agm-button--glass::after {
+  inset: 0;
+  clip-path: none;
+  border-radius: inherit;
+  background-color: transparent;
+}
+.agm-button--glass:active:not(:disabled) {
+  scale: 0.96;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--agm-accent) 18%, transparent),
+    inset 0 1px 0 var(--agm-light);
+}
+@media (hover: hover) {
+  /* The sweep only plays on the way in; leaving snaps it back off-plate. */
+  .agm-button:hover:not(:disabled)::after {
+    background-position: 0 0;
+    transition:
+      background-color var(--agm-duration),
+      background-position 720ms var(--agm-ease);
+  }
+  .agm-button--primary:hover:not(:disabled)::before,
+  .agm-button--primary:hover:not(:disabled)::after {
+    background-color: var(--agm-accent-hover);
+  }
+  .agm-button--primary:hover:not(:disabled) {
+    filter: drop-shadow(0 4px 14px var(--agm-glow));
+  }
+  .agm-button--danger:hover:not(:disabled)::before,
+  .agm-button--danger:hover:not(:disabled)::after {
+    background-color: var(--agm-danger-hover);
+  }
+  .agm-button--danger:hover:not(:disabled) {
+    filter: drop-shadow(0 4px 14px color-mix(in srgb, var(--agm-danger) 35%, transparent));
+  }
+  .agm-button--outline:hover:not(:disabled)::before {
+    background-color: var(--agm-accent);
+  }
+  .agm-button--ghost:hover:not(:disabled)::after {
+    background-color: var(--agm-surface);
+  }
+  .agm-button--glass:hover:not(:disabled) {
+    background: var(--agm-glass-strong);
+    border-color: color-mix(in srgb, var(--agm-glass-border) 55%, var(--agm-light));
+    box-shadow:
+      var(--agm-glass-shadow),
+      0 6px 22px rgb(31 54 74 / 14%),
+      inset 0 1px 0 var(--agm-light);
+  }
 }
 .agm-button:disabled,
 .agm-icon-button:disabled,
@@ -187,15 +264,10 @@
     opacity var(--agm-duration),
     scale var(--agm-duration-slow) var(--agm-ease);
 }
-.agm-icon-button:hover:not(:disabled)::before,
 .agm-icon-button:focus-visible::before {
   opacity: 0.8;
   scale: 1;
   animation: agm-orbit 5s linear infinite;
-}
-.agm-icon-button:hover:not(:disabled) {
-  border-color: var(--agm-accent);
-  color: var(--agm-accent);
 }
 .agm-icon-button:active:not(:disabled) {
   scale: 0.92;
@@ -209,10 +281,21 @@
     0 0 0 4px color-mix(in srgb, var(--agm-accent) 16%, transparent),
     0 0 20px var(--agm-glow);
 }
-.agm-icon-button[aria-pressed='true']:hover:not(:disabled) {
-  border-color: var(--agm-accent-hover);
-  background-color: var(--agm-accent-hover);
-  color: var(--agm-on-accent);
+@media (hover: hover) {
+  .agm-icon-button:hover:not(:disabled)::before {
+    opacity: 0.8;
+    scale: 1;
+    animation: agm-orbit 5s linear infinite;
+  }
+  .agm-icon-button:hover:not(:disabled) {
+    border-color: var(--agm-accent);
+    color: var(--agm-accent);
+  }
+  .agm-icon-button[aria-pressed='true']:hover:not(:disabled) {
+    border-color: var(--agm-accent-hover);
+    background-color: var(--agm-accent-hover);
+    color: var(--agm-on-accent);
+  }
 }
 .agm-icon-button svg {
   width: 22px;
@@ -301,7 +384,9 @@
   overflow: auto;
   padding: 6px;
   border: 1px solid var(--agm-border);
-  background: var(--agm-bg);
+  background: var(--agm-glass-strong);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+  backdrop-filter: blur(14px) saturate(1.35);
   border-radius: 3px;
   box-shadow:
     var(--agm-shadow),
@@ -477,8 +562,8 @@
     var(--agm-shadow),
     inset 0 1px 0 var(--agm-light);
   border-radius: 3px;
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(var(--agm-glass-blur));
+  backdrop-filter: blur(var(--agm-glass-blur));
 }
 .agm-panel::before,
 .agm-panel::after {
@@ -570,7 +655,9 @@
   padding: 32px;
   border: 1px solid var(--agm-border);
   border-top: 3px solid var(--agm-accent);
-  background: var(--agm-bg);
+  background: var(--agm-glass-strong);
+  -webkit-backdrop-filter: blur(var(--agm-glass-blur)) saturate(1.4);
+  backdrop-filter: blur(var(--agm-glass-blur)) saturate(1.4);
   box-shadow:
     var(--agm-shadow),
     inset 0 1px 0 var(--agm-light);
@@ -629,7 +716,9 @@
   padding: 8px 12px;
   border: 1px solid var(--agm-border);
   border-left: 2px solid var(--agm-accent);
-  background: var(--agm-bg);
+  background: var(--agm-glass-strong);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+  backdrop-filter: blur(14px) saturate(1.35);
   box-shadow: var(--agm-shadow);
 }
 .agm-tooltip[data-side='bottom'] {
@@ -667,7 +756,9 @@
   --agm-tone: var(--agm-success);
   position: relative;
   padding: 20px 62px 20px 20px;
-  background: var(--agm-bg);
+  background: var(--agm-glass-strong);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+  backdrop-filter: blur(14px) saturate(1.35);
   border: 1px solid var(--agm-border);
   border-left: 3px solid var(--agm-tone);
   box-shadow:
@@ -1144,5 +1235,40 @@
   .agm-status-dot::after,
   .agm-toast[data-countdown]::after {
     display: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .agm-panel,
+  .agm-dialog,
+  .agm-select-content,
+  .agm-tooltip,
+  .agm-toast,
+  .agm-button--glass {
+    background: var(--agm-bg);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: var(--agm-border);
+  }
+}
+
+@media (forced-colors: active) {
+  .agm-button {
+    border: 1px solid ButtonText;
+    border-radius: 3px;
+  }
+  .agm-button--glass {
+    border-radius: 999px;
+  }
+  .agm-button::before,
+  .agm-button::after {
+    display: none;
+  }
+  .agm-panel,
+  .agm-dialog,
+  .agm-select-content,
+  .agm-tooltip,
+  .agm-toast {
+    border-color: CanvasText;
   }
 }

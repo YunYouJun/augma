@@ -11,6 +11,8 @@ const count = shallowRef(0)
       <AgmButton @click="count++">连接设备</AgmButton>
       <AgmButton variant="outline" @click="count++">次要操作</AgmButton>
       <AgmButton variant="ghost" @click="count++">轻量操作</AgmButton>
+      <AgmButton variant="glass" @click="count++">玻璃悬浮</AgmButton>
+      <AgmButton variant="danger" @click="count++">危险操作</AgmButton>
       <AgmButton loading>加载中</AgmButton>
       <AgmButton disabled>不可用</AgmButton>
     </div>

@@ -14,6 +14,9 @@ Use `.dark` or `data-agm-theme="dark"` on the page root to turn on dark; a neste
 
 White and ice gray form the main surfaces. Transparency and hairline borders build depth, cut corners are reserved for actionable entry points, and rings are for status and progress. Reading areas stay quiet; panels on busy backgrounds need a solid enough background to keep text contrast.
 
+- **Web glass and overlays**: `--agm-panel` and `--agm-glass-bg` back frosted cards and `variant="glass"` floating capsule buttons, while `--agm-glass-strong`, `--agm-glass-border`, and `--agm-glass-blur` (`18px`) back `Dialog`, `Select`, `Tooltip`, and `Toast` overlays. When `prefers-reduced-transparency: reduce` is enabled, surfaces fall back to opaque backgrounds; under `forced-colors: active`, buttons restore explicit native borders.
+- **Apple native (`AugmaUI` for iOS 26 / macOS 26)**: Separate reading content from floating Liquid Glass controls. Floating HUD and spatial actions (`AugmaGlassOrbButton`, `AugmaGlassActionBar`, `.augmaButton(.floating)` / `.augmaButton(.floatingProminent)`) use native `.glass` / `.glassProminent` grouped inside `GlassEffectContainer`; actions inside scrolling forms, cards, and menus (`.augmaButton(.primary)` / `.augmaButton(.secondary)`) use `.borderedProminent` / `.bordered`. Never stack Liquid Glass buttons inside another glass surface.
+
 ## Color
 
 | Token | Light | Dark | Use |
@@ -26,7 +29,10 @@ White and ice gray form the main surfaces. Transparency and hairline borders bui
 | `--agm-highlight` | `#f28c12` | `#f28c12` | Decorative highlights, HUD graphics and gauge warnings |
 | `--agm-cyan` | `#258ca4` | `#67c8da` | Continuous controls |
 | `--agm-success` | `#287947` | `#7cdaa0` | Success |
-| `--agm-danger` | `#bc394a` | `#ff95a4` | Errors |
+| `--agm-danger` | `#bc394a` | `#ff95a4` | Errors and destructive actions |
+| `--agm-glass-bg` | `rgb(255 255 255 / 72%)` | `rgb(24 38 52 / 72%)` | Floating glass surfaces and `glass` buttons |
+| `--agm-glass-strong` | `rgb(255 255 255 / 86%)` | `rgb(22 35 48 / 88%)` | Frosted overlay surfaces |
+| `--agm-glass-border` | `rgb(255 255 255 / 62%)` | `rgb(255 255 255 / 16%)` | Specular glass rim |
 
 Override the variables at your app root to customize the theme. When you change the accent color, check the text contrast of `--agm-on-accent` too. A status must always include text, never color alone.
 
@@ -49,7 +55,7 @@ Error and helper text are linked to their fields through `aria-describedby`. Kee
 
 ## Interaction and motion
 
-Buttons and overlay close controls provide a touch height of at least 44px; small switches and sliders keep their light look by extending the hit area. Leave room in layouts so neighboring hit areas don't overlap. Focus rings stay whole and are never clipped by cut corners. Motion explains state changes and respects `prefers-reduced-motion`.
+Buttons and overlay close controls provide a touch height of at least 44px (`size="sm"` expands to 44px on coarse touch pointers, `size="lg"` offers a 52px hero action, and `glass` / `danger` cover floating frosted actions and destructive operations); small switches and sliders keep their light look by extending the hit area. Hover sheens are gated behind `@media (hover: hover)` so touch screens never stick on hover while keeping crisp `:active` press feedback. Leave room in layouts so neighboring hit areas don't overlap. Focus rings stay whole and are never clipped by cut corners. Motion explains state changes and respects `prefers-reduced-motion`.
 
 Motion follows the way Augma interfaces "surface" over reality: appear quickly, settle softly, and leave faster.
 
