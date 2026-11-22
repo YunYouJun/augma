@@ -24,8 +24,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps --only-shell chromium
       - run: pnpm check:build
-      - name: Ensure generated component docs and Skill references are current
-        run: git diff --exit-code -- apps/site/components apps/site/en/components apps/site/ja/components skills/augma/references
+      - name: Ensure generated tokens, component docs and Skill references are current
+        run: git diff --exit-code -- packages/core/src/tokens.css packages/augma-ui/Sources/AugmaUI/AugmaTokens.swift apps/site/components apps/site/en/components apps/site/ja/components skills/augma/references
       - uses: actions/upload-artifact@v7
         with:
           name: augma-site-${{ github.sha }}

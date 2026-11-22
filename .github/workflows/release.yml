@@ -39,8 +39,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm check
-      - name: Ensure generated component docs and Skill references are current
-        run: git diff --exit-code -- apps/site/components apps/site/en/components apps/site/ja/components skills/augma/references
+      - name: Ensure generated tokens, component docs and Skill references are current
+        run: git diff --exit-code -- packages/core/src/tokens.css packages/augma-ui/Sources/AugmaUI/AugmaTokens.swift apps/site/components apps/site/en/components apps/site/ja/components skills/augma/references
       - name: Pack verified files
         run: pnpm release:pack
       - uses: actions/upload-artifact@v7
@@ -73,6 +73,7 @@ jobs:
       - run: swift --version
       - name: Verify packaging and macOS signing rules
         run: pnpm test:release
+      - run: swift test --package-path packages/augma-ui
       - run: swift test --package-path apps/mac
       - name: Build separate Apple silicon and Intel archives
         run: pnpm mac:package
