@@ -1,0 +1,144 @@
+import SwiftUI
+
+/// HUD rings: a 60-mark scale, a cyan orbit with two counter-rotating orange arcs and a dashed core.
+public struct AugmaRing: View {
+  public var size: CGFloat
+  public var spinning: Bool
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  public init(size: CGFloat = 96, spinning: Bool = true) {
+    self.size = size
+    self.spinning = spinning
+  }
+
+  public var body: some View {
+    TimelineView(.animation(minimumInterval: 1 / 30, paused: !spinning || reduceMotion)) { context in
+      let seconds = spinning && !reduceMotion ? context.date.timeIntervalSinceReferenceDate : 0
+      let angle = (seconds / 24).truncatingRemainder(dividingBy: 1) * 360
+      let tick = max(2, size * 0.05)
+      let marks = 2 * .pi * (size / 2 - tick / 2) / 60
+      ZStack {
+        Circle()
+          .strokeBorder(Color.primary.opacity(0.35), style: StrokeStyle(lineWidth: tick, dash: [1, marks - 1]))
+          .rotationEffect(.degrees(angle * 0.25))
+        Circle()
+          .inset(by: size * 0.11)
+          .stroke(Color.augmaCyan.opacity(0.5), lineWidth: 1)
+        ForEach([0.0, 0.5], id: \.self) { start in
+          Circle()
+            .inset(by: size * 0.11)
+            .trim(from: start, to: start + 0.14)
+            .stroke(Color.augmaHighlight, style: StrokeStyle(lineWidth: max(2, size * 0.025), lineCap: .round))
+            .rotationEffect(.degrees(-angle))
+        }
+        Circle()
+          .inset(by: size * 0.22)
+          .stroke(Color.primary.opacity(0.22), style: StrokeStyle(lineWidth: 1, dash: [2, 5]))
+          .rotationEffect(.degrees(angle * 0.5))
+      }
+      .frame(width: size, height: size)
+      .shadow(color: Color.augmaHighlight.opacity(0.25), radius: 4)
+    }
+    .accessibilityHidden(true)
+  }
+}
+
+/// Status dot with a sonar ping, like the web HudStatus.
+public struct StatusPing: View {
+  public var color: Color
+  public var active: Bool
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  public init(color: Color, active: Bool = true) {
+    self.color = color
+    self.active = active
+  }
+
+  public var body: some View {
+    TimelineView(.animation(minimumInterval: 1 / 30, paused: !active || reduceMotion)) { context in
+      let cycle = context.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 2.4) / 2.4
+      let progress = min(cycle / 0.7, 1)
+      let pinging = active && !reduceMotion
+      ZStack {
+        Circle()
+          .fill(color)
+          .frame(width: 7, height: 7)
+          .scaleEffect(pinging ? 1 + 2.2 * progress : 1)
+          .opacity(pinging ? 0.55 * (1 - progress) : 0)
+        Circle()
+          .fill(color)
+          .frame(width: 7, height: 7)
+      }
+    }
+    .frame(width: 22, height: 22)
+    .accessibilityHidden(true)
+  }
+}
+
+/// Four corner brackets around a target area.
+public struct HudBrackets: Shape {
+  public var length: CGFloat
+
+  public init(length: CGFloat = 14) {
+    self.length = length
+  }
+
+  public func path(in rect: CGRect) -> Path {
+    var path = Path()
+    let l = min(length, rect.width / 2, rect.height / 2)
+    for (corner, dx, dy) in [
+      (CGPoint(x: rect.minX, y: rect.minY), 1.0, 1.0),
+      (CGPoint(x: rect.maxX, y: rect.minY), -1.0, 1.0),
+      (CGPoint(x: rect.minX, y: rect.maxY), 1.0, -1.0),
+      (CGPoint(x: rect.maxX, y: rect.maxY), -1.0, -1.0),
+    ] {
+      path.move(to: CGPoint(x: corner.x + dx * l, y: corner.y))
+      path.addLine(to: corner)
+      path.addLine(to: CGPoint(x: corner.x, y: corner.y + dy * l))
+    }
+    return path
+  }
+}
+
+/// Materialize: the view first appears as a lit horizontal line, then unfolds vertically.
+private struct MaterializeModifier: ViewModifier {
+  var active: Bool
+  var delay: Double
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @State private var stage = 0
+
+  func body(content: Content) -> some View {
+    content
+      .mask {
+        GeometryReader { geometry in
+          Rectangle()
+            .frame(width: stage == 0 ? 0 : geometry.size.width, height: stage < 2 ? 2 : geometry.size.height)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+      }
+      .brightness(stage == 2 ? 0 : 0.3)
+      .opacity(stage == 0 ? 0 : 1)
+      .task(id: active) {
+        guard active else {
+          stage = 0
+          return
+        }
+        guard !reduceMotion else {
+          stage = 2
+          return
+        }
+        stage = 0
+        try? await Task.sleep(for: .seconds(delay))
+        withAnimation(.easeOut(duration: AugmaMotion.duration)) { stage = 1 }
+        try? await Task.sleep(for: .seconds(AugmaMotion.duration))
+        withAnimation(.augma(duration: 0.46)) { stage = 2 }
+      }
+  }
+}
+
+public extension View {
+  /// Replays the materialize entrance whenever `active` becomes true.
+  func augmaMaterialize(active: Bool = true, delay: Double = 0) -> some View {
+    modifier(MaterializeModifier(active: active, delay: delay))
+  }
+}

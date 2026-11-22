@@ -1,3 +1,4 @@
+/* Generated from packages/core/src/tokens.json by scripts/sync-tokens.mjs. */
 :root,
 [data-agm-theme='light'] {
   --agm-font:
@@ -5,6 +6,10 @@
   --agm-bg: #ffffff;
   --agm-surface: #f3f6f8;
   --agm-panel: rgb(255 255 255 / 88%);
+  --agm-glass-bg: rgb(255 255 255 / 72%);
+  --agm-glass-strong: rgb(255 255 255 / 86%);
+  --agm-glass-border: rgb(255 255 255 / 62%);
+  --agm-glass-shadow: 0 12px 36px rgb(31 54 74 / 12%);
   --agm-text: #263442;
   --agm-muted: #5c7187;
   --agm-border: #becdda;
@@ -15,12 +20,14 @@
   --agm-cyan: #258ca4;
   --agm-success: #287947;
   --agm-danger: #bc394a;
+  --agm-danger-hover: #a62f3f;
+  --agm-on-danger: #ffffff;
   --agm-shadow: 0 18px 60px rgb(49 82 109 / 10%);
-  /* Light that sits on glass: top edge highlight, hover sheen and luminous accents. */
   --agm-light: rgb(255 255 255 / 85%);
   --agm-sheen: rgb(255 255 255 / 55%);
   --agm-glow: rgb(242 140 18 / 38%);
   --agm-cut: 10px;
+  --agm-glass-blur: 18px;
   /* Motion: HUD elements arrive fast and settle softly; exits are short. */
   --agm-duration: 160ms;
   --agm-duration-slow: 420ms;
@@ -33,6 +40,10 @@
   --agm-bg: #131e29;
   --agm-surface: #1b2936;
   --agm-panel: rgb(29 44 58 / 92%);
+  --agm-glass-bg: rgb(24 38 52 / 72%);
+  --agm-glass-strong: rgb(22 35 48 / 88%);
+  --agm-glass-border: rgb(255 255 255 / 16%);
+  --agm-glass-shadow: 0 14px 40px rgb(0 0 0 / 34%);
   --agm-text: #edf4fa;
   --agm-muted: #a0b6c9;
   --agm-border: #435a6e;
@@ -42,6 +53,8 @@
   --agm-cyan: #67c8da;
   --agm-success: #7cdaa0;
   --agm-danger: #ff95a4;
+  --agm-danger-hover: #ffb0bc;
+  --agm-on-danger: #240d11;
   --agm-shadow: 0 18px 60px rgb(0 0 0 / 25%);
   --agm-light: rgb(255 255 255 / 10%);
   --agm-sheen: rgb(255 255 255 / 16%);

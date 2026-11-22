@@ -2,6 +2,8 @@ node_modules
 .edgeone/
 dist
 apps/mac/.build
+packages/augma-ui/.build
+packages/augma-ui/.swiftpm
 .DS_Store
 *.local
 *.log

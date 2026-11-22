@@ -5,7 +5,9 @@ import { buildPluginCatalog } from './build-plugin-catalog.mjs'
 import { localizeComponents } from './catalog-i18n.mjs'
 import { components, effects, origin, version } from './catalog.mjs'
 import { extractProps } from './component-contract.mjs'
+import { syncTokens } from './sync-tokens.mjs'
 
+await syncTokens()
 await buildPluginCatalog()
 
 for (const path of ['package.json', 'packages/core/package.json', 'packages/augma/package.json']) {
