@@ -394,4 +394,4 @@ export const effects = [
   },
 ]
 export const origin = 'https://augma.yyj.moe'
-export const version = '0.2.2'
+export const version = '0.2.3'
