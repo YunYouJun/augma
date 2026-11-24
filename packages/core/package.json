@@ -28,7 +28,7 @@
     "build": "node ../../scripts/build-core.mjs"
   },
   "devDependencies": {
-    "typescript": "5.9.3"
+    "typescript": "6.0.3"
   },
   "publishConfig": {
     "access": "public"

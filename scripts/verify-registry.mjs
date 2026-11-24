@@ -84,11 +84,11 @@ try {
       name: 'augma-registry-consumer',
       private: true,
       type: 'module',
-      dependencies: { vue: '3.5.43' },
+      dependencies: { vue: '3.5.46' },
       devDependencies: {
-        'vite': '8.3.0',
-        'typescript': '5.9.3',
-        '@vitejs/plugin-vue': '6.0.9',
+        'vite': '8.3.8',
+        'typescript': '6.0.3',
+        '@vitejs/plugin-vue': '6.0.11',
       },
     }),
   )
@@ -122,7 +122,7 @@ try {
         moduleResolution: 'bundler',
         strict: true,
         skipLibCheck: true,
-        baseUrl: '.',
+        types: ['vite/client'],
         paths: { '@/*': ['./src/*'] },
         lib: ['ES2022', 'DOM'],
       },
@@ -147,17 +147,18 @@ try {
   )
   await run('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund'])
   const cli = fileURLToPath(import.meta.resolve('shadcn-vue'))
-  for (const item of components.filter(c => c.registry)) {
-    await run('node', [
-      cli,
-      'add',
-      `${base}/r/${item.slug}.json`,
-      '--yes',
-      '--overwrite',
-      '--cwd',
-      temp,
-    ])
-  }
+  const registryUrls = components
+    .filter(c => c.registry)
+    .map(item => `${base}/r/${item.slug}.json`)
+  await run('node', [
+    cli,
+    'add',
+    ...registryUrls,
+    '--yes',
+    '--overwrite',
+    '--cwd',
+    temp,
+  ])
   const generated = []
   async function scan(dir) {
     for (const e of await readdir(dir, { withFileTypes: true })) {

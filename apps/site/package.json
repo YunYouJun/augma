@@ -11,7 +11,7 @@
     "@fontsource/exo-2": "5.3.0",
     "augma": "workspace:*",
     "reka-ui": "2.11.0",
-    "vue": "3.5.43"
+    "vue": "3.5.46"
   },
   "devDependencies": {
     "vitepress": "1.6.4"

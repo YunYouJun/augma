@@ -9,5 +9,6 @@ export default antfu({
     'vue/singleline-html-element-content-newline': 'off',
     'vue/html-self-closing': 'off',
     'antfu/top-level-function': 'off',
+    'antfu/reasonable-newline': 'off',
   },
 })

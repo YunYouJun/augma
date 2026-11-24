@@ -28,8 +28,8 @@ try {
       dependencies: {
         '@augma/core': `file:${join(temp, core)}`,
         'augma': `file:${join(temp, vue)}`,
-        'vue': '3.5.43',
-        '@vue/server-renderer': '3.5.43',
+        'vue': '3.5.46',
+        '@vue/server-renderer': '3.5.46',
       },
     }),
   )

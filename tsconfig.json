@@ -6,15 +6,14 @@
       "DOM",
       "DOM.Iterable"
     ],
-    "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
       "augma": [
-        "packages/augma/src/index.ts"
+        "./packages/augma/src/index.ts"
       ],
       "@augma/core/*": [
-        "packages/core/src/*"
+        "./packages/core/src/*"
       ]
     },
     "resolveJsonModule": true,
