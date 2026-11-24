@@ -10,7 +10,30 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      web: ${{ steps.filter.outputs.web }}
+      mac: ${{ steps.filter.outputs.mac }}
+      browsers: ${{ steps.filter.outputs.browsers }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - id: filter
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: node scripts/ci-changes.mjs
   verify:
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -25,22 +48,24 @@ jobs:
       - run: pnpm exec playwright install --with-deps --only-shell chromium
       - run: pnpm check:build
       - name: Ensure generated tokens, component docs and Skill references are current
-        run: git diff --exit-code -- packages/core/src/tokens.css packages/augma-ui/Sources/AugmaUI/AugmaTokens.swift apps/site/components apps/site/en/components apps/site/ja/components skills/augma/references
+        run: pnpm check:generated
       - uses: actions/upload-artifact@v7
         with:
           name: augma-site-${{ github.sha }}
           path: apps/site/.vitepress/dist
           include-hidden-files: true
           if-no-files-found: error
+          retention-days: 1
   browser:
     name: Browser (${{ matrix.browser }})
-    needs: verify
+    needs: [changes, verify]
+    if: needs.changes.outputs.web == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
+        browser: ${{ fromJson(needs.changes.outputs.browsers || '["chromium"]') }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v7
@@ -65,3 +90,43 @@ jobs:
           path: /tmp/augma-playwright-results
           if-no-files-found: ignore
           retention-days: 14
+  mac:
+    name: macOS & AugmaUI
+    needs: changes
+    if: needs.changes.outputs.mac == 'true'
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - run: swift --version
+      - run: node --test tests/release/*.test.mjs
+      - run: swift test --package-path packages/augma-ui
+      - run: swift test --package-path apps/mac
+  ci:
+    name: CI
+    needs: [changes, verify, browser, mac]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Summarize workflow status
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          VERIFY_RESULT: ${{ needs.verify.result }}
+          BROWSER_RESULT: ${{ needs.browser.result }}
+          MAC_RESULT: ${{ needs.mac.result }}
+        run: |
+          echo "changes=$CHANGES_RESULT verify=$VERIFY_RESULT browser=$BROWSER_RESULT mac=$MAC_RESULT"
+          if [[ "$CHANGES_RESULT" != "success" ]]; then
+            echo "Change detection failed ($CHANGES_RESULT)" >&2
+            exit 1
+          fi
+          for status in "$VERIFY_RESULT" "$BROWSER_RESULT" "$MAC_RESULT"; do
+            if [[ "$status" != "success" && "$status" != "skipped" ]]; then
+              echo "Required CI check did not succeed: $status" >&2
+              exit 1
+            fi
+          done

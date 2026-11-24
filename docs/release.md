@@ -15,7 +15,7 @@ pnpm preview
 
 `pnpm check` 覆盖生成校验、lint、类型、组件与资源生命周期、主站与 AR 构建、npm 消费、真实 Registry CLI 安装及三个浏览器。站点产物为 `apps/site/.vitepress/dist`，其中包含独立 AR 构建的 `/ar/`。
 
-日常 CI 先运行 `pnpm check:build`，一次完成上述浏览器套件以外的检查与构建（Registry 消费验证仍使用 Chromium），再把同一份站点 artifact 交给 Chromium、Firefox、WebKit 三个并行任务。每个任务只安装所需浏览器；Chromium 仅下载 headless shell。各任务缓存 pnpm store，浏览器套件固定使用两个 worker、禁用重试，失败时按浏览器分别保留 trace。本地与发布流程继续使用完整的 `pnpm check`。
+日常 CI 先由 `scripts/ci-changes.mjs` 按变更路径分流：`verify` 运行 `pnpm check:build` 与 `pnpm check:generated`，一次完成浏览器套件以外的检查与构建（Registry 消费验证仍使用 Chromium），再把同一份站点 artifact 交给并行浏览器任务；PR 仅运行 Chromium，推送到 `main` 或手动触发则运行 Chromium、Firefox、WebKit 三个并行任务（均只安装所需浏览器，Chromium 仅下载 headless shell，缓存 pnpm store，固定 2 worker 禁用重试，失败保留 trace）。涉及 Swift / macOS / 打包脚本的变更并行触发 `macos-26` 上的 `AugmaUI`、`apps/mac` 与打包检查，并由汇总任务 `CI` 统一汇报结果。本地完整验证继续使用 `pnpm check`；发布工作流的 `prepare` 任务基于已通过 `main` CI 的提交，执行 `pnpm check:build`、`pnpm check:generated` 与 Chromium 冒烟测试。
 
 `pnpm-workspace.yaml` 保留 `trustPolicy: no-downgrade`。四个精确版本例外用于旧维护分支：semver 6.3.1、chokidar 4.0.3、undici-types 6.21.0 的 npm integrity 与重构前锁文件一致；Vite 5.4.21 是 VitePress 1 的兼容依赖，具有 provenance，但不同于新主版本的 OIDC 发布。升级时重新审查并删除失效例外。参考 [pnpm 跨维护分支的讨论](https://github.com/orgs/pnpm/discussions/11084)。
 
@@ -39,7 +39,7 @@ pnpm release:verify
 
 `release-artifacts/` 包含两个 `.tgz` 和 `manifest.json`。清单记录版本、完整 Git 提交 SHA、固定包名与 SHA-512 integrity；目录被 Git 忽略。验证拒绝不同提交、修改过的 tarball、缺失包或额外文件。`release:pack` 只打包，必须先成功执行 `pnpm check`，不会发布或创建版本标签。
 
-GitHub Actions 的 **Prepare or publish packages**（`release.yml`）在推送 `v*` 标签时自动准备并发布；手动运行默认 `publish=false`，可在 `main` 或功能分支演练。它完成检查后保存包与站点 artifact，名称包含提交 SHA、运行 ID 与尝试次数。准备任务不使用 npm environment 或写权限。
+GitHub Actions 的 **Prepare or publish packages**（`release.yml`）在推送 `v*` 标签时自动准备并发布；手动运行默认 `publish=false`，可在 `main` 或功能分支演练。`prepare` 任务完成检查后保存 `augma-packages-…` artifact（`mac` 任务保存 `augma-macos-…`），名称包含提交 SHA、运行 ID 与尝试次数，不再额外上传未被引用的站点 artifact。准备任务不使用 npm environment 或写权限。
 
 ## npm 正式发布
 
@@ -87,7 +87,7 @@ npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运
 
 ## macOS 客户端
 
-发布工作流的 `mac` 任务在 `macos-26` runner 上运行 `swift test` 和 `pnpm mac:package`，分别构建 arm64 与 x86_64 的 Release 版本，生成 `Augma-macOS-arm64.zip`、`Augma-macOS-x86_64.zip` 及各自的 `.sha256`，将这四个文件保存为 `augma-macos-…` artifact。打包时同时校验主程序与 NowPlaying 动态库只含目标架构，并验证嵌套签名。推送 `v*` 标签（或在匹配标签上手动 `publish=true`）时，`github-release` 任务在准备任务与 `mac` 任务都通过后，把四个文件附加到同名 GitHub Release：Release 不存在就创建并生成说明，已存在则覆盖同名文件。它不依赖 npm 发布任务，首次发布时 npm 失败也会照常上传。
+发布工作流的 `mac` 任务直接在 `macos-26` runner 上运行 `node --test tests/release/*.test.mjs`、`swift test`（分别覆盖 `packages/augma-ui` 与 `apps/mac`）以及 `./script/build_and_run.sh --package`（无需安装 `pnpm` 与前端依赖），分别构建 arm64 与 x86_64 的 Release 版本，生成 `Augma-macOS-arm64.zip`、`Augma-macOS-x86_64.zip` 及各自的 `.sha256`，将这四个文件保存为 `augma-macos-…` artifact。打包时同时校验主程序与 NowPlaying 动态库只含目标架构，并验证嵌套签名。推送 `v*` 标签（或在匹配标签上手动 `publish=true`）时，`github-release` 任务在准备任务与 `mac` 任务都通过后，把四个文件附加到同名 GitHub Release：Release 不存在就创建并生成说明，已存在则覆盖同名文件。它不依赖 npm 发布任务，首次发布时 npm 失败也会照常上传。
 
 站点三种语言的 `/download` 与 `/guide/macos` 分别提供 Apple 芯片版和 Intel 版，链接固定为 `releases/latest/download/Augma-macOS-arm64.zip` 与 `Augma-macOS-x86_64.zip`，不带版本号；首页 AR 演示区进入下载页。下载页的每种架构都有独立的 SHA-256 校验链接。首次发布分架构安装包之前，新链接会返回 404；发布新版本并确认这四个附件后再上线对应下载页。最低系统为 macOS 26。安装包只有 ad-hoc 签名，首次打开需要在「系统设置 → 隐私与安全性」中确认。改用 Developer ID 签名与公证需要 Apple Developer Program 账号，并把证书和 App Store Connect API 密钥配置为仓库 secrets。
 
@@ -99,7 +99,7 @@ npm 发布没有跨包事务。Core 已发布而 Vue 失败时，对同一次运
 
 - Pages 项目 `augma`（`augma.pages.dev`）连接 GitHub `YunYouJun/augma` 的 `main` 分支。生产和预览构建通过仓库根目录的 `.node-version` 选择 Node.js 26 LTS。若控制台设置了 `NODE_VERSION`，清除该项即可跟随仓库版本。Pages 使用 pnpm 12.5.1，运行 `pnpm build`，输出目录为 `apps/site/.vitepress/dist`。推送 `main` 即部署生产环境，PR 生成预览部署。推送后在日志中核对 Node 版本与构建状态。[Cloudflare Pages 构建镜像](https://developers.cloudflare.com/pages/configuration/build-image/)
 - `augma.yyj.moe` 是 Pages 项目的 Custom Domain，`yyj.moe` zone 中的 `augma` CNAME 指向 `augma.pages.dev`。
-- 2026-10-20 起不再使用 EdgeOne Pages：Augma 是业余项目，一处托管、推送即部署比国内加速更重要。代价是中国大陆访问 Cloudflare 免费计划较慢，偶尔不稳定；`*.pages.dev` 在大陆通常无法访问，对外只使用 `augma.yyj.moe`。CI 与发布工作流仍保存站点 artifact，仅用于排查。
+- 2026-10-20 起不再使用 EdgeOne Pages：Augma 是业余项目，一处托管、推送即部署比国内加速更重要。代价是中国大陆访问 Cloudflare 免费计划较慢，偶尔不稳定；`*.pages.dev` 在大陆通常无法访问，对外只使用 `augma.yyj.moe`。CI 工作流仍保存站点 artifact，仅用于排查与浏览器矩阵传递。
 
 ### `augma.yunyoujun.cn` 跳转
 
